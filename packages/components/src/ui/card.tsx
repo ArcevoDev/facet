@@ -7,6 +7,7 @@ const cardVariants = cva("rounded-xl border shadow", {
     variant: {
       default: "bg-card text-card-foreground",
       glass: "glass-card text-card-foreground",
+      frost: "frost text-card-foreground",
       glow: "bg-card text-card-foreground glow-indigo",
       ghost: "border-transparent bg-transparent shadow-none",
       outline: "border bg-transparent text-card-foreground shadow-none",

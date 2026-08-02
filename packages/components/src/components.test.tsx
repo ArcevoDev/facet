@@ -56,6 +56,7 @@ describe("Button", () => {
     const btn = container.querySelector("button");
     expect(btn).toHaveClass("bg-destructive");
     expect(btn).toHaveClass("h-10");
+    expect(btn).toHaveClass("cursor-pointer");
   });
 
   it("is disabled when disabled prop set", () => {
@@ -169,6 +170,21 @@ describe("Accordion", () => {
     const items = Array.from(headers, (h) => h.parentElement);
     expect(items[1]?.className).toContain("mt-2");
   });
+
+  it("applies nested indent and guide-line classes to the item", () => {
+    const { container } = render(
+      <Accordion type="single">
+        <AccordionItem variant="nested" value="item-1">
+          <AccordionTrigger>Child</AccordionTrigger>
+        </AccordionItem>
+      </Accordion>,
+    );
+    const header = container.querySelector("h3");
+    const item = header?.parentElement;
+    expect(item?.className).toContain("ml-3");
+    expect(item?.className).toContain("pl-3");
+    expect(item?.className).toContain("border-l");
+  });
 });
 
 describe("Dialog", () => {
@@ -183,7 +199,8 @@ describe("Dialog", () => {
     const content = await screen.findByText("Content");
     expect(content).toBeInTheDocument();
     const dialog = content.closest("[role=dialog]");
-    expect(dialog?.className).toContain("bg-background");
+    // Default dialog uses the frost surface for a readable, blurred card.
+    expect(dialog?.className).toContain("frost");
     // The overlay is rendered by Radix into the portal; the dim variant applies bg-black/80.
     expect(document.querySelector(".bg-black\\/80")).not.toBeNull();
   });

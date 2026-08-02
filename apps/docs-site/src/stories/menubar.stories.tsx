@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { getModSymbol } from "@arcevo/facet-components";
 import {
   Menubar,
   MenubarMenu,
@@ -33,7 +34,7 @@ export const Default: Story = {
         <MenubarTrigger>File</MenubarTrigger>
         <MenubarContent>
           <MenubarItem>
-            New Tab <MenubarShortcut>Ctrl+T</MenubarShortcut>
+            New Tab <MenubarShortcut>{getModSymbol()}+T</MenubarShortcut>
           </MenubarItem>
           <MenubarItem>New Window</MenubarItem>
           <MenubarSeparator />
@@ -45,10 +46,10 @@ export const Default: Story = {
         <MenubarTrigger>Edit</MenubarTrigger>
         <MenubarContent>
           <MenubarItem>
-            Undo <MenubarShortcut>Ctrl+Z</MenubarShortcut>
+            Undo <MenubarShortcut>{getModSymbol()}+Z</MenubarShortcut>
           </MenubarItem>
           <MenubarItem>
-            Redo <MenubarShortcut>Ctrl+Y</MenubarShortcut>
+            Redo <MenubarShortcut>{getModSymbol()}+Y</MenubarShortcut>
           </MenubarItem>
           <MenubarSeparator />
           <MenubarSub>

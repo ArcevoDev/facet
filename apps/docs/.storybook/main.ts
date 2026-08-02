@@ -5,7 +5,11 @@ import tailwindcss from "@tailwindcss/vite";
 const require = createRequire(import.meta.url);
 
 const config: StorybookConfig = {
-  stories: ["../src/**/*.stories.@(ts|tsx)", "../src/**/*.mdx"],
+  stories: [
+    "../src/**/*.stories.@(ts|tsx)",
+    "../src/**/*.mdx",
+    "../apps/docs-site/src/stories/**/*.stories.@(ts|tsx)",
+  ],
   addons: ["@storybook/addon-themes", "@storybook/addon-docs"],
   framework: {
     name: "@storybook/react-vite",

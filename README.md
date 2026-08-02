@@ -21,7 +21,8 @@ Published to npm: components/auth/layout at 1.0.2, tokens/sdk at 1.0.1.
 ## Sites
 
 - Landing: https://facet.arcevocirqle.com.ng
-- Docs: https://docs.facet.arcevocirqle.com.ng
+- Story (component gallery + docs): https://story.facet.arcevocirqle.com.ng
+- Storybook: https://docs.facet.arcevocirqle.com.ng
 
 ## Quick Start
 

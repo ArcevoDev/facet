@@ -17,7 +17,7 @@ const PaginationContent = React.forwardRef<
   HTMLUListElement,
   React.HTMLAttributes<HTMLUListElement>
 >(({ className, ...props }, ref) => (
-  <ul ref={ref} className={cn("flex flex-row items-center gap-1", className)} {...props} />
+  <ul ref={ref} className={cn("flex flex-row items-center gap-1.5", className)} {...props} />
 ));
 PaginationContent.displayName = "PaginationContent";
 
@@ -53,10 +53,18 @@ const PaginationPrevious = ({
   <PaginationLink
     aria-label="Go to previous page"
     size="default"
-    className={cn("gap-1 pl-2.5", className)}
+    className={cn("gap-1.5 pl-2.5 pr-3", className)}
     {...props}
   >
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0"
+      aria-hidden="true"
+    >
       <path
         d="M10 4L6 8L10 12"
         stroke="currentColor"
@@ -74,11 +82,19 @@ const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof Pag
   <PaginationLink
     aria-label="Go to next page"
     size="default"
-    className={cn("gap-1 pr-2.5", className)}
+    className={cn("gap-1.5 pl-3 pr-2.5", className)}
     {...props}
   >
     <span>Next</span>
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0"
+      aria-hidden="true"
+    >
       <path
         d="M6 4L10 8L6 12"
         stroke="currentColor"

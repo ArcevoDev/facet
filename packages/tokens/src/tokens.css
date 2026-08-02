@@ -202,6 +202,33 @@ body {
     inset 0 0 0 1px oklch(1 0 0 / 50%);
 }
 
+/* Frost: frosted surface optimized for readability over glass.
+ * More opaque than glass-card so body text stays high-contrast on top
+ * of blurred content. All values are CSS variables so consumers can
+ * customize the frost (opacity, blur radius, border, shadow) per theme. */
+.frost {
+  --frost-bg: oklch(0.155 0.02 240 / 82%);
+  --frost-blur: 16px;
+  --frost-border: 1px solid oklch(1 0 0 / 10%);
+  --frost-shadow:
+    0 8px 32px oklch(0 0 0 / 35%),
+    inset 0 0 0 1px oklch(1 0 0 / 5%);
+
+  background: var(--frost-bg);
+  backdrop-filter: blur(var(--frost-blur));
+  -webkit-backdrop-filter: blur(var(--frost-blur));
+  border: var(--frost-border);
+  box-shadow: var(--frost-shadow);
+}
+
+[data-theme="light"] .frost {
+  --frost-bg: oklch(0.99 0.01 240 / 88%);
+  --frost-border: 1px solid oklch(0 0 0 / 10%);
+  --frost-shadow:
+    0 8px 32px oklch(0 0 0 / 12%),
+    inset 0 0 0 1px oklch(1 0 0 / 60%);
+}
+
 .text-gradient {
   background: linear-gradient(135deg, oklch(0.75 0.15 273) 0%, oklch(0.85 0.08 220) 100%);
   -webkit-background-clip: text;

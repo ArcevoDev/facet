@@ -44,6 +44,9 @@ import {
   LayoutDashboard,
   FileText,
   HelpCircle,
+  LayoutGrid,
+  List,
+  TriangleAlert,
 } from "lucide-react";
 
 /* ── Types ────────────────────────────────────────────────── */
@@ -74,7 +77,10 @@ export type IconName =
   | "creditCard"
   | "dashboard"
   | "document"
-  | "help";
+  | "help"
+  | "grid"
+  | "list"
+  | "triangleAlert";
 
 /** Partial map used for overrides (IconProvider / registerIcon). */
 export type IconOverrides = Partial<Record<IconName, IconComponent>>;
@@ -105,6 +111,9 @@ const defaultIcons: Record<IconName, IconComponent> = {
   dashboard: LayoutDashboard,
   document: FileText,
   help: HelpCircle,
+  grid: LayoutGrid,
+  list: List,
+  triangleAlert: TriangleAlert,
 };
 
 /* ── Global registry ──────────────────────────────────────── */

@@ -118,3 +118,36 @@ export const Compact: Story = {
     </div>
   ),
 };
+
+export const Nested: Story = {
+  render: () => (
+    <Accordion type="single" collapsible className="w-[420px]">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>Getting started</AccordionTrigger>
+        <AccordionContent>
+          <Accordion type="single" collapsible>
+            <AccordionItem variant="nested" value="sub-1">
+              <AccordionTrigger>Installation</AccordionTrigger>
+              <AccordionContent>
+                pnpm add @arcevo/facet-components
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem variant="nested" value="sub-2">
+              <AccordionTrigger>Setup</AccordionTrigger>
+              <AccordionContent>Import tokens and wrap the app in ThemeProvider.</AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="item-2">
+        <AccordionTrigger>Advanced</AccordionTrigger>
+        <AccordionContent>
+          Nested accordions work because each level is its own Radix Root, so
+          open state is tracked independently per level. The nested variant
+          indents child items and draws a left guide line so the hierarchy
+          reads as a tree.
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  ),
+};

@@ -37,7 +37,7 @@ export const LightOnly: Story = {
   render: () => (
     <ThemeProvider defaultTheme="light">
       <div className="flex gap-3">
-        <ThemeToggle items={["light", "dark"]} />
+        <ThemeToggle />
       </div>
     </ThemeProvider>
   ),

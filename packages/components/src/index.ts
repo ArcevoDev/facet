@@ -9,7 +9,7 @@
  *   import "@arcevo/facet-components/tokens.css";
  */
 
-export { cn } from "./utils.js";
+export { cn, isMac, getModSymbol } from "./utils.js";
 
 /* ── Icon registry ──────────────────────────────────────────── */
 export { IconProvider, Icon, registerIcon, getIcon } from "./icon/index.js";
@@ -47,6 +47,14 @@ export {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
+  ConfirmAlertDialog,
+  AlertDialogIcon,
+} from "./ui/alert-dialog.js";
+export type {
+  ConfirmAlertDialogProps,
+  AlertDialogProps,
+  AlertDialogContentProps,
+  AlertDialogActionProps,
 } from "./ui/alert-dialog.js";
 
 export { RadioGroup, RadioGroupItem } from "./ui/radio-group.js";
@@ -121,7 +129,12 @@ export { Separator } from "./ui/separator.js";
 
 export { Skeleton } from "./ui/skeleton.js";
 
-export { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar.js";
+export { Avatar, AvatarImage, AvatarFallback, UserAvatar, getInitials } from "./ui/avatar.js";
+export type {
+  UserAvatarProps,
+  UserAvatarUser,
+  UserAvatarMenuItem,
+} from "./ui/avatar.js";
 
 export { Checkbox } from "./ui/checkbox.js";
 

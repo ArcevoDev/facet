@@ -68,3 +68,10 @@ export { AppLayout } from "./auth-layout.js";
 export { type ConsoleLayoutProps, ConsoleLayout } from "./console-layout.js";
 
 export { type LandingLayoutProps, LandingLayout } from "./landing-layout.js";
+
+/* ── Command palette (search) ─────────────────────────────── */
+export {
+  type CommandPaletteProps,
+  type CommandResult,
+  CommandPalette,
+} from "./search.js";

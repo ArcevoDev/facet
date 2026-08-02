@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Calculator, Calendar, CreditCard, Settings, Smile, User } from "lucide-react";
+import { getModSymbol } from "@arcevo/facet-components";
 import {
   Command,
   CommandDialog,
@@ -47,17 +48,17 @@ export const Default: Story = {
           <CommandItem>
             <User className="mr-2" />
             <span>Profile</span>
-            <CommandShortcut>⌘P</CommandShortcut>
+            <CommandShortcut>{getModSymbol()}P</CommandShortcut>
           </CommandItem>
           <CommandItem>
             <CreditCard className="mr-2" />
             <span>Billing</span>
-            <CommandShortcut>⌘B</CommandShortcut>
+            <CommandShortcut>{getModSymbol()}B</CommandShortcut>
           </CommandItem>
           <CommandItem>
             <Settings className="mr-2" />
             <span>Settings</span>
-            <CommandShortcut>⌘S</CommandShortcut>
+            <CommandShortcut>{getModSymbol()}S</CommandShortcut>
           </CommandItem>
         </CommandGroup>
       </CommandList>

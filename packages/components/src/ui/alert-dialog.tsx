@@ -1,10 +1,35 @@
 import * as React from "react";
 import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import { cn } from "../utils.js";
+import { buttonVariants } from "./button.js";
+import { Icon } from "../icon/index.js";
+import { Input } from "./input.js";
+import { Label } from "./label.js";
 
-const AlertDialog = AlertDialogPrimitive.Root;
+const AlertDialogPrimitiveRoot = AlertDialogPrimitive.Root;
 const AlertDialogTrigger = AlertDialogPrimitive.Trigger;
 const AlertDialogPortal = AlertDialogPrimitive.Portal;
+
+/**
+ * Tracks the Root's onOpenChange so AlertDialogContent can close the
+ * dialog when the overlay (outside) is clicked — Radix's AlertDialog
+ * intentionally does not dismiss on outside interaction.
+ */
+const AlertDialogCloseContext = React.createContext<((open: boolean) => void) | undefined>(
+  undefined,
+);
+
+export interface AlertDialogProps
+  extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Root> {}
+
+function AlertDialog({ onOpenChange, ...props }: AlertDialogProps) {
+  return (
+    <AlertDialogCloseContext.Provider value={onOpenChange}>
+      <AlertDialogPrimitiveRoot onOpenChange={onOpenChange} {...props} />
+    </AlertDialogCloseContext.Provider>
+  );
+}
+AlertDialog.displayName = AlertDialogPrimitive.Root.displayName;
 
 const AlertDialogOverlay = React.forwardRef<
   React.ComponentRef<typeof AlertDialogPrimitive.Overlay>,
@@ -21,22 +46,37 @@ const AlertDialogOverlay = React.forwardRef<
 ));
 AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName;
 
+export interface AlertDialogContentProps
+  extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content> {
+  /** Visual emphasis. Default: "default". */
+  variant?: "default" | "destructive";
+}
+
 const AlertDialogContent = React.forwardRef<
   React.ComponentRef<typeof AlertDialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <AlertDialogPortal>
-    <AlertDialogOverlay />
-    <AlertDialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
-        className,
-      )}
-      {...props}
-    />
-  </AlertDialogPortal>
-));
+  AlertDialogContentProps
+>(({ className, variant = "default", ...props }, ref) => {
+  const close = React.useContext(AlertDialogCloseContext);
+  return (
+    <AlertDialogPortal>
+      <AlertDialogOverlay
+        onClick={() => {
+          // Clicking the overlay = outside click: close the dialog.
+          close?.(false);
+        }}
+      />
+      <AlertDialogPrimitive.Content
+        ref={ref}
+        className={cn(
+          "frost fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 p-6 text-foreground duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+          variant === "destructive" && "border-destructive/50 bg-destructive/5",
+          className,
+        )}
+        {...props}
+      />
+    </AlertDialogPortal>
+  );
+});
 AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName;
 
 const AlertDialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -76,14 +116,20 @@ const AlertDialogDescription = React.forwardRef<
 ));
 AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayName;
 
+export interface AlertDialogActionProps
+  extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action> {
+  /** Button style. Default: "default". */
+  variant?: "default" | "destructive";
+}
+
 const AlertDialogAction = React.forwardRef<
   React.ComponentRef<typeof AlertDialogPrimitive.Action>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
->(({ className, ...props }, ref) => (
+  AlertDialogActionProps
+>(({ className, variant = "default", ...props }, ref) => (
   <AlertDialogPrimitive.Action
     ref={ref}
     className={cn(
-      "inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      buttonVariants({ variant: variant === "destructive" ? "destructive" : "default" }),
       className,
     )}
     {...props}
@@ -97,14 +143,166 @@ const AlertDialogCancel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
-    className={cn(
-      "inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-md border border-input bg-transparent px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-      className,
-    )}
+    className={cn(buttonVariants({ variant: "outline" }), className)}
     {...props}
   />
 ));
 AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
+
+/** Renders a warning icon sized for an alert dialog. */
+export function AlertDialogIcon({ className }: { className?: string }) {
+  return <Icon name="triangleAlert" className={cn("size-5 text-destructive", className)} />;
+}
+
+/**
+ * ConfirmAlertDialog — destructive-action confirmation with typed
+ * verification, like GitHub's "type the repo name to delete" flow.
+ *
+ * Two inputs must be filled exactly before the confirm action enables:
+ *   1. The name of the entity being deleted/deactivated.
+ *   2. A confirmation phrase (e.g. "confirm delete").
+ *
+ * Usage:
+ *   <ConfirmAlertDialog
+ *     entityName="My Project"
+ *     entityLabel="project"
+ *     confirmPhrase="confirm delete"
+ *     actionLabel="Delete project"
+ *     trigger={<Button variant="destructive">Delete</Button>}
+ *     onConfirm={() => ...}
+ *   />
+ *
+ * The dialog handles its own open state, but accepts controlled `open` /
+ * `onOpenChange`. Pass `actionVariant="destructive"` to style the confirm
+ * button as destructive.
+ */
+export interface ConfirmAlertDialogProps {
+  /** The name the user must type to unlock confirmation. */
+  entityName: string;
+  /** Human label for the entity, e.g. "project" (used in helper text). */
+  entityLabel?: string;
+  /** The phrase the user must type to confirm the action. Default: "confirm delete". */
+  confirmPhrase?: string;
+  /** Label for the destructive confirm button. */
+  actionLabel?: string;
+  /** Trigger element (typically a Button). Rendered via asChild. */
+  trigger: React.ReactNode;
+  /** Called when both inputs match and the confirm button is clicked. */
+  onConfirm?: () => void;
+  /** Called when the dialog closes (cancel or confirm). */
+  onOpenChange?: (open: boolean) => void;
+  /** Controlled open state. Defaults to internal state. */
+  open?: boolean;
+  /** Style the confirm button as destructive. Default: true. */
+  destructive?: boolean;
+  /** Accessible description shown under the title. */
+  description?: React.ReactNode;
+  /** Extra content rendered above the footer. */
+  children?: React.ReactNode;
+}
+
+export function ConfirmAlertDialog({
+  entityName,
+  entityLabel = "name",
+  confirmPhrase = "confirm delete",
+  actionLabel = "Delete",
+  trigger,
+  onConfirm,
+  onOpenChange,
+  open: openProp,
+  destructive = true,
+  description,
+  children,
+}: ConfirmAlertDialogProps) {
+  const [internalOpen, setInternalOpen] = React.useState(false);
+  const open = openProp ?? internalOpen;
+  const setOpen = React.useCallback(
+    (next: boolean) => {
+      if (openProp !== undefined) {
+        onOpenChange?.(next);
+      } else {
+        setInternalOpen(next);
+      }
+    },
+    [openProp, onOpenChange],
+  );
+  const [nameInput, setNameInput] = React.useState("");
+  const [phraseInput, setPhraseInput] = React.useState("");
+
+  // Reset inputs whenever the dialog (re)opens.
+  React.useEffect(() => {
+    if (open) {
+      setNameInput("");
+      setPhraseInput("");
+    }
+  }, [open]);
+
+  const nameMatch = nameInput.trim().toLowerCase() === entityName.trim().toLowerCase();
+  const phraseMatch = phraseInput.trim().toLowerCase() === confirmPhrase.trim().toLowerCase();
+  const confirmed = nameMatch && phraseMatch;
+
+  return (
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>
+      <AlertDialogContent variant={destructive ? "destructive" : "default"}>
+        <AlertDialogHeader>
+          <div className="flex items-start gap-3 sm:items-center">
+            {destructive && <AlertDialogIcon className="mt-0.5 shrink-0 sm:mt-0" />}
+            <div className="flex flex-col gap-1.5">
+              <AlertDialogTitle>{actionLabel} this {entityLabel}?</AlertDialogTitle>
+              <AlertDialogDescription>
+                {description ?? (
+                  <>
+                    This action cannot be undone. Type <strong>{entityName}</strong> and{" "}
+                    <strong>{confirmPhrase}</strong> to continue.
+                  </>
+                )}
+              </AlertDialogDescription>
+            </div>
+          </div>
+        </AlertDialogHeader>
+        {children}
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="confirm-entity-name">
+              To confirm, type "{entityName}"
+            </Label>
+            <Input
+              id="confirm-entity-name"
+              value={nameInput}
+              onChange={(event) => setNameInput(event.target.value)}
+              placeholder={entityName}
+              autoComplete="off"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="confirm-phrase">
+              To confirm, type "{confirmPhrase}"
+            </Label>
+            <Input
+              id="confirm-phrase"
+              value={phraseInput}
+              onChange={(event) => setPhraseInput(event.target.value)}
+              placeholder={confirmPhrase}
+              autoComplete="off"
+            />
+          </div>
+        </div>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            disabled={!confirmed}
+            onClick={() => onConfirm?.()}
+            variant={destructive ? "destructive" : "default"}
+          >
+            {actionLabel}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+ConfirmAlertDialog.displayName = "ConfirmAlertDialog";
 
 export {
   AlertDialog,

@@ -24,7 +24,7 @@ Three customization axes: `appearance` (style), `config` (behavior flags), `slot
 ```
 packages/tokens/       ← Design tokens (finished)
 packages/sdk/          ← arc-id SDK (finished)
-packages/components/   ← 27 styled shadcn equivalents
+packages/components/   ← 47 styled Radix components (shadcn-style, Radix + tailwind-merge)
 packages/auth/         ← Auth components + presets
 packages/layout/       ← Domain-configurable app shell (ConsoleLayout, AuthLayout, LandingLayout)
 apps/docs/             ← Documentation site
@@ -93,14 +93,14 @@ COMPLETE → (onSuccess callback) → redirect
 
 1. ✅ `packages/tokens/`: Complete
 2. ✅ `packages/sdk/`: Complete, strict domain types (`sdk/src/types.ts`)
-3. ✅ `packages/components/`: 35+ styled Radix components + theme system
-4. ✅ `packages/auth/`: ArcProvider, SignIn, SignUp, UserButton, Guard, MfaDialog, 8 standalone forms
+3. ✅ `packages/components/`: 47 styled Radix components + theme system + IconRegistry
+4. ✅ `packages/auth/`: ArcProvider, SignIn, SignUp, UserButton, Guard, MfaDialog, 7 standalone forms
 5. ✅ `packages/layout/`: ConsoleLayout (full + rail modes), AuthLayout (renamed from AppLayout, alias kept), LandingLayout, 5 presets
 6. ✅ `apps/docs/`: Storybook 10.5.5, 50+ story files + 5 MDX docs, mock SDK decorator
 7. ✅ Changesets + npm publish pipeline
 8. ✅ `apps/landing/`: rebuilt public-facing site (vite + tailwind v4)
 9. ✅ Layout stories: ConsoleLayout, AuthLayout, Sidebar, Topbar, PageHeader, LandingLayout
-10. ✅ Tests: vitest workspace, 107 tests across sdk/components/auth/layout (12 files)
+10. ✅ Tests: vitest workspace, 108 tests across sdk/components/auth/layout (12 files)
 11. ✅ SignIn mfa_challenge wired to MfaVerifyForm
 12. ✅ Verified 2026-08-01: `pnpm build` green, `pnpm test` green, `pnpm typecheck` green (after fixing docs mock-sdk.ts to strict SDK types). `pnpm lint` hangs on this machine (environment issue).
 13. ✅ Publish pipeline in place: `@arcevo/facet-*` scope on npm, Changesets + GitHub Actions on `main` with `NPM_TOKEN`.
@@ -113,7 +113,7 @@ When arc-id adopts facet as its frontend, these need resolution:
 
 1. ✅ **SDK 401 auto-refresh**: Added `onTokenRefresh` callback to `ArcIdClient` (`client.ts:113-124`). Automatic retry on 401.
 2. ✅ **Placeholder handlers**: `handlePasskeyAuth` now calls `passkeySdk.authenticationOptions()` → `navigator.credentials.get()` → `passkeySdk.authenticate()`. `handleForgotPasswordSubmit` calls `authSdk.forgotPassword()`. No longer stubs.
-3. ✅ **Test infrastructure**: Vitest workspace, 107 tests across sdk/components/auth/layout (12 files).
+3. ✅ **Test infrastructure**: Vitest workspace, 108 tests across sdk/components/auth/layout (12 files).
 4. ✅ **SignIn MFA challenge**: Wired to `MfaVerifyForm` (2026-07-31).
 5. ✅ **Duplicate dropdowns**: `layout/UserMenu` now uses `@arcevo/facet-components` `DropdownMenu`.
 6. ✅ **Type strictness**: SDK now has strict domain interfaces in `sdk/src/types.ts`; `Record<string, unknown>` eliminated.
@@ -123,8 +123,9 @@ When arc-id adopts facet as its frontend, these need resolution:
 10. ✅ **Form validation**: Auth forms integrate react-hook-form + zod with inline errors.
 11. ✅ **Domain preset registry**: `registerPreset`/`getPreset`/`resolvePreset` in auth and layout.
 12. ✅ **Docs mock types**: `apps/docs/src/stories/mock-sdk.ts` now typed against strict SDK types (User/Membership, TokenBundle), so `pnpm typecheck` is green repo-wide.
+13. ✅ **Icon library registry**: `IconRegistry` shipped in 1.0.2 (`icon/registry.tsx`): `IconProvider`/`Icon`/`registerIcon`/`getIcon` with lucide-react as the default set and domain overrides supported.
 
-**Still open (not blockers):** 1. **No Tailwind config**: No `tailwind.config.*`. Relies on CSS variables. Consumers need `tailwindcss-animate` plugin. 2. **Icon library registry**: lucide-react adopted piecemeal; an IconRegistry with domain overrides would enable runtime icon swapping. 3. **Bundle optimization**: tsup uses CLI flags, not config files; no code-splitting or tree-shake analysis. 4. **CSS build pipeline**: Tokens CSS is copied via inline `fs.cpSync` instead of a proper build step (PostCSS + autoprefixer + minification). 5. **Turbo validation**: `turbo.json` exists but hasn't been validated with a real run. 6. **Component a11y audit**: Radix primitives provide baseline accessibility, but compounded components (SignIn state machine, MfaDialog phases) need keyboard navigation and screen reader testing before third-party use.
+**Still open (not blockers):** 1. **No Tailwind config**: No `tailwind.config.*`. Relies on CSS variables. Consumers need `tailwindcss-animate` plugin. 2. **Bundle optimization**: tsup uses CLI flags, not config files; no code-splitting or tree-shake analysis. 3. **CSS build pipeline**: Tokens CSS is copied via inline `fs.cpSync` instead of a proper build step (PostCSS + autoprefixer + minification). 4. **Turbo validation**: `turbo.json` exists but hasn't been validated with a real run. 5. **Component a11y audit**: Radix primitives provide baseline accessibility, but compounded components (SignIn state machine, MfaDialog phases) need keyboard navigation and screen reader testing before third-party use.
 
 ## Consumption Target
 

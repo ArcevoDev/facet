@@ -9,6 +9,8 @@ import {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
+  AlertDialogIcon,
+  ConfirmAlertDialog,
 } from "@arcevo/facet-components";
 import { Button } from "@arcevo/facet-components";
 
@@ -51,18 +53,36 @@ export const Destructive: Story = {
       <AlertDialogTrigger asChild>
         <Button variant="destructive">Revoke access</Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent variant="destructive">
         <AlertDialogHeader>
-          <AlertDialogTitle>Revoke API access?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This will immediately invalidate all tokens issued to this application.
-          </AlertDialogDescription>
+          <div className="flex items-start gap-3 sm:items-center">
+            <AlertDialogIcon className="mt-0.5 shrink-0 sm:mt-0" />
+            <div className="flex flex-col gap-1.5">
+              <AlertDialogTitle>Revoke API access?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will immediately invalidate all tokens issued to this application.
+              </AlertDialogDescription>
+            </div>
+          </div>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Keep access</AlertDialogCancel>
-          <AlertDialogAction>Revoke</AlertDialogAction>
+          <AlertDialogAction variant="destructive">Revoke</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+  ),
+};
+
+export const ConfirmByTyping: Story = {
+  render: () => (
+    <ConfirmAlertDialog
+      entityName="facet"
+      entityLabel="workspace"
+      confirmPhrase="confirm delete"
+      actionLabel="Delete workspace"
+      description="This action cannot be undone. Type the workspace name and the confirmation phrase to continue."
+      trigger={<Button variant="destructive">Delete workspace</Button>}
+    />
   ),
 };

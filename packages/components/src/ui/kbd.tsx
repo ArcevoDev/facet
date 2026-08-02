@@ -1,10 +1,16 @@
 import * as React from "react";
-import { cn } from "../utils.js";
+import { cn, getModSymbol } from "../utils.js";
 
-export interface KbdProps extends React.HTMLAttributes<HTMLSpanElement> {}
+export interface KbdProps extends React.HTMLAttributes<HTMLSpanElement> {
+  /**
+   * Render the platform modifier key (⌘ on macOS, Ctrl elsewhere)
+   * instead of passing children.
+   */
+  mod?: boolean;
+}
 
 const Kbd = React.forwardRef<HTMLSpanElement, KbdProps>(
-  ({ className, ...props }, ref) => (
+  ({ className, mod, ...props }, ref) => (
     <kbd
       ref={ref}
       className={cn(
@@ -12,9 +18,10 @@ const Kbd = React.forwardRef<HTMLSpanElement, KbdProps>(
         className,
       )}
       {...props}
-    />
+    >
+      {mod ? getModSymbol() : props.children}
+    </kbd>
   ),
 );
 Kbd.displayName = "Kbd";
-
 export { Kbd };

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { getModSymbol } from "@arcevo/facet-components";
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -39,7 +40,7 @@ export const Default: Story = {
           Forward <ContextMenuShortcut>Alt+Right</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          Reload <ContextMenuShortcut>Ctrl+R</ContextMenuShortcut>
+          Reload <ContextMenuShortcut>{getModSymbol()}+R</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuSub>
           <ContextMenuSubTrigger>More Tools</ContextMenuSubTrigger>

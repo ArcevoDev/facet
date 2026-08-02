@@ -11,6 +11,7 @@ import type { Appearance, ComponentSlots } from "./types.js";
 
 import { Button } from "@arcevo/facet-components";
 import { Avatar, AvatarFallback } from "@arcevo/facet-components";
+import { getModSymbol } from "@arcevo/facet-components";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -87,11 +88,11 @@ export function UserButton({ appearance, slots, onSignOut }: UserButtonProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => {}}>
           Profile
-          <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          <DropdownMenuShortcut>⇧{getModSymbol()}P</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => {}}>
           Settings
-          <DropdownMenuShortcut>⌘,</DropdownMenuShortcut>
+          <DropdownMenuShortcut>{getModSymbol()},</DropdownMenuShortcut>
         </DropdownMenuItem>
         {user.memberships && user.memberships.length > 0 && (
           <>
@@ -110,7 +111,7 @@ export function UserButton({ appearance, slots, onSignOut }: UserButtonProps) {
           className="text-destructive focus:text-destructive"
         >
           Sign out
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          <DropdownMenuShortcut>⇧{getModSymbol()}Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

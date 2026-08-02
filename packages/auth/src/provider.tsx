@@ -358,6 +358,15 @@ export function useAuth(): AuthContextValue {
   return ctx;
 }
 
+/**
+ * Same as useAuth, but returns null when no <ArcProvider> is present.
+ * Useful for layout shells that render with or without auth context
+ * (e.g. ConsoleLayout used by docs/static sites).
+ */
+export function useOptionalAuth(): AuthContextValue | null {
+  return React.useContext(AuthContext);
+}
+
 /* ── Helpers ───────────────────────────────────────────────── */
 
 async function refreshAccessToken(

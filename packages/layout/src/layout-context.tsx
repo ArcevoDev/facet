@@ -15,6 +15,15 @@ const LayoutContext = React.createContext<LayoutContextValue | null>(null);
 /** localStorage key for the rail-mode collapsed state. */
 const STORAGE_KEY = "facet:sidebar-collapsed";
 
+/** localStorage key for the resizable sidebar width (px). */
+const STORAGE_KEY_WIDTH = "facet:sidebar-width";
+
+/** localStorage key for per-section collapse state. */
+const STORAGE_KEY_SECTIONS = "facet:sidebar-sections";
+
+/** Default expanded sidebar width. */
+export const DEFAULT_SIDEBAR_WIDTH = 260;
+
 export function LayoutProvider({
   children,
   router,
@@ -52,6 +61,48 @@ export function LayoutProvider({
     });
   }, []);
 
+  // Resizable sidebar width (rail mode, desktop). Persisted so the user's
+  // preferred width survives reloads. Bounded to [176, 400].
+  const [sidebarWidth, setSidebarWidthState] = React.useState<number>(() => {
+    if (typeof window === "undefined") return DEFAULT_SIDEBAR_WIDTH;
+    const stored = Number(window.localStorage.getItem(STORAGE_KEY_WIDTH));
+    return stored >= 176 && stored <= 400 ? stored : DEFAULT_SIDEBAR_WIDTH;
+  });
+
+  const setSidebarWidth = React.useCallback((width: number) => {
+    const clamped = Math.min(400, Math.max(176, width));
+    setSidebarWidthState(clamped);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(STORAGE_KEY_WIDTH, String(clamped));
+    }
+  }, []);
+
+  // Per-section collapse state (sidebar group headers). Persisted so the
+  // user's open/closed sections survive reloads. Absent key => open.
+  const [collapsedSections, setCollapsedSections] = React.useState<Record<string, boolean>>(
+    () => {
+      if (typeof window === "undefined") return {};
+      try {
+        const raw = window.localStorage.getItem(STORAGE_KEY_SECTIONS);
+        return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
+      } catch {
+        return {};
+      }
+    },
+  );
+
+  const toggleSection = React.useCallback((sectionId: string) => {
+    setCollapsedSections((prev) => {
+      const next = { ...prev, [sectionId]: !prev[sectionId] };
+      try {
+        window.localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(next));
+      } catch {
+        // Storage can be unavailable (private mode): non-fatal.
+      }
+      return next;
+    });
+  }, []);
+
   // Keep a stable default adapter so the context value is referentially
   // stable across renders unless the consumer swaps the router.
   const defaultRouter = React.useMemo(() => createDefaultAdapter(), []);
@@ -65,6 +116,10 @@ export function LayoutProvider({
       sidebarCollapsed,
       setSidebarCollapsed,
       toggleSidebarCollapsed,
+      sidebarWidth,
+      setSidebarWidth,
+      collapsedSections,
+      toggleSection,
       router: activeRouter,
     }),
     [
@@ -74,6 +129,10 @@ export function LayoutProvider({
       sidebarCollapsed,
       setSidebarCollapsed,
       toggleSidebarCollapsed,
+      sidebarWidth,
+      setSidebarWidth,
+      collapsedSections,
+      toggleSection,
       activeRouter,
     ],
   );

@@ -14,6 +14,7 @@ const accordionItemVariants = cva("", {
         "rounded-lg border bg-card shadow-sm [&:not(:first-child)]:mt-2",
       ghost: "rounded-md",
       compact: "border-b rounded-md",
+      nested: "border-l border-border/60 ml-3 pl-3",
     },
   },
   defaultVariants: {

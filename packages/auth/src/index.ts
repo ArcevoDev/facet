@@ -12,7 +12,7 @@
  */
 
 /* ── Provider ──────────────────────────────────────────────── */
-export { type ArcProviderProps, ArcProvider, useAuth } from "./provider.js";
+export { type ArcProviderProps, ArcProvider, useAuth, useOptionalAuth } from "./provider.js";
 
 /* ── Storage ───────────────────────────────────────────────── */
 export { type TokenStorage, defaultStorage } from "./storage.js";

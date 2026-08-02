@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { getModSymbol } from "@arcevo/facet-components";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -34,13 +35,13 @@ export const Default: Story = {
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          Profile <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          Profile <DropdownMenuShortcut>⇧{getModSymbol()}P</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          Billing <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+          Billing <DropdownMenuShortcut>{getModSymbol()}B</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          Settings <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+          Settings <DropdownMenuShortcut>{getModSymbol()}S</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Log out</DropdownMenuItem>

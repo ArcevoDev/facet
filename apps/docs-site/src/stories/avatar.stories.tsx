@@ -1,5 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Avatar, AvatarImage, AvatarFallback } from "@arcevo/facet-components";
+import {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  UserAvatar,
+  getModSymbol,
+} from "@arcevo/facet-components";
 
 const meta: Meta<typeof Avatar> = {
   title: "Components/Avatar",
@@ -33,5 +39,22 @@ export const Large: Story = {
     <Avatar className="h-16 w-16 text-lg">
       <AvatarFallback>JD</AvatarFallback>
     </Avatar>
+  ),
+};
+
+export const AuthenticatedUser: Story = {
+  render: () => (
+    <UserAvatar
+      user={{
+        name: "Ada Lovelace",
+        email: "ada@arcevo.dev",
+        memberships: [{ tenantId: "1", name: "Arcevo" }],
+      }}
+      items={[
+        { label: "Profile", shortcut: `⇧${getModSymbol()}P`, icon: "users" },
+        { label: "Settings", shortcut: `${getModSymbol()},`, icon: "settings" },
+      ]}
+      onSignOut={() => console.log("signed out")}
+    />
   ),
 };

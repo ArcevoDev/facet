@@ -34,6 +34,11 @@ export interface NavSection {
   title: string;
   /** Items in this section */
   items: NavItem[];
+  /**
+   * Optional stable id used to persist the section's collapsed state.
+   * Falls back to `title` when omitted.
+   */
+  id?: string;
 }
 
 /* ── Brand identity (used in AuthLayout left panel) ────────── */
@@ -92,6 +97,13 @@ export interface LayoutContextValue {
   sidebarCollapsed: boolean;
   setSidebarCollapsed: (collapsed: boolean) => void;
   toggleSidebarCollapsed: () => void;
+  /** Rail mode: current expanded sidebar width in px (resizable). Default: 260 */
+  sidebarWidth: number;
+  setSidebarWidth: (width: number) => void;
+  /** Per-section collapse state keyed by section id (or title). */
+  collapsedSections: Record<string, boolean>;
+  /** Toggle a section's collapsed state (persisted to localStorage). */
+  toggleSection: (sectionId: string) => void;
   /** Framework-aware navigation. Defaults to window.location + plain <a>. */
   router?: RouterAdapter;
 }

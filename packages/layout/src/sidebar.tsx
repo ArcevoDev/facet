@@ -1,14 +1,17 @@
 /**
  * @arcevo/facet-layout: Sidebar
  *
- * Fixed w-[260px] navigation panel for desktop.
+ * Fixed-width navigation panel for desktop.
  * Renders sections and items from LayoutConfig.navigation.
  * Uses the LayoutProvider RouterAdapter when provided (Next/react-router
  * aware links + active detection); falls back to window.location + <a>.
+ *
+ * Rail mode: collapses to an icon-only rail; the expanded width is
+ * resizable via the drag handle on the right edge (VS Code style).
  */
 
 import * as React from "react";
-import { useLayout } from "./layout-context.js";
+import { useLayout, DEFAULT_SIDEBAR_WIDTH } from "./layout-context.js";
 import {
   ScrollArea,
   Skeleton,
@@ -27,23 +30,67 @@ export interface SidebarProps {
   isLoading?: boolean;
   /** Rail mode: render icon-only with tooltip labels. Default: false */
   collapsed?: boolean;
+  /** Current expanded sidebar width in px. Default: 260 */
+  width?: number;
 }
 
 /* ── Component ────────────────────────────────────────────── */
 
-export function Sidebar({ config, isLoading, collapsed = false }: SidebarProps) {
-  const { setSidebarOpen, router } = useLayout();
+export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_SIDEBAR_WIDTH }: SidebarProps) {
+  const { setSidebarOpen, router, setSidebarWidth, setSidebarCollapsed } = useLayout();
 
   const handleNav = React.useCallback(() => {
     setSidebarOpen(false);
   }, [setSidebarOpen]);
 
+  const sidebarWidth = collapsed ? 68 : width;
+
+  // VS Code style resize: dragging the right edge resizes the sidebar.
+  // Dragging below the min width collapses it to the rail; dragging the
+  // rail's handle (or the chevron) expands it again.
+  const handlePointerDown = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (collapsed) return;
+      event.preventDefault();
+      const startX = event.clientX;
+      const startWidth = width;
+      const onMove = (moveEvent: PointerEvent) => {
+        const next = startWidth + (moveEvent.clientX - startX);
+        if (next <= 96) {
+          // Below min width: collapse to rail.
+          setSidebarCollapsed(true);
+          document.removeEventListener("pointermove", onMove);
+          document.removeEventListener("pointerup", onUp);
+          return;
+        }
+        setSidebarWidth(next);
+      };
+      const onUp = () => {
+        document.removeEventListener("pointermove", onMove);
+        document.removeEventListener("pointerup", onUp);
+      };
+      document.addEventListener("pointermove", onMove);
+      document.addEventListener("pointerup", onUp);
+    },
+    [collapsed, width, setSidebarWidth, setSidebarCollapsed],
+  );
+
   return (
     <aside
       className={`fixed left-0 top-0 z-30 flex h-screen flex-col border-r bg-sidebar transition-[width] duration-200 ${
-        collapsed ? "w-[68px]" : "w-[260px]"
+        collapsed ? "w-[68px]" : ""
       }`}
+      style={collapsed ? undefined : { width: `${sidebarWidth}px` }}
     >
+      {/* Resize handle (VS Code style, right edge) */}
+      {!collapsed && (
+        <div
+          onPointerDown={handlePointerDown}
+          className="absolute right-0 top-0 z-10 h-full w-1.5 cursor-col-resize bg-transparent transition-colors hover:bg-primary/60 active:bg-primary/80"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Brand */}
       <div className="flex h-14 items-center gap-2 border-b border-sidebar-border px-5">
         {config.brand.logo ?? (
@@ -68,24 +115,25 @@ export function Sidebar({ config, isLoading, collapsed = false }: SidebarProps) 
           </svg>
         )}
         {!collapsed && (
-          <span className="font-semibold text-sidebar-foreground">{config.brand.name}</span>
+          <span className="truncate font-semibold text-sidebar-foreground">{config.brand.name}</span>
         )}
       </div>
 
       {/* Nav */}
       <ScrollArea className="flex-1 px-3 py-4">
         {isLoading ? (
-          <SidebarSkeleton />
+          <SidebarSkeleton collapsed={collapsed} />
         ) : config.navigation.length === 0 ? (
           <p className="px-2 text-sm text-sidebar-foreground/40">No navigation items</p>
         ) : (
-          <nav className={collapsed ? "space-y-4" : "space-y-6"}>
+          <nav className={collapsed ? "flex flex-col items-center gap-1" : "space-y-6"}>
             {config.navigation.map((section) => (
               <NavSectionRenderer
                 key={section.title}
                 section={section}
                 router={router}
                 onNav={handleNav}
+                onExpand={() => setSidebarCollapsed(false)}
                 collapsed={collapsed}
               />
             ))}
@@ -116,31 +164,92 @@ function NavSectionRenderer({
   router,
   onNav,
   collapsed,
+  onExpand,
 }: {
   section: NavSection;
   router: RouterAdapter | undefined;
   onNav: () => void;
   collapsed: boolean;
+  onExpand: () => void;
 }) {
+  // Storybook-style section: the header toggles the whole group.
+  // Open by default; collapse state is persisted via layout context.
+  const { collapsedSections, toggleSection } = useLayout();
+  const sectionKey = section.id ?? section.title;
+  const open = !collapsedSections[sectionKey];
+
+  // Collapsed rail (YouTube-style): one icon slot per section, not a list.
+  // All section icons stack together with no scroll; the full item list
+  // only shows when the sidebar is expanded.
+  if (collapsed) {
+    const first = section.items[0];
+    const icon = first?.icon;
+    return (
+      <div>
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={onExpand}
+                aria-label={section.title}
+                className="flex h-9 w-9 items-center justify-center rounded-md text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              >
+                {icon ? (
+                  <span className="size-4 shrink-0">{icon}</span>
+                ) : (
+                  <span className="text-sm font-semibold">
+                    {section.title.charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right">{section.title}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    );
+  }
+
   return (
     <div>
-      {!collapsed && (
-        <p className="mb-2 px-2 text-[11px] font-semibold uppercase tracking-widest text-sidebar-foreground/50">
-          {section.title}
-        </p>
+      <button
+        type="button"
+        onClick={() => toggleSection(sectionKey)}
+        aria-expanded={open}
+        className="mb-2 flex w-full items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold uppercase tracking-widest text-sidebar-foreground/50 transition-colors hover:text-sidebar-foreground/80"
+      >
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+          className={`shrink-0 transition-transform ${open ? "rotate-90" : ""}`}
+        >
+          <path d="m9 18 6-6-6-6" />
+        </svg>
+        {section.title}
+      </button>
+      {open && (
+        <ul className="space-y-1">
+          {section.items.map((item) => (
+            <NavItemRenderer
+              key={item.href}
+              item={item}
+              router={router}
+              onNav={onNav}
+              onExpand={onExpand}
+              depth={0}
+              collapsed={collapsed}
+            />
+          ))}
+        </ul>
       )}
-      <ul className="space-y-1">
-        {section.items.map((item) => (
-          <NavItemRenderer
-            key={item.href}
-            item={item}
-            router={router}
-            onNav={onNav}
-            depth={0}
-            collapsed={collapsed}
-          />
-        ))}
-      </ul>
     </div>
   );
 }
@@ -151,12 +260,14 @@ function NavItemRenderer({
   item,
   router,
   onNav,
+  onExpand,
   depth,
   collapsed,
 }: {
   item: NavItem;
   router: RouterAdapter | undefined;
   onNav: () => void;
+  onExpand: () => void;
   depth: number;
   collapsed: boolean;
 }) {
@@ -173,7 +284,7 @@ function NavItemRenderer({
             <TooltipTrigger asChild>
               <button
                 type="button"
-                onClick={() => !collapsed && setOpen((v) => !v)}
+                onClick={() => (collapsed ? onExpand() : setOpen((v) => !v))}
                 aria-expanded={collapsed ? undefined : open}
                 aria-label={collapsed ? item.label : undefined}
                 className={`flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-sm font-medium transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
@@ -181,7 +292,7 @@ function NavItemRenderer({
                 }`}
                 style={collapsed ? undefined : { paddingLeft: `${8 + depth * 12}px` }}
               >
-                {item.icon && <span className="size-4 shrink-0">{item.icon}</span>}
+                {item.icon && collapsed && <span className="size-4 shrink-0">{item.icon}</span>}
                 {!collapsed && <span className="flex-1 text-left">{item.label}</span>}
                 {!collapsed && item.badge != null && (
                   <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
@@ -217,6 +328,7 @@ function NavItemRenderer({
                 item={child}
                 router={router}
                 onNav={onNav}
+                onExpand={onExpand}
                 depth={depth + 1}
                 collapsed={collapsed}
               />
@@ -237,7 +349,14 @@ function NavItemRenderer({
           <TooltipTrigger asChild>
             <Link
               href={item.href}
-              onClick={onNav}
+              onClick={(event) => {
+                if (collapsed) {
+                  event.preventDefault();
+                  onExpand();
+                  return;
+                }
+                onNav();
+              }}
               aria-label={collapsed ? item.label : undefined}
               aria-current={isActive ? "page" : undefined}
               className={`flex items-center gap-3 rounded-md px-2.5 py-2 text-sm font-medium transition-colors ${
@@ -248,7 +367,7 @@ function NavItemRenderer({
                   : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               }`}
             >
-              {item.icon && <span className="size-4 shrink-0">{item.icon}</span>}
+              {item.icon && collapsed && <span className="size-4 shrink-0">{item.icon}</span>}
               {!collapsed && <span className="flex-1">{item.label}</span>}
               {!collapsed && item.badge != null && (
                 <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
@@ -292,7 +411,16 @@ function DefaultAnchor({
 
 /* ── Skeleton ─────────────────────────────────────────────── */
 
-function SidebarSkeleton() {
+function SidebarSkeleton({ collapsed }: { collapsed?: boolean }) {
+  if (collapsed) {
+    return (
+      <div className="flex flex-col items-center gap-1">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <Skeleton key={i} className="h-9 w-9 rounded-md" />
+        ))}
+      </div>
+    );
+  }
   return (
     <div className="space-y-6">
       {[1, 2, 3].map((i) => (
