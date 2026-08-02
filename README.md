@@ -12,7 +12,7 @@ design manual (Alpha Palette), and your auth requirements differ per sector
 | -------------------- | --------------------------------------------------------------------------------------------------- | ------- |
 | `@arcevo/facet-tokens`     | Design tokens: Alpha Palette, typography, spacing, CSS vars                                         | ✅ 1.0.1 |
 | `@arcevo/facet-sdk`        | arc-id API client (pure fetch, typed, 10 domain SDKs)                                               | ✅ 1.0.1 |
-| `@arcevo/facet-components` | 35+ styled UI components (Radix + tailwind-merge + variants)                                        | ✅ 1.0.2 |
+| `@arcevo/facet-components` | 45+ styled UI components (Radix + tailwind-merge + variants)                                        | ✅ 1.0.2 |
 | `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.0.2 |
 | `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.0.2 |
 

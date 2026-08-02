@@ -37,10 +37,11 @@ export const navbarVariants = cva(
         bordered: "border border-border/60 bg-background shadow-sm",
         transparent: "border-b border-transparent bg-transparent",
         pill: [
-          "sticky top-3 z-50 mx-auto w-[calc(100%-2rem)] max-w-7xl rounded-full",
-          "border border-border/60 bg-background/70 px-3 py-2 shadow-lg shadow-black/5",
-          "backdrop-blur-xl supports-[backdrop-filter]:bg-background/40",
+          "sticky top-0 z-50 w-full",
+          "border-b border-border/60 bg-background/80 px-3 py-2 shadow-sm shadow-black/5",
+          "backdrop-blur-xl supports-[backdrop-filter]:bg-background/60",
           "transition-colors",
+          "md:top-3 md:mx-auto md:w-[calc(100%-2rem)] md:max-w-7xl md:rounded-full md:border md:border-border/60 md:bg-background/70 md:px-3 md:shadow-lg md:shadow-black/5",
         ].join(" "),
       },
       size: {

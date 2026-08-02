@@ -1,6 +1,7 @@
 import { Github, ExternalLink } from "lucide-react";
 import { Navbar, Button, ThemeToggle } from "@arcevo/facet-components";
 import type { NavLink } from "@arcevo/facet-components";
+import { getDocsUrl } from "../lib/docs-url.js";
 
 // Anchor links scroll to in-page sections; no dead routes.
 const LINKS: NavLink[] = [
@@ -54,7 +55,7 @@ function MobileMenu() {
       <Button
         size="sm"
         className="mt-1 w-full"
-        onClick={() => window.open("https://docs.facet.arcevocirqle.com.ng")}
+        onClick={() => window.open(getDocsUrl())}
       >
         Browse components
         <ExternalLink size={14} />
@@ -80,7 +81,11 @@ export function Nav() {
             GitHub
           </a>
           <ThemeToggle />
-          <Button size="sm" onClick={() => window.open("https://docs.facet.arcevocirqle.com.ng")}>
+          <Button
+            size="sm"
+            className="hidden md:inline-flex"
+            onClick={() => window.open(getDocsUrl())}
+          >
             Browse components
           </Button>
         </div>

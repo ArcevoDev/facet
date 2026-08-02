@@ -1,5 +1,6 @@
 import { Github, BookOpen } from "lucide-react";
 import { Separator } from "@arcevo/facet-components";
+import { getDocsUrl } from "../lib/docs-url.js";
 
 export function Footer() {
   return (
@@ -18,7 +19,7 @@ export function Footer() {
             GitHub
           </a>
           <a
-            href="https://docs.facet.arcevocirqle.com.ng"
+            href={getDocsUrl()}
             className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
             <BookOpen size={14} />

@@ -1,5 +1,6 @@
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Button, Badge } from "@arcevo/facet-components";
+import { getDocsUrl } from "../lib/docs-url.js";
 
 const STATS = [
   { value: "35+", label: "components" },
@@ -26,7 +27,7 @@ export function HeroSection() {
         dark mode, and a pluggable auth flow that fits your domain.
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-        <Button size="lg" className="gap-2" onClick={() => window.open("https://docs.facet.arcevocirqle.com.ng")}>
+        <Button size="lg" className="gap-2" onClick={() => window.open(getDocsUrl())}>
           Browse components
           <ArrowRight size={16} />
         </Button>

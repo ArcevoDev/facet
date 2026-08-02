@@ -1,4 +1,5 @@
 import { Button } from "@arcevo/facet-components";
+import { getDocsUrl } from "../lib/docs-url.js";
 
 export function CTASection() {
   return (
@@ -11,7 +12,7 @@ export function CTASection() {
           The components are free. Your time is not. Start with the essentials.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Button size="lg" className="gap-2" onClick={() => window.open("https://docs.facet.arcevocirqle.com.ng")}>
+          <Button size="lg" className="gap-2" onClick={() => window.open(getDocsUrl())}>
             Browse components
           </Button>
           <Button
