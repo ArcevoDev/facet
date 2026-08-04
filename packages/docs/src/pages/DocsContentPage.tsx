@@ -13,6 +13,7 @@ import { InstallTabs } from "../components/InstallTabs.js";
 import { AuthDemo } from "../components/AuthDemo.js";
 import { AuthPreviews } from "../components/AuthPreviews.js";
 import { LayoutPreviews } from "../components/LayoutPreviews.js";
+import { InteractiveDemo } from "../components/InteractiveDemo.js";
 import { KeyboardShortcuts } from "../components/KeyboardShortcuts.js";
 import type { DocsBlock } from "../lib/pages.js";
 import { useDocsApp } from "../context.js";
@@ -51,6 +52,8 @@ function Block({ block }: { block: DocsBlock }) {
       );
     case "authDemo":
       return <AuthDemo />;
+    case "demo":
+      return <InteractiveDemo slug={block.slug} title={block.title} labels={block.labels} />;
     case "authPreviews":
       return <AuthPreviews />;
     case "layoutPreviews":

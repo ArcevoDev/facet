@@ -27,7 +27,17 @@ export type DocsBlock =
   | { type: "authDemo" }
   | { type: "authPreviews" }
   | { type: "layoutPreviews" }
-  | { type: "keyboardShortcuts" };
+  | { type: "keyboardShortcuts" }
+  | {
+      /** Reusable interactive demo: variant switcher + live preview + copyable code. */
+      type: "demo";
+      /** Manifest slug, e.g. "console-layout", "form", "sign-in". */
+      slug: string;
+      /** Optional heading above the demo; defaults to the manifest entry name. */
+      title?: string;
+      /** Optional subset of variant labels to surface as tabs. */
+      labels?: string[];
+    };
 
 export interface DocsPage {
   /** Route path, e.g. "/getting-started". */
@@ -396,6 +406,12 @@ function MyHeader() {
         type: "p",
         text: "The sign-in flow is a configurable state machine. The email/password form is the embedded default entry point; the other methods branch off it based on `config`. Head to the [Sign In](/auth/sign-in) page — it is the single home for the interactive demo: pick a method, watch the live preview, and copy the matching code.",
       },
+      {
+        type: "demo",
+        slug: "sign-in",
+        title: "Sign In",
+        description: "Live preview with a method switcher and copyable code.",
+      },
       { type: "h2", text: "In this section" },
       {
         type: "ul",
@@ -485,6 +501,12 @@ function MyHeader() {
 />`,
       },
       { type: "authPreviews" },
+      {
+        type: "demo",
+        slug: "sign-up",
+        title: "Sign Up",
+        description: "Account creation with appearance / config / slots customization.",
+      },
       { type: "h2", text: "Slots" },
       {
         type: "ul",
@@ -505,6 +527,12 @@ function MyHeader() {
       {
         type: "p",
         text: "MFA is config-driven: `config.requireMfa` controls whether the `check_mfa` gate forces a second factor. The MFA forms are independently importable.",
+      },
+      {
+        type: "demo",
+        slug: "mfa-dialog",
+        title: "MFA challenge",
+        description: "Live preview of the verify / setup / recovery forms.",
       },
       { type: "authPreviews" },
       { type: "h2", text: "MfaDialog" },
@@ -544,6 +572,12 @@ function MyHeader() {
   <ProtectedPage />
 </Guard>`,
       },
+      {
+        type: "demo",
+        slug: "guard",
+        title: "Guard",
+        description: "Renders children only when a session is present; falls back otherwise.",
+      },
       { type: "authPreviews" },
       { type: "h2", text: "Customization" },
       {
@@ -581,6 +615,12 @@ function MyHeader() {
     return res.error?.message ?? null;
   }}
 />`,
+      },
+      {
+        type: "demo",
+        slug: "login-form",
+        title: "LoginForm",
+        description: "Email + password form with inline validation.",
       },
       { type: "authPreviews" },
     ],
@@ -771,20 +811,50 @@ export function App() {
 </ConsoleLayout>`,
       },
       { type: "layoutPreviews" },
+      {
+        type: "demo",
+        slug: "console-layout",
+        title: "ConsoleLayout",
+        description: "Dashboard shell: sidebar + topbar + content area, full or rail mode.",
+      },
       { type: "h2", text: "AuthLayout" },
       {
         type: "p",
         text: "Branded split-panel auth page frame (login/register/MFA) with brand logo, tagline, and benefits on the left, centered card on the right.",
+      },
+      {
+        type: "demo",
+        slug: "auth-layout",
+        title: "AuthLayout",
+        description: "Branded split-panel auth page frame.",
       },
       { type: "h2", text: "LandingLayout" },
       {
         type: "p",
         text: "Full-bleed marketing page with glassmorphic hero and glow CTAs. Pair with the `Navbar` `pill` variant for a floating frosted bar.",
       },
+      {
+        type: "demo",
+        slug: "landing-layout",
+        title: "LandingLayout",
+        description: "Full-bleed marketing shell with a glassmorphic hero.",
+      },
       { type: "h2", text: "Sidebar & Topbar" },
       {
         type: "p",
         text: "Use `Sidebar` (driven by a `LayoutConfig` `navigation`) and `Topbar` standalone with `LayoutProvider`. This docs site is itself built from these components.",
+      },
+      {
+        type: "demo",
+        slug: "sidebar",
+        title: "Sidebar",
+        description: "Collapsible, resizable navigation rail driven by a LayoutConfig.",
+      },
+      {
+        type: "demo",
+        slug: "topbar",
+        title: "Topbar",
+        description: "Application top bar with breadcrumb, search, and actions.",
       },
       { type: "h2", text: "Domain presets" },
       {
