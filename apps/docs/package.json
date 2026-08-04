@@ -1,34 +1,36 @@
 {
-  "name": "@arcevo/facet-docs",
-  "version": "1.0.2",
+  "name": "@arcevo/facet-docs-site",
+  "version": "1.0.1",
   "private": true,
+  "description": "facet's own docs site: a thin consumer of @arcevo/facet-docs, deployed to docs.facet.arcevocirqle.com.ng.",
   "type": "module",
   "scripts": {
-    "dev": "storybook dev -p 6006 --no-open",
-    "build": "storybook build -o dist",
-    "analyze": "storybook build -o dist --stats-json && vite-bundle-visualizer --stats dist/stats.json",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@arcevo/facet-auth": "workspace:*",
-    "@arcevo/facet-components": "workspace:*",
-    "@arcevo/facet-layout": "workspace:*",
-    "@arcevo/facet-sdk": "workspace:*",
-    "@arcevo/facet-tokens": "workspace:*"
-  },
-  "devDependencies": {
-    "@storybook/addon-docs": "^10.5.5",
-    "@storybook/addon-themes": "^10.5.5",
-    "@storybook/react": "^10.5.5",
-    "@storybook/react-vite": "^10.5.5",
-    "@tailwindcss/vite": "^4.3.3",
-    "lucide-react": "^0.468.0",
     "react": "^19",
     "react-dom": "^19",
+    "react-router-dom": "^7.1.1",
+    "@arcevo/facet-docs": "workspace:*",
+    "@arcevo/facet-tokens": "workspace:*",
+    "@arcevo/facet-components": "workspace:*",
+    "@arcevo/facet-layout": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "lucide-react": "^0.468.0",
     "sonner": "^2.0.7",
-    "storybook": "^10.5.5",
-    "tailwindcss": "^4.3.3",
     "typescript": "^5",
-    "vite": "^6.4.3"
+    "vite": "^8.0.0",
+    "@vitejs/plugin-react": "^6.0.4",
+    "@tailwindcss/vite": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

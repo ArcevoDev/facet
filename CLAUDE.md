@@ -24,10 +24,11 @@ Three customization axes: `appearance` (style), `config` (behavior flags), `slot
 ```
 packages/tokens/       ← Design tokens (finished)
 packages/sdk/          ← arc-id SDK (finished)
-packages/components/   ← 47 styled Radix components (shadcn-style, Radix + tailwind-merge)
+packages/components/   ← 57 styled Radix components (shadcn-style, Radix + tailwind-merge)
 packages/auth/         ← Auth components + presets
 packages/layout/       ← Domain-configurable app shell (ConsoleLayout, AuthLayout, LandingLayout)
-apps/docs/             ← Documentation site
+packages/docs/         ← Installable docs engine: @arcevo/facet-docs (<DocsApp config pages />)
+apps/docs/             ← Docs demo site: thin consumer of @arcevo/facet-docs (private, @arcevo/facet-docs-site)
 apps/landing/          ← Landing page
 ```
 
@@ -89,21 +90,22 @@ COMPLETE → (onSuccess callback) → redirect
 | Session TTL  | 15 min  | 30 min | 24 hr | 8 hr       |
 | Magic link   | ✅      | ❌     | ✅    | ❌         |
 
-## Build Status (2026-08-01)
+## Build Status (2026-08-03)
 
 1. ✅ `packages/tokens/`: Complete
 2. ✅ `packages/sdk/`: Complete, strict domain types (`sdk/src/types.ts`)
-3. ✅ `packages/components/`: 47 styled Radix components + theme system + IconRegistry
-4. ✅ `packages/auth/`: ArcProvider, SignIn, SignUp, UserButton, Guard, MfaDialog, 7 standalone forms
+3. ✅ `packages/components/`: 57 styled Radix components + theme system + IconRegistry (+11 this session: color-picker, country-code-input, data-table, date-picker, dropzone, form, location-picker, marquee, number-input, qrcode, roadmap; notification-bell removed)
+4. ✅ `packages/auth/`: ArcProvider, SignIn (controlled `step`/`onStepChange` API), SignUp, UserButton, Guard, MfaDialog, 7 standalone forms
 5. ✅ `packages/layout/`: ConsoleLayout (full + rail modes), AuthLayout (renamed from AppLayout, alias kept), LandingLayout, 5 presets
-6. ✅ `apps/docs/`: Storybook 10.5.5, 50+ story files + 5 MDX docs, mock SDK decorator
+6. ✅ `packages/docs/`: installable config-driven docs engine (`@arcevo/facet-docs`) + thin demo consumer at `apps/docs/` (`@arcevo/facet-docs-site`)
 7. ✅ Changesets + npm publish pipeline
-8. ✅ `apps/landing/`: rebuilt public-facing site (vite + tailwind v4)
-9. ✅ Layout stories: ConsoleLayout, AuthLayout, Sidebar, Topbar, PageHeader, LandingLayout
-10. ✅ Tests: vitest workspace, 108 tests across sdk/components/auth/layout (12 files)
-11. ✅ SignIn mfa_challenge wired to MfaVerifyForm
-12. ✅ Verified 2026-08-01: `pnpm build` green, `pnpm test` green, `pnpm typecheck` green (after fixing docs mock-sdk.ts to strict SDK types). `pnpm lint` hangs on this machine (environment issue).
-13. ✅ Publish pipeline in place: `@arcevo/facet-*` scope on npm, Changesets + GitHub Actions on `main` with `NPM_TOKEN`.
+8. ✅ `apps/landing/`: rebuilt public-facing site (vite + tailwind v4) + feedback page (`/feedback`) with mail/WhatsApp/socials
+9. ✅ Tests: vitest workspace, 129/130 components tests pass (1 pre-existing flake: theme.test.tsx Radix/jsdom), 22 new component tests green
+10. ✅ SignIn mfa_challenge wired to MfaVerifyForm
+11. ✅ SignIn controlled `step`/`onStepChange` + `<SignInFlowDemo>` live-linked state machine + `<AuthDemo>` config block
+12. ✅ Docs restructure landed (UNCOMMITTED): old `apps/docs-site` removed, `packages/docs` engine + `apps/docs` thin consumer. Docs site includes a live-linked SignIn flow diagram (click a node → real `<SignIn>` advances), an AuthDemo with config toggles, and a keyboard-shortcuts table on Overview + Getting Started.
+13. ✅ P0 fixes landed (2026-08-03): `check-docs-inventory.mjs` rewritten as a barrel+manifest drift gate (no story dependency); Storybook fully purged (48 story fixtures deleted, `@storybook/react-vite` removed from root devDeps); `packages/docs` added to root tsconfig references. Docs site serves a clean non-overlapping React Flow sign-in diagram with Auth as a nested sidebar group and Components grouped by category.
+14. ⚠️ `pnpm lint` hangs on this machine (environment issue). CLI `tsc` is pathologically slow; use editor LSP diagnostics on changed files as the typecheck signal.
 
 ## Known Gaps for arc-id Consumption
 
@@ -122,10 +124,10 @@ When arc-id adopts facet as its frontend, these need resolution:
 9. ✅ **OAuth provider buttons**: SignIn renders provider buttons from `config.oauthProviders` and calls `onOAuth`.
 10. ✅ **Form validation**: Auth forms integrate react-hook-form + zod with inline errors.
 11. ✅ **Domain preset registry**: `registerPreset`/`getPreset`/`resolvePreset` in auth and layout.
-12. ✅ **Docs mock types**: `apps/docs/src/stories/mock-sdk.ts` now typed against strict SDK types (User/Membership, TokenBundle), so `pnpm typecheck` is green repo-wide.
+12. ✅ **Docs inventory gate**: `node scripts/check-docs-inventory.mjs` verifies every `ui/` component is barrel-exported and present in the docs manifest (Storybook fixtures removed).
 13. ✅ **Icon library registry**: `IconRegistry` shipped in 1.0.2 (`icon/registry.tsx`): `IconProvider`/`Icon`/`registerIcon`/`getIcon` with lucide-react as the default set and domain overrides supported.
 
-**Still open (not blockers):** 1. **No Tailwind config**: No `tailwind.config.*`. Relies on CSS variables. Consumers need `tailwindcss-animate` plugin. 2. **Bundle optimization**: tsup uses CLI flags, not config files; no code-splitting or tree-shake analysis. 3. **CSS build pipeline**: Tokens CSS is copied via inline `fs.cpSync` instead of a proper build step (PostCSS + autoprefixer + minification). 4. **Turbo validation**: `turbo.json` exists but hasn't been validated with a real run. 5. **Component a11y audit**: Radix primitives provide baseline accessibility, but compounded components (SignIn state machine, MfaDialog phases) need keyboard navigation and screen reader testing before third-party use.
+**Still open (not blockers):** 1. **No Tailwind config**: No `tailwind.config.*`. Relies on CSS variables. Consumers need `tailwindcss-animate` plugin. 2. **Bundle optimization**: tsup uses CLI flags, not config files; no code-splitting or tree-shake analysis. 3. **CSS build pipeline**: Tokens CSS is copied via inline `fs.cpSync` instead of a proper build step (PostCSS + autoprefixer + minification). 4. **Turbo validation**: `turbo.json` exists but hasn't been validated with a real run. 5. **Component a11y audit**: Radix primitives provide baseline accessibility, but compounded components (SignIn state machine, MfaDialog phases) need keyboard navigation and screen reader testing before third-party use. 6. **Storybook fully removed**: the repo no longer runs Storybook and has zero `@storybook/*` deps; the docs inventory drift gate (`node scripts/check-docs-inventory.mjs`) verifies barrel exports + manifest coverage instead. 7. **check-docs-inventory.mjs rewritten**: the three P0 breakages from `.agent/analysis-current-state.md` are fixed (see item 13 above).
 
 ## Consumption Target
 
@@ -145,10 +147,14 @@ pnpm install              # Install all workspace dependencies
 pnpm build                # Build all packages
 pnpm build:tokens         # Build tokens only
 pnpm build:sdk            # Build SDK only
-pnpm dev:docs             # Start documentation site
+pnpm dev:docs-site      # Start docs demo site (Vite, port 5173)
+pnpm dev:landing        # Start landing page (Vite, port 5173)
 pnpm typecheck            # TypeScript check all packages
 pnpm lint                 # ESLint all packages
 pnpm format               # Prettier format all files
+node gen-snapshot.js              # Regenerate ui_codebase_snapshot.txt (local/agent use)
+node scripts/gen-docs-manifest.mjs # Regenerate packages/docs/src/manifest.ts
+node scripts/check-docs-inventory.mjs # Drift gate (pnpm check:docs)
 ```
 
 ## AGENTS.md

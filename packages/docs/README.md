@@ -1,0 +1,101 @@
+# @arcevo/facet-docs
+
+Installable, config-driven documentation site engine for the Arcevo
+ecosystem. Mount `<DocsApp config={...} pages={...} />` with your own
+brand, nav, content pages, and ecosystem links, with no forking or copied
+source.
+
+Ships: a searchable sidebar shell (VS Code-style collapsible rail), a
+paginated component gallery with per-component variant pages, per-variant
+usage tabs, install tabs for every package manager, and an optional
+ecosystem links section.
+
+## Install
+
+```bash
+pnpm add @arcevo/facet-docs react react-dom react-router-dom
+```
+
+## Usage
+
+```tsx
+import { DocsApp } from "@arcevo/facet-docs";
+import type { DocsPage, DocsSiteConfig } from "@arcevo/facet-docs";
+
+const config: DocsSiteConfig = {
+  brand: { name: "my-app", tagline: "My product docs" },
+  navigation: [], // optional extra sections
+  ecosystem: [{ label: "arc-id", href: "/arc-id" }], // optional
+};
+
+const pages: DocsPage[] = [
+  {
+    path: "/",
+    title: "Overview",
+    section: "guides", // "guides" | "foundations" | "ecosystem"
+    description: "Welcome.",
+    blocks: [
+      { type: "p", text: "Hello." },
+      { type: "h2", text: "Quick start" },
+      { type: "code", lang: "tsx", text: "import { Button } from \"@arcevo/facet-components\";" },
+      { type: "install", pkg: "@arcevo/facet-components" },
+      { type: "ul", items: ["One", "Two"] },
+    ],
+  },
+];
+
+export function App() {
+  return <DocsApp config={config} pages={pages} />;
+}
+```
+
+## Content blocks
+
+| Block | Shape | Renders |
+|-------|-------|---------|
+| `p` | `{ text }` | paragraph |
+| `h2` | `{ text }` | section heading |
+| `code` | `{ text, lang? }` | code block with copy button |
+| `install` | `{ pkg, extras? }` | pnpm / npm / yarn / bun tabs |
+| `ul` | `{ items }` | bullet list |
+| `link` | `{ label, href }` | internal link |
+| `authDemo` | `{}` | live `<SignIn>` with toggles for magic link, passkeys, MFA, and OAuth providers |
+| `signInFlowDiagram` | `{}` | interactive SignIn state-machine diagram |
+| `signInFlowDemo` | `{}` | live-linked diagram + real controlled `<SignIn>` demo |
+| `keyboardShortcuts` | `{}` | Kbd-chip keyboard shortcuts table |
+
+## Sidebar
+
+The sidebar's Guides / Foundations / Ecosystem sections derive from the
+pages you pass (by their `section` field), so pages and navigation stay in
+lockstep: add a page to your registry and it appears in the sidebar and in
+the search palette automatically.
+
+## Component gallery
+
+Pass `showComponents` (default `true`) to mount the `/components` gallery.
+It requires the `@arcevo/facet-components` manifest, which ships with this
+package. Each component page shows a live demo card, a full variant
+gallery, and per-variant usage tabs with copy buttons.
+
+## Icons
+
+The engine renders through `@arcevo/facet-components`' semantic icon
+registry, so consumers can override icons per domain via `IconProvider`
+without forking the docs engine.
+
+## Ecosystem links
+
+Set `config.ecosystem` to add a final "Ecosystem" sidebar section linking
+to your other products' docs (e.g. arc-id, arcbase, arc-wallet).
+
+## Development
+
+```bash
+pnpm build      # tsup -> dist
+pnpm typecheck
+```
+
+The demo consumer lives at `apps/docs` (`@arcevo/facet-docs-site`);
+it installs this package via `workspace:*` exactly like an external
+consumer would, proving the API surface end to end.

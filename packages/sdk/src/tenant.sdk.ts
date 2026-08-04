@@ -189,7 +189,7 @@ export class TenantSdk {
 
   /* ── JWKS ─────────────────────────────────────────────────── */
 
-  /** GET /tenants/:slug/jwks — bare { keys } payload. */
+  /** GET /tenants/:slug/jwks: bare { keys } payload. */
   getJwksBySlug(slug: string): Promise<ApiResponse<{ keys: JwkKey[] }>> {
     return this.client.get<{ keys: JwkKey[] }>(`/tenants/${slug}/jwks`, { bare: true });
   }

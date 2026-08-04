@@ -159,6 +159,22 @@ export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_
 
 /* ── Nav section (internal) ───────────────────────────────── */
 
+/** True when an item (or any nested child) matches the active route. */
+function isItemActive(
+  item: NavItem,
+  isActive: (href: string) => boolean,
+): boolean {
+  if (isActive(item.href)) return true;
+  return item.children?.some((child) => isItemActive(child, isActive)) ?? false;
+}
+
+function sectionHasActiveItem(
+  section: NavSection,
+  isActive: (href: string) => boolean,
+): boolean {
+  return section.items.some((item) => isItemActive(item, isActive));
+}
+
 function NavSectionRenderer({
   section,
   router,
@@ -176,7 +192,11 @@ function NavSectionRenderer({
   // Open by default; collapse state is persisted via layout context.
   const { collapsedSections, toggleSection } = useLayout();
   const sectionKey = section.id ?? section.title;
-  const open = !collapsedSections[sectionKey];
+  const isActive = router ? router.isActive : (href: string) => href === window.location.pathname;
+  const hasActive = sectionHasActiveItem(section, isActive);
+  // A section containing the active page stays open regardless of the
+  // persisted collapse state (unless the user explicitly collapsed it).
+  const open = hasActive ? true : !collapsedSections[sectionKey];
 
   // Collapsed rail (YouTube-style): one icon slot per section, not a list.
   // All section icons stack together with no scroll; the full item list
@@ -271,9 +291,16 @@ function NavItemRenderer({
   depth: number;
   collapsed: boolean;
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [internalOpen, setInternalOpen] = React.useState(false);
   const children = item.children;
   const hasChildren = children?.length;
+  const getActive = router ? router.isActive : (href: string) => href === window.location.pathname;
+  // Auto-expand a collapsible group when one of its children is the
+  // active page, so the current location is always visible.
+  const childActive = hasChildren
+    ? children.some((child) => isItemActive(child, getActive))
+    : false;
+  const open = childActive ? true : internalOpen;
 
   // Group item: toggles its children inline (full mode) or shows icon-only trigger
   if (hasChildren) {
@@ -284,7 +311,7 @@ function NavItemRenderer({
             <TooltipTrigger asChild>
               <button
                 type="button"
-                onClick={() => (collapsed ? onExpand() : setOpen((v) => !v))}
+                onClick={() => (collapsed ? onExpand() : setInternalOpen((v) => !v))}
                 aria-expanded={collapsed ? undefined : open}
                 aria-label={collapsed ? item.label : undefined}
                 className={`flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-sm font-medium transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${

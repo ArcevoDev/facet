@@ -4,13 +4,16 @@
 
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { Settings, LogOut } from "lucide-react";
+import { Settings, LogOut, Copy, Compass, User } from "lucide-react";
 import { Icon, IconProvider, getIcon, registerIcon } from "./index.js";
 
 describe("icon registry", () => {
   it("provides built-in semantic icons", () => {
     expect(getIcon("settings")).toBe(Settings);
     expect(getIcon("logout")).toBe(LogOut);
+    expect(getIcon("copy")).toBe(Copy);
+    expect(getIcon("compass")).toBe(Compass);
+    expect(getIcon("user")).toBe(User);
   });
 
   it("registerIcon overrides a global icon", () => {

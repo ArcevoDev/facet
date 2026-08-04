@@ -32,9 +32,44 @@ import {
   Skeleton,
   Kbd,
   getModSymbol,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
 } from "@arcevo/facet-components";
-import { Search } from "lucide-react";
+import { Search, Trash2 } from "lucide-react";
 import type { LayoutConfig, NavItem } from "./types.js";
+
+/* ── Search history (persisted) ────────────────────────────── */
+
+const HISTORY_KEY = "facet:search-history";
+const HISTORY_MAX = 10;
+
+function loadHistory(): string[] {
+  try {
+    const raw = window.localStorage.getItem(HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((item): item is string => typeof item === "string").slice(0, HISTORY_MAX);
+    }
+  } catch {
+    // Ignore corrupt history and start fresh.
+  }
+  return [];
+}
+
+function saveHistory(items: string[]) {
+  try {
+    window.localStorage.setItem(HISTORY_KEY, JSON.stringify(items));
+  } catch {
+    // Storage may be unavailable (private mode); history is best-effort.
+  }
+}
 
 export interface CommandResult {
   /** Group heading, e.g. "Components". */
@@ -124,8 +159,28 @@ export function CommandPalette({
   const [query, setQuery] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [asyncResults, setAsyncResults] = React.useState<CommandResult[] | null>(null);
+  const [history, setHistory] = React.useState<string[]>(() =>
+    typeof window !== "undefined" ? loadHistory() : [],
+  );
+  const [confirmClearOpen, setConfirmClearOpen] = React.useState(false);
+
+  // Persist history on change.
+  React.useEffect(() => {
+    if (typeof window !== "undefined") saveHistory(history);
+  }, [history]);
 
   const commands = React.useMemo(() => flattenNav(config.navigation), [config.navigation]);
+
+  // Add a query to the recent-searches list (deduped, most recent first).
+  const addToHistory = React.useCallback((term: string) => {
+    const cleaned = term.trim();
+    if (!cleaned) return;
+    setHistory((prev) => [cleaned, ...prev.filter((item) => item !== cleaned)].slice(0, HISTORY_MAX));
+  }, []);
+
+  const removeFromHistory = React.useCallback((term: string) => {
+    setHistory((prev) => prev.filter((item) => item !== term));
+  }, []);
 
   // Group nav commands by section title (stable order).
   const grouped = React.useMemo(() => {
@@ -191,6 +246,8 @@ export function CommandPalette({
   }, [query, search]);
 
   const handleSelect = (href: string) => {
+    // Record the search term before navigating (only non-empty queries).
+    if (query.trim()) addToHistory(query);
     setOpen(false);
     setQuery("");
     navigate(href);
@@ -211,6 +268,47 @@ export function CommandPalette({
       </>
     ) : null;
 
+  // Recent searches: shown only when the input is empty. Each row has a
+  // trash button to delete that entry, and a "Clear history" action opens
+  // a confirmation dialog.
+  const renderRecentSearches = () => {
+    if (query.trim() !== "" || history.length === 0) return null;
+    return (
+      <>
+        <CommandGroup heading="Recent searches">
+          {history.map((term) => (
+            <CommandItem
+              key={term}
+              onSelect={() => setQuery(term)}
+              className="relative pr-8"
+            >
+              <span className="min-w-0 truncate">{term}</span>
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-label={`Delete search "${term}"`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeFromHistory(term);
+                }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded p-1 text-muted-foreground opacity-60 transition-opacity hover:bg-accent hover:text-foreground hover:opacity-100"
+              >
+                <Trash2 className="size-3.5" />
+              </button>
+            </CommandItem>
+          ))}
+          <CommandItem
+            onSelect={() => setConfirmClearOpen(true)}
+            className="text-xs text-muted-foreground"
+          >
+            Clear history
+          </CommandItem>
+        </CommandGroup>
+        <CommandSeparator />
+      </>
+    );
+  };
+
   const renderResults = () => {
     if (loading) {
       return (
@@ -227,6 +325,7 @@ export function CommandPalette({
     if (asyncResults && asyncResults.length > 0) {
       return (
         <>
+          {renderRecentSearches()}
           {renderQuickActions()}
           {groupResults(asyncResults, handleSelect)}
         </>
@@ -235,6 +334,7 @@ export function CommandPalette({
 
     return (
       <>
+        {renderRecentSearches()}
         {renderQuickActions()}
         {filtered.map(([group, items]) => (
           <CommandGroup key={group} heading={group}>
@@ -291,6 +391,31 @@ export function CommandPalette({
           </Command>
         </DialogContent>
       </Dialog>
+
+      {/* Clear-history confirmation */}
+      <AlertDialog open={confirmClearOpen} onOpenChange={setConfirmClearOpen}>
+        <AlertDialogContent variant="destructive">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Clear search history?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This removes all {history.length} recent {history.length === 1 ? "search" : "searches"}.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                setHistory([]);
+                setConfirmClearOpen(false);
+              }}
+            >
+              Clear history
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

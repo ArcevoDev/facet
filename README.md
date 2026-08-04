@@ -12,25 +12,38 @@ design manual (Alpha Palette), and your auth requirements differ per sector
 | -------------------- | --------------------------------------------------------------------------------------------------- | ------- |
 | `@arcevo/facet-tokens`     | Design tokens: Alpha Palette, typography, spacing, CSS vars                                         | ✅ 1.0.1 |
 | `@arcevo/facet-sdk`        | arc-id API client (pure fetch, typed, 10 domain SDKs)                                               | ✅ 1.0.1 |
-| `@arcevo/facet-components` | 45+ styled UI components (Radix + tailwind-merge + variants)                                        | ✅ 1.0.2 |
-| `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.0.2 |
-| `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.0.2 |
+| `@arcevo/facet-components` | 57 styled UI components (Radix + tailwind-merge + variants)                               | ✅ 1.1.0 |
+| `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.0.3 |
+| `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.1.0 |
+| `@arcevo/facet-docs`       | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages                          | 📦 1.1.0 |
 
-Published to npm: components/auth/layout at 1.0.2, tokens/sdk at 1.0.1.
+Published to npm: components/layout at 1.1.0, auth at 1.0.3, tokens/sdk at 1.0.1, docs at 1.1.0.
+Components 1.1.0 shipped 11 new components (color-picker, country-code-input, data-table, date-picker, dropzone, form, location-picker, marquee, number-input, qrcode, roadmap) and removed `notification-bell`.
 
 ## Sites
 
 - Landing: https://facet.arcevocirqle.com.ng
-- Story (component gallery + docs): https://story.facet.arcevocirqle.com.ng
-- Storybook: https://docs.facet.arcevocirqle.com.ng
+- Demo-Docs (component gallery + docs): https://docs.facet.arcevocirqle.com.ng
+
+## Documentation
+
+The docs site (`apps/docs`) is a thin consumer of the installable
+`@arcevo/facet-docs` engine, the same package any project can mount with its
+own brand, nav, and pages. Guides cover getting started, auth, layout,
+theming, tokens, and the docs package itself; the component gallery shows all
+57 components with live demos and usage tabs.
+
+```sh
+pnpm dev:docs-site  # run the docs site locally (Vite, port 5173)
+```
 
 ## Quick Start
 
 ```sh
 pnpm install
 pnpm build
-pnpm test      # 108 tests across 4 packages (vitest)
-pnpm typecheck # all 7 projects
+pnpm test      # vitest workspace (sdk/components/auth/layout)
+pnpm typecheck # all 8 projects
 ```
 
 Consume in your app:
@@ -96,8 +109,8 @@ pnpm changeset publish   # ships unpublished packages at their current version
 ## Dev Preview
 
 ```sh
-pnpm dev:docs   # Storybook → http://localhost:6006 (local)
-pnpm dev:landing # Landing → http://localhost:5173 (local)
+pnpm dev:docs-site  # Docs demo site → http://localhost:5173 (local)
+pnpm dev:landing    # Landing → http://localhost:5173 (local)
 ```
 
 ## License

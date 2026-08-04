@@ -12,7 +12,7 @@ const AlertDialogPortal = AlertDialogPrimitive.Portal;
 
 /**
  * Tracks the Root's onOpenChange so AlertDialogContent can close the
- * dialog when the overlay (outside) is clicked — Radix's AlertDialog
+ * dialog when the overlay (outside) is clicked: Radix's AlertDialog
  * intentionally does not dismiss on outside interaction.
  */
 const AlertDialogCloseContext = React.createContext<((open: boolean) => void) | undefined>(
@@ -155,7 +155,7 @@ export function AlertDialogIcon({ className }: { className?: string }) {
 }
 
 /**
- * ConfirmAlertDialog — destructive-action confirmation with typed
+ * ConfirmAlertDialog: destructive-action confirmation with typed
  * verification, like GitHub's "type the repo name to delete" flow.
  *
  * Two inputs must be filled exactly before the confirm action enables:

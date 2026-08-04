@@ -1,13 +1,25 @@
-import { Github, ExternalLink } from "lucide-react";
-import { Navbar, Button, ThemeToggle } from "@arcevo/facet-components";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Grid2x2 } from "lucide-react";
+import {
+  Navbar,
+  Button,
+  ThemeToggle,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@arcevo/facet-components";
 import type { NavLink } from "@arcevo/facet-components";
 import { getDocsUrl } from "../lib/docs-url.js";
+import { GithubIcon } from "./BrandIcons.js";
 
 // Anchor links scroll to in-page sections; no dead routes.
 const LINKS: NavLink[] = [
+  { href: "#packages", label: "Packages" },
   { href: "#features", label: "Features" },
   { href: "#demo", label: "Demo" },
   { href: "#install", label: "Install" },
+  { href: "/feedback", label: "Feedback" },
 ];
 
 function Brand() {
@@ -30,13 +42,17 @@ function Brand() {
   );
 }
 
-function MobileMenu() {
+function MobileMenu({ onNavigate }: { onNavigate: (href: string) => void }) {
   return (
     <div className="flex flex-col gap-1">
       {LINKS.map((link) => (
         <a
           key={link.href}
           href={link.href}
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigate(link.href);
+          }}
           className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
         >
           {link.label}
@@ -49,7 +65,7 @@ function MobileMenu() {
         rel="noreferrer"
         className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
       >
-        <Github size={16} />
+        <GithubIcon size={16} />
         GitHub
       </a>
       <Button
@@ -58,36 +74,68 @@ function MobileMenu() {
         onClick={() => window.open(getDocsUrl())}
       >
         Browse components
-        <ExternalLink size={14} />
+        <Grid2x2 size={14} />
       </Button>
     </div>
   );
 }
 
 export function Nav() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Single handler for all Navbar links (desktop + mobile). Hash anchors
+  // scroll in-page; real routes navigate via the router.
+  const handleNav = (href: string) => {
+    if (href.startsWith("#")) {
+      // If we're not on the home page, go home first, then scroll.
+      if (location.pathname !== "/") {
+        navigate("/");
+        // Wait for the home page to mount before scrolling.
+        setTimeout(() => {
+          document.getElementById(href.slice(1))?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else {
+        document.getElementById(href.slice(1))?.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      navigate(href);
+    }
+  };
+
   return (
     <Navbar
       variant="pill"
       brand={<Brand />}
       links={LINKS}
-      mobileMenu={<MobileMenu />}
+      onNavigate={handleNav}
+      mobileMenu={<MobileMenu onNavigate={handleNav} />}
       actions={
         <div className="flex items-center gap-2">
           <a
             href="https://github.com/arcevodev/facet"
             className="hidden items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground md:flex"
           >
-            <Github size={16} />
+            <GithubIcon size={16} />
             GitHub
           </a>
           <ThemeToggle />
-          <Button
-            size="sm"
-            className="hidden md:inline-flex"
-            onClick={() => window.open(getDocsUrl())}
-          >
-            Browse components
-          </Button>
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="outline"
+                  className="hidden md:inline-flex"
+                  aria-label="Browse components"
+                  onClick={() => window.open(getDocsUrl())}
+                >
+                  <Grid2x2 size={16} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">Browse components</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       }
     />

@@ -49,6 +49,8 @@ const EXTENSION_BLACKLIST = new Set([
   ".mp3",
   ".pdf",
   ".zip",
+  ".tgz",
+  ".log",
   // Also skip PEM/key files wherever they appear in the tree
   ".pem",
   ".key",

@@ -1,0 +1,41 @@
+# @arcevo/facet-docs-site
+
+facet's own docs site: a **thin consumer** of the `@arcevo/facet-docs`
+package. It proves the install-and-configure model works exactly as an
+external consumer (arc-id, arcbase, arc-wallet) would use it, with no forking
+and no copied source. Everything renders from the config + pages passed to
+`<DocsApp>`.
+
+Deployed to https://docs.facet.arcevocirqle.com.ng.
+
+## What it is
+
+- **`src/demo-config.ts`**: the `DocsSiteConfig` (brand "facet", ecosystem
+  link to arc-id) and the pages registry (facet's canonical pages from the
+  package).
+- **`src/app.tsx`**: mounts `<DocsApp config={demoConfig} pages={demoPages} />`.
+
+## Consume it like an external consumer
+
+```tsx
+import { DocsApp } from "@arcevo/facet-docs";
+import type { DocsPage, DocsSiteConfig } from "@arcevo/facet-docs";
+
+const config: DocsSiteConfig = { brand: { name: "my-app" }, navigation: [] };
+const pages: DocsPage[] = [
+  { path: "/", title: "Overview", section: "guides", blocks: [...] },
+];
+
+export function App() {
+  return <DocsApp config={config} pages={pages} />;
+}
+```
+
+## Scripts
+
+- `pnpm dev`: Vite dev server (port 5173)
+- `pnpm build`: production build to `dist/`
+- `pnpm typecheck`: TypeScript check
+
+This app is private and never published. The publishable artifact is
+`@arcevo/facet-docs` under `packages/`.

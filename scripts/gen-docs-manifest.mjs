@@ -1,21 +1,86 @@
-// Generates apps/docs-site/src/manifest.ts from the real component files,
+// Generates packages/docs/src/manifest.ts from the real component files,
 // so the docs sidebar and component list stay in sync with the library.
 //
 // For each file in packages/components/src/ui/, emits:
-//   { name, slug, description }
+//   { name, slug, description, category }
 // where description is the first JSDoc block line (if any), falling back
 // to the file base name. Non-`ui/` exports (icon registry, theme) are
 // appended as "foundations" entries.
 //
 // Run: node scripts/gen-docs-manifest.mjs
-// Writes: apps/docs-site/src/manifest.ts
+// Writes: packages/docs/src/manifest.ts
 
 import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
 const uiDir = path.join(root, "packages/components/src/ui");
-const outFile = path.join(root, "apps/docs-site/src/manifest.ts");
+const outFile = path.join(root, "packages/docs/src/manifest.ts");
+
+/** Sidebar sub-group for a component slug. */
+const CATEGORY = {
+  // Layout & navigation primitives
+  accordion: "layout",
+  breadcrumb: "layout",
+  collapsible: "layout",
+  menubar: "layout",
+  navbar: "layout",
+  "navigation-menu": "layout",
+  pagination: "layout",
+  "scroll-area": "layout",
+  separator: "layout",
+  sheet: "layout",
+  tabs: "layout",
+  // Feedback & overlay primitives
+  alert: "feedback",
+  "alert-dialog": "feedback",
+  dialog: "feedback",
+  "dropdown-menu": "feedback",
+  "empty-state": "feedback",
+  "hover-card": "feedback",
+  popover: "feedback",
+  progress: "feedback",
+  skeleton: "feedback",
+  sonner: "feedback",
+  spinner: "feedback",
+  tooltip: "feedback",
+  "context-menu": "feedback",
+  // Inputs & forms
+  checkbox: "inputs",
+  combobox: "inputs",
+  "country-code-input": "inputs",
+  form: "inputs",
+  input: "inputs",
+  "input-otp": "inputs",
+  label: "inputs",
+  "number-input": "inputs",
+  "radio-group": "inputs",
+  select: "inputs",
+  slider: "inputs",
+  switch: "inputs",
+  textarea: "inputs",
+  toggle: "inputs",
+  "toggle-group": "inputs",
+  "date-picker": "inputs",
+  "location-picker": "inputs",
+  // Data display
+  avatar: "data-display",
+  "avatar-group": "data-display",
+  badge: "data-display",
+  button: "data-display",
+  "button-group": "data-display",
+  card: "data-display",
+  "data-table": "data-display",
+  kbd: "data-display",
+  table: "data-display",
+  "notification-drawer": "data-display",
+  // Ready-to-use composites
+  "color-picker": "ready-to-use",
+  dropzone: "ready-to-use",
+  marquee: "ready-to-use",
+  qrcode: "ready-to-use",
+  roadmap: "ready-to-use",
+};
 
 function firstDocLine(filePath) {
   const src = fs.readFileSync(filePath, "utf-8");
@@ -39,7 +104,12 @@ const components = fs
   .sort()
   .map((name) => {
     const file = path.join(uiDir, `${name}.tsx`);
-    return { name: humanize(name), slug: name, description: firstDocLine(file) };
+    return {
+      name: humanize(name),
+      slug: name,
+      description: firstDocLine(file),
+      category: CATEGORY[name] ?? "general",
+    };
   });
 
 const foundations = [
@@ -48,11 +118,13 @@ const foundations = [
     slug: "icon",
     description:
       "Semantic icon registry: built-in lucide map, registerIcon overrides, IconProvider per-domain overrides.",
+    category: "foundations",
   },
   {
     name: "Theme",
     slug: "theme",
     description: "ThemeProvider / useTheme / ThemeToggle: light, dark, and system theming.",
+    category: "foundations",
   },
 ];
 
@@ -65,6 +137,7 @@ export interface DocsManifestEntry {
   name: string;
   slug: string;
   description: string;
+  category: string;
 }
 
 export const docsManifest: DocsManifestEntry[] = ${JSON.stringify(entries, null, 2)};

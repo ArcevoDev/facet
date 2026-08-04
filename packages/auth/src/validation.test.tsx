@@ -2,11 +2,17 @@
  * Form validation tests: validate flag on LoginForm + ResetPasswordForm.
  */
 
-import { describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi, afterEach } from "vitest";
+import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LoginForm } from "./forms/auth/login-form.js";
 import { ResetPasswordForm } from "./forms/auth/reset-password-form.js";
+
+// RTL's auto-cleanup doesn't fire under this setup (shared setup has no RTL),
+// so unmount between tests to avoid duplicate-element matches across cases.
+afterEach(() => {
+  cleanup();
+});
 
 describe("LoginForm validation", () => {
   it("blocks submit and shows inline errors when validate is enabled", async () => {

@@ -91,12 +91,12 @@ export class OAuthSdk {
 
   /* ── OIDC ─────────────────────────────────────────────────── */
 
-  /** GET /oauth/userinfo — bare OIDC UserInfo payload. */
+  /** GET /oauth/userinfo: bare OIDC UserInfo payload. */
   userinfo(): Promise<ApiResponse<OidcUserInfo>> {
     return this.client.get<OidcUserInfo>("/oauth/userinfo", { bare: true });
   }
 
-  /** GET /oauth/jwks — bare { keys } payload. */
+  /** GET /oauth/jwks: bare { keys } payload. */
   jwks(): Promise<ApiResponse<Jwks>> {
     return this.client.get<Jwks>("/oauth/jwks", { bare: true });
   }

@@ -284,12 +284,6 @@ export {
   CommandSeparator,
 } from "./ui/command.js";
 
-export { NotificationBell } from "./ui/notification-bell.js";
-export type {
-  Notification as BellNotification,
-  NotificationBellProps,
-} from "./ui/notification-bell.js";
-
 export { Navbar, navbarVariants } from "./ui/navbar.js";
 export type {
   NavbarProps,
@@ -305,3 +299,84 @@ export type {
   NotificationDrawerProps,
   NotificationType,
 } from "./ui/notification-drawer.js";
+
+/* ── Ready-to-use components ─────────────────────────────────── */
+export { type DropzoneProps, Dropzone } from "./ui/dropzone.js";
+
+export {
+  type ColorPickerProps,
+  ColorPicker,
+  normalizeHex,
+  isValidHex,
+} from "./ui/color-picker.js";
+
+export { type QRCodeProps, QRCode } from "./ui/qrcode.js";
+
+export { type MarqueeProps, Marquee } from "./ui/marquee.js";
+
+export {
+  type RoadmapItem,
+  type RoadmapProps,
+  type RoadmapStatus,
+  Roadmap,
+} from "./ui/roadmap.js";
+
+export {
+  Form,
+  FormField,
+  FormMessage,
+  useFormFieldState,
+  FormProvider,
+  useForm,
+  useFormContext,
+  Controller,
+} from "./ui/form.js";
+export type {
+  FormProps,
+  FormFieldProps,
+  FormMessageProps,
+  FieldValues,
+  UseFormProps,
+  Path,
+  FieldPath,
+  FieldPathValue,
+} from "./ui/form.js";
+
+/* ── Data & input composables ───────────────────────────────── */
+export { type DataTableColumn, type DataTableProps, DataTable } from "./ui/data-table.js";
+
+export {
+  type DatePickerProps,
+  DatePicker,
+  isSameDay,
+  startOfMonth,
+  endOfMonth,
+  addMonths,
+  addDays,
+  toIsoDate,
+  parseIsoDate,
+  formatDate,
+} from "./ui/date-picker.js";
+
+export { type NumberInputProps, NumberInput } from "./ui/number-input.js";
+
+export {
+  type CountryCode,
+  type CountryCodeValue,
+  type CountryCodeInputProps,
+  COMMON_COUNTRY_CODES,
+  getCountryCode,
+  CountryCodeInput,
+} from "./ui/country-code-input.js";
+
+export {
+  type Country,
+  type Region,
+  type Locality,
+  type LocationValue,
+  type LocationPickerProps,
+  DEFAULT_COUNTRIES,
+  DEFAULT_REGIONS,
+  DEFAULT_LOCALITIES,
+  LocationPicker,
+} from "./ui/location-picker.js";

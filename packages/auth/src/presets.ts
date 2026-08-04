@@ -7,10 +7,6 @@
  * Usage:
  *   import { fintechPreset } from "@arcevo/facet-auth";
  *
- *   <ArcProvider client={client} config={fintechPreset}>
- *     <App />
- *   </ArcProvider>
- *
  *   <SignIn config={fintechPreset} />
  */
 

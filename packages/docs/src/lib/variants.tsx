@@ -1,0 +1,1737 @@
+import * as React from "react";
+import {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+  Badge,
+  Button,
+  Icon,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Progress,
+  Spinner,
+  Switch,
+  Toggle,
+  ToggleGroup,
+  ToggleGroupItem,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  UserAvatar,
+  AvatarGroup,
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogIcon,
+  ConfirmAlertDialog,
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  ButtonGroup,
+  Checkbox,
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+  Combobox,
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  EmptyState,
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+  Input,
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
+  Kbd,
+  getModSymbol,
+  Label,
+  Menubar,
+  MenubarMenu,
+  MenubarTrigger,
+  MenubarContent,
+  MenubarItem,
+  MenubarSeparator,
+  Navbar,
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  NotificationDrawer,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+  PaginationEllipsis,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  RadioGroup,
+  RadioGroupItem,
+  ScrollArea,
+  ScrollBar,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  Separator,
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  Skeleton,
+  Slider,
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+  Textarea,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+  Dropzone,
+  ColorPicker,
+  QRCode,
+  Marquee,
+  Roadmap,
+  Form,
+  FormField,
+  useForm,
+  DataTable,
+  DatePicker,
+  NumberInput,
+  CountryCodeInput,
+  LocationPicker,
+  type RoadmapItem,
+  type DataTableColumn,
+} from "@arcevo/facet-components";
+
+/** One cell in the variant gallery: a label plus the rendered example. */
+export interface VariantCell {
+  label: string;
+  node: React.ReactNode;
+}
+
+const IMG =
+  "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=faces";
+
+const AVATARS = [
+  { src: IMG, alt: "a", fallback: "A" },
+  { fallback: "B" },
+  { fallback: "C" },
+  { fallback: "D" },
+  { fallback: "E" },
+];
+
+const DEMO_ROWS: Record<string, unknown>[] = [
+  { id: "1", name: "Ada Lovelace", email: "ada@example.com", role: "Admin" },
+  { id: "2", name: "Grace Hopper", email: "grace@example.com", role: "Engineer" },
+  { id: "3", name: "Alan Turing", email: "alan@example.com", role: "Researcher" },
+];
+
+const DEMO_COLUMNS: DataTableColumn<Record<string, unknown>>[] = [
+  { key: "name", header: "Name" },
+  { key: "email", header: "Email" },
+  { key: "role", header: "Role" },
+];
+
+const ROADMAP_ITEMS: RoadmapItem[] = [
+  { title: "Auth presets", description: "Fintech, med, edu", status: "done", date: "v1.0" },
+  { title: "Passkey support", description: "WebAuthn across presets", status: "in-progress" },
+  { title: "SAML/OIDC SSO", description: "Enterprise identity providers", status: "planned" },
+];
+
+const OTP = (
+  <InputOTP maxLength={6}>
+    <InputOTPGroup>
+      <InputOTPSlot index={0} />
+      <InputOTPSlot index={1} />
+      <InputOTPSlot index={2} />
+      <InputOTPSlot index={3} />
+      <InputOTPSlot index={4} />
+      <InputOTPSlot index={5} />
+    </InputOTPGroup>
+  </InputOTP>
+);
+
+const OTP_SEPARATED = (
+  <InputOTP maxLength={6}>
+    <InputOTPGroup>
+      <InputOTPSlot index={0} />
+      <InputOTPSlot index={1} />
+      <InputOTPSlot index={2} />
+    </InputOTPGroup>
+    <InputOTPSeparator />
+    <InputOTPGroup>
+      <InputOTPSlot index={3} />
+      <InputOTPSlot index={4} />
+      <InputOTPSlot index={5} />
+    </InputOTPGroup>
+  </InputOTP>
+);
+
+function SelectDemo() {
+  return (
+    <Select>
+      <SelectTrigger className="w-56">
+        <SelectValue placeholder="Pick one" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="a">Apple</SelectItem>
+        <SelectItem value="b">Banana</SelectItem>
+        <SelectItem value="c">Cherry</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+
+function ComboboxDemo() {
+  return (
+    <div className="w-56">
+      <Combobox
+        options={[
+          { value: "o1", label: "Option 1" },
+          { value: "o2", label: "Option 2" },
+          { value: "o3", label: "Option 3" },
+        ]}
+        value="o1"
+        placeholder="Select..."
+        label="Options"
+      />
+    </div>
+  );
+}
+
+function CommandDemo() {
+  return (
+    <Command className="w-64">
+      <CommandInput placeholder="Search..." />
+      <CommandList>
+        <CommandEmpty>No results</CommandEmpty>
+        <CommandGroup heading="Suggestions">
+          <CommandItem>Profile</CommandItem>
+          <CommandItem>Settings</CommandItem>
+          <CommandItem>Logout</CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </Command>
+  );
+}
+
+function DropdownMenuDemo() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Menu</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuLabel>Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem>Settings</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function ContextMenuDemo() {
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <div className="flex h-24 w-64 items-center justify-center rounded-md border border-dashed border-border text-sm text-muted-foreground">
+          Right-click
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuLabel>Actions</ContextMenuLabel>
+        <ContextMenuSeparator />
+        <ContextMenuItem>Copy</ContextMenuItem>
+        <ContextMenuItem>Paste</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+}
+
+function MenubarDemo() {
+  return (
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>File</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>New</MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem>Exit</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Edit</MenubarTrigger>
+        <MenubarContent>
+          <MenubarItem>Undo</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  );
+}
+
+function DialogDemo() {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Open</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Dialog</DialogTitle>
+          <DialogDescription>Dialog content</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button>Save</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function SheetDemo({ side }: { side?: "left" | "right" | "top" | "bottom" }) {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline">Open</Button>
+      </SheetTrigger>
+      <SheetContent side={side}>
+        <SheetHeader>
+          <SheetTitle>Sheet</SheetTitle>
+          <SheetDescription>Sheet content</SheetDescription>
+        </SheetHeader>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+function PopoverDemo() {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline">Open</Button>
+      </PopoverTrigger>
+      <PopoverContent>Popover content</PopoverContent>
+    </Popover>
+  );
+}
+
+function HoverCardDemo() {
+  return (
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <Button variant="link">Hover</Button>
+      </HoverCardTrigger>
+      <HoverCardContent>Hover card content</HoverCardContent>
+    </HoverCard>
+  );
+}
+
+function TooltipDemo() {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="outline">Hover</Button>
+        </TooltipTrigger>
+        <TooltipContent>Tooltip content</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+}
+
+function NavigationMenuDemo() {
+  return (
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Docs</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <NavigationMenuLink href="#">Getting Started</NavigationMenuLink>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
+  );
+}
+
+function BreadcrumbDemo({ custom }: { custom?: boolean }) {
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+        </BreadcrumbItem>
+        {custom && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/docs">Docs</BreadcrumbLink>
+            </BreadcrumbItem>
+          </>
+        )}
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>{custom ? "Guide" : "Docs"}</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+}
+
+function PaginationDemo() {
+  return (
+    <Pagination>
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious href="#" />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">1</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#" isActive>
+            2
+          </PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationLink href="#">5</PaginationLink>
+        </PaginationItem>
+        <PaginationItem>
+          <PaginationNext href="#" />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
+}
+
+/**
+ * Per-component variant galleries for the /components/:slug pages.
+ * Each slug maps to the labeled cells shown in the docs grid.
+ * Falls back to a single default cell for slugs without a gallery.
+ */
+export function variantCells(slug: string): VariantCell[] | undefined {
+  switch (slug) {
+    /* ── Buttons / actions ───────────────────────────────────── */
+    case "button":
+      return (
+        ["default", "secondary", "destructive", "outline", "ghost", "link", "glass", "glow"] as const
+      ).map((variant) => ({
+        label: variant,
+        node: <Button variant={variant}>Button</Button>,
+      }));
+    case "button-group":
+      return [
+        {
+          label: "Default",
+          node: (
+            <ButtonGroup>
+              <Button size="sm">Left</Button>
+              <Button size="sm">Middle</Button>
+              <Button size="sm">Right</Button>
+            </ButtonGroup>
+          ),
+        },
+        {
+          label: "Joined",
+          node: (
+            <ButtonGroup joined>
+              <Button size="sm">Left</Button>
+              <Button size="sm">Middle</Button>
+              <Button size="sm">Right</Button>
+            </ButtonGroup>
+          ),
+        },
+      ];
+
+    /* ── Badges / display ────────────────────────────────────── */
+    case "badge":
+      return [
+        ...(["default", "secondary", "outline", "success", "warning", "destructive"] as const).map(
+          (variant) => ({
+            label: variant,
+            node: <Badge variant={variant}>{variant}</Badge>,
+          }),
+        ),
+        { label: "with icon", node: <Badge icon={<Icon name="sparkles" className="size-3" />}>New</Badge> },
+        {
+          label: "icon only",
+          node: (
+            <Badge variant="success" iconOnly icon={<Icon name="check" className="size-3.5" />} aria-label="Verified" />
+          ),
+        },
+      ];
+    case "kbd":
+      return [
+        { label: "Default", node: <Kbd>⌘K</Kbd> },
+        { label: "Modifier", node: <Kbd mod /> },
+        { label: "Combination", node: <Kbd>Shift + ⌘ + P</Kbd> },
+      ];
+
+    /* ── Feedback / alerts ───────────────────────────────────── */
+    case "alert":
+      return (
+        [
+          { label: "Default", variant: "default", title: "Heads up", desc: "Default alert" },
+          { label: "Destructive", variant: "destructive", title: "Error", desc: "Destructive alert" },
+          { label: "Success", variant: "success", title: "Success", desc: "Success alert" },
+          { label: "Warning", variant: "warning", title: "Warning", desc: "Warning alert" },
+        ] as const
+      ).map(({ label, variant, title, desc }) => ({
+        label,
+        node: (
+          <Alert variant={variant} className="w-full">
+            <AlertTitle>{title}</AlertTitle>
+            <AlertDescription>{desc}</AlertDescription>
+          </Alert>
+        ),
+      }));
+    case "empty-state":
+      return [
+        {
+          label: "Default",
+          node: <EmptyState title="No results" description="Try a different filter." />,
+        },
+        {
+          label: "With icon",
+          node: (
+            <EmptyState
+              icon={<Icon name="search" className="size-6" />}
+              title="Nothing here"
+              description="No items match your search."
+            />
+          ),
+        },
+        {
+          label: "With action",
+          node: (
+            <EmptyState
+              icon={<Icon name="document" className="size-6" />}
+              title="No documents"
+              description="Create your first document to get started."
+              action={<Button size="sm">New document</Button>}
+            />
+          ),
+        },
+      ];
+    case "skeleton":
+      return [
+        {
+          label: "Text",
+          node: (
+            <div className="flex w-56 flex-col gap-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ),
+        },
+        {
+          label: "Avatar",
+          node: <Skeleton className="size-12 rounded-full" />,
+        },
+        {
+          label: "Card",
+          node: (
+            <div className="flex w-56 flex-col gap-3">
+              <Skeleton className="h-28 w-full rounded-lg" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ),
+        },
+      ];
+    case "progress":
+      return [0, 25, 50, 85, 100].map((value) => ({
+        label: value === 0 ? "Empty" : value === 100 ? "Complete" : `${value}%`,
+        node: <Progress value={value} className="w-56" />,
+      }));
+    case "spinner":
+      return (
+        [
+          { label: "Default", variant: "default" },
+          { label: "Primary", variant: "primary" },
+          { label: "Muted", variant: "muted" },
+          { label: "Small", variant: "default", size: "sm" },
+          { label: "Large", variant: "default", size: "lg" },
+        ] as const
+      ).map(({ label, ...props }) => ({
+        label,
+        node: <Spinner {...props} />,
+      }));
+    case "sonner":
+      return [
+        {
+          label: "Toaster",
+          node: (
+            <div className="w-64 space-y-2 rounded-lg border border-border bg-background p-3 text-sm">
+              <div className="flex items-center gap-2">
+                <Icon name="check" className="size-4 text-success" />
+                <span className="text-foreground">Saved successfully</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Icon name="triangleAlert" className="size-4 text-warning" />
+                <span className="text-foreground">Check your connection</span>
+              </div>
+            </div>
+          ),
+        },
+      ];
+
+    /* ── Layout / navigation ─────────────────────────────────── */
+    case "accordion":
+      return [
+        {
+          label: "Default",
+          node: (
+            <Accordion type="single" collapsible className="w-64">
+              <AccordionItem value="a">
+                <AccordionTrigger>Item A</AccordionTrigger>
+                <AccordionContent>Content A</AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ),
+        },
+        {
+          label: "Multiple",
+          node: (
+            <Accordion type="multiple" className="w-64">
+              <AccordionItem value="a">
+                <AccordionTrigger>Item A</AccordionTrigger>
+                <AccordionContent>Content A</AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ),
+        },
+        {
+          label: "Separated",
+          node: (
+            <Accordion type="single" collapsible className="w-64">
+              <AccordionItem variant="separated" value="a">
+                <AccordionTrigger>Item A</AccordionTrigger>
+                <AccordionContent>Content A</AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ),
+        },
+        {
+          label: "Ghost",
+          node: (
+            <Accordion type="single" collapsible className="w-64">
+              <AccordionItem variant="ghost" value="a">
+                <AccordionTrigger>Item A</AccordionTrigger>
+                <AccordionContent>Content A</AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ),
+        },
+        {
+          label: "Compact",
+          node: (
+            <Accordion type="single" collapsible className="w-64">
+              <AccordionItem variant="compact" value="a">
+                <AccordionTrigger>Item A</AccordionTrigger>
+                <AccordionContent>Content A</AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ),
+        },
+        {
+          label: "Nested",
+          node: (
+            <Accordion type="single" collapsible className="w-64">
+              <AccordionItem value="parent">
+                <AccordionTrigger>Parent</AccordionTrigger>
+                <AccordionContent>
+                  <Accordion type="single" collapsible>
+                    <AccordionItem variant="nested" value="child">
+                      <AccordionTrigger>Child item</AccordionTrigger>
+                      <AccordionContent>Deep content</AccordionContent>
+                    </AccordionItem>
+                  </Accordion>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          ),
+        },
+      ];
+    case "breadcrumb":
+      return [
+        { label: "Two levels", node: <BreadcrumbDemo /> },
+        { label: "Three levels", node: <BreadcrumbDemo custom /> },
+      ];
+    case "collapsible":
+      return [
+        {
+          label: "Default",
+          node: (
+            <Collapsible className="w-64">
+              <CollapsibleTrigger>Toggle</CollapsibleTrigger>
+              <CollapsibleContent className="mt-2 text-sm text-muted-foreground">
+                Collapsible content
+              </CollapsibleContent>
+            </Collapsible>
+          ),
+        },
+        {
+          label: "Open by default",
+          node: (
+            <Collapsible defaultOpen className="w-64">
+              <CollapsibleTrigger>Toggle</CollapsibleTrigger>
+              <CollapsibleContent className="mt-2 text-sm text-muted-foreground">
+                Open content
+              </CollapsibleContent>
+            </Collapsible>
+          ),
+        },
+      ];
+    case "menubar":
+      return [{ label: "Default", node: <MenubarDemo /> }];
+    case "navbar":
+      return (
+        ["default", "sticky", "glass", "bordered", "transparent", "pill"] as const
+      ).map((variant) => ({
+        label: variant,
+        node: (
+          <div className="w-full max-w-md">
+            <Navbar
+              variant={variant}
+              brand={<span className="font-semibold">facet</span>}
+              links={[
+                { href: "#", label: "Features" },
+                { href: "#", label: "Docs" },
+              ]}
+            />
+          </div>
+        ),
+      }));
+    case "navigation-menu":
+      return [
+        { label: "Default", node: <NavigationMenuDemo /> },
+        {
+          label: "Multiple items",
+          node: (
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Docs</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <NavigationMenuLink href="#">Getting Started</NavigationMenuLink>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+                  <NavigationMenuContent>
+                    <NavigationMenuLink href="#">API Reference</NavigationMenuLink>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          ),
+        },
+      ];
+    case "pagination":
+      return [
+        { label: "Default", node: <PaginationDemo /> },
+        {
+          label: "Simple",
+          node: (
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious href="#" />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext href="#" />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          ),
+        },
+      ];
+    case "scroll-area":
+      return [
+        {
+          label: "Vertical",
+          node: (
+            <ScrollArea className="h-32 w-56 rounded-md border border-border p-3">
+              {Array.from({ length: 20 }, (_, i) => (
+                <p key={i} className="py-0.5 text-sm">
+                  Line {i + 1}
+                </p>
+              ))}
+              <ScrollBar />
+            </ScrollArea>
+          ),
+        },
+        {
+          label: "Horizontal",
+          node: (
+            <ScrollArea className="h-24 w-56 whitespace-nowrap rounded-md border border-border p-3">
+              <div className="flex w-max gap-3">
+                {Array.from({ length: 12 }, (_, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex h-16 w-32 items-center justify-center rounded-md border border-border bg-muted/30 text-sm"
+                  >
+                    Card {i + 1}
+                  </span>
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          ),
+        },
+        {
+          label: "Both",
+          node: (
+            <ScrollArea className="h-40 w-56 rounded-md border border-border p-3">
+              <div className="grid w-max grid-cols-3 gap-3">
+                {Array.from({ length: 18 }, (_, i) => (
+                  <div
+                    key={i}
+                    className="flex h-24 w-24 items-center justify-center rounded-md border border-border bg-muted/30 text-sm"
+                  >
+                    {i + 1}
+                  </div>
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+          ),
+        },
+      ];
+    case "separator":
+      return [
+        {
+          label: "Horizontal",
+          node: (
+            <div className="flex w-56 flex-col gap-2">
+              <span>Above</span>
+              <Separator />
+              <span>Below</span>
+            </div>
+          ),
+        },
+        {
+          label: "Vertical",
+          node: (
+            <div className="flex h-12 items-center gap-3">
+              <span>Left</span>
+              <Separator orientation="vertical" />
+              <span>Right</span>
+            </div>
+          ),
+        },
+      ];
+    case "sheet":
+      return [
+        { label: "Right", node: <SheetDemo /> },
+        { label: "Left", node: <SheetDemo side="left" /> },
+        { label: "Top", node: <SheetDemo side="top" /> },
+        { label: "Bottom", node: <SheetDemo side="bottom" /> },
+      ];
+    case "tabs":
+      return [
+        {
+          label: "Default",
+          node: (
+            <Tabs defaultValue="a">
+              <TabsList>
+                <TabsTrigger value="a">A</TabsTrigger>
+                <TabsTrigger value="b">B</TabsTrigger>
+              </TabsList>
+              <TabsContent value="a">Content A</TabsContent>
+              <TabsContent value="b">Content B</TabsContent>
+            </Tabs>
+          ),
+        },
+        {
+          label: "Three tabs",
+          node: (
+            <Tabs defaultValue="a">
+              <TabsList>
+                <TabsTrigger value="a">Account</TabsTrigger>
+                <TabsTrigger value="b">Settings</TabsTrigger>
+                <TabsTrigger value="c">Billing</TabsTrigger>
+              </TabsList>
+              <TabsContent value="a">Account content</TabsContent>
+            </Tabs>
+          ),
+        },
+      ];
+
+    /* ── Data display ────────────────────────────────────────── */
+    case "avatar":
+      return [
+        {
+          label: "With image",
+          node: (
+            <Avatar className="h-10 w-10">
+              <AvatarImage src={IMG} alt="Jane Archer" />
+              <AvatarFallback>JA</AvatarFallback>
+            </Avatar>
+          ),
+        },
+        {
+          label: "Fallback",
+          node: (
+            <Avatar className="h-10 w-10">
+              <AvatarFallback>JA</AvatarFallback>
+            </Avatar>
+          ),
+        },
+        {
+          label: "Large",
+          node: (
+            <Avatar className="h-16 w-16 text-lg">
+              <AvatarFallback>JD</AvatarFallback>
+            </Avatar>
+          ),
+        },
+        {
+          label: "Authenticated user",
+          node: (
+            <UserAvatar
+              user={{ name: "Ada Lovelace", email: "ada@arcevo.dev" }}
+              items={[
+                { label: "Profile", shortcut: `⇧${getModSymbol()}P`, icon: "users" },
+                { label: "Settings", shortcut: `${getModSymbol()},`, icon: "settings" },
+              ]}
+            />
+          ),
+        },
+      ];
+    case "avatar-group":
+      return [
+        {
+          label: "Default",
+          node: <AvatarGroup avatars={AVATARS} />,
+        },
+        {
+          label: "Small",
+          node: <AvatarGroup avatars={AVATARS} size="sm" />,
+        },
+        {
+          label: "Large",
+          node: <AvatarGroup avatars={AVATARS} size="lg" />,
+        },
+        {
+          label: "Max 2",
+          node: <AvatarGroup avatars={AVATARS} max={2} />,
+        },
+      ];
+    case "card":
+      return (
+        ["default", "glass", "frost", "glow", "ghost", "outline", "elevated", "interactive"] as const
+      ).map((variant) => ({
+        label: variant,
+        node: (
+          <Card variant={variant} className="w-full">
+            <CardHeader>
+              <CardTitle className="capitalize">{variant}</CardTitle>
+              <CardDescription>The {variant} card variant.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">Card content area.</p>
+            </CardContent>
+            <CardFooter className="justify-end">
+              <Button size="sm" variant="outline">
+                Action
+              </Button>
+            </CardFooter>
+          </Card>
+        ),
+      }));
+    case "table":
+      return [
+        {
+          label: "Default",
+          node: (
+            <Table className="w-72">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Ada</TableCell>
+                  <TableCell>Active</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Grace</TableCell>
+                  <TableCell>Active</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          ),
+        },
+        {
+          label: "Wide",
+          node: (
+            <Table className="w-96">
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Role</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Ada</TableCell>
+                  <TableCell>ada@example.com</TableCell>
+                  <TableCell>Admin</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          ),
+        },
+      ];
+    case "notification-drawer":
+      return [
+        {
+          label: "Default",
+          node: <NotificationDrawer notifications={[]} />,
+        },
+        {
+          label: "With notifications",
+          node: (
+            <NotificationDrawer
+              notifications={[
+                { id: "1", title: "New message", description: "Ada sent you a message", time: "2m", read: false, type: "info" },
+                { id: "2", title: "Build passed", description: "CI pipeline succeeded", time: "1h", read: false, type: "success" },
+              ]}
+            />
+          ),
+        },
+      ];
+
+    /* ── Inputs / forms ──────────────────────────────────────── */
+    case "checkbox":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="flex items-center gap-2">
+              <Checkbox id="c1" />
+              <Label htmlFor="c1">Accept terms</Label>
+            </div>
+          ),
+        },
+        {
+          label: "Checked",
+          node: (
+            <div className="flex items-center gap-2">
+              <Checkbox id="c2" defaultChecked />
+              <Label htmlFor="c2">Checked</Label>
+            </div>
+          ),
+        },
+        {
+          label: "Disabled",
+          node: (
+            <div className="flex items-center gap-2">
+              <Checkbox id="c3" disabled />
+              <Label htmlFor="c3">Disabled</Label>
+            </div>
+          ),
+        },
+      ];
+    case "combobox":
+      return [
+        { label: "Default", node: <ComboboxDemo /> },
+        {
+          label: "Placeholder",
+          node: (
+            <div className="w-56">
+              <Combobox
+                options={[{ value: "o1", label: "Option 1" }]}
+                placeholder="Choose a framework..."
+                label="Framework"
+              />
+            </div>
+          ),
+        },
+      ];
+    case "input":
+      return [
+        { label: "Default", node: <Input className="w-56" placeholder="Type here..." /> },
+        {
+          label: "With label",
+          node: (
+            <div className="grid w-56 gap-1.5">
+              <Label htmlFor="in-1">Email</Label>
+              <Input id="in-1" placeholder="you@example.com" type="email" />
+            </div>
+          ),
+        },
+        { label: "Disabled", node: <Input className="w-56" placeholder="Disabled" disabled /> },
+      ];
+    case "input-otp":
+      return [
+        { label: "Default", node: OTP },
+        { label: "Separated", node: OTP_SEPARATED },
+        {
+          label: "Small",
+          node: (
+            <InputOTP maxLength={4}>
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+                <InputOTPSlot index={3} />
+              </InputOTPGroup>
+            </InputOTP>
+          ),
+        },
+      ];
+    case "label":
+      return [
+        { label: "Default", node: <Label htmlFor="x">Email</Label> },
+        {
+          label: "With input",
+          node: (
+            <div className="grid w-56 gap-1.5">
+              <Label htmlFor="lbl">Full name</Label>
+              <Input id="lbl" placeholder="Ada Lovelace" />
+            </div>
+          ),
+        },
+      ];
+    case "radio-group":
+      return [
+        {
+          label: "Default",
+          node: (
+            <RadioGroup defaultValue="a">
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="a" id="ra" />
+                <Label htmlFor="ra">Option A</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="b" id="rb" />
+                <Label htmlFor="rb">Option B</Label>
+              </div>
+            </RadioGroup>
+          ),
+        },
+        {
+          label: "Disabled",
+          node: (
+            <RadioGroup defaultValue="a">
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="a" id="rd" />
+                <Label htmlFor="rd">Option A</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <RadioGroupItem value="b" id="rd2" disabled />
+                <Label htmlFor="rd2">Disabled</Label>
+              </div>
+            </RadioGroup>
+          ),
+        },
+      ];
+    case "select":
+      return [
+        { label: "Default", node: <SelectDemo /> },
+        {
+          label: "With value",
+          node: (
+            <Select defaultValue="b">
+              <SelectTrigger className="w-56">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="a">Apple</SelectItem>
+                <SelectItem value="b">Banana</SelectItem>
+              </SelectContent>
+            </Select>
+          ),
+        },
+      ];
+    case "slider":
+      return [
+        { label: "Default", node: <Slider defaultValue={[50]} max={100} step={1} className="w-56" /> },
+        { label: "Range", node: <Slider defaultValue={[25, 75]} max={100} step={1} className="w-56" /> },
+        { label: "Disabled", node: <Slider defaultValue={[50]} max={100} step={1} disabled className="w-56" /> },
+      ];
+    case "switch":
+      return (
+        [
+          { label: "Off", checked: false },
+          { label: "On", checked: true },
+          { label: "Disabled", checked: false, disabled: true },
+        ] as const
+      ).map(({ label, ...props }) => ({
+        label,
+        node: <Switch {...props} />,
+      }));
+    case "textarea":
+      return [
+        { label: "Default", node: <Textarea className="w-56" placeholder="Write something..." /> },
+        {
+          label: "With label",
+          node: (
+            <div className="grid w-56 gap-1.5">
+              <Label htmlFor="ta-1">Bio</Label>
+              <Textarea id="ta-1" placeholder="Tell us about yourself" />
+            </div>
+          ),
+        },
+      ];
+    case "toggle":
+      return (
+        [
+          { label: "Default", pressed: true, children: "Bold" },
+          { label: "Outline", variant: "outline", children: "Italic" },
+          {
+            label: "With icon",
+            children: (
+              <>
+                <Icon name="settings" className="size-4" /> Settings
+              </>
+            ),
+          },
+        ] as const
+      ).map(({ label, children, ...props }) => ({
+        label,
+        node: <Toggle {...props}>{children}</Toggle>,
+      }));
+    case "toggle-group":
+      return [
+        {
+          label: "Single",
+          node: (
+            <ToggleGroup type="single" defaultValue="a">
+              <ToggleGroupItem value="a">A</ToggleGroupItem>
+              <ToggleGroupItem value="b">B</ToggleGroupItem>
+              <ToggleGroupItem value="c">C</ToggleGroupItem>
+            </ToggleGroup>
+          ),
+        },
+        {
+          label: "Multiple",
+          node: (
+            <ToggleGroup type="multiple" defaultValue={["a"]}>
+              <ToggleGroupItem value="a">A</ToggleGroupItem>
+              <ToggleGroupItem value="b">B</ToggleGroupItem>
+              <ToggleGroupItem value="c">C</ToggleGroupItem>
+            </ToggleGroup>
+          ),
+        },
+        {
+          label: "Outline",
+          node: (
+            <ToggleGroup type="single" variant="outline" defaultValue="a">
+              <ToggleGroupItem value="a">A</ToggleGroupItem>
+              <ToggleGroupItem value="b">B</ToggleGroupItem>
+            </ToggleGroup>
+          ),
+        },
+      ];
+
+    /* ── Overlays / menus ────────────────────────────────────── */
+    case "alert-dialog":
+      return [
+        {
+          label: "Default",
+          node: (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">Delete account</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction>Continue</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          ),
+        },
+        {
+          label: "Destructive",
+          node: (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">Revoke access</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent variant="destructive">
+                <AlertDialogHeader>
+                  <div className="flex items-start gap-3 sm:items-center">
+                    <AlertDialogIcon className="mt-0.5 shrink-0 sm:mt-0" />
+                    <div className="flex flex-col gap-1.5">
+                      <AlertDialogTitle>Revoke API access?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will invalidate all tokens immediately.
+                      </AlertDialogDescription>
+                    </div>
+                  </div>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Keep access</AlertDialogCancel>
+                  <AlertDialogAction variant="destructive">Revoke</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          ),
+        },
+        {
+          label: "Confirm by typing",
+          node: (
+            <ConfirmAlertDialog
+              entityName="facet"
+              entityLabel="workspace"
+              confirmPhrase="confirm delete"
+              actionLabel="Delete workspace"
+              description="This action cannot be undone. Type the workspace name and the confirmation phrase to continue."
+              trigger={<Button variant="destructive">Delete workspace</Button>}
+            />
+          ),
+        },
+      ];
+    case "command":
+      return [
+        { label: "Default", node: <CommandDemo /> },
+        {
+          label: "With separator",
+          node: (
+            <Command className="w-64">
+              <CommandInput placeholder="Search..." />
+              <CommandList>
+                <CommandEmpty>No results</CommandEmpty>
+                <CommandGroup heading="General">
+                  <CommandItem>Profile</CommandItem>
+                  <CommandItem>Settings</CommandItem>
+                </CommandGroup>
+                <CommandGroup heading="Danger">
+                  <CommandItem>Logout</CommandItem>
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          ),
+        },
+      ];
+    case "context-menu":
+      return [
+        { label: "Default", node: <ContextMenuDemo /> },
+        {
+          label: "With icons",
+          node: (
+            <ContextMenu>
+              <ContextMenuTrigger asChild>
+                <div className="flex h-24 w-64 items-center justify-center rounded-md border border-dashed border-border text-sm text-muted-foreground">
+                  Right-click
+                </div>
+              </ContextMenuTrigger>
+              <ContextMenuContent>
+                <ContextMenuLabel>Actions</ContextMenuLabel>
+                <ContextMenuSeparator />
+                <ContextMenuItem>
+                  <Icon name="copy" className="size-4" /> Copy
+                </ContextMenuItem>
+                <ContextMenuItem>
+                  <Icon name="list" className="size-4" /> Paste
+                </ContextMenuItem>
+              </ContextMenuContent>
+            </ContextMenu>
+          ),
+        },
+      ];
+    case "dialog":
+      return [
+        { label: "Default", node: <DialogDemo /> },
+        {
+          label: "With footer",
+          node: (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">Open</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create project</DialogTitle>
+                  <DialogDescription>Fill in the details below.</DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button variant="outline">Cancel</Button>
+                  <Button>Create</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          ),
+        },
+      ];
+    case "dropdown-menu":
+      return [
+        { label: "Default", node: <DropdownMenuDemo /> },
+        {
+          label: "With icons",
+          node: (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">Menu</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Icon name="users" className="size-4" /> Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Icon name="settings" className="size-4" /> Settings
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ),
+        },
+      ];
+    case "hover-card":
+      return [
+        { label: "Default", node: <HoverCardDemo /> },
+        {
+          label: "With content",
+          node: (
+            <HoverCard>
+              <HoverCardTrigger asChild>
+                <Button variant="link">@ada</Button>
+              </HoverCardTrigger>
+              <HoverCardContent className="w-64">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold">Ada Lovelace</h4>
+                  <p className="text-sm text-muted-foreground">Mathematician and writer.</p>
+                </div>
+              </HoverCardContent>
+            </HoverCard>
+          ),
+        },
+      ];
+    case "popover":
+      return [
+        { label: "Default", node: <PopoverDemo /> },
+        {
+          label: "With content",
+          node: (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">Open</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64">
+                <div className="space-y-1">
+                  <h4 className="text-sm font-semibold">Dimensions</h4>
+                  <p className="text-sm text-muted-foreground">Set the width and height.</p>
+                </div>
+              </PopoverContent>
+            </Popover>
+          ),
+        },
+      ];
+    case "tooltip":
+      return [
+        { label: "Default", node: <TooltipDemo /> },
+        {
+          label: "Top",
+          node: (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">Hover</Button>
+                </TooltipTrigger>
+                <TooltipContent side="top">Top tooltip</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ),
+        },
+      ];
+
+    /* ── Ready-to-use ────────────────────────────────────────── */
+    case "dropzone":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="w-full max-w-sm">
+              <Dropzone label="Drag files here or click to browse" hint="PDF, images, anything" />
+            </div>
+          ),
+        },
+        {
+          label: "Disabled",
+          node: (
+            <div className="w-full max-w-sm">
+              <Dropzone label="Uploads disabled" disabled />
+            </div>
+          ),
+        },
+      ];
+    case "color-picker":
+      return [
+        { label: "Default", node: <ColorPicker value="#6366f1" label="Brand accent" /> },
+        {
+          label: "Compact",
+          node: (
+            <div className="flex flex-col gap-2">
+              <ColorPicker value="#10b981" compact label="Compact" />
+              <span className="text-xs text-muted-foreground">Swatch only</span>
+            </div>
+          ),
+        },
+      ];
+    case "qrcode":
+      return [
+        {
+          label: "Default",
+          node: <QRCode value="https://facet.arcevocirqle.com.ng" size={120} label="facet docs" />,
+        },
+        {
+          label: "Large",
+          node: <QRCode value="https://github.com/arcevodev/facet" size={160} label="facet GitHub" />,
+        },
+        {
+          label: "Colored",
+          node: <QRCode value="https://facet.arcevocirqle.com.ng" size={120} fgColor="#6366f1" label="branded" />,
+        },
+      ];
+    case "marquee":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="w-full">
+              <Marquee
+                duration={16}
+                items={["facet", "arc-id", "auth", "tokens", "React 19", "Radix"]}
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Reverse",
+          node: (
+            <div className="w-full">
+              <Marquee
+                duration={16}
+                reverse
+                items={["A", "B", "C", "D", "E", "F"].map((letter) => (
+                  <span
+                    key={letter}
+                    className="rounded-full border border-border bg-background px-4 py-2 text-sm font-medium"
+                  >
+                    Item {letter}
+                  </span>
+                ))}
+              />
+            </div>
+          ),
+        },
+      ];
+    case "roadmap":
+      return [
+        { label: "Default", node: <Roadmap items={ROADMAP_ITEMS} /> },
+        {
+          label: "No line",
+          node: <Roadmap items={ROADMAP_ITEMS} showLine={false} />,
+        },
+      ];
+    case "form":
+      return [
+        {
+          label: "Basic form",
+          node: <BasicFormDemo />,
+        },
+        {
+          label: "With validation",
+          node: <ValidatedFormDemo />,
+        },
+      ];
+    case "data-table":
+      return [
+        {
+          label: "Default",
+          node: <DataTable columns={DEMO_COLUMNS} data={DEMO_ROWS} />,
+        },
+        {
+          label: "Searchable",
+          node: <DataTable columns={DEMO_COLUMNS} data={DEMO_ROWS} searchable />,
+        },
+        {
+          label: "Selectable",
+          node: <DataTable columns={DEMO_COLUMNS} data={DEMO_ROWS} selectable />,
+        },
+      ];
+    case "date-picker":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="max-w-xs">
+              <DatePicker label="Due date" />
+            </div>
+          ),
+        },
+        {
+          label: "Horizontal strip",
+          node: (
+            <div className="max-w-sm">
+              <DatePicker label="Pick a day" scrollMode="horizontal" horizontalDays={14} />
+            </div>
+          ),
+        },
+      ];
+    case "number-input":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="max-w-xs">
+              <NumberInput label="Quantity" min={0} max={10} />
+            </div>
+          ),
+        },
+        {
+          label: "With value",
+          node: (
+            <div className="max-w-xs">
+              <NumberInput label="Quantity" value={4} min={0} max={10} />
+            </div>
+          ),
+        },
+      ];
+    case "country-code-input":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="max-w-xs">
+              <CountryCodeInput label="Mobile number" />
+            </div>
+          ),
+        },
+      ];
+    case "location-picker":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="max-w-sm">
+              <LocationPicker showLocality />
+            </div>
+          ),
+        },
+        {
+          label: "Without locality",
+          node: (
+            <div className="max-w-sm">
+              <LocationPicker />
+            </div>
+          ),
+        },
+      ];
+
+    default:
+      return undefined;
+  }
+}
+
+function BasicFormDemo() {
+  const form = useForm<{ name: string; email: string }>({
+    defaultValues: { name: "", email: "" },
+  });
+  return (
+    <div className="w-full max-w-sm">
+      <Form form={form} onSubmit={() => {}}>
+        <FormField name="name" label="Name" required>
+          <Input placeholder="Ada Lovelace" />
+        </FormField>
+        <FormField name="email" label="Email" required>
+          <Input placeholder="ada@example.com" type="email" />
+        </FormField>
+        <Button type="submit">Submit</Button>
+      </Form>
+    </div>
+  );
+}
+
+function ValidatedFormDemo() {
+  const form = useForm<{ email: string }>({
+    defaultValues: { email: "" },
+  });
+  return (
+    <div className="w-full max-w-sm">
+      <Form form={form} onSubmit={() => {}}>
+        <FormField name="email" label="Work email" required>
+          <Input placeholder="you@company.com" type="email" />
+        </FormField>
+        <Button type="submit">Continue</Button>
+      </Form>
+    </div>
+  );
+}

@@ -5,8 +5,16 @@
  * the auth step flow. Extracted forms are independently importable from
  * @arcevo/facet-auth.
  *
- * Steps: idle → check_session → select_method → login_form / magic_link_form
+ * Steps: idle → check_session → login_form / magic_link_form / passkey_auth
  *        → check_mfa → mfa_challenge → complete
+ *
+ * The email/password form is the embedded default entry point; other
+ * methods (magic link, passkey, OAuth) are offered as alternates on the
+ * same card. `select_method` remains reachable as a fallback step.
+ *
+ * Controlled mode: pass `step` + `onStepChange` to render exactly a given
+ * step and drive SignIn from outside (e.g. a live state-machine diagram).
+ * When omitted, SignIn manages its own transitions.
  */
 
 import * as React from "react";
@@ -41,6 +49,22 @@ export interface SignInProps {
   onOAuth?: (provider: string) => void;
   /** Enable zod client-side validation on the email/password forms. Default: false */
   validate?: boolean;
+  /**
+   * Initial step to render. Defaults to "login_form" (the email/password
+   * form with the other methods embedded below it). Set to "select_method"
+   * to land on the method picker instead.
+   */
+  initialStep?: "select_method" | "login_form";
+  /**
+   * Controlled step. When set, SignIn renders exactly this step instead of
+   * managing its own transition: `onStepChange` is called for every
+   * internal transition. Use it to drive SignIn from outside (e.g. a live
+   * state-machine diagram in the docs). When omitted, SignIn is
+   * self-managed.
+   */
+  step?: SignInStep;
+  /** Called whenever SignIn would change step (only when `step` is set). */
+  onStepChange?: (step: SignInStep) => void;
 }
 
 /* ── Method selector (internal to SignIn) ──────────────────── */
@@ -115,6 +139,9 @@ export function SignIn({
   onSuccess,
   onOAuth,
   validate = false,
+  initialStep = "login_form",
+  step: controlledStep,
+  onStepChange,
 }: SignInProps) {
   const cfg = { ...defaultConfig, ...configOverrides };
   const { login, verifyMfa, isAuthenticated, client } = useAuth();
@@ -122,8 +149,27 @@ export function SignIn({
   const authSdk = React.useMemo(() => new AuthSdk(client), [client]);
   const passkeySdk = React.useMemo(() => new PasskeySdk(client), [client]);
 
-  const [step, setStep] = React.useState<SignInStep>("idle");
+  const [step, setStep] = React.useState<SignInStep>(initialStep);
   const [error, setError] = React.useState<string | null>(null);
+
+  // Controlled mode: when the consumer passes `step`, the component renders
+  // that step and reports transitions via `onStepChange` instead of storing
+  // its own state.
+  const isControlled = controlledStep !== undefined;
+  const activeStep = isControlled ? controlledStep : step;
+
+  // Apply a step transition (internal state when uncontrolled, callback
+  // when controlled).
+  const go = React.useCallback(
+    (next: SignInStep) => {
+      if (isControlled) {
+        onStepChange?.(next);
+      } else {
+        setStep(next);
+      }
+    },
+    [isControlled, onStepChange],
+  );
 
   // Form fields that persist across steps
   const [, setEmail] = React.useState("");
@@ -133,11 +179,9 @@ export function SignIn({
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      setStep("complete");
-    } else {
-      setStep("select_method");
+      go("complete");
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, go]);
 
   /* ── Handlers ────────────────────────────────────────────── */
 
@@ -151,10 +195,10 @@ export function SignIn({
         const result = res.data as LoginResult;
         if (result.sessionId && !result.accessToken) {
           setSessionId(result.sessionId);
-          setStep("mfa_challenge");
+          go("mfa_challenge");
           return null;
         }
-        setStep("complete");
+        go("complete");
         onSuccess?.(res.data as unknown as TokenPair);
         return null;
       }
@@ -171,7 +215,7 @@ export function SignIn({
   };
 
   const handleForgotPassword = () => {
-    setStep("forgot_password");
+    go("forgot_password");
   };
 
   const handleForgotPasswordSubmit = async (email: string) => {
@@ -183,12 +227,12 @@ export function SignIn({
   const handleMfaVerify = async (code: string) => {
     const sId = sessionId;
     if (!sId) {
-      setStep("select_method");
+      go("select_method");
       return;
     }
     const res = await verifyMfa(code, sId);
     if (res.data) {
-      setStep("complete");
+      go("complete");
     } else {
       setError(res.error?.message ?? "Invalid code");
     }
@@ -248,7 +292,7 @@ export function SignIn({
       });
 
       if (res.data) {
-        setStep("complete");
+        go("complete");
         onSuccess?.(res.data as unknown as TokenPair);
       } else {
         setError(res.error?.message ?? "Passkey authentication failed");
@@ -260,7 +304,7 @@ export function SignIn({
 
   /* ── Root render ─────────────────────────────────────────── */
 
-  switch (step) {
+  switch (activeStep) {
     case "check_session":
     case "idle":
       return null;
@@ -270,27 +314,62 @@ export function SignIn({
           appearance={appearance}
           slots={slots}
           cfg={cfg}
-          onSelectMethod={setStep}
+          onSelectMethod={go}
           handlePasskeyAuth={handlePasskeyAuth}
           onOAuth={onOAuth}
         />
       );
     case "login_form":
       return (
-        <LoginForm
-          appearance={appearance}
-          onSubmit={handleEmailPasswordLogin}
-          onBack={() => setStep("select_method")}
-          onForgotPassword={handleForgotPassword}
-          validate={validate}
-        />
+        <div className="flex flex-col gap-3">
+          <LoginForm
+            appearance={appearance}
+            onSubmit={handleEmailPasswordLogin}
+            onBack={initialStep === "select_method" ? () => go("select_method") : undefined}
+            onForgotPassword={handleForgotPassword}
+            validate={validate}
+          />
+          {(cfg.allowMagicLink || cfg.allowPasskey || cfg.oauthProviders.length > 0) && (
+            <div className="space-y-3">
+              {cfg.allowMagicLink && (
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => go("magic_link_form")}
+                >
+                  Continue with Magic Link
+                </Button>
+              )}
+              {cfg.allowPasskey && (
+                <Button variant="outline" className="w-full" onClick={handlePasskeyAuth}>
+                  Continue with Passkey
+                </Button>
+              )}
+              {cfg.oauthProviders.length > 0 && (
+                <>
+                  <Separator className="my-2" />
+                  {cfg.oauthProviders.map((provider) => (
+                    <Button
+                      key={provider}
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => onOAuth?.(provider)}
+                    >
+                      Sign in with {provider}
+                    </Button>
+                  ))}
+                </>
+              )}
+            </div>
+          )}
+        </div>
       );
     case "magic_link_form":
       return (
         <MagicLinkForm
           appearance={appearance}
           onSubmit={handleMagicLinkRequest}
-          onBack={() => setStep("select_method")}
+          onBack={() => go("select_method")}
           validate={validate}
         />
       );
@@ -299,7 +378,7 @@ export function SignIn({
         <ForgotPasswordForm
           appearance={appearance}
           onSubmit={handleForgotPasswordSubmit}
-          onBack={() => setStep("login_form")}
+          onBack={() => go("login_form")}
           validate={validate}
         />
       );
@@ -309,7 +388,7 @@ export function SignIn({
           <CardContent className="p-0">
             <MfaVerifyForm
               onVerify={handleMfaVerify}
-              onCancel={() => setStep("select_method")}
+              onCancel={() => go("select_method")}
               error={error ?? undefined}
             />
           </CardContent>
@@ -325,7 +404,7 @@ export function SignIn({
             <CardDescription>{error ?? "An unexpected error occurred"}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full" onClick={() => setStep("select_method")}>
+            <Button className="w-full" onClick={() => go("select_method")}>
               Try Again
             </Button>
           </CardContent>

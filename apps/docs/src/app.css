@@ -10,15 +10,7 @@
 /* ── Tailwind v4 theme extension (maps CSS vars → utilities) ─ */
 @import "../../../packages/tokens/src/tailwind.css";
 
-/* ── Scanner hints: crawl workspace packages for class names: */
+/* ── Scanner hints: tell Tailwind to crawl workspace packages: */
 @source "../../../packages/components/src";
 @source "../../../packages/layout/src";
-@source "../../../packages/auth/src";
-
-/* ── Storybook code blocks: force JetBrains Mono ──────────────── */
-.sbdocs pre,
-.sbdocs code,
-.docblock-source,
-.docblock-code-toggle {
-  font-family: var(--font-mono) !important;
-}
+@source "../../../packages/docs/src";

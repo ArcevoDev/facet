@@ -81,7 +81,7 @@ export class AuthSdk {
     return this.client.post<void>("/auth/logout", { sessionId });
   }
 
-  /** GET /identity/profile — resolves the current identity from the bearer token. */
+  /** GET /identity/profile: resolves the current identity from the bearer token. */
   me(): Promise<ApiResponse<UserProfile>> {
     return this.client.get<UserProfile>("/identity/profile");
   }

@@ -33,6 +33,14 @@ It overrides/supplements CLAUDE.md for AI agents.
 See `CLAUDE.md` and the README for the verified build/test/typecheck state.
 `.agent/output.txt` is the local-only live dashboard.
 
+The working tree carries a large UNCOMMITTED changeset (docs engine
+`packages/docs`, rebuilt consumer `apps/docs`, +11 components, landing
+rework, changesets). The three P0 breakages from the previous analysis
+(storiesDir path, missing @storybook/react, root tsconfig reference) are
+fixed as of 2026-08-03: Storybook is fully purged and the drift gate is a
+barrel + manifest check. See `.agent/analysis-current-state.md` for the
+current priority backlog.
+
 ## Publish Status
 
 Packages publish to npm under the `@arcevo/facet-*` scope via Changesets
