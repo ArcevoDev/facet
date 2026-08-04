@@ -41,6 +41,8 @@ export type { CodeBlockProps } from "./components/CodeBlock.js";
 export { InstallTabs } from "./components/InstallTabs.js";
 export type { InstallCommand } from "./components/InstallTabs.js";
 export { VariantUsageTabs } from "./components/VariantUsageTabs.js";
+export { InteractiveDemo } from "./components/InteractiveDemo.js";
+export type { InteractiveDemoProps } from "./components/InteractiveDemo.js";
 export { AuthDemo } from "./components/AuthDemo.js";
 export type { AuthDemoProps, AuthDemoConfig, AuthDemoStep } from "./components/AuthDemo.js";
 export { AuthPreviews } from "./components/AuthPreviews.js";
