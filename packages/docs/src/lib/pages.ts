@@ -394,7 +394,7 @@ function MyHeader() {
       },
       {
         type: "p",
-        text: "The sign-in flow is a configurable state machine. The email/password form is the embedded default entry point; the other methods branch off it based on `config`. Head to the [Sign In](/auth/sign-in) page for a live, interactive demo with a method switcher and copyable code.",
+        text: "The sign-in flow is a configurable state machine. The email/password form is the embedded default entry point; the other methods branch off it based on `config`. Head to the [Sign In](/auth/sign-in) page — it is the single home for the interactive demo: pick a method, watch the live preview, and copy the matching code.",
       },
       { type: "h2", text: "In this section" },
       {
@@ -430,7 +430,7 @@ function MyHeader() {
       { type: "h2", text: "Controlled mode" },
       {
         type: "p",
-        text: "Pass `step` + `onStepChange` to render exactly a given step and drive SignIn from outside (e.g. a live state-machine diagram). When omitted, SignIn manages its own transitions.",
+        text: "Pass `step` + `onStepChange` to render exactly a given step and drive SignIn from outside. When omitted, SignIn manages its own transitions.",
       },
       {
         type: "code",

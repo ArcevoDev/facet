@@ -113,24 +113,52 @@ export function AuthDemo({ initialConfig }: AuthDemoProps) {
   }}
 />`;
 
+  // Each snippet embeds the live config so the copyable code always
+  // matches what is previewed for the active method.
   const methodCode: Record<keyof typeof METHOD_STEPS, string> = {
     "Email + password": `<SignIn
-  config={config}
+  config={{
+    allowMagicLink: ${config.allowMagicLink},
+    allowPasskey: ${config.allowPasskey},
+    requireMfa: ${config.requireMfa},
+    oauthProviders: ${JSON.stringify(config.oauthProviders)},
+  }}
   initialStep="login_form"
 />`,
     "Magic link": `<SignIn
-  config={{ ...config, allowMagicLink: true }}
+  config={{
+    allowMagicLink: true,
+    allowPasskey: ${config.allowPasskey},
+    requireMfa: ${config.requireMfa},
+    oauthProviders: ${JSON.stringify(config.oauthProviders)},
+  }}
   initialStep="magic_link_form"
 />`,
     Passkey: `<SignIn
-  config={{ ...config, allowPasskey: true }}
+  config={{
+    allowMagicLink: ${config.allowMagicLink},
+    allowPasskey: true,
+    requireMfa: ${config.requireMfa},
+    oauthProviders: ${JSON.stringify(config.oauthProviders)},
+  }}
   initialStep="passkey_auth"
 />`,
     OAuth: `<SignIn
-  config={{ ...config, oauthProviders: ${JSON.stringify(config.oauthProviders)} }}
+  config={{
+    allowMagicLink: ${config.allowMagicLink},
+    allowPasskey: ${config.allowPasskey},
+    requireMfa: ${config.requireMfa},
+    oauthProviders: ${JSON.stringify(config.oauthProviders)},
+  }}
+  initialStep="login_form"
 />`,
     "Forgot password": `<SignIn
-  config={config}
+  config={{
+    allowMagicLink: ${config.allowMagicLink},
+    allowPasskey: ${config.allowPasskey},
+    requireMfa: ${config.requireMfa},
+    oauthProviders: ${JSON.stringify(config.oauthProviders)},
+  }}
   step="forgot_password"
   onStepChange={setStep}
 />`,
