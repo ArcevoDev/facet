@@ -156,6 +156,21 @@ import {
   CountryCodeInputDemo,
   LocationPickerDemo,
 } from "./ReadyToUseDemos.js";
+import { ArcProvider, SignIn, SignUp, Guard, LoginForm, MfaVerifyForm } from "@arcevo/facet-auth";
+import { ArcIdClient } from "@arcevo/facet-sdk";
+import {
+  ConsoleLayout,
+  AuthLayout,
+  LandingLayout,
+  Sidebar,
+  Topbar,
+  LayoutProvider,
+  defaultLayoutPreset,
+  fintechLayoutPreset,
+} from "@arcevo/facet-layout";
+
+/** No network: bootstrap stays signed out because no token is stored. */
+const DEMO_CLIENT = new ArcIdClient({ baseUrl: "https://demo.invalid" });
 
 const IMG =
   "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&h=64&fit=crop&crop=faces";
@@ -661,6 +676,147 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
       return <LocationPickerDemo />;
     case "country-code-input":
       return <CountryCodeInputDemo />;
+    case "sign-in":
+      return (
+        <div className="w-full max-w-md">
+          <ArcProvider client={DEMO_CLIENT}>
+            <SignIn config={{ allowMagicLink: true, allowPasskey: true }} />
+          </ArcProvider>
+        </div>
+      );
+    case "sign-up":
+      return (
+        <div className="w-full max-w-md">
+          <ArcProvider client={DEMO_CLIENT}>
+            <SignUp config={{ allowPasskey: true, allowMagicLink: true }} />
+          </ArcProvider>
+        </div>
+      );
+    case "mfa-dialog":
+      return (
+        <ArcProvider client={DEMO_CLIENT}>
+          <MfaVerifyForm onVerify={async () => {}} onRecovery={() => {}} onCancel={() => {}} />
+        </ArcProvider>
+      );
+    case "guard":
+      return (
+        <div className="w-full max-w-md">
+          <ArcProvider client={DEMO_CLIENT}>
+            <Guard fallback={<SignIn />}>
+              <div className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
+                Signed in content would render here.
+              </div>
+            </Guard>
+          </ArcProvider>
+        </div>
+      );
+    case "login-form":
+      return (
+        <div className="w-full max-w-md">
+          <ArcProvider client={DEMO_CLIENT}>
+            <LoginForm onSubmit={async () => null} validate />
+          </ArcProvider>
+        </div>
+      );
+    case "console-layout":
+      return (
+        <div className="h-96 w-full">
+          <ConsoleLayout config={defaultLayoutPreset} mode="full">
+            <Card>
+              <CardHeader>
+                <CardTitle>Dashboard</CardTitle>
+                <CardDescription>Your content renders here.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  This is the content area inside ConsoleLayout.
+                </p>
+              </CardContent>
+            </Card>
+          </ConsoleLayout>
+        </div>
+      );
+    case "auth-layout":
+      return (
+        <div className="h-96 w-full overflow-hidden rounded-md border border-border">
+          <AuthLayout config={fintechLayoutPreset}>
+            <div className="space-y-2 text-sm">
+              <p className="font-medium">Sign in</p>
+              <div className="space-y-2">
+                <input
+                  className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                  placeholder="you@company.com"
+                />
+                <input
+                  className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                  placeholder="Password"
+                  type="password"
+                />
+              </div>
+              <Button className="w-full">Sign in</Button>
+            </div>
+          </AuthLayout>
+        </div>
+      );
+    case "landing-layout":
+      return (
+        <div className="h-96 w-full overflow-hidden rounded-md border border-border">
+          <LandingLayout
+            nav={
+              <Navbar
+                variant="pill"
+                brand={<span className="font-semibold">facet</span>}
+                links={[
+                  { href: "#", label: "Features" },
+                  { href: "#", label: "Docs" },
+                ]}
+              />
+            }
+            hero={
+              <div className="flex flex-col items-center gap-4 text-center">
+                <h1 className="font-heading text-4xl font-bold text-foreground">Build faster</h1>
+                <p className="max-w-md text-muted-foreground">
+                  A glassmorphic hero with a glow CTA, ready for your marketing site.
+                </p>
+                <div className="flex gap-3">
+                  <Button className="glow-indigo">Get started</Button>
+                  <Button variant="outline">Learn more</Button>
+                </div>
+              </div>
+            }
+            footer={
+              <div className="px-8 py-4 text-sm text-muted-foreground">
+                © {new Date().getFullYear()} ArcevoCirqle Ecosystem
+              </div>
+            }
+          >
+            <div className="px-8 py-12">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Feature section</CardTitle>
+                  <CardDescription>Your marketing content goes here.</CardDescription>
+                </CardHeader>
+              </Card>
+            </div>
+          </LandingLayout>
+        </div>
+      );
+    case "sidebar":
+      return (
+        <div className="h-96 w-full overflow-hidden rounded-md border border-border">
+          <LayoutProvider>
+            <Sidebar config={fintechLayoutPreset} />
+          </LayoutProvider>
+        </div>
+      );
+    case "topbar":
+      return (
+        <div className="w-full overflow-hidden rounded-md border border-border">
+          <LayoutProvider>
+            <Topbar />
+          </LayoutProvider>
+        </div>
+      );
     default:
       return (
         <div className="text-sm text-muted-foreground">

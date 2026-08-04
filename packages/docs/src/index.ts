@@ -27,6 +27,10 @@ export type { DocsSiteConfig } from "./lib/nav.js";
 export { buildDocsLayoutConfig } from "./lib/nav.js";
 export type { NavItem, NavSection } from "./lib/nav.js";
 
+// Gallery manifest (components + auth + layout)
+export { extendedManifest, extendedEntries } from "./lib/manifest.js";
+export type { DocsManifestEntry } from "./lib/manifest.js";
+
 // Reusable docs components
 export { GuidePage, H2, P, Pre, Ul, Li, Code, PageNav, InlineText } from "./components/Guide.js";
 export type { GuidePageProps } from "./components/Guide.js";

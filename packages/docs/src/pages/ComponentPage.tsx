@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
-import { docsManifest } from "../manifest.js";
+import { extendedManifest } from "../lib/manifest.js";
 import { ComponentDemoCard } from "../components/ComponentDemoCard.js";
 import { ComponentPreview } from "../components/previews.js";
 import { VariantUsageTabs } from "../components/VariantUsageTabs.js";
@@ -44,7 +44,7 @@ export function demoControls(slug: string): Control[] | undefined {
 export function ComponentPage() {
   const { slug } = useParams();
   if (!slug) return <Navigate to="/components" replace />;
-  const entry = docsManifest.find((e) => e.slug === slug);
+  const entry = extendedManifest.find((e) => e.slug === slug);
   if (!entry) return <Navigate to="/components" replace />;
 
   // Live controls for parameterized previews (Button/Badge).

@@ -59,9 +59,9 @@ export function App() {
 | `install` | `{ pkg, extras? }` | pnpm / npm / yarn / bun tabs |
 | `ul` | `{ items }` | bullet list |
 | `link` | `{ label, href }` | internal link |
-| `authDemo` | `{}` | live `<SignIn>` with toggles for magic link, passkeys, MFA, and OAuth providers |
-| `signInFlowDiagram` | `{}` | interactive SignIn state-machine diagram |
-| `signInFlowDemo` | `{}` | live-linked diagram + real controlled `<SignIn>` demo |
+| `authDemo` | `{}` | live `<SignIn>` with method switcher + preview + synced code |
+| `authPreviews` | `{}` | live previews of SignUp, MfaDialog, Guard, and forms |
+| `layoutPreviews` | `{}` | live previews of ConsoleLayout, AuthLayout, Sidebar/Topbar, LandingLayout |
 | `keyboardShortcuts` | `{}` | Kbd-chip keyboard shortcuts table |
 
 ## Sidebar
@@ -74,9 +74,15 @@ the search palette automatically.
 ## Component gallery
 
 Pass `showComponents` (default `true`) to mount the `/components` gallery.
-It requires the `@arcevo/facet-components` manifest, which ships with this
-package. Each component page shows a live demo card, a full variant
-gallery, and per-variant usage tabs with copy buttons.
+It renders from the extended manifest, which covers the UI components in
+`@arcevo/facet-components` plus the auth (`@arcevo/facet-auth`) and layout
+(`@arcevo/facet-layout`) surfaces — so SignIn, SignUp, MfaDialog, Guard,
+ConsoleLayout, AuthLayout, LandingLayout, Sidebar, and Topbar all get a
+gallery page with a live preview, a full variant gallery, and per-variant
+usage tabs with copy buttons.
+
+Foundational entries (Icon, Theme) are excluded from the Components
+sidebar — they have their own guide pages under the Foundations section.
 
 ## Icons
 

@@ -1,7 +1,7 @@
 import * as React from "react";
 import type { LayoutConfig, NavItem, NavSection } from "@arcevo/facet-layout";
 import type { DocsPage } from "./pages.js";
-import { docsManifest } from "../manifest.js";
+import { extendedManifest } from "./manifest.js";
 
 /**
  * Navigation config for the docs site shell (feeds facet Sidebar).
@@ -136,8 +136,8 @@ export function buildDocsLayoutConfig(
  * their own docs pages under the Foundations section.
  */
 function buildComponentsSection(): NavSection {
-  const byCategory = new Map<string, typeof docsManifest>();
-  for (const entry of docsManifest) {
+  const byCategory = new Map<string, typeof extendedManifest>();
+  for (const entry of extendedManifest) {
     if (entry.category === "foundations") continue;
     const list = byCategory.get(entry.category) ?? [];
     list.push(entry);

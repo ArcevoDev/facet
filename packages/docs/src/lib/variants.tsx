@@ -160,6 +160,21 @@ import {
   type RoadmapItem,
   type DataTableColumn,
 } from "@arcevo/facet-components";
+import { ArcProvider, SignIn, SignUp, Guard, LoginForm, MfaVerifyForm } from "@arcevo/facet-auth";
+import { ArcIdClient } from "@arcevo/facet-sdk";
+import {
+  ConsoleLayout,
+  AuthLayout,
+  LandingLayout,
+  Sidebar,
+  Topbar,
+  LayoutProvider,
+  defaultLayoutPreset,
+  fintechLayoutPreset,
+} from "@arcevo/facet-layout";
+
+/** No network: bootstrap stays signed out because no token is stored. */
+const DEMO_CLIENT = new ArcIdClient({ baseUrl: "https://demo.invalid" });
 
 /** One cell in the variant gallery: a label plus the rendered example. */
 export interface VariantCell {
@@ -1691,6 +1706,287 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           node: (
             <div className="max-w-sm">
               <LocationPicker />
+            </div>
+          ),
+        },
+      ];
+
+    /* ── Auth (@arcevo/facet-auth) ───────────────────────────── */
+    case "sign-in":
+      return [
+        {
+          label: "Email + password",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <SignIn config={{}} step="login_form" />
+              </ArcProvider>
+            </div>
+          ),
+        },
+        {
+          label: "Magic link",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <SignIn config={{ allowMagicLink: true }} step="magic_link_form" />
+              </ArcProvider>
+            </div>
+          ),
+        },
+        {
+          label: "Passkey",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <SignIn config={{ allowPasskey: true }} step="passkey_auth" />
+              </ArcProvider>
+            </div>
+          ),
+        },
+        {
+          label: "OAuth",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <SignIn config={{ oauthProviders: ["google", "github"] }} step="login_form" />
+              </ArcProvider>
+            </div>
+          ),
+        },
+        {
+          label: "Forgot password",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <SignIn config={{}} step="forgot_password" />
+              </ArcProvider>
+            </div>
+          ),
+        },
+      ];
+    case "sign-up":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <SignUp config={{}} />
+              </ArcProvider>
+            </div>
+          ),
+        },
+        {
+          label: "Passkey + magic link",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <SignUp config={{ allowPasskey: true, allowMagicLink: true }} />
+              </ArcProvider>
+            </div>
+          ),
+        },
+      ];
+    case "mfa-dialog":
+      return [
+        {
+          label: "Verify",
+          node: (
+            <ArcProvider client={DEMO_CLIENT}>
+              <MfaVerifyForm onVerify={async () => {}} onRecovery={() => {}} onCancel={() => {}} />
+            </ArcProvider>
+          ),
+        },
+        {
+          label: "Setup",
+          node: (
+            <ArcProvider client={DEMO_CLIENT}>
+              <MfaVerifyForm onVerify={async () => {}} onRecovery={() => {}} onCancel={() => {}} />
+            </ArcProvider>
+          ),
+        },
+      ];
+    case "guard":
+      return [
+        {
+          label: "Unauthenticated",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <Guard fallback={<SignIn />}>
+                  <div className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
+                    Signed in content would render here.
+                  </div>
+                </Guard>
+              </ArcProvider>
+            </div>
+          ),
+        },
+        {
+          label: "Authenticated",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <Guard fallback={<SignIn />}>
+                  <div className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
+                    Signed in content would render here.
+                  </div>
+                </Guard>
+              </ArcProvider>
+            </div>
+          ),
+        },
+      ];
+    case "login-form":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <LoginForm onSubmit={async () => null} />
+              </ArcProvider>
+            </div>
+          ),
+        },
+        {
+          label: "With validation",
+          node: (
+            <div className="w-full max-w-md">
+              <ArcProvider client={DEMO_CLIENT}>
+                <LoginForm onSubmit={async () => null} validate />
+              </ArcProvider>
+            </div>
+          ),
+        },
+      ];
+
+    /* ── Layout (@arcevo/facet-layout) ───────────────────────── */
+    case "console-layout":
+      return [
+        {
+          label: "Full",
+          node: (
+            <div className="h-96 w-full">
+              <ConsoleLayout config={defaultLayoutPreset} mode="full">
+                <div className="p-6 text-sm text-muted-foreground">Content area</div>
+              </ConsoleLayout>
+            </div>
+          ),
+        },
+        {
+          label: "Rail",
+          node: (
+            <div className="h-96 w-full">
+              <ConsoleLayout config={defaultLayoutPreset} mode="rail">
+                <div className="p-6 text-sm text-muted-foreground">Content area</div>
+              </ConsoleLayout>
+            </div>
+          ),
+        },
+      ];
+    case "auth-layout":
+      return [
+        {
+          label: "Fintech",
+          node: (
+            <div className="h-96 w-full overflow-hidden rounded-md border border-border">
+              <AuthLayout config={fintechLayoutPreset}>
+                <div className="space-y-2 text-sm">
+                  <p className="font-medium">Sign in</p>
+                  <div className="space-y-2">
+                    <input
+                      className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                      placeholder="you@company.com"
+                    />
+                    <input
+                      className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                      placeholder="Password"
+                      type="password"
+                    />
+                  </div>
+                  <Button className="w-full">Sign in</Button>
+                </div>
+              </AuthLayout>
+            </div>
+          ),
+        },
+        {
+          label: "Default",
+          node: (
+            <div className="h-96 w-full overflow-hidden rounded-md border border-border">
+              <AuthLayout config={defaultLayoutPreset}>
+                <div className="space-y-2 text-sm">
+                  <p className="font-medium">Sign in</p>
+                  <div className="space-y-2">
+                    <input
+                      className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                      placeholder="you@company.com"
+                    />
+                    <input
+                      className="h-9 w-full rounded-md border border-input bg-transparent px-3 text-sm"
+                      placeholder="Password"
+                      type="password"
+                    />
+                  </div>
+                  <Button className="w-full">Sign in</Button>
+                </div>
+              </AuthLayout>
+            </div>
+          ),
+        },
+      ];
+    case "landing-layout":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="h-96 w-full overflow-hidden rounded-md border border-border">
+              <LandingLayout
+                nav={
+                  <Navbar
+                    variant="pill"
+                    brand={<span className="font-semibold">facet</span>}
+                    links={[{ href: "#", label: "Features" }]}
+                  />
+                }
+                hero={
+                  <div className="flex flex-col items-center gap-4 text-center">
+                    <h1 className="font-heading text-4xl font-bold text-foreground">Build faster</h1>
+                    <p className="max-w-md text-muted-foreground">A glassmorphic hero.</p>
+                    <Button className="glow-indigo">Get started</Button>
+                  </div>
+                }
+              >
+                <div className="px-8 py-12">Marketing content</div>
+              </LandingLayout>
+            </div>
+          ),
+        },
+      ];
+    case "sidebar":
+      return [
+        {
+          label: "Expanded",
+          node: (
+            <div className="h-96 w-full overflow-hidden rounded-md border border-border">
+              <LayoutProvider>
+                <Sidebar config={fintechLayoutPreset} />
+              </LayoutProvider>
+            </div>
+          ),
+        },
+      ];
+    case "topbar":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="w-full overflow-hidden rounded-md border border-border">
+              <LayoutProvider>
+                <Topbar />
+              </LayoutProvider>
             </div>
           ),
         },

@@ -18,7 +18,7 @@ import {
   SelectValue,
   Icon,
 } from "@arcevo/facet-components";
-import { docsManifest } from "../manifest.js";
+import { extendedManifest } from "../lib/manifest.js";
 import { ComponentPreview } from "../components/previews.js";
 import { ThemePreviewFrame } from "../components/ThemePreviewFrame.js";
 
@@ -58,7 +58,7 @@ function useIsDesktop() {
 }
 
 export function ComponentsPage() {
-  const allComponents = docsManifest.filter((entry) => entry.category !== "foundations");
+  const allComponents = extendedManifest.filter((entry) => entry.category !== "foundations");
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState<number>(DEFAULT_PAGE_SIZE);
   const [view, setView] = React.useState<ViewMode>("grid");

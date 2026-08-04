@@ -144,9 +144,10 @@ export function AuthDemo({ initialConfig }: AuthDemoProps) {
         onSetConfig={setConfig}
       />
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Method switcher */}
-        <Card>
+      {/* Single flex: method switcher + live preview side-by-side,
+          stacked vertically on small screens. */}
+      <div className="flex flex-col gap-6 lg:flex-row">
+        <Card className="w-full lg:w-72 lg:shrink-0">
           <CardHeader>
             <CardTitle>Sign-in methods</CardTitle>
             <CardDescription>
@@ -180,7 +181,7 @@ export function AuthDemo({ initialConfig }: AuthDemoProps) {
         </Card>
 
         {/* Live preview */}
-        <Card>
+        <Card className="min-w-0 flex-1">
           <CardHeader>
             <CardTitle>Live preview</CardTitle>
             <CardDescription>

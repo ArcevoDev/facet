@@ -15,6 +15,12 @@ Deployed to https://docs.facet.arcevocirqle.com.ng.
   package).
 - **`src/app.tsx`**: mounts `<DocsApp config={demoConfig} pages={demoPages} />`.
 
+The `/components` gallery renders the extended manifest, so the auth and
+layout surfaces (SignIn, SignUp, MfaDialog, Guard, ConsoleLayout,
+AuthLayout, LandingLayout, Sidebar, Topbar) are previewable alongside the
+UI components — each with live previews, variant galleries, and per-variant
+usage tabs.
+
 ## Consume it like an external consumer
 
 ```tsx

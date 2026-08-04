@@ -737,6 +737,74 @@ function Example() {
     />
   );
 }`,
+  "sign-in": `import { SignIn } from "@arcevo/facet-auth";
+import { ArcProvider } from "@arcevo/facet-auth";
+
+<ArcProvider client={client}>
+  <SignIn config={fintechPreset} />
+</ArcProvider>`,
+  "sign-up": `import { SignUp } from "@arcevo/facet-auth";
+
+<SignUp
+  config={eduPreset}
+  onSuccess={(result) => router.push("/dashboard")}
+/>`,
+  "mfa-dialog": `import { MfaDialog } from "@arcevo/facet-auth";
+
+<MfaDialog
+  open={open}
+  onOpenChange={setOpen}
+  client={client}
+  sessionId={sessionId}
+  onComplete={(result) => console.log(result)}
+/>`,
+  guard: `import { Guard, SignIn } from "@arcevo/facet-auth";
+
+<Guard fallback={<SignIn />}>
+  <ProtectedPage />
+</Guard>`,
+  "login-form": `import { LoginForm } from "@arcevo/facet-auth";
+
+<LoginForm
+  onSubmit={async (email, password) => {
+    const res = await login({ email, password });
+    return res.error?.message ?? null;
+  }}
+/>`,
+  "console-layout": `import { ConsoleLayout, defaultLayoutPreset } from "@arcevo/facet-layout";
+
+<ConsoleLayout config={defaultLayoutPreset} mode="full">
+  <YourContent />
+</ConsoleLayout>`,
+  "auth-layout": `import { AuthLayout, fintechLayoutPreset } from "@arcevo/facet-layout";
+import { SignIn, fintechPreset } from "@arcevo/facet-auth";
+
+<AuthLayout config={fintechLayoutPreset}>
+  <SignIn config={fintechPreset} />
+</AuthLayout>`,
+  "landing-layout": `import { LandingLayout } from "@arcevo/facet-layout";
+import { Navbar } from "@arcevo/facet-components";
+
+<LandingLayout
+  nav={<Navbar variant="pill" brand={brand} links={links} />}
+  hero={<h1 className="text-5xl font-bold">Build faster</h1>}
+  footer={<footer>© 2026</footer>}
+>
+  <section>Feature grid</section>
+</LandingLayout>`,
+  sidebar: `import { Sidebar, LayoutProvider, fintechLayoutPreset } from "@arcevo/facet-layout";
+
+<LayoutProvider>
+  <div className="flex">
+    <Sidebar config={fintechLayoutPreset} />
+    <main className="flex-1">Content</main>
+  </div>
+</LayoutProvider>`,
+  topbar: `import { Topbar, LayoutProvider } from "@arcevo/facet-layout";
+
+<LayoutProvider>
+  <Topbar />
+</LayoutProvider>`,
 };
 
 /** Minimal import + usage snippet for a component slug. */
@@ -1727,6 +1795,110 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     Default: `<LocationPicker showLocality />`,
     "Without locality": `<LocationPicker />`,
   },
+  "sign-in": {
+    "Email + password": `<SignIn config={config} initialStep="login_form" />`,
+    "Magic link": `<SignIn config={{ ...config, allowMagicLink: true }} initialStep="magic_link_form" />`,
+    Passkey: `<SignIn config={{ ...config, allowPasskey: true }} initialStep="passkey_auth" />`,
+    OAuth: `<SignIn config={{ ...config, oauthProviders: ["google", "github"] }} />`,
+    "Forgot password": `<SignIn config={config} step="forgot_password" onStepChange={setStep} />`,
+  },
+  "sign-up": {
+    Default: `<SignUp config={config} />`,
+    "Passkey + magic link": `<SignUp config={{ allowPasskey: true, allowMagicLink: true }} />`,
+  },
+  "mfa-dialog": {
+    Verify: `<MfaVerifyForm
+  onVerify={async (code) => verifyMfa(code, sessionId)}
+  onRecovery={() => {}}
+  onCancel={() => {}}
+/>`,
+    Setup: `<MfaSetupForm
+  onComplete={(result) => console.log(result)}
+  onCancel={() => {}}
+/>`,
+  },
+  guard: {
+    Unauthenticated: `<Guard fallback={<SignIn />}>
+  <ProtectedPage />
+</Guard>`,
+    Authenticated: `<Guard fallback={<SignIn />}>
+  <ProtectedPage />
+</Guard>`,
+  },
+  "login-form": {
+    Default: `<LoginForm
+  onSubmit={async (email, password) => login({ email, password })}
+/>`,
+    "With validation": `<LoginForm
+  onSubmit={async (email, password) => login({ email, password })}
+  validate
+/>`,
+  },
+  "console-layout": {
+    Full: `<ConsoleLayout config={defaultLayoutPreset} mode="full">
+  <YourContent />
+</ConsoleLayout>`,
+    Rail: `<ConsoleLayout config={defaultLayoutPreset} mode="rail">
+  <YourContent />
+</ConsoleLayout>`,
+  },
+  "auth-layout": {
+    Fintech: `<AuthLayout config={fintechLayoutPreset}>
+  <SignIn config={fintechPreset} />
+</AuthLayout>`,
+    Default: `<AuthLayout config={defaultLayoutPreset}>
+  <SignIn config={defaultPreset} />
+</AuthLayout>`,
+  },
+  "landing-layout": {
+    Default: `<LandingLayout
+  nav={<Navbar variant="pill" brand={brand} links={links} />}
+  hero={<h1 className="text-5xl font-bold">Build faster</h1>}
+>
+  <section>Feature grid</section>
+</LandingLayout>`,
+  },
+  sidebar: {
+    Expanded: `<LayoutProvider>
+  <div className="flex">
+    <Sidebar config={fintechLayoutPreset} />
+    <main className="flex-1">Content</main>
+  </div>
+</LayoutProvider>`,
+  },
+  topbar: {
+    Default: `<LayoutProvider>
+  <Topbar />
+</LayoutProvider>`,
+  },
+};
+
+/** The package a slug's components live in (for usage import lines). */
+const PACKAGE_BY_SLUG: Record<string, string> = {
+  "sign-in": "@arcevo/facet-auth",
+  "sign-up": "@arcevo/facet-auth",
+  "mfa-dialog": "@arcevo/facet-auth",
+  guard: "@arcevo/facet-auth",
+  "login-form": "@arcevo/facet-auth",
+  "console-layout": "@arcevo/facet-layout",
+  "auth-layout": "@arcevo/facet-layout",
+  "landing-layout": "@arcevo/facet-layout",
+  sidebar: "@arcevo/facet-layout",
+  topbar: "@arcevo/facet-layout",
+};
+
+/** Components imported from a non-components package, keyed by slug. */
+const PACKAGE_IMPORTS: Record<string, string[]> = {
+  "sign-in": ["SignIn"],
+  "sign-up": ["SignUp"],
+  "mfa-dialog": ["MfaVerifyForm", "MfaSetupForm"],
+  guard: ["Guard", "SignIn"],
+  "login-form": ["LoginForm"],
+  "console-layout": ["ConsoleLayout", "defaultLayoutPreset"],
+  "auth-layout": ["AuthLayout", "fintechLayoutPreset", "defaultLayoutPreset"],
+  "landing-layout": ["LandingLayout"],
+  sidebar: ["Sidebar", "LayoutProvider", "fintechLayoutPreset"],
+  topbar: ["Topbar", "LayoutProvider"],
 };
 
 /** Per-variant usage snippet for a slug. Returns { label, code } entries in
@@ -1735,6 +1907,8 @@ export function variantUsage(slug: string): { label: string; code: string }[] {
   const variants = VARIANT_USAGE[slug];
   if (!variants) return [{ label: "Default", code: usageCode(slug) }];
   const name = importName(slug);
+  const pkg = PACKAGE_BY_SLUG[slug];
+  const packageImports = PACKAGE_IMPORTS[slug];
   const needsMore = (code: string) =>
     code.includes("Button") ||
     code.includes("Label") ||
@@ -1745,7 +1919,13 @@ export function variantUsage(slug: string): { label: string; code: string }[] {
     code.includes("ScrollBar") ||
     code.includes("InputOTPSeparator");
   const extraImports = (code: string) => {
-    const parts = [`import { ${name} } from "@arcevo/facet-components";`];
+    const parts: string[] = [];
+    if (pkg && packageImports) {
+      const used = packageImports.filter((c) => code.includes(c));
+      parts.push(`import { ${used.join(", ")} } from "${pkg}";`);
+    } else {
+      parts.push(`import { ${name} } from "@arcevo/facet-components";`);
+    }
     if (needsMore(code)) {
       const extras = ["Button", "Label", "Separator", "ScrollBar", "InputOTPSeparator", "UserAvatar", "ConfirmAlertDialog"]
         .filter((c) => code.includes(c))
