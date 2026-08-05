@@ -53,7 +53,14 @@ function Block({ block }: { block: DocsBlock }) {
     case "authDemo":
       return <AuthDemo />;
     case "demo":
-      return <InteractiveDemo slug={block.slug} title={block.title} labels={block.labels} />;
+      return (
+        <InteractiveDemo
+          slug={block.slug}
+          title={block.title}
+          description={block.description}
+          labels={block.labels}
+        />
+      );
     case "authPreviews":
       return <AuthPreviews />;
     case "layoutPreviews":

@@ -7,6 +7,7 @@ import { DocsLayout } from "./components/DocsLayout.js";
 import { DocsContentPage } from "./pages/DocsContentPage.js";
 import { ComponentsPage } from "./pages/ComponentsPage.js";
 import { ComponentPage } from "./pages/ComponentPage.js";
+import { ReadyToUsePage } from "./pages/ReadyToUsePage.js";
 import type { DocsSiteConfig } from "./lib/nav.js";
 import type { DocsPage } from "./lib/pages.js";
 
@@ -56,6 +57,7 @@ export function DocsApp({
                 <>
                   <Route path="/components" element={<ComponentsPage />} />
                   <Route path="/components/:slug" element={<ComponentPage />} />
+                  <Route path="/ready-to-use" element={<ReadyToUsePage />} />
                 </>
               )}
               <Route path="*" element={<DocsContentPage />} />

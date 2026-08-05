@@ -55,10 +55,10 @@ export function buildDocsLayoutConfig(
   const bySection = (section: DocsPage["section"]) =>
     pages.filter((page) => page.section === section);
 
-  // The Components section is inserted after the Auth section so the
-  // component gallery follows auth in the sidebar. It renders before
+  // The Components and Ready-to-Use sections are inserted after the Auth
+  // section so the gallery follows auth in the sidebar. They render before
   // the remaining page-driven sections (foundations, ecosystem).
-  const ORDER = ["guides", "auth", "components", "foundations", "ecosystem"];
+  const ORDER = ["guides", "auth", "components", "ready-to-use", "foundations", "ecosystem"];
   const seen = new Set(ORDER);
   const ordered = [...ORDER];
   for (const page of pages) {
@@ -68,14 +68,20 @@ export function buildDocsLayoutConfig(
     }
   }
 
-  // Build the components section first so we can insert it at the right
-  // position in the ordered sections below.
+  // Build the components + ready-to-use sections first so we can insert
+  // them at the right positions in the ordered sections below.
   const componentsSection = showComponents ? buildComponentsSection() : undefined;
+  const readyToUseSection = showComponents ? buildReadyToUseSection() : undefined;
 
   for (const section of ordered) {
-    // The components section is assembled from the manifest, not pages.
+    // The components / ready-to-use sections are assembled from the
+    // manifest, not pages.
     if (section === "components") {
       if (componentsSection) navigation.push(componentsSection);
+      continue;
+    }
+    if (section === "ready-to-use") {
+      if (readyToUseSection) navigation.push(readyToUseSection);
       continue;
     }
     const sectionPages = bySection(section);
@@ -130,15 +136,25 @@ export function buildDocsLayoutConfig(
 
 /**
  * Build the sidebar Components section from the manifest: "All components"
- * then one collapsible sub-group per manifest category. Ready-to-use
- * components are grouped under this section (no separate "Ready to Use"
- * sidebar section). Foundations (Icon, Theme) are excluded — they have
- * their own docs pages under the Foundations section.
+ * then one collapsible sub-group per manifest category. Only base UI
+ * primitives live here — the auth and layout surfaces (SignIn, SignUp,
+ * ConsoleLayout, ...) are excluded because they have their own guide pages
+ * with interactive demos under the Auth and Layout sections. Foundations
+ * (Icon, Theme) also have their own docs pages under Foundations, and the
+ * Ready-to-Use components live in the dedicated "Ready to Use" section
+ * (buildReadyToUseSection).
  */
 function buildComponentsSection(): NavSection {
   const byCategory = new Map<string, typeof extendedManifest>();
   for (const entry of extendedManifest) {
-    if (entry.category === "foundations") continue;
+    if (
+      entry.category === "foundations" ||
+      entry.category === "ready-to-use" ||
+      entry.category === "auth" ||
+      entry.category === "layout"
+    ) {
+      continue;
+    }
     const list = byCategory.get(entry.category) ?? [];
     list.push(entry);
     byCategory.set(entry.category, list);
@@ -158,6 +174,23 @@ function buildComponentsSection(): NavSection {
     });
   }
   return { title: "Components", id: "components", items };
+}
+
+/**
+ * Build the dedicated "Ready to Use" sidebar section from the manifest:
+ * ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap,
+ * Form) rendered as top-level items with their gallery pages.
+ */
+export function buildReadyToUseSection(): NavSection {
+  const readyToUse = extendedManifest.filter((entry) => entry.category === "ready-to-use");
+  return {
+    title: "Ready to Use",
+    id: "ready-to-use",
+    items: readyToUse.map((entry) => ({
+      href: `/components/${entry.slug}`,
+      label: entry.name,
+    })),
+  };
 }
 
 /** Export a nav item type for consumers building their own sections. */

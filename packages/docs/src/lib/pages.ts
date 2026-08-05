@@ -35,6 +35,8 @@ export type DocsBlock =
       slug: string;
       /** Optional heading above the demo; defaults to the manifest entry name. */
       title?: string;
+      /** Optional one-line description under the title. */
+      description?: string;
       /** Optional subset of variant labels to surface as tabs. */
       labels?: string[];
     };
@@ -665,6 +667,12 @@ function MyHeader() {
 <SignIn config={myPreset} />`,
       },
       {
+        type: "demo",
+        slug: "sign-in",
+        title: "SignIn with a preset",
+        description: "Live preview of SignIn driven by a domain preset config.",
+      },
+      {
         type: "p",
         text: "Because `config` is `Partial<AuthConfig>`, any consumer can build their own presets from an existing one.",
       },
@@ -685,6 +693,12 @@ function MyHeader() {
         text: `<AuthLayout config={enterpriseLayoutPreset}>
   <SignIn config={enterprisePreset} />
 </AuthLayout>`,
+      },
+      {
+        type: "demo",
+        slug: "auth-layout",
+        title: "AuthLayout",
+        description: "Branded split-panel auth page frame with a live SignIn.",
       },
       { type: "h2", text: "Router adapter" },
       {
@@ -761,6 +775,7 @@ export function App() {
           ["`ul`", "`{ items }`", "Bullet list"],
           ["`table`", "`{ headers, rows }`", "Responsive table"],
           ["`link`", "`{ label, href }`", "Internal link"],
+          ["`demo`", "`{ slug, title?, labels? }`", "Reusable interactive demo: variant switcher + live preview + copyable code for any manifest slug"],
           ["`authDemo`", "`{}`", "Live SignIn demo with a method switcher and copyable config code"],
           ["`authPreviews`", "`{}`", "Live auth previews (SignUp, MfaDialog, Guard, forms) with copyable code"],
           ["`layoutPreviews`", "`{}`", "Live layout previews (ConsoleLayout, AuthLayout, Sidebar/Topbar, LandingLayout) with copyable code"],

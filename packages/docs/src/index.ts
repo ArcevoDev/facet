@@ -40,7 +40,6 @@ export { CodeBlock } from "./components/CodeBlock.js";
 export type { CodeBlockProps } from "./components/CodeBlock.js";
 export { InstallTabs } from "./components/InstallTabs.js";
 export type { InstallCommand } from "./components/InstallTabs.js";
-export { VariantUsageTabs } from "./components/VariantUsageTabs.js";
 export { InteractiveDemo } from "./components/InteractiveDemo.js";
 export type { InteractiveDemoProps } from "./components/InteractiveDemo.js";
 export { AuthDemo } from "./components/AuthDemo.js";
@@ -61,4 +60,3 @@ export { ComponentPage } from "./pages/ComponentPage.js";
 
 // Component manifest (auto-generated)
 export { docsManifest } from "./manifest.js";
-export type { DocsManifestEntry } from "./manifest.js";

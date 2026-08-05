@@ -818,13 +818,103 @@ function Example() {
 }`;
 }
 
-/** lucide icons a snippet's code needs, detected by name. */
-function lucideIcons(code: string): string {
-  const icons = new Set<string>();
-  for (const icon of ["Sparkles", "Check", "Sun", "Moon", "ArrowRight"]) {
-    if (code.includes(icon)) icons.add(icon);
+/** lucide icon components that can appear inside facet usage snippets. */
+const LUCIDE_ICONS = new Set([
+  "Sparkles",
+  "Check",
+  "Sun",
+  "Moon",
+  "ArrowRight",
+  "Copy",
+  "Paste",
+  "Users",
+  "Settings",
+  "Search",
+  "ShieldAlert",
+  "ChevronDown",
+  "ChevronLeft",
+  "ChevronRight",
+  "Bell",
+  "Menu",
+  "Grid",
+  "List",
+  "Plus",
+  "Trash",
+  "Edit",
+  "X",
+]);
+
+/** Placeholder JSX names in snippets that are NOT real imports (e.g.
+ *  `<YourContent />`, `<ProtectedPage />`) — the reader replaces these
+ *  with their own components. */
+const PLACEHOLDER_COMPONENTS = new Set([
+  "YourContent",
+  "ProtectedPage",
+  "YourApp",
+  "YourRoutes",
+]);
+
+/** Capitalized JSX element names used in a snippet (component names / icons).
+ *  Only captures identifiers that appear as `<Name`, `</Name` — text content
+ *  like "Glass" is ignored. */
+function identifiersIn(code: string): string[] {
+  const found = new Set<string>();
+  for (const m of code.matchAll(/<\/?([A-Z][A-Za-z0-9]*)\b/g)) {
+    const name = m[1];
+    if (name) found.add(name);
   }
-  return icons.size ? `\nimport { ${[...icons].join(", ")} } from "lucide-react";` : "";
+  return [...found];
+}
+
+/** Whether a name appears as a JSX tag OR a bare identifier in the snippet
+ *  (catches lowercase preset values like `fintechPreset` too). */
+function usesName(code: string, name: string): boolean {
+  if (identifiersIn(code).includes(name)) return true;
+  return new RegExp(`\\b${name}\\b`).test(code);
+}
+
+/** Per-variant usage snippet for a slug. Returns { label, code } entries in
+ *  gallery order, falling back to a single "Default" tab. */
+export function variantUsage(slug: string): { label: string; code: string }[] {
+  const variants = VARIANT_USAGE[slug];
+  if (!variants) return [{ label: "Default", code: usageCode(slug) }];
+  const pkg = PACKAGE_BY_SLUG[slug];
+  const packageImports = PACKAGE_IMPORTS[slug];
+  const extraPackages = EXTRA_PACKAGE_IMPORTS[slug];
+  const extraImports = (code: string) => {
+    const ids = identifiersIn(code);
+    const parts: string[] = [];
+    // Components that belong to a non-components package (auth/layout).
+    const knownPkgIds = new Set<string>(packageImports ?? []);
+    for (const names of Object.values(extraPackages ?? {})) names.forEach((n) => knownPkgIds.add(n));
+    if (pkg && packageImports) {
+      const used = packageImports.filter((c) => usesName(code, c));
+      if (used.length > 0) parts.push(`import { ${used.join(", ")} } from "${pkg}";`);
+    }
+    // Extra cross-package imports (e.g. SignIn from facet-auth).
+    if (extraPackages) {
+      for (const [extraPkg, names] of Object.entries(extraPackages)) {
+        const used = names.filter((c) => usesName(code, c));
+        if (used.length > 0) parts.push(`import { ${used.join(", ")} } from "${extraPkg}";`);
+      }
+    }
+    // Anything else capitalized is a facet component (Button, Label, ...)
+    // or a lucide icon (Copy, Settings, ...).
+    const facet = ids.filter(
+      (id) => !knownPkgIds.has(id) && !LUCIDE_ICONS.has(id) && !PLACEHOLDER_COMPONENTS.has(id),
+    );
+    if (facet.length > 0) parts.push(`import { ${facet.join(", ")} } from "@arcevo/facet-components";`);
+    const icons = ids.filter((id) => LUCIDE_ICONS.has(id));
+    if (icons.length > 0) parts.push(`import { ${icons.join(", ")} } from "lucide-react";`);
+    return parts.join("\n");
+  };
+  return Object.entries(variants).map(([label, code]) => ({
+    label,
+    code: `${extraImports(code)}
+function Example() {
+  return ${code};
+}`,
+  }));
 }
 
 /**
@@ -1901,46 +1991,13 @@ const PACKAGE_IMPORTS: Record<string, string[]> = {
   topbar: ["Topbar", "LayoutProvider"],
 };
 
-/** Per-variant usage snippet for a slug. Returns { label, code } entries in
- *  gallery order, falling back to a single "Default" tab. */
-export function variantUsage(slug: string): { label: string; code: string }[] {
-  const variants = VARIANT_USAGE[slug];
-  if (!variants) return [{ label: "Default", code: usageCode(slug) }];
-  const name = importName(slug);
-  const pkg = PACKAGE_BY_SLUG[slug];
-  const packageImports = PACKAGE_IMPORTS[slug];
-  const needsMore = (code: string) =>
-    code.includes("Button") ||
-    code.includes("Label") ||
-    code.includes("Separator") ||
-    code.includes("Input") ||
-    code.includes("UserAvatar") ||
-    code.includes("ConfirmAlertDialog") ||
-    code.includes("ScrollBar") ||
-    code.includes("InputOTPSeparator");
-  const extraImports = (code: string) => {
-    const parts: string[] = [];
-    if (pkg && packageImports) {
-      const used = packageImports.filter((c) => code.includes(c));
-      parts.push(`import { ${used.join(", ")} } from "${pkg}";`);
-    } else {
-      parts.push(`import { ${name} } from "@arcevo/facet-components";`);
-    }
-    if (needsMore(code)) {
-      const extras = ["Button", "Label", "Separator", "ScrollBar", "InputOTPSeparator", "UserAvatar", "ConfirmAlertDialog"]
-        .filter((c) => code.includes(c))
-        .join(", ");
-      if (extras) parts.push(`import { ${extras} } from "@arcevo/facet-components";`);
-    }
-    const icons = lucideIcons(code);
-    if (icons) parts.push(icons.replace(/^\n/, ""));
-    return parts.join("\n");
-  };
-  return Object.entries(variants).map(([label, code]) => ({
-    label,
-    code: `${extraImports(code)}
-function Example() {
-  return ${code};
-}`,
-  }));
-}
+/**
+ * Additional cross-package imports for a slug's snippets, keyed by the
+ * target package. E.g. auth-layout snippets compose SignIn from facet-auth
+ * inside AuthLayout from facet-layout.
+ */
+const EXTRA_PACKAGE_IMPORTS: Record<string, Record<string, string[]>> = {
+  "auth-layout": {
+    "@arcevo/facet-auth": ["SignIn", "fintechPreset", "defaultPreset"],
+  },
+};

@@ -3,8 +3,7 @@ import { Link, useParams, Navigate } from "react-router-dom";
 import { extendedManifest } from "../lib/manifest.js";
 import { ComponentDemoCard } from "../components/ComponentDemoCard.js";
 import { ComponentPreview } from "../components/previews.js";
-import { VariantUsageTabs } from "../components/VariantUsageTabs.js";
-import { variantCells } from "../lib/variants.js";
+import { InteractiveDemo } from "../components/InteractiveDemo.js";
 import { PageNav } from "../components/Guide.js";
 import { useDocsKeyboardNav, useDocsNavigation } from "../lib/keyboard-nav.js";
 import type { Control } from "../components/Playground.js";
@@ -16,7 +15,7 @@ export function demoControls(slug: string): Control[] | undefined {
       return [
         {
           label: "Variant",
-          options: ["default", "secondary", "outline", "ghost", "destructive", "link"],
+          options: ["default", "secondary", "outline", "ghost", "destructive", "link", "glass", "glow"],
           value: "default",
           onChange: () => {},
         },
@@ -56,8 +55,6 @@ export function ComponentPage() {
       ? { ...c, value: variant, onChange: setVariant }
       : { ...c, value: size, onChange: setSize },
   );
-
-  const cells = variantCells(slug);
 
   // Unified prev/next across the whole docs site (content pages +
   // components), so Alt+Up/Down works regardless of sidebar state.
@@ -101,26 +98,9 @@ export function ComponentPage() {
         expanded={<ComponentPreview slug={slug} variant={variant} size={size} />}
       />
 
-      {cells && cells.length > 0 && (
-        <section className="mt-8">
-          <h2 className="font-heading text-xl font-semibold text-foreground">Variants</h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {cells.map((cell) => (
-              <div
-                key={cell.label}
-                className="overflow-hidden rounded-lg border border-border"
-              >
-                <div className="flex min-h-28 items-center justify-center p-4">{cell.node}</div>
-                <p className="border-t border-border bg-muted/30 px-3 py-1.5 text-center text-xs font-medium text-muted-foreground">
-                  {cell.label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <VariantUsageTabs slug={slug} />
+      {/* Variant tabs: each tab shows the live preview AND its matching
+          copyable code side-by-side on desktop (stacked on mobile). */}
+      <InteractiveDemo slug={slug} title={null} />
 
       <PageNav
         prev={prev ? { label: prev.label, to: prev.path } : undefined}

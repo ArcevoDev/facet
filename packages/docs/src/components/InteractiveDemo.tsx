@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@arcevo/facet-components";
+import { Tabs, TabsList, TabsTrigger } from "@arcevo/facet-components";
 import { CodeBlock } from "./CodeBlock.js";
 import { ThemePreviewFrame } from "./ThemePreviewFrame.js";
 import { variantCells } from "../lib/variants.js";
@@ -9,8 +9,10 @@ import { extendedManifest } from "../lib/manifest.js";
 export interface InteractiveDemoProps {
   /** Manifest slug, e.g. "console-layout", "form", "sign-in". */
   slug: string;
-  /** Optional heading above the demo; defaults to the manifest entry name. */
-  title?: string;
+  /** Optional heading above the demo; defaults to the manifest entry name.
+   *  Pass `null` to hide the header entirely (e.g. on a component page
+   *  that already renders the name as its h1). */
+  title?: string | null;
   /** Optional one-line description under the title. */
   description?: string;
   /** Optional subset of variant labels to surface as tabs. */
@@ -56,8 +58,8 @@ export function InteractiveDemo({
   const activeTab = visibleTabs.find((tab) => tab.label === active) ?? visibleTabs[0];
   const activeCell = cells?.find((cell) => cell.label === activeTab?.label);
 
-  const heading = title ?? entry?.name ?? slug;
-  const sub = description ?? entry?.description;
+  const heading = title === undefined ? (entry?.name ?? slug) : title;
+  const sub = title === null ? undefined : (description ?? entry?.description);
 
   return (
     <section className="not-prose mt-8">

@@ -8,7 +8,10 @@ source.
 Ships: a searchable sidebar shell (VS Code-style collapsible rail), a
 paginated component gallery with per-component variant pages, per-variant
 usage tabs, install tabs for every package manager, and an optional
-ecosystem links section.
+ecosystem links section. The gallery separates the base UI components from
+the "Ready to Use" extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap,
+Form), which get their own sidebar section with live previews and copyable
+usage snippets.
 
 ## Install
 
@@ -62,6 +65,7 @@ export function App() {
 | `authDemo` | `{}` | live `<SignIn>` with method switcher + preview + synced code |
 | `authPreviews` | `{}` | live previews of SignUp, MfaDialog, Guard, and forms |
 | `layoutPreviews` | `{}` | live previews of ConsoleLayout, AuthLayout, Sidebar/Topbar, LandingLayout |
+| `demo` | `{ slug, title?, description?, labels? }` | reusable interactive demo for any manifest slug: variant switcher + live preview + copyable code |
 | `keyboardShortcuts` | `{}` | Kbd-chip keyboard shortcuts table |
 
 ## Sidebar
@@ -76,13 +80,18 @@ the search palette automatically.
 Pass `showComponents` (default `true`) to mount the `/components` gallery.
 It renders from the extended manifest, which covers the UI components in
 `@arcevo/facet-components` plus the auth (`@arcevo/facet-auth`) and layout
-(`@arcevo/facet-layout`) surfaces — so SignIn, SignUp, MfaDialog, Guard,
+(`@arcevo/facet-layout`) surfaces, so SignIn, SignUp, MfaDialog, Guard,
 ConsoleLayout, AuthLayout, LandingLayout, Sidebar, and Topbar all get a
 gallery page with a live preview, a full variant gallery, and per-variant
-usage tabs with copy buttons.
+usage tabs with copy buttons. Each variant tab shows the live preview and
+its matching code side-by-side on desktop.
+
+The "Ready to Use" extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap,
+Form) live in a dedicated `/ready-to-use` sidebar section with live
+previews and copyable usage snippets, separate from the base gallery.
 
 Foundational entries (Icon, Theme) are excluded from the Components
-sidebar — they have their own guide pages under the Foundations section.
+sidebar; they have their own guide pages under the Foundations section.
 
 ## Icons
 

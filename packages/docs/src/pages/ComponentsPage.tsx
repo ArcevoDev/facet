@@ -58,7 +58,16 @@ function useIsDesktop() {
 }
 
 export function ComponentsPage() {
-  const allComponents = extendedManifest.filter((entry) => entry.category !== "foundations");
+  // Only base UI primitives in the gallery. Auth/layout surfaces have
+  // their own guide pages with interactive demos, foundations have their
+  // own docs pages, and ready-to-use extras have the /ready-to-use page.
+  const allComponents = extendedManifest.filter(
+    (entry) =>
+      entry.category !== "foundations" &&
+      entry.category !== "ready-to-use" &&
+      entry.category !== "auth" &&
+      entry.category !== "layout",
+  );
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState<number>(DEFAULT_PAGE_SIZE);
   const [view, setView] = React.useState<ViewMode>("grid");
