@@ -16,6 +16,7 @@ export default defineConfig({
       "packages/components/vitest.config.ts",
       "packages/auth/vitest.config.ts",
       "packages/layout/vitest.config.ts",
+      "packages/cli/vitest.config.ts",
     ],
   },
 });

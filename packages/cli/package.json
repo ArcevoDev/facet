@@ -1,0 +1,66 @@
+{
+  "name": "@arcevo/facet-cli",
+  "version": "0.1.0",
+  "description": "Scaffold and generate @arcevo/facet-docs sites. Framework/language-agnostic docs init + component add.",
+  "type": "module",
+  "bin": {
+    "facet": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "build:analyze": "tsup src/index.ts --format esm --dts --metafile",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArcevoDev/facet.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/ArcevoDev/facet/issues"
+  },
+  "homepage": "https://facet.arcevocirqle.com.ng",
+  "license": "MIT",
+  "keywords": [
+    "cli",
+    "docs",
+    "scaffold",
+    "generator",
+    "facet",
+    "arcevocirqle"
+  ],
+  "dependencies": {
+    "commander": "^12.1.0",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/prompts": "^2.4.9"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
