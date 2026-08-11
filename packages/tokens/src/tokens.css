@@ -235,3 +235,31 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* ── Animation keyframes ────────────────────────────────────────
+ * The enter/exit utility classes (animate-in/out, fade-*, zoom-*,
+ * slide-*) are provided to Tailwind consumers via tailwind.css
+ * (tw-animate-css import). These keyframes back the two facet
+ * components that animate directly: Marquee (facet-marquee) and
+ * InputOTP's caret (caret-blink). Non-Tailwind consumers can define
+ * the enter/exit utilities from tw-animate-css themselves. */
+@keyframes facet-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  70%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  50% {
+    opacity: 0;
+  }
+}

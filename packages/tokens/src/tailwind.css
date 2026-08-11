@@ -8,7 +8,16 @@
  *   @import "tailwindcss";
  *   @import "@arcevo/facet-tokens/tokens.css";
  *   @import "@arcevo/facet-tokens/tailwind.css";
+ *
+ * Also pulls in `tw-animate-css` (v4-native replacement for
+ * tailwindcss-animate) so the enter/exit utilities used by the
+ * facet components (animate-in/out, fade-*, zoom-*, slide-*) exist
+ * for Tailwind consumers.
  * ================================================================= */
+
+/* tw-animate-css provides the enter/exit animation utilities
+ * (animate-in/out, fade, zoom, slide) referenced by facet components. */
+@import "tw-animate-css";
 
 @theme {
   /* ── Surface / semantic colours ──────────────────────────── */
@@ -98,6 +107,8 @@
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-pulse-ring: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-facet-marquee: facet-marquee 20s linear infinite;
+  --animate-caret-blink: caret-blink 1s step-end infinite;
 }
 
 @keyframes accordion-down {
@@ -127,6 +138,28 @@
   50% {
     opacity: 0.3;
     transform: scale(1.05);
+  }
+}
+
+/* ── facet-marquee + caret-blink (back the --animate-* vars) ─── */
+@keyframes facet-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes caret-blink {
+  0%,
+  70%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  50% {
+    opacity: 0;
   }
 }
 

@@ -43,6 +43,10 @@ current priority backlog.
 
 ## Publish Status
 
-Packages publish to npm under the `@arcevo/facet-*` scope via Changesets
-(`pnpm changeset publish`). The GitHub Actions workflow publishes on `main`
-using the `NPM_TOKEN` secret. See the README Publishing section.
+Packages publish to npm under the `@arcevo/facet-*` scope via Changesets.
+Publishing is done **locally** by the maintainer (`pnpm changeset publish`,
+authenticated from the terminal). The GitHub Actions workflow
+(`.github/workflows/ci-cd.yml`) is a validation gate only (build, typecheck,
+docs inventory) — it does NOT publish. The previous automated publish job
+was removed after it hit repo-fetch errors in CI; re-enabling it is a
+follow-up. See the README Publishing section.

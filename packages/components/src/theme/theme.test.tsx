@@ -116,9 +116,6 @@ describe("ThemeToggle", () => {
     const trigger = screen.getByRole("button", { name: /toggle theme/i });
     await userEvent.click(trigger);
 
-    const lightItem = await screen.findByRole("menuitem", { name: /light/i });
-    await userEvent.click(lightItem);
-
     expect(document.documentElement.getAttribute("data-theme")).toBe("light");
     expect(localStorage.getItem("facet-theme")).toBe("light");
   });

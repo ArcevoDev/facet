@@ -13,6 +13,8 @@ export interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   max?: number;
   /** Size of each avatar in px (passed to Avatar's className). */
   size?: "sm" | "default" | "lg";
+  /** Disable the hover lift/ring effect. Default: false */
+  disableHover?: boolean;
 }
 
 const sizeClasses: Record<NonNullable<AvatarGroupProps["size"]>, string> = {
@@ -22,9 +24,12 @@ const sizeClasses: Record<NonNullable<AvatarGroupProps["size"]>, string> = {
 };
 
 const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
-  ({ className, avatars, max = 4, size = "default", ...props }, ref) => {
+  ({ className, avatars, max = 4, size = "default", disableHover = false, ...props }, ref) => {
     const shown = avatars.slice(0, max);
     const overflow = avatars.length - shown.length;
+    const hoverClass = disableHover
+      ? ""
+      : "transition-transform duration-200 hover:-translate-y-0.5 hover:ring-2 hover:ring-ring hover:z-10";
 
     return (
       <div ref={ref} className={cn("flex items-center -space-x-2", className)} {...props}>
@@ -34,6 +39,7 @@ const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
             className={cn(
               "ring-2 ring-background",
               sizeClasses[size],
+              hoverClass,
             )}
           >
             {avatar.src ? (
@@ -43,7 +49,7 @@ const AvatarGroup = React.forwardRef<HTMLDivElement, AvatarGroupProps>(
           </Avatar>
         ))}
         {overflow > 0 && (
-          <Avatar className={cn("ring-2 ring-background bg-muted", sizeClasses[size])}>
+          <Avatar className={cn("ring-2 ring-background bg-muted", sizeClasses[size], hoverClass)}>
             <AvatarFallback className="bg-muted text-muted-foreground">
               +{overflow}
             </AvatarFallback>
