@@ -1,5 +1,16 @@
 # @arcevo/facet-auth
 
+## 1.1.0
+
+### Minor Changes
+
+- 568497d: SignIn now supports a controlled `step` + `onStepChange` API: pass `step` to render exactly that step and drive the component from outside (e.g. a live state-machine diagram), and SignIn reports every internal transition via `onStepChange`. Fully backward compatible: when `step` is omitted, SignIn manages its own transitions as before.
+
+### Patch Changes
+
+- Updated dependencies [3de0e04]
+  - @arcevo/facet-components@1.2.0
+
 ## 1.0.3
 
 ### Patch Changes

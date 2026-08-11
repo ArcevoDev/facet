@@ -1,6 +1,6 @@
 {
   "name": "@arcevo/facet-auth",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Domain-customizable auth components for the ArcevoCirqle ecosystem: ArcProvider, SignIn/SignUp, Guard, MfaDialog, and 5 domain presets (fintech, med, edu, enterprise, default). Wired to @arcevo/facet-sdk.",
   "type": "module",
   "exports": {
