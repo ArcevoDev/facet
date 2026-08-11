@@ -17,10 +17,12 @@ interface BrandIconProps {
   className?: string;
   size?: number | string;
   label: string;
+  /** Optional consumer label; defaults to the brand name. */
+  "aria-label"?: string;
   children: React.ReactNode;
 }
 
-function BrandIcon({ className, size, label, children }: BrandIconProps) {
+function BrandIcon({ className, size, label, "aria-label": ariaLabel, children }: BrandIconProps) {
   return (
     <svg
       width={size}
@@ -33,7 +35,7 @@ function BrandIcon({ className, size, label, children }: BrandIconProps) {
       strokeLinejoin="round"
       className={className}
       role="img"
-      aria-label={label}
+      aria-label={ariaLabel ?? label}
     >
       {children}
     </svg>
@@ -41,9 +43,9 @@ function BrandIcon({ className, size, label, children }: BrandIconProps) {
 }
 
 function makeBrand(label: string, paths: React.ReactNode): IconComponent {
-  return function Brand({ className, size }) {
+  return function Brand({ className, size, ...props }) {
     return (
-      <BrandIcon className={className} size={size} label={label}>
+      <BrandIcon className={className} size={size} label={label} {...props}>
         {paths}
       </BrandIcon>
     );

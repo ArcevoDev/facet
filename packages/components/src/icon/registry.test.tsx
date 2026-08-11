@@ -3,14 +3,18 @@
  * dynamic lowercase lucide name resolution / brand icons / kebab aliases.
  */
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Settings, LogOut, Copy, Compass, User, Heart } from "lucide-react";
-import { Icon, IconProvider, getIcon, registerIcon } from "./index.js";
+import { Icon, IconProvider, getIcon, registerIcon, resetIconRegistry } from "./index.js";
 import { lucideIconMap, type LucideIconName } from "./icon-map.js";
 import { brandIcons } from "./brand-icons.js";
 
 describe("icon registry", () => {
+  // registerIcon mutates the module-level globalRegistry; reset between
+  // tests so override cases can't pollute later renders.
+  beforeEach(resetIconRegistry);
+
   it("provides built-in semantic icons", () => {
     expect(getIcon("settings")).toBe(Settings);
     expect(getIcon("logout")).toBe(LogOut);

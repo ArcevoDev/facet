@@ -193,6 +193,12 @@ export function registerIcon(name: IconName, icon: IconComponent): void {
   globalRegistry[name] = icon;
 }
 
+/** Reset the global registry back to the built-in defaults (clears registerIcon overrides). */
+export function resetIconRegistry(): void {
+  for (const key of Object.keys(globalRegistry)) delete globalRegistry[key];
+  Object.assign(globalRegistry, defaultIcons);
+}
+
 /** Get the global icon for a name (semantic, registered, or lucide). */
 export function getIcon(name: IconName): IconComponent | undefined {
   return resolveIcon(name);

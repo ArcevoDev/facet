@@ -1,4 +1,4 @@
-export { IconProvider, Icon, registerIcon, getIcon, toKebab } from "./registry.js";
+export { IconProvider, Icon, registerIcon, resetIconRegistry, getIcon, toKebab } from "./registry.js";
 export type {
   IconComponent,
   IconName,
