@@ -29,7 +29,9 @@ export type DocsLocation = "." | "src/docs" | "docs";
 /**
  * Where `facet add <component>` drops the copied source. A free-form
  * relative dir (default `src/components`), because it targets the
- * consumer's source tree, not the docs site.
+ * consumer's source tree, not the docs site. Components are written flat
+ * into a dedicated subdirectory inside it (`src/components/facet/` by
+ * default) so the consumer's own components root stays untouched.
  */
 export type AddTarget = string;
 
@@ -58,6 +60,10 @@ export interface DocsAnswers {
   useFacetTokens: boolean;
   /** Docs template kind. */
   template: TemplateKind;
+  /** Whether to create a barrel export for the generated site. `"auto"`
+   * (default) creates one when it fits the layout, `true` always creates,
+   * `false` never touches a barrel. */
+  barrel: boolean | "auto";
   /** Resolved current versions of the facet packages (npm registry). */
   facetVersions: Record<string, string>;
 }
@@ -189,6 +195,7 @@ export function devCommand(framework: Framework): string {
     case "next": return "pnpm dev";
     case "remix": return "pnpm dev";
     case "react-vite": return "pnpm dev";
+    case "python": return "python docs_pipeline.py";
     default: return "Run the content pipeline";
   }
 }

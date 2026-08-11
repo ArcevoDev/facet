@@ -37,20 +37,37 @@ The scaffold never pins hardcoded versions. At `docs init` time the CLI:
 
 ### `facet docs init`
 
-Interactive wizard that scaffolds a docs site in the current repo. It asks
-for:
+Interactive wizard that scaffolds a docs site in the current repo. It opens
+with a **"Decide for me"** option — detect my stack and use the best
+defaults (also available non-interactively via `--yes`) — or walks you
+through each choice:
 
-- **Name** (default `docs`)
+- **Name** — leave blank to use the default `docs`
 - **Location** (`.` recommended, or `docs/`, `src/docs/`)
 - **Language** (TypeScript / JavaScript)
 - **Framework** (React+Vite, Next.js, Remix, plain JS, Python)
 - **Styling** (detected from your repo; facet tokens recommended)
 - **Template kind** (component library / API reference / product docs)
+- **Barrel export** — `auto` (recommended): create an `index.ts` when it
+  fits the layout; `always`: force one; `never`: leave your tree untouched
 
-For React+Vite it generates a complete thin-consumer app (like facet's own
-`apps/docs`): `package.json`, Vite config, `src/main`, `src/app`, and a
-`src/pages` registry. For plain JS / Python it generates a framework-agnostic
-`pages` registry + a markdown content pipeline with no React shell.
+Every prompt describes what the choice represents, so you know what each
+step will generate before committing.
+
+For **React+Vite** it generates a complete thin-consumer app (like facet's
+own `apps/docs`): `package.json`, Vite config, `src/main`, `src/app`, and a
+`src/pages` registry. For **Next.js** it scaffolds a real `src/app/docs`
+route (`"use client"` rendering `DocsApp`) plus `src/lib/docs/config` and
+`src/lib/docs/pages`, so the docs mount at `/docs` in your existing Next
+app — with `next`/`react` deps and `docs:dev`/`docs:build` scripts added.
+For **Remix** it scaffolds a real `app/routes/docs` route rendering
+`DocsApp` plus the same `src/lib/docs` config + pages, with
+`@remix-run/react` deps and `docs:dev`/`docs:build` scripts. For **plain
+JS** it generates a framework-agnostic `pages` registry + a markdown
+content pipeline with no React shell. For **Python** it generates a
+`docs_pipeline.py` markdown → `pages.json` compiler plus a starter
+registry, so a Python repo owns its docs in markdown and hands the JSON
+to any React host for rendering.
 
 **The scaffold never copies facet's own docs.** You get the engine
 (`@arcevo/facet-docs`) and an empty `pages` registry to fill with your
@@ -62,6 +79,28 @@ Copy a component into your source (shadcn-style). **Recommended:** import
 from `@arcevo/facet-components` instead — you get updates, tree-shaking,
 and the token system. Copying source means you own every future fix. This
 exists for consumers who prefer a copy-into-source workflow.
+
+Placement is flexible and stays out of your way:
+
+- By default (`decide`), the CLI detects what you already have and wires up
+  the best layout — components go flat into your components root when it
+  already has a barrel (so they're importable immediately), otherwise into
+  a clean `facet/` subdirectory.
+- `--dir <dir>` chooses the components directory (default `src/components`).
+- `--ui-dir <name>` names the subdirectory that holds the copies (default
+  `facet`, shadcn's `ui/` pattern). Ignored with `--flat`.
+- `--flat` places components directly in the root instead of a subdirectory.
+- `--no-barrel` skips creating or updating any barrel export.
+- `--barrel` always creates a barrel (even when none exists yet).
+
+When a barrel already exists, the CLI merges a single re-export into it —
+your own exports are never overwritten. The generated subdirectory barrel
+(`facet/index.ts`) is kept in sync as you add more components, so you can
+import like:
+
+```ts
+import { Button, Badge } from "@/components/facet";
+```
 
 ## Theming
 

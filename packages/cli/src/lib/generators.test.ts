@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { generateReactVite } from "./generators.js";
-import { generateComponentAdd, generatePlainJs } from "./generators-plain.js";
+import { generateComponentAdd, generatePlainJs, generateNext, generatePython, generateRemix } from "./generators-plain.js";
 import { detectFramework, detectPackageManager, installCommand } from "./types.js";
 import { facetInstallCommand } from "./registry.js";
 import { mergePackageJson } from "./writer.js";
@@ -16,6 +16,7 @@ const answers = {
   styling: "none" as const,
   useFacetTokens: true,
   template: "component-library" as const,
+  barrel: "auto" as const,
   facetVersions: {
     "@arcevo/facet-docs": "^1.2.0",
     "@arcevo/facet-tokens": "^1.0.2",
@@ -37,6 +38,7 @@ describe("generateReactVite", () => {
       "config.ts",
       "pages.ts",
       "app.css",
+      "index.ts",
     ]);
   });
 
@@ -66,6 +68,7 @@ describe("generatePlainJs", () => {
       expect(names).toEqual([
         `pages.${language === "typescript" ? "ts" : "js"}`,
         `content-pipeline.${language === "typescript" ? "ts" : "js"}`,
+        `index.${language === "typescript" ? "ts" : "js"}`,
       ]);
     }
   });
@@ -79,17 +82,116 @@ describe("generatePlainJs", () => {
   });
 });
 
+describe("generateNext", () => {
+  it("emits a Next app route + config + pages registry", () => {
+    const files = generateNext(answers, "/repo");
+    const names = files.map((f) => f.path.replace(/\\/g, "/").split("/").pop());
+    expect(names).toEqual([
+      "page.tsx",
+      "config.ts",
+      "pages.ts",
+      "index.ts",
+    ]);
+    const route = files.find((f) => f.path.endsWith("page.tsx"))!.content;
+    expect(route).toContain('"use client"');
+    expect(route).toContain("DocsApp");
+    expect(route).not.toContain("DocsAppProps");
+  });
+
+  it("routes land under src/app/docs/", () => {
+    const files = generateNext(answers, "/repo");
+    expect(files.some((f) => f.path.replace(/\\/g, "/").includes("src/app/docs/page.tsx"))).toBe(true);
+  });
+
+  it("creates the barrel by default (auto)", () => {
+    const files = generateNext({ ...answers, barrel: "auto" }, "/repo");
+    expect(files.some((f) => f.path.replace(/\\/g, "/").endsWith("src/lib/docs/index.ts"))).toBe(true);
+  });
+
+  it("barrel: false suppresses the barrel", () => {
+    const files = generateNext({ ...answers, barrel: false }, "/repo");
+    expect(files.some((f) => f.path.endsWith("index.ts"))).toBe(false);
+  });
+});
+
+describe("generatePython", () => {
+  it("emits a Python pipeline + starter pages.json", () => {
+    const files = generatePython(answers, "/repo");
+    const names = files.map((f) => f.path.replace(/\\/g, "/").split("/").pop());
+    expect(names).toEqual(["docs_pipeline.py", "pages.json"]);
+    const pipeline = files.find((f) => f.path.endsWith("docs_pipeline.py"))!.content;
+    expect(pipeline).toContain("python docs_pipeline.py > pages.json");
+    expect(pipeline).toContain("markdown_to_blocks");
+    expect(pipeline).toContain("parse_front_matter");
+    const pages = files.find((f) => f.path.endsWith("pages.json"))!.content;
+    expect(JSON.parse(pages)[0]).toMatchObject({ path: "/", title: "Overview" });
+  });
+
+  it("emits no TS barrel", () => {
+    const files = generatePython(answers, "/repo");
+    expect(files.some((f) => f.path.endsWith("index.ts"))).toBe(false);
+  });
+});
+
+describe("generateRemix", () => {
+  it("emits a Remix route + config + pages registry", () => {
+    const files = generateRemix(answers, "/repo");
+    const names = files.map((f) => f.path.replace(/\\/g, "/").split("/").pop());
+    expect(names).toEqual(["docs.tsx", "config.ts", "pages.ts", "index.ts"]);
+    const route = files.find((f) => f.path.endsWith("docs.tsx"))!.content;
+    expect(route).toContain('"use client"');
+    expect(route).toContain("DocsApp");
+    expect(route).toContain("../../src/lib/docs/config.ts");
+  });
+
+  it("routes land under app/routes/", () => {
+    const files = generateRemix(answers, "/repo");
+    expect(files.some((f) => f.path.replace(/\\/g, "/").includes("app/routes/docs.tsx"))).toBe(true);
+  });
+
+  it("creates the barrel by default", () => {
+    const files = generateRemix({ ...answers, barrel: "auto" }, "/repo");
+    expect(files.some((f) => f.path.replace(/\\/g, "/").endsWith("src/lib/docs/index.ts"))).toBe(true);
+  });
+});
+
+describe("generateReactVite barrel", () => {
+  it("creates the src/index barrel by default", () => {
+    const files = generateReactVite({ ...answers, barrel: "auto" }, "/repo");
+    expect(files.some((f) => f.path.replace(/\\/g, "/").endsWith("src/index.ts"))).toBe(true);
+  });
+
+  it("barrel: false suppresses the src/index barrel", () => {
+    const files = generateReactVite({ ...answers, barrel: false }, "/repo");
+    expect(files.some((f) => f.path.endsWith("index.ts"))).toBe(false);
+  });
+});
+
 describe("generateComponentAdd", () => {
-  it("writes the component re-export into src/components", () => {
+  it("writes the component into the facet subdir + a barrel", () => {
     const files = generateComponentAdd("Button", "/repo", {
       language: "typescript",
       target: "src/components",
+      placement: "decide",
     });
-    expect(files).toHaveLength(1);
-    const file = files[0]!;
-    expect(file.path.replace(/\\/g, "/")).toContain("src/components/Button.ts");
+    expect(files).toHaveLength(2);
+    const file = files.find((f) => f.path.replace(/\\/g, "/").endsWith("facet/Button.tsx"))!;
+    expect(file.path.replace(/\\/g, "/")).toContain("src/components/facet/Button.tsx");
     expect(file.content).toContain('import { Button } from "@arcevo/facet-components"');
     expect(file.content).toContain("Recommended: import from the package instead of copying source");
+
+    const barrel = files.find((f) => f.path.replace(/\\/g, "/").endsWith("src/components/facet/index.ts"))!;
+    expect(barrel.content).toContain('export { default as Button } from "./Button.tsx"');
+  });
+
+  it("flat placement writes the component to the root", () => {
+    const files = generateComponentAdd("Button", "/repo", {
+      language: "typescript",
+      target: "src/components",
+      placement: "flat",
+    });
+    const file = files.find((f) => f.path.replace(/\\/g, "/").endsWith("src/components/Button.tsx"))!;
+    expect(file.path.replace(/\\/g, "/")).toContain("src/components/Button.tsx");
   });
 });
 
@@ -131,6 +233,40 @@ describe("mergePackageJson", () => {
     // Facet deps added, distinct docs scripts added.
     expect(parsed.dependencies["@arcevo/facet-docs"]).toBe("^1.2.0");
     expect(parsed.scripts["docs:dev"]).toBe("vite");
+  });
+
+  it("creates a Next scaffold with next/react deps and next scripts", () => {
+    const result = mergePackageJson(null, {
+      facetDocs: "^1.2.0",
+      facetTokens: "^1.0.2",
+      facetComponents: "^1.1.1",
+      facetLayout: "^1.0.3",
+      framework: "next",
+      language: "typescript",
+    });
+    expect(result.existed).toBe(false);
+    const parsed = JSON.parse(result.content);
+    expect(parsed.dependencies.next).toBe("^15");
+    expect(parsed.dependencies.react).toBe("^19");
+    expect(parsed.scripts["docs:dev"]).toBe("next dev");
+    expect(parsed.scripts.dev).toBe("next dev");
+  });
+
+  it("creates a Remix scaffold with remix/react deps and remix scripts", () => {
+    const result = mergePackageJson(null, {
+      facetDocs: "^1.2.0",
+      facetTokens: "^1.0.2",
+      facetComponents: "^1.1.1",
+      facetLayout: "^1.0.3",
+      framework: "remix",
+      language: "typescript",
+    });
+    expect(result.existed).toBe(false);
+    const parsed = JSON.parse(result.content);
+    expect(parsed.dependencies["@remix-run/react"]).toBe("^2");
+    expect(parsed.dependencies.react).toBe("^19");
+    expect(parsed.scripts["docs:dev"]).toBe("remix dev");
+    expect(parsed.scripts.dev).toBe("remix dev");
   });
 });
 

@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import type { DocsAnswers, GeneratedFile } from "./types.js";
 import { mergePackageJson, readExistingPackageJson } from "./writer.js";
@@ -137,6 +138,23 @@ export default defineConfig({
       content: answers.useFacetTokens ? tokensCss : plainCss,
     },
   ];
+
+  // Barrel: a single entry that re-exports the docs site pieces so the
+  // consumer can import them as one module. "auto" creates it for a
+  // fresh scaffold; true always; false never.
+  const wantsBarrel =
+    answers.barrel === true ||
+    (answers.barrel !== false && !existsSync(path.join(base, "src", `index.${e}`)));
+  if (wantsBarrel) {
+    files.push({
+      path: path.join(base, "src", `index.${e}`),
+      content: `/** Docs site entry. Import the docs app, config, or pages from here. */
+export { default as App } from "./app.${tsx}";
+export { docsConfig } from "./config.${e}";
+export { docsPages } from "./pages.${e}";
+`,
+    });
+  }
 
   return files;
 }

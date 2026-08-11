@@ -57,7 +57,8 @@ export function mergePackageJson(
   const existed = existing !== null;
 
   // Docs scripts, added under distinct names so they never clobber a
-  // consumer's existing "dev"/"build" scripts.
+  // consumer's existing "dev"/"build" scripts. For Next/Remix the docs
+  // site IS the app route, so scripts drive the framework's dev server.
   const docsScripts: Record<string, string> =
     resolved.framework === "react-vite"
       ? {
@@ -65,7 +66,18 @@ export function mergePackageJson(
           "docs:build": "vite build",
           "docs:preview": "vite preview",
         }
-      : {};
+      : resolved.framework === "next"
+        ? {
+            "docs:dev": "next dev",
+            "docs:build": "next build",
+            "docs:start": "next start",
+          }
+        : resolved.framework === "remix"
+          ? {
+              "docs:dev": "remix dev",
+              "docs:build": "remix build",
+            }
+          : {};
 
   const facetDeps = {
     "@arcevo/facet-docs": resolved.facetDocs,
@@ -74,11 +86,24 @@ export function mergePackageJson(
     "@arcevo/facet-layout": resolved.facetLayout,
   };
 
+  // Fresh Next/Remix scaffolds need the framework + React runtime.
+  const frameworkDeps: Record<string, string> =
+    resolved.framework === "next"
+      ? { next: "^15", react: "^19", "react-dom": "^19" }
+      : resolved.framework === "remix"
+        ? {
+            "@remix-run/react": "^2",
+            "@remix-run/node": "^2",
+            "react": "^19",
+            "react-dom": "^19",
+          }
+        : {};
+
   if (existed) {
     const merged: PackageJsonShape = {
       ...existing,
       scripts: { ...(existing.scripts ?? {}), ...docsScripts },
-      dependencies: { ...(existing.dependencies ?? {}), ...facetDeps },
+      dependencies: { ...(existing.dependencies ?? {}), ...facetDeps, ...frameworkDeps },
     };
     return { content: JSON.stringify(merged, null, 2) + "\n", existed };
   }
@@ -92,11 +117,17 @@ export function mergePackageJson(
     type: "module",
     scripts: {
       ...docsScripts,
-      dev: "vite",
-      build: "vite build",
-      preview: "vite preview",
+      dev: resolved.framework === "next" || resolved.framework === "remix"
+        ? (resolved.framework === "next" ? "next dev" : "remix dev")
+        : "vite",
+      build: resolved.framework === "next" || resolved.framework === "remix"
+        ? (resolved.framework === "next" ? "next build" : "remix build")
+        : "vite build",
+      preview: resolved.framework === "next" || resolved.framework === "remix"
+        ? (resolved.framework === "next" ? "next start" : "remix-serve build")
+        : "vite preview",
     },
-    dependencies: facetDeps,
+    dependencies: { ...facetDeps, ...frameworkDeps },
   };
   return { content: JSON.stringify(fresh, null, 2) + "\n", existed };
 }
