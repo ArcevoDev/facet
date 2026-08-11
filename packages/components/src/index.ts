@@ -12,10 +12,12 @@
 export { cn, isMac, getModSymbol } from "./utils.js";
 
 /* ── Icon registry ──────────────────────────────────────────── */
-export { IconProvider, Icon, registerIcon, getIcon } from "./icon/index.js";
+export { IconProvider, Icon, registerIcon, getIcon, lucideIconMap, lucideIconNames, toKebab } from "./icon/index.js";
 export type {
   IconComponent,
   IconName,
+  SemanticIconName,
+  LucideIconName,
   IconOverrides,
   IconProps,
   IconProviderProps,

@@ -69,7 +69,7 @@ const Combobox = React.forwardRef<HTMLDivElement, ComboboxProps>(
               className="w-full justify-between font-normal"
             >
               {triggerLabel ?? selected?.label ?? placeholder}
-              <Icon name="chevronDown" className="ml-2 size-4 shrink-0 opacity-50" />
+              <Icon name="chevron-down" className="ml-2 size-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">

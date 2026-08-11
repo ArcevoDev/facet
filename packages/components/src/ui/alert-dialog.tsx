@@ -151,7 +151,7 @@ AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName;
 
 /** Renders a warning icon sized for an alert dialog. */
 export function AlertDialogIcon({ className }: { className?: string }) {
-  return <Icon name="triangleAlert" className={cn("size-5 text-destructive", className)} />;
+  return <Icon name="triangle-alert" className={cn("size-5 text-destructive", className)} />;
 }
 
 /**

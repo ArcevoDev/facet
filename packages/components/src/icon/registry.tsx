@@ -1,13 +1,19 @@
 /**
  * @arcevo/facet-components: Icon registry
  *
- * Formalizes lucide-react as a semantic icon registry so consumers and
- * domain presets can override icons without forking components.
+ * Resolves semantic + lowercase kebab lucide icon names to components, so
+ * consumers and domain presets can override icons without forking
+ * components — and never need lucide-react installed themselves.
  *
- * Three layers:
- *   1. Built-in map: semantic names -> lucide components.
- *   2. registerIcon(name, icon): global overrides/additions.
- *   3. IconProvider: per-app / per-domain overrides via context.
+ * Naming is lucide-style kebab-case throughout:
+ *   <Icon name="settings" /> <Icon name="chevron-down" /> <Icon name="heart" />
+ * (camelCase aliases like "chevronDown" still resolve for back-compat.)
+ *
+ * Resolution order:
+ *   1. IconProvider context overrides (per-app / per-domain).
+ *   2. registerIcon global overrides/additions.
+ *   3. Built-in semantic map (settings, logout, github, ...).
+ *   4. Lowercase lucide name map (any of lucide's 1.5k+ icons, e.g. "heart").
  *
  * Usage:
  *   import { Icon, registerIcon, IconProvider } from "@arcevo/facet-components";
@@ -15,86 +21,35 @@
  *   registerIcon("settings", MyCustomSettingsIcon);
  *
  *   <IconProvider overrides={{ logout: Shield }}>   // domain override
- *     <Icon name="logout" className="size-4" />
+ *     <Icon name="logout" size={16} />
  *   </IconProvider>
+ *
+ *   <Icon name="heart" />                          // any lucide icon
  */
 
 import * as React from "react";
-import {
-  Settings,
-  LogOut,
-  ChevronDown,
-  Search,
-  Check,
-  Moon,
-  Sun,
-  Bell,
-  Menu,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  ArrowRight,
-  Sparkles,
-  BookOpen,
-  Building2,
-  Users,
-  Shield,
-  CreditCard,
-  LayoutDashboard,
-  FileText,
-  HelpCircle,
-  LayoutGrid,
-  List,
-  TriangleAlert,
-  Copy,
-  ChevronsUpDown,
-  Compass,
-  Layers,
-  Palette,
-  KeyRound,
-  User,
-  Upload,
-  QrCode,
-  Trash2,
-} from "lucide-react";
+import { X, Building2, Trash2 } from "lucide-react";
+import { lucideIconMap, type LucideIconName } from "./icon-map.js";
+import { brandIcons } from "./brand-icons.js";
 
-/* ── Brand icons (inline SVG) ────────────────────────────── */
-
-/**
- * GitHub mark as an inline SVG. lucide-react deprecated brand icons
- * (Github, Linkedin, Instagram, Facebook, ...), so we keep the semantic
- * "github" icon available without relying on them.
- */
-function GithubIcon({ className, size }: { className?: string; size?: number | string }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      role="img"
-      aria-label="GitHub"
-    >
-      <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-      <path d="M9 18c-4.51 2-5-2-7-2" />
-    </svg>
-  );
-}
+export type { LucideIconName } from "./icon-map.js";
 
 /* ── Types ────────────────────────────────────────────────── */
 
 export type IconComponent = React.ComponentType<{ className?: string; size?: number | string }>;
 
-/** Semantic icon names used across facet components. */
-export type IconName =
+/**
+ * Icon names accepted by the registry: the built-in semantic names (shown
+ * for autocomplete) plus any lowercase lucide icon name. The `string & {}`
+ * keeps the literals autocompleting while allowing any name at compile time.
+ */
+export type IconName = SemanticIconName | (string & {});
+
+/** The built-in semantic names (lucide-style kebab-case). */
+export type SemanticIconName =
   | "settings"
   | "logout"
-  | "chevronDown"
+  | "chevron-down"
   | "search"
   | "check"
   | "moon"
@@ -102,89 +57,145 @@ export type IconName =
   | "bell"
   | "menu"
   | "close"
-  | "chevronLeft"
-  | "chevronRight"
-  | "arrowRight"
+  | "chevron-left"
+  | "chevron-right"
+  | "arrow-right"
   | "sparkles"
   | "github"
-  | "bookOpen"
+  | "book-open"
   | "building"
   | "users"
   | "shield"
-  | "creditCard"
+  | "credit-card"
   | "dashboard"
   | "document"
   | "help"
   | "grid"
   | "list"
-  | "triangleAlert"
+  | "triangle-alert"
   | "copy"
-  | "chevronUpDown"
+  | "chevron-up-down"
   | "compass"
   | "layers"
   | "palette"
-  | "keyRound"
+  | "key-round"
   | "user"
   | "upload"
   | "qrcode"
-  | "trash";
+  | "trash"
+  /* Brand icons (inline SVG, independent of lucide) */
+  | "linkedin"
+  | "instagram"
+  | "facebook"
+  | "tiktok"
+  | "whatsapp"
+  | "x"
+  | "twitter"
+  | "youtube"
+  | "slack"
+  | "discord"
+  | "telegram"
+  | "figma"
+  | "spotify";
 
 /** Partial map used for overrides (IconProvider / registerIcon). */
 export type IconOverrides = Partial<Record<IconName, IconComponent>>;
 
 /* ── Built-in map ─────────────────────────────────────────── */
 
-const defaultIcons: Record<IconName, IconComponent> = {
-  settings: Settings,
-  logout: LogOut,
-  chevronDown: ChevronDown,
-  search: Search,
-  check: Check,
-  moon: Moon,
-  sun: Sun,
-  bell: Bell,
-  menu: Menu,
+/**
+ * Semantic name -> lucide kebab key. Most semantic names match their
+ * kebab form in lucide, but a few use lucide's own key (log-out, qr-code,
+ * layout-dashboard, ...). `close` and `x` are the same glyph (X), and
+ * building/trash use the -2 variants for the person/side variants. The
+ * map is resolved through lucideIconMap (single import surface), so the
+ * three exceptions above are the only direct lucide imports needed.
+ */
+const SEMANTIC_LUCIDE_KEYS: Partial<Record<SemanticIconName, LucideIconName>> = {
+  settings: "settings",
+  logout: "log-out",
+  "chevron-down": "chevron-down",
+  search: "search",
+  check: "check",
+  moon: "moon",
+  sun: "sun",
+  bell: "bell",
+  menu: "menu",
+  "chevron-left": "chevron-left",
+  "chevron-right": "chevron-right",
+  "arrow-right": "arrow-right",
+  sparkles: "sparkles",
+  "book-open": "book-open",
+  building: "building",
+  users: "users",
+  shield: "shield",
+  "credit-card": "credit-card",
+  dashboard: "layout-dashboard",
+  document: "file-text",
+  help: "circle-question-mark",
+  grid: "layout-grid",
+  list: "list",
+  "triangle-alert": "triangle-alert",
+  copy: "copy",
+  "chevron-up-down": "chevrons-up-down",
+  compass: "compass",
+  layers: "layers",
+  palette: "palette",
+  "key-round": "key-round",
+  user: "user",
+  upload: "upload",
+  qrcode: "qr-code",
+  trash: "trash",
+};
+
+/** Icons that don't resolve through the lucide name map (X glyph, -2 variants). */
+const SEMANTIC_DIRECT: Partial<Record<SemanticIconName, IconComponent>> = {
   close: X,
-  chevronLeft: ChevronLeft,
-  chevronRight: ChevronRight,
-  arrowRight: ArrowRight,
-  sparkles: Sparkles,
-  github: GithubIcon,
-  bookOpen: BookOpen,
   building: Building2,
-  users: Users,
-  shield: Shield,
-  creditCard: CreditCard,
-  dashboard: LayoutDashboard,
-  document: FileText,
-  help: HelpCircle,
-  grid: LayoutGrid,
-  list: List,
-  triangleAlert: TriangleAlert,
-  copy: Copy,
-  chevronUpDown: ChevronsUpDown,
-  compass: Compass,
-  layers: Layers,
-  palette: Palette,
-  keyRound: KeyRound,
-  user: User,
-  upload: Upload,
-  qrcode: QrCode,
   trash: Trash2,
+};
+
+const defaultIcons: Partial<Record<IconName, IconComponent>> = {
+  ...Object.fromEntries(
+    (Object.keys(SEMANTIC_LUCIDE_KEYS) as SemanticIconName[]).map((name) => {
+      const key = SEMANTIC_LUCIDE_KEYS[name]!;
+      return [name, lucideIconMap[key]];
+    }),
+  ),
+  ...SEMANTIC_DIRECT,
+  ...brandIcons,
 };
 
 /* ── Global registry ──────────────────────────────────────── */
 
-const globalRegistry: Record<IconName, IconComponent> = { ...defaultIcons };
+const globalRegistry: Partial<Record<IconName, IconComponent>> = { ...defaultIcons };
 
-/** Register (or override) a global semantic icon. */
+/** Normalize camelCase (or mixed) names to the lucide kebab form: "chevronDown" -> "chevron-down". */
+export function toKebab(name: string): string {
+  return name
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
+    .toLowerCase();
+}
+
+/** Resolve a raw name (as typed) through the full lookup chain. */
+function resolveIcon(name: string): IconComponent | undefined {
+  return (
+    globalRegistry[name] ??
+    globalRegistry[toKebab(name)] ??
+    lucideIconMap[name as LucideIconName] ??
+    lucideIconMap[toKebab(name) as LucideIconName]
+  );
+}
+
+/** Register (or override) a global icon. */
 export function registerIcon(name: IconName, icon: IconComponent): void {
   globalRegistry[name] = icon;
 }
 
-/** Get the global icon for a name. */
-export function getIcon(name: IconName): IconComponent {
-  return globalRegistry[name];
+/** Get the global icon for a name (semantic, registered, or lucide). */
+export function getIcon(name: IconName): IconComponent | undefined {
+  return resolveIcon(name);
 }
 
 /* ── Context (per-app / domain overrides) ─────────────────── */
@@ -199,9 +210,16 @@ export interface IconProviderProps {
 
 export function IconProvider({ overrides, children }: IconProviderProps) {
   const parent = React.useContext(IconContext);
+  // Normalize override keys (camelCase -> kebab) so consumers can pass either.
+  const normalized = React.useMemo(() => {
+    if (!overrides) return null;
+    const out: IconOverrides = {};
+    for (const [key, icon] of Object.entries(overrides)) out[toKebab(key)] = icon;
+    return out;
+  }, [overrides]);
   const merged = React.useMemo(
-    () => (parent ? { ...parent, ...overrides } : (overrides ?? null)),
-    [parent, overrides],
+    () => (parent ? { ...parent, ...normalized } : normalized),
+    [parent, normalized],
   );
   return <IconContext.Provider value={merged}>{children}</IconContext.Provider>;
 }
@@ -214,9 +232,12 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
   size?: number | string;
 }
 
-/** Renders the resolved icon for a semantic name (context overrides win). */
+/** Renders the resolved icon for a name (context overrides win, then global, then lucide). */
 export function Icon({ name, className, size, ...props }: IconProps) {
   const overrides = React.useContext(IconContext);
-  const Component = overrides?.[name] ?? globalRegistry[name];
+  const kebab = toKebab(name);
+  const Component =
+    overrides?.[kebab] ?? overrides?.[name] ?? resolveIcon(name);
+  if (!Component) return null;
   return <Component className={className} size={size} {...props} />;
 }
