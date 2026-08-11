@@ -1,16 +1,4 @@
-import type { LucideIcon } from "lucide-react";
-import {
-  Building2,
-  Puzzle,
-  Lock,
-  Zap,
-  Palette,
-  Ruler,
-  ShieldCheck,
-  Boxes,
-  Fingerprint,
-  BookOpen,
-} from "lucide-react";
+import type { IconName } from "@arcevo/facet-components";
 
 /** Live library stats, verified against the packages on every release. */
 export const STATS = [
@@ -24,7 +12,8 @@ export interface Package {
   name: string;
   desc: string;
   version: string;
-  icon: LucideIcon;
+  /** Semantic icon name resolved through @arcevo/facet-components' Icon registry. */
+  icon: IconName;
 }
 
 /** The six published packages (versions verified 2026-08 against npm). */
@@ -33,81 +22,82 @@ export const PACKAGES: Package[] = [
     name: "@arcevo/facet-components",
     desc: "57 styled, accessible React components built on Radix primitives.",
     version: "1.1.0",
-    icon: Boxes,
+    icon: "boxes",
   },
   {
     name: "@arcevo/facet-docs",
     desc: "Installable docs engine: mount <DocsApp> with your own brand, nav, and pages.",
     version: "1.1.0",
-    icon: BookOpen,
+    icon: "book-open",
   },
   {
     name: "@arcevo/facet-auth",
     desc: "SignIn, SignUp, Guard, MFA and forms with per-domain presets.",
     version: "1.0.3",
-    icon: ShieldCheck,
+    icon: "shield-check",
   },
   {
     name: "@arcevo/facet-layout",
     desc: "Console, auth and landing shells with a collapsible icon rail.",
-    version: "1.0.2",
-    icon: Building2,
+    version: "1.1.0",
+    icon: "building",
   },
   {
     name: "@arcevo/facet-sdk",
     desc: "Typed fetch client for arc-id: 10 domain SDKs, zero React.",
     version: "1.0.1",
-    icon: Zap,
+    icon: "zap",
   },
   {
     name: "@arcevo/facet-tokens",
     desc: "Alpha Palette design tokens: color, type, spacing, surfaces.",
     version: "1.0.1",
-    icon: Palette,
+    icon: "palette",
   },
 ];
 
 export interface Feature {
   title: string;
   desc: string;
-  icon: LucideIcon;
+  /** Semantic icon name resolved through the Icon registry. */
+  icon: IconName;
 }
 
 export const FEATURES: Feature[] = [
   {
     title: "Radix quality",
     desc: "Accessible primitives with keyboard support and focus management, so you don't have to build them.",
-    icon: Puzzle,
+    icon: "puzzle",
   },
   {
     title: "Themeable tokens",
     desc: "CSS variables for colors and spacing. Dark mode included. Swap into any project without changing markup.",
-    icon: Palette,
+    icon: "palette",
   },
   {
     title: "Auth orchestration",
     desc: "A sign-in flow with MFA, passkeys and magic links that works with your backend.",
-    icon: Lock,
+    icon: "lock",
   },
   {
     title: "Typed SDK",
     desc: "A TypeScript client for your identity API. Call it from the browser, not just the server.",
-    icon: Zap,
+    icon: "zap",
   },
   {
     title: "Layout shells",
     desc: "Console, app and landing shells with sidebar, topbar and mobile support. Bring your own router.",
-    icon: Ruler,
+    icon: "ruler",
   },
   {
     title: "Your domain",
     desc: "Presets for fintech, healthcare and education. Extend them or build your own.",
-    icon: Building2,
+    icon: "building",
   },
   {
     title: "Passkeys & MFA",
     desc: "WebAuthn passkeys, TOTP and recovery codes wired straight into the auth flow.",
-    icon: Fingerprint,
+    icon: "fingerprint-pattern",
   },
 ];
 

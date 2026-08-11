@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { Mail, MessageCircle } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Separator, Label, Input, Textarea } from "@arcevo/facet-components";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Separator, Label, Input, Textarea, Icon } from "@arcevo/facet-components";
 import { CONTACT } from "../lib/socials.js";
 import { Nav } from "./Nav.js";
 import {
@@ -50,7 +49,7 @@ export function FeedbackPage() {
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Mail size={18} className="text-primary" />
+            <Icon name="mail" size={18} className="text-primary" />
             Send feedback by email
           </CardTitle>
           <CardDescription>
@@ -106,7 +105,7 @@ export function FeedbackPage() {
           rel="noreferrer"
           className="flex items-center gap-3 rounded-lg border border-border bg-background p-4 transition-colors hover:bg-accent/50"
         >
-          <MessageCircle size={20} className="text-primary" />
+          <Icon name="message-circle" size={20} className="text-primary" />
           <div>
             <div className="text-sm font-medium text-foreground">WhatsApp</div>
             <div className="text-xs text-muted-foreground">Chat with us directly</div>

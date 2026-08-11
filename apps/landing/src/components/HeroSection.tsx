@@ -1,6 +1,5 @@
-import { ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button, Badge } from "@arcevo/facet-components";
+import { Button, Badge, Icon } from "@arcevo/facet-components";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { STATS } from "../data/features.js";
 
@@ -46,7 +45,7 @@ export function HeroSection() {
       />
       <Badge
         variant="outline"
-        icon={<Sparkles size={12} />}
+        icon={<Icon name="sparkles" size={12} />}
         className="mb-6 border-primary/30 text-primary text-xs tracking-wider uppercase px-4 py-1"
       >
         Open source &middot; Radix powered &middot; MIT
@@ -61,7 +60,7 @@ export function HeroSection() {
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
         <Button size="lg" className="gap-2" onClick={() => window.open(getDocsUrl())}>
           Browse components
-          <ArrowRight size={16} />
+          <Icon name="arrow-right" size={16} />
         </Button>
         <Button
           variant="glass"

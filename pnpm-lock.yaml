@@ -120,9 +120,6 @@ importers:
       '@arcevo/facet-tokens':
         specifier: workspace:*
         version: link:../../packages/tokens
-      lucide-react:
-        specifier: ^1.30.0
-        version: 1.30.0(react@19.2.8)
       react:
         specifier: ^19
         version: 19.2.8
@@ -401,9 +398,6 @@ importers:
       '@arcevo/facet-components':
         specifier: workspace:*
         version: link:../components
-      lucide-react:
-        specifier: ^0.468.0
-        version: 0.468.0(react@19.2.8)
     devDependencies:
       '@testing-library/react':
         specifier: ^16.3.0
@@ -2724,11 +2718,6 @@ packages:
   lru-cache@11.5.2:
     resolution: {integrity: sha512-4pfM1Ff0x50o0tQwb5ucw/RzNyD0/YJME6IVcStalZuMWxdt3sR3huStTtxz4PUmvZfRguvDejasvQ2kifR11g==}
     engines: {node: 20 || >=22}
-
-  lucide-react@0.468.0:
-    resolution: {integrity: sha512-6koYRhnM2N0GGZIdXzSeiNwguv1gt/FAjZOiPl76roBi3xKEXa4WmfpxgQwTTL4KipXjefrnf3oV4IsYhi4JFA==}
-    peerDependencies:
-      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
 
   lucide-react@1.30.0:
     resolution: {integrity: sha512-tUIr2jXLbWpCkdtH8XP7P7YppM9ueWgTky99lpWDY6z5REs6B+O6ZQ3U5tHkUUY59ANyOv/PBcs8E4Fe3KO3eA==}
@@ -5583,10 +5572,6 @@ snapshots:
   lodash.startcase@4.4.0: {}
 
   lru-cache@11.5.2: {}
-
-  lucide-react@0.468.0(react@19.2.8):
-    dependencies:
-      react: 19.2.8
 
   lucide-react@1.30.0(react@19.2.8):
     dependencies:

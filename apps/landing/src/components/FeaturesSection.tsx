@@ -1,4 +1,5 @@
 import { FEATURES } from "../data/features.js";
+import { Icon } from "@arcevo/facet-components";
 
 export function FeaturesSection() {
   return (
@@ -12,19 +13,16 @@ export function FeaturesSection() {
         </p>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {FEATURES.map((f) => {
-          const Icon = f.icon;
-          return (
-            <div
-              key={f.title}
-              className="glass-card rounded-xl p-6 transition-all hover:translate-y-[-2px]"
-            >
-              <Icon className="size-6 text-primary" />
-              <h3 className="mt-4 font-semibold text-foreground">{f.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-            </div>
-          );
-        })}
+        {FEATURES.map((f) => (
+          <div
+            key={f.title}
+            className="glass-card rounded-xl p-6 transition-all hover:translate-y-[-2px]"
+          >
+            <Icon name={f.icon} className="size-6 text-primary" />
+            <h3 className="mt-4 font-semibold text-foreground">{f.title}</h3>
+            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

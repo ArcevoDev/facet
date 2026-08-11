@@ -1,4 +1,5 @@
 import { PACKAGES } from "../data/features.js";
+import { Icon } from "@arcevo/facet-components";
 
 export function PackagesSection() {
   return (
@@ -12,24 +13,21 @@ export function PackagesSection() {
         </p>
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {PACKAGES.map((pkg) => {
-          const Icon = pkg.icon;
-          return (
-            <div
-              key={pkg.name}
-              className="glass-card rounded-xl p-6 transition-all hover:translate-y-[-2px]"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <Icon className="size-6 text-primary" />
-                <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                  {pkg.version}
-                </span>
-              </div>
-              <h3 className="mt-4 font-mono text-sm font-semibold text-foreground">{pkg.name}</h3>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{pkg.desc}</p>
+        {PACKAGES.map((pkg) => (
+          <div
+            key={pkg.name}
+            className="glass-card rounded-xl p-6 transition-all hover:translate-y-[-2px]"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <Icon name={pkg.icon} className="size-6 text-primary" />
+              <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                {pkg.version}
+              </span>
             </div>
-          );
-        })}
+            <h3 className="mt-4 font-mono text-sm font-semibold text-foreground">{pkg.name}</h3>
+            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{pkg.desc}</p>
+          </div>
+        ))}
       </div>
     </section>
   );

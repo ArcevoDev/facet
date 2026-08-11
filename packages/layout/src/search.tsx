@@ -40,8 +40,8 @@ import {
   AlertDialogFooter,
   AlertDialogAction,
   AlertDialogCancel,
+  Icon,
 } from "@arcevo/facet-components";
-import { Search, Trash2 } from "lucide-react";
 import type { LayoutConfig, NavItem } from "./types.js";
 
 /* ── Search history (persisted) ────────────────────────────── */
@@ -293,7 +293,7 @@ export function CommandPalette({
                 }}
                 className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer rounded p-1 text-muted-foreground opacity-60 transition-opacity hover:bg-accent hover:text-foreground hover:opacity-100"
               >
-                <Trash2 className="size-3.5" />
+                <Icon name="trash" className="size-3.5" />
               </button>
             </CommandItem>
           ))}
@@ -360,7 +360,7 @@ export function CommandPalette({
       onClick={onClick}
       className="flex h-9 w-64 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
     >
-      <Search className="size-4 shrink-0" />
+      <Icon name="search" className="size-4 shrink-0" />
       <span className="flex-1 truncate text-left">{placeholder}</span>
       <Kbd className="hidden items-center gap-0.5 border-border bg-muted px-1.5 py-0.5 text-[10px] sm:inline-flex">
         {getModSymbol()} K

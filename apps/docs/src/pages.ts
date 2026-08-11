@@ -943,5 +943,81 @@ registerIcon("shield", ShieldAlert);`,
       },
     ],
   },
+  {
+    path: "/cli",
+    title: "CLI",
+    section: "ecosystem",
+    description: "Scaffold facet docs sites and copy components with @arcevo/facet-cli.",
+    blocks: [
+      {
+        type: "p",
+        text: "`@arcevo/facet-cli` is the facet ecosystem's scaffolding tool. It sets up a docs site in any repo (React+Vite, Next.js, Remix, plain JS, or Python) and copies components into your source (shadcn-style).",
+      },
+      { type: "h2", text: "Install" },
+      {
+        type: "install",
+        pkg: "@arcevo/facet-cli",
+      },
+      { type: "h2", text: "Scaffold a docs site" },
+      {
+        type: "code",
+        lang: "bash",
+        text: `facet docs init
+# or non-interactive, using detected defaults:
+facet docs init --yes`,
+      },
+      {
+        type: "p",
+        text: "The wizard opens with a \"Decide for me\" option — detect your stack and use the best defaults — or walks you through each choice: name (blank falls back to `docs`), location (`.` recommended, `docs/`, or `src/docs/`), language, framework, styling, template kind, and whether to create a barrel export.",
+      },
+      { type: "h2", text: "Framework support" },
+      {
+        type: "table",
+        headers: ["Framework", "What you get"],
+        rows: [
+          ["`react-vite`", "Full thin-consumer app (config + pages registry + app shell)"],
+          ["`next`", "`src/app/docs` route (\"use client\" → DocsApp) + config/pages"],
+          ["`remix`", "`app/routes/docs` route (\"use client\" → DocsApp) + config/pages"],
+          ["`plain-js`", "Framework-agnostic pages registry + markdown content pipeline"],
+          ["`python`", "`docs_pipeline.py` → pages.json + starter registry"],
+        ],
+      },
+      {
+        type: "p",
+        text: "Every framework gets the same `@arcevo/facet-docs` engine — the content is plain data, so any host can render it.",
+      },
+      { type: "h2", text: "Copy a component" },
+      {
+        type: "code",
+        lang: "bash",
+        text: `facet add Button
+# placement: decide (default) / subdir / flat
+facet add Button --flat
+facet add Button --ui-dir ui`,
+      },
+      {
+        type: "p",
+        text: "`facet add` copies a component into your source. By default it decides based on what you already have: flat into your components root when a barrel exists, else a clean `facet/` subdirectory. `--dir`, `--ui-dir`, `--flat`, `--no-barrel`, and `--barrel` give you explicit control. An existing barrel is merged, never overwritten.",
+      },
+      {
+        type: "p",
+        text: "**Recommended:** import from `@arcevo/facet-components` instead of copying source — you get updates, tree-shaking, and the token system. Copying source means you own every future fix.",
+      },
+      { type: "h2", text: "How it stays current" },
+      {
+        type: "ul",
+        items: [
+          "Detects your frontend stack (Next.js, Remix, Vite, plain JS, Python); backend frameworks are ignored — docs are a frontend concern.",
+          "Detects your package manager from the lockfile and recommends the matching install command.",
+          "Resolves current published facet versions from the npm registry, so the scaffold never pins a stale version.",
+          "Patches an existing package.json, preserving your scripts, deps, name, and metadata.",
+        ],
+      },
+      {
+        type: "p",
+        text: "Run `facet --help` for the full flag reference. This page is facet's own ecosystem docs — the CLI is a facet package, documented alongside the rest.",
+      },
+    ],
+  },
 ];
 

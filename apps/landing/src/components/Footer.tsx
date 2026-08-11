@@ -1,6 +1,5 @@
-import { BookOpen, Mail, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Separator } from "@arcevo/facet-components";
+import { Separator, Icon } from "@arcevo/facet-components";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { CONTACT } from "../lib/socials.js";
 import {
@@ -31,7 +30,7 @@ export function Footer() {
             to="/feedback"
             className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
-            <Mail size={14} />
+            <Icon name="mail" size={14} />
             Feedback
           </Link>
           <a
@@ -45,7 +44,7 @@ export function Footer() {
             href={getDocsUrl()}
             className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
-            <BookOpen size={14} />
+            <Icon name="book-open" size={14} />
             Documentation
           </a>
         </div>
@@ -55,7 +54,7 @@ export function Footer() {
           Feedback: <a href={`mailto:${CONTACT.email}`} className="hover:text-foreground">{CONTACT.email}</a>
           {" "}· WhatsApp:{" "}
           <a href={CONTACT.whatsapp} target="_blank" rel="noreferrer" className="hover:text-foreground">
-            <MessageCircle size={12} className="inline" /> Chat
+            <Icon name="message-circle" size={12} className="inline" /> Chat
           </a>
         </p>
         <div className="flex items-center gap-4">

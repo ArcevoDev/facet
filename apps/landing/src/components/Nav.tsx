@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Grid2x2 } from "lucide-react";
 import {
   Navbar,
   ThemeToggle,
@@ -7,6 +6,7 @@ import {
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
+  Icon,
 } from "@arcevo/facet-components";
 import type { NavLink } from "@arcevo/facet-components";
 import { getDocsUrl } from "../lib/docs-url.js";
@@ -128,7 +128,7 @@ export function Nav() {
                   title="Browse components"
                   onClick={() => window.open(getDocsUrl())}
                 >
-                  <Grid2x2 size={16} />
+                  <Icon name="grid" size={16} />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Browse components</TooltipContent>
