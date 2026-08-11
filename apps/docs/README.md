@@ -11,8 +11,10 @@ Deployed to https://docs.facet.arcevocirqle.com.ng.
 ## What it is
 
 - **`src/demo-config.ts`**: the `DocsSiteConfig` (brand "facet", ecosystem
-  link to arc-id) and the pages registry (facet's canonical pages from the
-  package).
+  link to arc-id) and the pages registry (facet's canonical pages).
+- **`src/pages.ts`**: facet's own authored guide pages — the documentation
+  *content*. This lives in the consumer, not in the `@arcevo/facet-docs`
+  package, so installing the package never ships facet's docs.
 - **`src/app.tsx`**: mounts `<DocsApp config={demoConfig} pages={demoPages} />`.
 
 The `/components` gallery renders the extended manifest, so the auth and

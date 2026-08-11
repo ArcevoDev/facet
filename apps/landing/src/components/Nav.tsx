@@ -2,7 +2,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Grid2x2 } from "lucide-react";
 import {
   Navbar,
-  Button,
   ThemeToggle,
   Tooltip,
   TooltipTrigger,
@@ -68,14 +67,13 @@ function MobileMenu({ onNavigate }: { onNavigate: (href: string) => void }) {
         <GithubIcon size={16} />
         GitHub
       </a>
-      <Button
-        size="sm"
-        className="mt-1 w-full"
+      <button
+        type="button"
         onClick={() => window.open(getDocsUrl())}
+        className="mt-1 flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
       >
         Browse components
-        <Grid2x2 size={14} />
-      </Button>
+      </button>
     </div>
   );
 }
@@ -123,15 +121,15 @@ export function Nav() {
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="outline"
-                  className="hidden md:inline-flex"
+                <button
+                  type="button"
+                  className="hidden h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:inline-flex"
                   aria-label="Browse components"
+                  title="Browse components"
                   onClick={() => window.open(getDocsUrl())}
                 >
                   <Grid2x2 size={16} />
-                </Button>
+                </button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Browse components</TooltipContent>
             </Tooltip>

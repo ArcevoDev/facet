@@ -372,7 +372,7 @@ function ComponentCard({
             )}
           </span>
           <Icon
-            name="chevronDown"
+            name="chevron-down"
             className={`size-4 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
           />
         </button>

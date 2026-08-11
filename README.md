@@ -16,6 +16,7 @@ design manual (Alpha Palette), and your auth requirements differ per sector
 | `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.0.3 |
 | `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.1.0 |
 | `@arcevo/facet-docs`       | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages                          | 📦 1.1.0 |
+| `@arcevo/facet-cli`        | Scaffold a docs site (`facet docs init`) + copy components (`facet add`)                            | 🧪 0.1.0 |
 
 Published to npm: components/layout at 1.1.0, auth at 1.0.3, tokens/sdk at 1.0.1, docs at 1.1.0.
 Components 1.1.0 shipped 11 new components (color-picker, country-code-input, data-table, date-picker, dropzone, form, location-picker, marquee, number-input, qrcode, roadmap) and removed `notification-bell`.
@@ -36,6 +37,22 @@ theming, tokens, and the docs package itself; the component gallery shows all
 ```sh
 pnpm dev:docs-site  # run the docs site locally (Vite, port 5173)
 ```
+
+### Docs CLI
+
+Scaffold a docs site in any repo (framework-agnostic) with the interactive
+wizard, or copy a component into your source:
+
+```sh
+npx @arcevo/facet-cli docs init   # pick name, location, stack, styling
+npx @arcevo/facet-cli add button  # shadcn-style copy (package import recommended)
+```
+
+The wizard detects your frontend framework (ignoring backend stacks), your
+package manager, and your styling (facet tokens / Tailwind / plain CSS),
+then resolves the current facet package versions from npm and patches your
+existing `package.json` rather than overwriting it. See
+`packages/cli/README.md` for the full flow.
 
 ## Quick Start
 

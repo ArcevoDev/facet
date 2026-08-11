@@ -20,7 +20,7 @@ export type { DocsAppValue } from "./context.js";
 
 // Page registry
 export type { DocsPage, DocsBlock, DocsLink } from "./lib/pages.js";
-export { docsPages, slugify } from "./lib/pages.js";
+export { slugify } from "./lib/pages.js";
 
 // Nav config
 export type { DocsSiteConfig } from "./lib/nav.js";

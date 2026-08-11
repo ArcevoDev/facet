@@ -646,7 +646,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                 <span className="text-foreground">Saved successfully</span>
               </div>
               <div className="flex items-center gap-2">
-                <Icon name="triangleAlert" className="size-4 text-warning" />
+                <Icon name="triangle-alert" className="size-4 text-warning" />
                 <span className="text-foreground">Check your connection</span>
               </div>
             </div>

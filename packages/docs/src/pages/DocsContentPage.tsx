@@ -73,8 +73,8 @@ function Block({ block }: { block: DocsBlock }) {
             { label: "Collapse / expand sidebar", keys: ["mod", "B"] },
             { label: "Previous page", keys: ["Alt", "←"] },
             { label: "Next page", keys: ["Alt", "→"] },
-            { label: "Previous page", keys: ["Alt", "↑"] },
-            { label: "Next page", keys: ["Alt", "↓"] },
+            { label: "Previous", keys: ["Alt", "↑"] },
+            { label: "Next", keys: ["Alt", "↓"] },
           ]}
         />
       );

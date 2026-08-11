@@ -1,9 +1,14 @@
 # @arcevo/facet-docs
 
-Installable, config-driven documentation site engine for the Arcevo
+Installable, config-driven documentation site **engine** for the Arcevo
 ecosystem. Mount `<DocsApp config={...} pages={...} />` with your own
 brand, nav, content pages, and ecosystem links, with no forking or copied
 source.
+
+The package ships the engine only — the shell, the component gallery, and
+the content block types. It does **not** ship facet's own authored guide
+pages; those live in the demo consumer (`apps/docs`). You write your own
+`pages` array for your product.
 
 Ships: a searchable sidebar shell (VS Code-style collapsible rail), a
 paginated component gallery with per-component variant pages, per-variant
@@ -62,7 +67,7 @@ export function App() {
 | `install` | `{ pkg, extras? }` | pnpm / npm / yarn / bun tabs |
 | `ul` | `{ items }` | bullet list |
 | `link` | `{ label, href }` | internal link |
-| `authDemo` | `{}` | live `<SignIn>` with method switcher + preview + synced code |
+| `authDemo` | `{}` | live `<SignIn>`: config checkboxes drive a method switcher, a live preview, and the synced config code |
 | `authPreviews` | `{}` | live previews of SignUp, MfaDialog, Guard, and forms |
 | `layoutPreviews` | `{}` | live previews of ConsoleLayout, AuthLayout, Sidebar/Topbar, LandingLayout |
 | `demo` | `{ slug, title?, description?, labels? }` | reusable interactive demo for any manifest slug: variant switcher + live preview + copyable code |
@@ -113,4 +118,6 @@ pnpm typecheck
 
 The demo consumer lives at `apps/docs` (`@arcevo/facet-docs-site`);
 it installs this package via `workspace:*` exactly like an external
-consumer would, proving the API surface end to end.
+consumer would, proving the API surface end to end. Its `src/pages.ts`
+holds facet's own authored guide pages — the package itself ships only
+the engine and block types, not that content.

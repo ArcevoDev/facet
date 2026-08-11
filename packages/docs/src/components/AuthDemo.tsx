@@ -5,7 +5,6 @@ import { ArcIdClient } from "@arcevo/facet-sdk";
 import {
   Checkbox,
   Label,
-  Switch,
   Card,
   CardHeader,
   CardTitle,
@@ -22,14 +21,12 @@ export interface AuthDemoProps {
     allowMagicLink?: boolean;
     allowPasskey?: boolean;
     oauthProviders?: string[];
-    requireMfa?: boolean;
   };
 }
 
 export interface AuthDemoConfig {
   allowMagicLink: boolean;
   allowPasskey: boolean;
-  requireMfa: boolean;
   oauthProviders: string[];
 }
 
@@ -42,14 +39,12 @@ const METHOD_STEPS = {
   "Magic link": "magic_link_form",
   Passkey: "passkey_auth",
   OAuth: "login_form",
-  "Forgot password": "forgot_password",
 } as const satisfies Record<string, AuthDemoStep>;
 
 /** Whether a method is offered under the current config. */
 function methodEnabled(config: AuthDemoConfig, method: keyof typeof METHOD_STEPS): boolean {
   switch (method) {
     case "Email + password":
-    case "Forgot password":
       return true;
     case "Magic link":
       return config.allowMagicLink;
@@ -63,11 +58,11 @@ function methodEnabled(config: AuthDemoConfig, method: keyof typeof METHOD_STEPS
 }
 
 /**
- * Live, configurable auth demo: a method switcher next to a real <SignIn>,
- * with toggles for the exact auth methods and OAuth providers consumers pick
- * at runtime. The generated config object updates in real time so the docs
- * page doubles as a working example of @arcevo/facet-auth's configuration
- * surface. The code sample below always matches the selected method.
+ * Live, configurable auth demo: the config checkboxes are the single source
+ * of truth. Checking/unchecking a method (or an OAuth provider) updates the
+ * method switcher, the live <SignIn> preview, and the generated code in
+ * lockstep. On large screens the method switcher and live preview sit
+ * side-by-side with the copyable code below.
  *
  * The demo is intentionally client-free: <ArcProvider> bootstraps signed
  * out (no stored token -> no network call), and <SignIn> renders its
@@ -78,7 +73,6 @@ export function AuthDemo({ initialConfig }: AuthDemoProps) {
   const [config, setConfig] = React.useState<AuthDemoConfig>({
     allowMagicLink: initialConfig?.allowMagicLink ?? true,
     allowPasskey: initialConfig?.allowPasskey ?? true,
-    requireMfa: initialConfig?.requireMfa ?? false,
     oauthProviders: initialConfig?.oauthProviders ?? ["google"],
   });
   const [step, setStep] = React.useState<AuthDemoStep>("login_form");
@@ -92,8 +86,37 @@ export function AuthDemo({ initialConfig }: AuthDemoProps) {
   };
 
   const activeMethod = (Object.keys(METHOD_STEPS) as (keyof typeof METHOD_STEPS)[]).find(
-    (m) => METHOD_STEPS[m] === step,
+    (m) => METHOD_STEPS[m] === step && methodEnabled(config, m),
   );
+
+  // If the active method is disabled by a checkbox, hop to the first
+  // enabled method so the preview + code never show a grayed-out method.
+  React.useEffect(() => {
+    if (!activeMethod) {
+      const first = (Object.keys(METHOD_STEPS) as (keyof typeof METHOD_STEPS)[]).find((m) =>
+        methodEnabled(config, m),
+      );
+      if (first) setStep(METHOD_STEPS[first]);
+    }
+  }, [activeMethod, config]);
+
+  const toggleMethod = (method: keyof typeof METHOD_STEPS) => {
+    const turningOff = methodEnabled(config, method);
+    setConfig((prev) => {
+      switch (method) {
+        case "Magic link":
+          return { ...prev, allowMagicLink: !prev.allowMagicLink };
+        case "Passkey":
+          return { ...prev, allowPasskey: !prev.allowPasskey };
+        default:
+          return prev; // email/password and OAuth (as a block) are handled below
+      }
+    });
+    // OAuth is enabled/disabled by checking/unchecking its providers.
+    if (method === "OAuth" && turningOff) {
+      setConfig((prev) => ({ ...prev, oauthProviders: [] }));
+    }
+  };
 
   const toggleProvider = (provider: string) => {
     setConfig((prev) => ({
@@ -104,82 +127,102 @@ export function AuthDemo({ initialConfig }: AuthDemoProps) {
     }));
   };
 
+  const methodCheckboxes: { method: keyof typeof METHOD_STEPS; id: string }[] = [
+    { method: "Email + password", id: "auth-method-email" },
+    { method: "Magic link", id: "auth-method-magic-link" },
+    { method: "Passkey", id: "auth-method-passkey" },
+  ];
+
   const configCode = `<SignIn
   config={{
     allowMagicLink: ${config.allowMagicLink},
     allowPasskey: ${config.allowPasskey},
-    requireMfa: ${config.requireMfa},
     oauthProviders: ${JSON.stringify(config.oauthProviders)},
   }}
+  initialStep="${step}"
 />`;
 
-  // Each snippet embeds the live config so the copyable code always
-  // matches what is previewed for the active method.
-  const methodCode: Record<keyof typeof METHOD_STEPS, string> = {
-    "Email + password": `<SignIn
-  config={{
-    allowMagicLink: ${config.allowMagicLink},
-    allowPasskey: ${config.allowPasskey},
-    requireMfa: ${config.requireMfa},
-    oauthProviders: ${JSON.stringify(config.oauthProviders)},
-  }}
-  initialStep="login_form"
-/>`,
-    "Magic link": `<SignIn
-  config={{
-    allowMagicLink: true,
-    allowPasskey: ${config.allowPasskey},
-    requireMfa: ${config.requireMfa},
-    oauthProviders: ${JSON.stringify(config.oauthProviders)},
-  }}
-  initialStep="magic_link_form"
-/>`,
-    Passkey: `<SignIn
-  config={{
-    allowMagicLink: ${config.allowMagicLink},
-    allowPasskey: true,
-    requireMfa: ${config.requireMfa},
-    oauthProviders: ${JSON.stringify(config.oauthProviders)},
-  }}
-  initialStep="passkey_auth"
-/>`,
-    OAuth: `<SignIn
-  config={{
-    allowMagicLink: ${config.allowMagicLink},
-    allowPasskey: ${config.allowPasskey},
-    requireMfa: ${config.requireMfa},
-    oauthProviders: ${JSON.stringify(config.oauthProviders)},
-  }}
-  initialStep="login_form"
-/>`,
-    "Forgot password": `<SignIn
-  config={{
-    allowMagicLink: ${config.allowMagicLink},
-    allowPasskey: ${config.allowPasskey},
-    requireMfa: ${config.requireMfa},
-    oauthProviders: ${JSON.stringify(config.oauthProviders)},
-  }}
-  step="forgot_password"
-  onStepChange={setStep}
-/>`,
-  };
+  const active = activeMethod ?? "Email + password";
 
   return (
     <div className="not-prose space-y-6">
-      <AuthDemoControls
-        config={config}
-        onToggleProvider={toggleProvider}
-        onSetConfig={setConfig}
-      />
+      {/* Configuration: checkboxes determine methods + providers */}
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Configuration</CardTitle>
+          <CardDescription>
+            Check the methods and providers your app offers. The preview and code update live.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm font-medium">Methods</p>
+          {methodCheckboxes.map(({ method, id }) => {
+            const enabled = methodEnabled(config, method);
+            return (
+              <div key={method} className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id={id}
+                    checked={enabled}
+                    onCheckedChange={() => toggleMethod(method)}
+                  />
+                  <Label htmlFor={id} className="text-sm font-normal">
+                    {method}
+                  </Label>
+                </div>
+                {!enabled && (
+                  <span className="text-xs text-muted-foreground">off</span>
+                )}
+              </div>
+            );
+          })}
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="auth-method-oauth"
+                checked={config.oauthProviders.length > 0}
+                onCheckedChange={() => {
+                  if (config.oauthProviders.length > 0) {
+                    setConfig((prev) => ({ ...prev, oauthProviders: [] }));
+                  } else {
+                    setConfig((prev) => ({ ...prev, oauthProviders: ["google"] }));
+                  }
+                }}
+              />
+              <Label htmlFor="auth-method-oauth" className="text-sm font-normal">
+                OAuth
+              </Label>
+            </div>
+            {config.oauthProviders.length === 0 && (
+              <span className="text-xs text-muted-foreground">off</span>
+            )}
+          </div>
 
-      {/* Single flex: method switcher + live preview side-by-side,
-          stacked vertically on small screens. */}
-      <div className="flex flex-col gap-6 lg:flex-row">
+          <div className="space-y-2 border-t border-border pt-3">
+            <p className="text-sm font-medium">OAuth providers</p>
+            {OAUTH_PROVIDERS.map((provider) => (
+              <div key={provider} className="flex items-center gap-2">
+                <Checkbox
+                  id={`oauth-${provider}`}
+                  checked={config.oauthProviders.includes(provider)}
+                  onCheckedChange={() => toggleProvider(provider)}
+                />
+                <Label htmlFor={`oauth-${provider}`} className="text-sm font-normal">
+                  {provider}
+                </Label>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Method switcher + live preview side-by-side on large screens */}
+      <div className="flex min-w-0 flex-col gap-6 lg:flex-row">
         <Card className="w-full lg:w-72 lg:shrink-0">
           <CardHeader>
             <CardTitle>Sign-in methods</CardTitle>
             <CardDescription>
-              Pick a method to preview it. Disabled methods are turned off in the config below.
+              Pick a method to preview it. Disabled methods are off in the config.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -191,9 +234,9 @@ export function AuthDemo({ initialConfig }: AuthDemoProps) {
                   type="button"
                   disabled={!enabled}
                   onClick={() => selectMethod(method)}
-                  aria-pressed={activeMethod === method}
+                  aria-pressed={active === method}
                   className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left text-sm font-medium transition-colors ${
-                    activeMethod === method
+                    active === method
                       ? "border-primary/60 bg-primary/10 text-primary"
                       : "border-border bg-background text-foreground hover:bg-accent/40"
                   } ${!enabled ? "cursor-not-allowed opacity-40" : ""}`}
@@ -213,7 +256,7 @@ export function AuthDemo({ initialConfig }: AuthDemoProps) {
           <CardHeader>
             <CardTitle>Live preview</CardTitle>
             <CardDescription>
-              Renders the {activeMethod ?? "selected"} step from `config` alone, no backend required.
+              Renders the {active} step from `config` alone, no backend required.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -229,76 +272,7 @@ export function AuthDemo({ initialConfig }: AuthDemoProps) {
         </Card>
       </div>
 
-      <CodeBlock code={activeMethod ? methodCode[activeMethod] : configCode} />
+      <CodeBlock code={configCode} title="SignIn config" />
     </div>
-  );
-}
-
-function AuthDemoControls({
-  config,
-  onToggleProvider,
-  onSetConfig,
-}: {
-  config: AuthDemoConfig;
-  onToggleProvider: (provider: string) => void;
-  onSetConfig: React.Dispatch<React.SetStateAction<AuthDemoConfig>>;
-}) {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Configuration</CardTitle>
-        <CardDescription>Choose the methods and providers your app offers.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="space-y-0.5">
-            <Label htmlFor="auth-magic-link">Magic link</Label>
-            <p className="text-xs text-muted-foreground">Email a sign-in link</p>
-          </div>
-          <Switch
-            id="auth-magic-link"
-            checked={config.allowMagicLink}
-            onCheckedChange={(v) => onSetConfig((prev) => ({ ...prev, allowMagicLink: v }))}
-          />
-        </div>
-        <div className="flex items-center justify-between gap-4">
-          <div className="space-y-0.5">
-            <Label htmlFor="auth-passkey">Passkeys</Label>
-            <p className="text-xs text-muted-foreground">WebAuthn sign-in</p>
-          </div>
-          <Switch
-            id="auth-passkey"
-            checked={config.allowPasskey}
-            onCheckedChange={(v) => onSetConfig((prev) => ({ ...prev, allowPasskey: v }))}
-          />
-        </div>
-        <div className="flex items-center justify-between gap-4">
-          <div className="space-y-0.5">
-            <Label htmlFor="auth-mfa">Require MFA</Label>
-            <p className="text-xs text-muted-foreground">Force a second factor</p>
-          </div>
-          <Switch
-            id="auth-mfa"
-            checked={config.requireMfa}
-            onCheckedChange={(v) => onSetConfig((prev) => ({ ...prev, requireMfa: v }))}
-          />
-        </div>
-        <div className="space-y-2 border-t border-border pt-3">
-          <p className="text-sm font-medium">OAuth providers</p>
-          {OAUTH_PROVIDERS.map((provider) => (
-            <div key={provider} className="flex items-center gap-2">
-              <Checkbox
-                id={`oauth-${provider}`}
-                checked={config.oauthProviders.includes(provider)}
-                onCheckedChange={() => onToggleProvider(provider)}
-              />
-              <Label htmlFor={`oauth-${provider}`} className="text-sm font-normal">
-                {provider}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
   );
 }

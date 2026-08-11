@@ -1,0 +1,947 @@
+import type { DocsPage } from "@arcevo/facet-docs";
+
+/**
+ * facet's own authored guide pages.
+ *
+ * These are facet's documentation content — NOT part of the @arcevo/facet-docs
+ * engine. Consumers mount <DocsApp> with their own pages; this registry is
+ * just the demo consumer's content, kept out of the package so installing
+ * the docs package doesn't ship facet's docs.
+ */
+export const docsPages: DocsPage[] = [
+  {
+    path: "/",
+    title: "Overview",
+    section: "guides",
+    description: "Domain-customizable, auth-first component system for the Arcevo ecosystem.",
+    blocks: [
+      {
+        type: "p",
+        text: "facet is what you get when you own the identity backend (arc-id), have a formal design manual (Alpha Palette), and your auth requirements differ per sector (fintech vs med vs edu vs enterprise).",
+      },
+      { type: "h2", text: "Packages" },
+      {
+        type: "ul",
+        items: [
+          "`@arcevo/facet-tokens`: Alpha Palette design tokens, typography, spacing, CSS variables.",
+          "`@arcevo/facet-sdk`: arc-id API client (pure fetch, typed, 10 domain SDKs).",
+          "`@arcevo/facet-components`: 52 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
+          "`@arcevo/facet-auth`: auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms.",
+          "`@arcevo/facet-layout`: domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets.",
+          "`@arcevo/facet-docs`: this config-driven docs engine, installable by any Arcevo project.",
+        ],
+      },
+      { type: "h2", text: "Architecture" },
+      {
+        type: "p",
+        text: "Every component follows 4 layers: **Primitive → Styled Base → Composed → Domain Preset**. Customization runs along 3 axes: `appearance` (style), `config` (behavior), and `slots` (render props).",
+      },
+      { type: "h2", text: "Quick start" },
+      {
+        type: "code",
+        text: `pnpm install
+pnpm build
+pnpm test      # 108 tests across 4 packages (vitest)
+pnpm typecheck # all projects`,
+      },
+      { type: "p", text: "Consume in your app:" },
+      {
+        type: "code",
+        text: `import { ConsoleLayout, enterpriseLayoutPreset } from "@arcevo/facet-layout";
+import { Guard, fintechAuthPreset } from "@arcevo/facet-auth";
+
+function App() {
+  return (
+    <ConsoleLayout config={enterpriseLayoutPreset} tenants={tenants}>
+      <Guard fallback={<SignIn config={fintechAuthPreset} />}>
+        <YourRoutes />
+      </Guard>
+    </ConsoleLayout>
+  );
+}`,
+      },
+      { type: "h2", text: "Publishing" },
+      {
+        type: "p",
+        text: "Packages publish to npm under the `@arcevo/facet-*` scope via Changesets. The GitHub Actions workflow runs `pnpm changeset publish` on `main` using the `NPM_TOKEN` secret.",
+      },
+    ],
+  },
+  {
+    path: "/getting-started",
+    title: "Getting Started",
+    section: "guides",
+    description: "Install the packages and boot a facet app in minutes.",
+    blocks: [
+      { type: "h2", text: "1. Install" },
+      {
+        type: "install",
+        pkg: "@arcevo/facet-components",
+        extras: ["@arcevo/facet-sdk", "@arcevo/facet-auth", "@arcevo/facet-layout"],
+      },
+      { type: "p", text: "Tokens are optional but recommended:" },
+      {
+        type: "install",
+        pkg: "@arcevo/facet-tokens",
+      },
+      { type: "h2", text: "2. Import tokens" },
+      {
+        type: "p",
+        text: "The Alpha Palette tokens ship as CSS variables. Import them once at your app root:",
+      },
+      { type: "code", text: `@import "@arcevo/facet-tokens/tokens.css";` },
+      {
+        type: "p",
+        text: "If you use Tailwind v4, import the theme extension to map the variables onto utility classes (`bg-primary`, `text-foreground`, ...):",
+      },
+      { type: "code", text: `@import "@arcevo/facet-tokens/tailwind.css";` },
+      { type: "h2", text: "3. Theme provider" },
+      {
+        type: "p",
+        text: "Wrap your app in `ThemeProvider` for light/dark/system theming:",
+      },
+      {
+        type: "code",
+        text: `import { ThemeProvider, ThemeToggle } from "@arcevo/facet-components";
+
+function App() {
+  return (
+    <ThemeProvider defaultTheme="system">
+      <ThemeToggle />
+      <YourApp />
+    </ThemeProvider>
+  );
+}`,
+      },
+      { type: "h2", text: "4. Render a component" },
+      {
+        type: "code",
+        text: `import { Button, Badge } from "@arcevo/facet-components";
+
+<Button variant="default" size="lg">Get started</Button>
+<Badge variant="success">Live</Badge>`,
+      },
+      { type: "h2", text: "5. Auth in 30 seconds" },
+      {
+        type: "p",
+        text: "The auth components compose with domain presets so copy, steps, and behavior adapt per sector:",
+      },
+      {
+        type: "code",
+        text: `import { ArcProvider, SignIn, fintechPreset } from "@arcevo/facet-auth";
+
+<ArcProvider client={client}>
+  <SignIn config={fintechPreset} />
+</ArcProvider>`,
+      },
+      {
+        type: "p",
+        text: "See the `Auth` guide for the full state machine and preset table.",
+      },
+      { type: "h2", text: "6. App shells" },
+      {
+        type: "p",
+        text: "The layout package provides framework-agnostic, slot-based shells with no routing dependency. Pair `ConsoleLayout` with a router adapter for Next, Remix, or react-router. See the `Layout` guide.",
+      },
+      {
+        type: "p",
+        text: "Want this exact docs site in your own project? See the `Docs Package` guide for mounting `@arcevo/facet-docs` with your brand and pages.",
+      },
+      { type: "h2", text: "7. Keyboard shortcuts" },
+      {
+        type: "p",
+        text: "The docs shell and component gallery ship with keyboard shortcuts. `mod` is `⌘` on macOS and `Ctrl` on Windows/Linux. They're ignored while you're typing in an input.",
+      },
+      { type: "keyboardShortcuts" },
+      { type: "h2", text: "8. Use the docs package" },
+      {
+        type: "p",
+        text: "Want a docs site like this one in your own project? `@arcevo/facet-docs` is an installable docs engine. Mount `<DocsApp>` with your brand, pages, and content blocks:",
+      },
+      {
+        type: "code",
+        lang: "tsx",
+        text: `import { DocsApp } from "@arcevo/facet-docs";
+import type { DocsPage, DocsSiteConfig } from "@arcevo/facet-docs";
+
+const config: DocsSiteConfig = {
+  brand: { name: "my-app", tagline: "My product docs" },
+  navigation: [],
+};
+
+const pages: DocsPage[] = [
+  {
+    path: "/",
+    title: "Overview",
+    section: "guides",
+    blocks: [{ type: "p", text: "Welcome." }],
+  },
+];
+
+export function App() {
+  return <DocsApp config={config} pages={pages} />;
+}`,
+      },
+      {
+        type: "p",
+        text: "Pages are plain data (route + title + section + blocks). The sidebar nav, search palette, and routes all derive from the same registry. See the `Docs Package` guide for every block type and the full config surface.",
+      },
+      { type: "h2", text: "9. Where to go next" },
+      {
+        type: "ul",
+        items: [
+          "`Auth`: the SignIn state machine, standalone forms, MFA, guards, and domain presets.",
+          "`Layout`: ConsoleLayout, AuthLayout, LandingLayout, sidebar/topbar, and router adapters.",
+          "`Theming`: light/dark/system theming and per-brand token overrides.",
+          "`Docs Package`: mount @arcevo/facet-docs with your own brand and pages.",
+          "`Components`: browse the component gallery with live demos and usage tabs.",
+          "`Ready to Use`: drop-in extras like Dropzone, ColorPicker, QRCode, Marquee, Roadmap, and Form.",
+        ],
+      },
+      {
+        type: "p",
+        text: "**Your first facet app:** install the packages → import tokens → wrap in `ThemeProvider` → render a component → drop in `ArcProvider` + `SignIn` → wrap in a `ConsoleLayout` shell. Each step is a section above.",
+      },
+    ],
+  },
+  {
+    path: "/theming",
+    title: "Theming",
+    section: "guides",
+    description: "Light, dark, and system theming via design tokens.",
+    blocks: [
+      {
+        type: "p",
+        text: "facet drives theming with a `data-theme` attribute on `<html>`. Design tokens are CSS custom properties; each theme swaps the values. The `ThemeProvider` sets the attribute, persists the choice to `localStorage`, and follows the OS preference when set to `system`.",
+      },
+      { type: "h2", text: "ThemeProvider" },
+      {
+        type: "code",
+        text: `<ThemeProvider defaultTheme="system">
+  <App />
+</ThemeProvider>`,
+      },
+      {
+        type: "p",
+        text: "Props: `defaultTheme` (`light | dark | system`), `storageKey`, `enableSystem`, `attribute`, `themes`, and `overrideVars`.",
+      },
+      { type: "h2", text: "useTheme" },
+      {
+        type: "p",
+        text: "Access the current theme, toggle it, or read the resolved (non-system) value:",
+      },
+      {
+        type: "code",
+        text: `import { useTheme } from "@arcevo/facet-components";
+
+function MyHeader() {
+  const { theme, setTheme, toggleTheme, resolvedTheme } = useTheme();
+  return <button onClick={toggleTheme}>{resolvedTheme === "dark" ? "Light" : "Dark"}</button>;
+}`,
+      },
+      { type: "h2", text: "Override variables per brand" },
+      {
+        type: "p",
+        text: "Consumers can override any token (e.g. `--primary`, `--sub-brand-accent`) without forking components:",
+      },
+      {
+        type: "code",
+        text: `<ThemeProvider
+  defaultTheme="dark"
+  overrideVars={{ "--primary": "oklch(0.5 0.2 30)" }}
+>
+  <App />
+</ThemeProvider>`,
+      },
+      { type: "h2", text: "Dark mode utilities" },
+      {
+        type: "p",
+        text: "The Tailwind v4 theme extension registers a `dark:` variant scoped to `[data-theme=\"dark\"]`, so you can write theme-aware utilities:",
+      },
+      {
+        type: "code",
+        text: `<div className="bg-background text-foreground dark:bg-navy-900 dark:text-muted-foreground">
+  ...
+</div>`,
+      },
+      { type: "h2", text: "Best practices" },
+      {
+        type: "ul",
+        items: [
+          "Prefer token utilities (`bg-primary`) over hardcoded colors.",
+          "Use `ThemeToggle` for a ready-made light/dark switch.",
+          "Set `overrideVars` once per brand at the app root.",
+        ],
+      },
+      { type: "h2", text: "Domain presets" },
+      {
+        type: "p",
+        text: "facet ships with auth domain presets. Each preset configures MFA requirements, passkey support, session TTL, and more:",
+      },
+      {
+        type: "table",
+        headers: ["Preset", "MFA", "Passkey", "Session TTL", "Use Case"],
+        rows: [
+          ["`fintechPreset`", "Required", "Yes", "15 min", "Trading, banking"],
+          ["`medPreset`", "Required", "No", "30 min", "HIPAA-compliant"],
+          ["`eduPreset`", "Optional", "Yes", "12 hr", "Student portals"],
+          ["`enterprisePreset`", "Required", "Yes", "8 hr", "SSO + MFA"],
+          ["`defaultPreset`", "Optional", "Yes", "8 hr", "General"],
+        ],
+      },
+    ],
+  },
+  {
+    path: "/tokens",
+    title: "Design Tokens",
+    section: "guides",
+    description: "Alpha Palette tokens: color, typography, spacing, and surfaces.",
+    blocks: [
+      {
+        type: "p",
+        text: "The @arcevo/facet-tokens package exports tokens.css (CSS variables) and tailwind.css (maps them to Tailwind v4 utilities like bg-background and text-foreground).",
+      },
+      { type: "h2", text: "Color" },
+      {
+        type: "ul",
+        items: [
+          "background / foreground",
+          "primary / primary-foreground",
+          "secondary / secondary-foreground",
+          "destructive / destructive-foreground",
+          "success / warning",
+          "muted / muted-foreground",
+          "accent / accent-foreground",
+          "card / card-foreground",
+          "border, ring, input",
+        ],
+      },
+      { type: "h2", text: "Typography" },
+      {
+        type: "p",
+        text: "font-heading, font-sans (Inter), and font-mono (JetBrains Mono) map to Tailwind's font-heading / font-sans / font-mono utilities.",
+      },
+      { type: "h2", text: "Surfaces" },
+      {
+        type: "p",
+        text: "frost and glass surface treatments are exposed as CSS variables so consumers can tune opacity, blur, and borders per theme.",
+      },
+    ],
+  },
+  {
+    path: "/auth",
+    title: "Auth",
+    section: "auth",
+    description: "Domain-customizable auth components wired to arc-id.",
+    blocks: [
+      {
+        type: "p",
+        text: "The `@arcevo/facet-auth` package provides SignIn, SignUp, Guard, MfaDialog, forms, and domain presets. Everything is customizable per sector (fintech, med, edu, enterprise) via appearance / config / slots.",
+      },
+      {
+        type: "p",
+        text: "The sign-in flow is a configurable state machine. The email/password form is the embedded default entry point; the other methods branch off it based on `config`. Head to the [Sign In](/auth/sign-in) page — it is the single home for the interactive demo: pick a method, watch the live preview, and copy the matching code.",
+      },
+      {
+        type: "demo",
+        slug: "sign-in",
+        title: "Sign In",
+        description: "Live preview with a method switcher and copyable code.",
+      },
+      { type: "h2", text: "In this section" },
+      {
+        type: "ul",
+        items: [
+          "[Sign In](/auth/sign-in): the sign-in state machine, methods, and controlled `step`.",
+          "[Sign Up](/auth/sign-up): account creation and customization.",
+          "[MFA](/auth/mfa): MfaDialog and the verify/setup/recovery forms.",
+          "[Guards](/auth/guard): protect routes with `Guard`.",
+          "[Forms](/auth/forms): independently importable standalone forms.",
+          "[Domain Presets](/auth/presets): fintech, med, edu, enterprise.",
+          "[Layouts](/auth/layouts): AuthLayout and app-shell integration.",
+        ],
+      },
+    ],
+  },
+  {
+    path: "/auth/sign-in",
+    title: "Sign In",
+    section: "auth",
+    description: "The configurable SignIn state machine and its method forms.",
+    blocks: [
+      {
+        type: "p",
+        text: "`SignIn` is a configurable state machine. The email/password form is the embedded default entry point; the other methods branch off it based on `config`.",
+      },
+      { type: "authDemo" },
+      { type: "h2", text: "State machine" },
+      {
+        type: "p",
+        text: "Steps: `idle` → `check_session` → `login_form` / `magic_link_form` / `passkey_auth` → `check_mfa` → `mfa_challenge` → `complete`. `select_method` remains reachable as a fallback step.",
+      },
+      { type: "h2", text: "Controlled mode" },
+      {
+        type: "p",
+        text: "Pass `step` + `onStepChange` to render exactly a given step and drive SignIn from outside. When omitted, SignIn manages its own transitions.",
+      },
+      {
+        type: "code",
+        text: `<SignIn
+  step={step}
+  onStepChange={setStep}
+  config={{ requireMfa: true, allowMagicLink: false }}
+/>`,
+      },
+      { type: "h2", text: "Methods" },
+      {
+        type: "ul",
+        items: [
+          "Email + password: the default form.",
+          "Magic link: passwordless email link (config.allowMagicLink).",
+          "Passkey: WebAuthn via the real SDK (config.allowPasskey).",
+          "OAuth: provider buttons from config.oauthProviders calling onOAuth.",
+        ],
+      },
+      { type: "h2", text: "Customizing components" },
+      {
+        type: "p",
+        text: "Every auth component is dynamically configurable through three prop families: `appearance` (styling), `slots` (content replacement), and `config` (behavior).",
+      },
+      {
+        type: "code",
+        text: `<SignIn
+  appearance={{ className: "max-w-md rounded-3xl border-primary/20" }}
+  slots={{ title: <h1>Welcome back</h1> }}
+  config={{ requireMfa: true, allowMagicLink: false, oauthProviders: ["google"] }}
+/>`,
+      },
+    ],
+  },
+  {
+    path: "/auth/sign-up",
+    title: "Sign Up",
+    section: "auth",
+    description: "Account creation with the SignUp component.",
+    blocks: [
+      {
+        type: "p",
+        text: "`SignUp` mirrors the `SignIn` configuration surface: `appearance`, `slots`, and `config` all apply the same way.",
+      },
+      {
+        type: "code",
+        text: `import { SignUp } from "@arcevo/facet-auth";
+
+<SignUp
+  config={eduPreset}
+  onSuccess={(result) => router.push("/dashboard")}
+/>`,
+      },
+      { type: "authPreviews" },
+      {
+        type: "demo",
+        slug: "sign-up",
+        title: "Sign Up",
+        description: "Account creation with appearance / config / slots customization.",
+      },
+      { type: "h2", text: "Slots" },
+      {
+        type: "ul",
+        items: [
+          "title / description: card header copy.",
+          "footer: extra content below the form.",
+          "complete: replaces the success state.",
+        ],
+      },
+    ],
+  },
+  {
+    path: "/auth/mfa",
+    title: "MFA",
+    section: "auth",
+    description: "Multi-factor authentication: MfaDialog and the verify/setup/recovery forms.",
+    blocks: [
+      {
+        type: "p",
+        text: "MFA is config-driven: `config.requireMfa` controls whether the `check_mfa` gate forces a second factor. The MFA forms are independently importable.",
+      },
+      {
+        type: "demo",
+        slug: "mfa-dialog",
+        title: "MFA challenge",
+        description: "Live preview of the verify / setup / recovery forms.",
+      },
+      { type: "authPreviews" },
+      { type: "h2", text: "MfaDialog" },
+      {
+        type: "p",
+        text: "`MfaDialog` presents the MFA challenge in a dialog, with the same `appearance` / `slots` / `config` surface.",
+      },
+      { type: "h2", text: "Forms" },
+      {
+        type: "ul",
+        items: [
+          "`MfaVerifyForm`: enter the one-time code.",
+          "`MfaSetupForm`: enroll a second factor.",
+          "`MfaRecoveryForm`: restore access via recovery codes.",
+        ],
+      },
+      { type: "h2", text: "Flow" },
+      {
+        type: "p",
+        text: "On login, when the session requires MFA, `SignIn` stores the pending `sessionId` and advances to `mfa_challenge`. `MfaVerifyForm` calls `verifyMfa(code, sessionId)`; success moves to `complete`.",
+      },
+    ],
+  },
+  {
+    path: "/auth/guard",
+    title: "Guards",
+    section: "auth",
+    description: "Protect routes with the Guard component.",
+    blocks: [
+      {
+        type: "p",
+        text: "`Guard` renders its children only when a session is present, falling back to `fallback` otherwise.",
+      },
+      {
+        type: "code",
+        text: `<Guard fallback={<SignIn />}>
+  <ProtectedPage />
+</Guard>`,
+      },
+      {
+        type: "demo",
+        slug: "guard",
+        title: "Guard",
+        description: "Renders children only when a session is present; falls back otherwise.",
+      },
+      { type: "authPreviews" },
+      { type: "h2", text: "Customization" },
+      {
+        type: "p",
+        text: "`Guard` accepts the same `appearance` / `slots` / `config` families for its fallback rendering.",
+      },
+    ],
+  },
+  {
+    path: "/auth/forms",
+    title: "Forms",
+    section: "auth",
+    description: "Independently importable standalone auth forms.",
+    blocks: [
+      {
+        type: "p",
+        text: "Forms are independently importable from `@arcevo/facet-auth` and all use react-hook-form + zod with inline errors.",
+      },
+      {
+        type: "ul",
+        items: [
+          "`LoginForm`: email + password.",
+          "`MagicLinkForm`: passwordless email link.",
+          "`ForgotPasswordForm` / `ResetPasswordForm`.",
+          "`MfaVerifyForm` / `MfaSetupForm` / `MfaRecoveryForm`.",
+        ],
+      },
+      {
+        type: "code",
+        text: `import { LoginForm } from "@arcevo/facet-auth";
+
+<LoginForm
+  onSubmit={async (email, password) => {
+    const res = await login({ email, password });
+    return res.error?.message ?? null;
+  }}
+/>`,
+      },
+      {
+        type: "demo",
+        slug: "login-form",
+        title: "LoginForm",
+        description: "Email + password form with inline validation.",
+      },
+      { type: "authPreviews" },
+    ],
+  },
+  {
+    path: "/auth/presets",
+    title: "Domain Presets",
+    section: "auth",
+    description: "Fintech, med, edu, and enterprise auth presets.",
+    blocks: [
+      {
+        type: "p",
+        text: "Presets are plain `AuthConfig` objects. Spread one (or more) into the `config` prop to customize every step per sector.",
+      },
+      {
+        type: "code",
+        text: `import { SignIn, fintechPreset } from "@arcevo/facet-auth";
+
+<SignIn config={fintechPreset} />`,
+      },
+      {
+        type: "p",
+        text: "Available: `fintechPreset`, `medPreset`, `eduPreset`, `enterprisePreset`, `defaultPreset`.",
+      },
+      { type: "h2", text: "Preset differences" },
+      {
+        type: "table",
+        headers: ["Preset", "MFA", "Passkey", "Magic link", "Session TTL", "Use Case"],
+        rows: [
+          ["`fintechPreset`", "Required", "Off", "On", "15 min", "Trading, banking"],
+          ["`medPreset`", "Required", "Off", "Off", "30 min", "HIPAA-compliant"],
+          ["`eduPreset`", "Optional", "On", "On", "24 hr", "Student portals"],
+          ["`enterprisePreset`", "Required", "On", "Off", "8 hr", "SSO + MFA"],
+          ["`defaultPreset`", "Optional", "On", "On", "8 hr", "General"],
+        ],
+      },
+      { type: "h2", text: "Custom presets" },
+      {
+        type: "code",
+        text: `const myPreset = { ...defaultPreset, sessionTtl: 60, oauthProviders: ["google"] };
+
+<SignIn config={myPreset} />`,
+      },
+      {
+        type: "demo",
+        slug: "sign-in",
+        title: "SignIn with a preset",
+        description: "Live preview of SignIn driven by a domain preset config.",
+      },
+      {
+        type: "p",
+        text: "Because `config` is `Partial<AuthConfig>`, any consumer can build their own presets from an existing one.",
+      },
+    ],
+  },
+  {
+    path: "/auth/layouts",
+    title: "Layouts",
+    section: "auth",
+    description: "AuthLayout and app-shell integration.",
+    blocks: [
+      {
+        type: "p",
+        text: "The layout package provides `AuthLayout`: a branded split-panel auth page frame (login/register/MFA) with brand logo, tagline, and benefits on the left, centered card on the right.",
+      },
+      {
+        type: "code",
+        text: `<AuthLayout config={enterpriseLayoutPreset}>
+  <SignIn config={enterprisePreset} />
+</AuthLayout>`,
+      },
+      {
+        type: "demo",
+        slug: "auth-layout",
+        title: "AuthLayout",
+        description: "Branded split-panel auth page frame with a live SignIn.",
+      },
+      { type: "h2", text: "Router adapter" },
+      {
+        type: "p",
+        text: "facet never imports a router. Pass a `RouterAdapter` (or `createDefaultAdapter()`) so Sidebar, Navbar, and UserMenu render framework-native links and detect the active route.",
+      },
+    ],
+  },
+  {
+    path: "/docs-package",
+    title: "Docs Package",
+    section: "guides",
+    description: "Install @arcevo/facet-docs in your own project: mount, config, pages, and blocks.",
+    blocks: [
+      {
+        type: "p",
+        text: "`@arcevo/facet-docs` is an installable docs engine. You mount `<DocsApp>` with your own brand, nav, pages, and ecosystem links, with no forking or copied source. This very site is a consumer of it.",
+      },
+      { type: "h2", text: "Install" },
+      {
+        type: "install",
+        pkg: "@arcevo/facet-docs",
+        extras: ["react", "react-dom", "react-router-dom"],
+      },
+      {
+        type: "p",
+        text: "Peer dependencies: `react`, `react-dom`, and `react-router-dom` are required.",
+      },
+      { type: "h2", text: "Mount DocsApp" },
+      {
+        type: "code",
+        lang: "tsx",
+        text: `import { DocsApp } from "@arcevo/facet-docs";
+import type { DocsPage, DocsSiteConfig } from "@arcevo/facet-docs";
+
+const config: DocsSiteConfig = {
+  brand: { name: "my-app", tagline: "My product docs" },
+  navigation: [], // optional extra sidebar sections
+  ecosystem: [{ label: "arc-id", href: "/arc-id" }], // optional
+};
+
+const pages: DocsPage[] = [
+  {
+    path: "/",
+    title: "Overview",
+    section: "guides",
+    description: "Welcome.",
+    blocks: [
+      { type: "p", text: "Hello." },
+      { type: "h2", text: "Quick start" },
+      { type: "code", lang: "tsx", text: "import { Button } from \\"@arcevo/facet-components\\";" },
+    ],
+  },
+];
+
+export function App() {
+  return <DocsApp config={config} pages={pages} />;
+}`,
+      },
+      { type: "h2", text: "Pages are data" },
+      {
+        type: "p",
+        text: "A page is a route, a title, a sidebar section, and content blocks. The sidebar nav and search palette derive from the same registry, so adding a page automatically adds its route, nav entry, and search hit, with zero component edits.",
+      },
+      { type: "h2", text: "Content blocks" },
+      {
+        type: "table",
+        headers: ["Block", "Shape", "Renders"],
+        rows: [
+          ["`p`", "`{ text }`", "Paragraph with inline code/bold/links"],
+          ["`h2`", "`{ text }`", "Section heading"],
+          ["`code`", "`{ text, lang? }`", "Code block with copy button"],
+          ["`install`", "`{ pkg, extras? }`", "pnpm / npm / yarn / bun install tabs"],
+          ["`ul`", "`{ items }`", "Bullet list"],
+          ["`table`", "`{ headers, rows }`", "Responsive table"],
+          ["`link`", "`{ label, href }`", "Internal link"],
+          ["`demo`", "`{ slug, title?, labels? }`", "Reusable interactive demo: variant switcher + live preview + copyable code for any manifest slug"],
+          ["`authDemo`", "`{}`", "Live SignIn demo: config checkboxes drive a method switcher, a live preview, and the copyable config code in lockstep"],
+          ["`authPreviews`", "`{}`", "Live auth previews (SignUp, MfaDialog, Guard, forms) with copyable code"],
+          ["`layoutPreviews`", "`{}`", "Live layout previews (ConsoleLayout, AuthLayout, Sidebar/Topbar, LandingLayout) with copyable code"],
+          ["`keyboardShortcuts`", "`{}`", "Docs keyboard shortcuts table"],
+        ],
+      },
+      { type: "h2", text: "Component gallery" },
+      {
+        type: "p",
+        text: "Pass `showComponents` (default `true`) to mount the `/components` gallery. Each component page shows a live demo, a full variant gallery, and per-variant usage tabs with copy buttons, driven by the bundled manifest.",
+      },
+      { type: "h2", text: "Branding & customization" },
+      {
+        type: "ul",
+        items: [
+          "`config.brand`: name, tagline, used in the sidebar and settings menu.",
+          "`config.navigation`: extra sidebar sections beyond the page-driven ones.",
+          "`config.ecosystem`: links to your other products' docs.",
+          "Icons flow through `@arcevo/facet-components`' semantic registry; override per domain via `IconProvider`, no forking.",
+          "The theme follows the host app's `ThemeProvider` (light/dark/system).",
+        ],
+      },
+      {
+        type: "p",
+        text: "Try it: the docs demo app (`apps/docs`) consumes `@arcevo/facet-docs` via `workspace:*` exactly like an external consumer, so it doubles as a reference implementation.",
+      },
+    ],
+  },
+  {
+    path: "/layout",
+    title: "Layout",
+    section: "guides",
+    description: "Domain-configurable app shells and sidebar.",
+    blocks: [
+      {
+        type: "p",
+        text: "`@arcevo/facet-layout` ships ConsoleLayout, AuthLayout, LandingLayout, and a collapsible, resizable sidebar. Config-driven via `LayoutConfig` with domain presets.",
+      },
+      { type: "h2", text: "ConsoleLayout" },
+      {
+        type: "p",
+        text: "Dashboard shell: sidebar + topbar + content area. Two sidebar versions: `mode=\"full\"` (always-labeled) and `mode=\"rail\"` (collapsible to an icon-only rail, persisted in localStorage). Mobile collapses to a Sheet.",
+      },
+      {
+        type: "code",
+        text: `<ConsoleLayout config={defaultLayoutPreset} mode="full">
+  <YourContent />
+</ConsoleLayout>`,
+      },
+      { type: "layoutPreviews" },
+      {
+        type: "demo",
+        slug: "console-layout",
+        title: "ConsoleLayout",
+        description: "Dashboard shell: sidebar + topbar + content area, full or rail mode.",
+      },
+      { type: "h2", text: "AuthLayout" },
+      {
+        type: "p",
+        text: "Branded split-panel auth page frame (login/register/MFA) with brand logo, tagline, and benefits on the left, centered card on the right.",
+      },
+      {
+        type: "demo",
+        slug: "auth-layout",
+        title: "AuthLayout",
+        description: "Branded split-panel auth page frame.",
+      },
+      { type: "h2", text: "LandingLayout" },
+      {
+        type: "p",
+        text: "Full-bleed marketing page with glassmorphic hero and glow CTAs. Pair with the `Navbar` `pill` variant for a floating frosted bar.",
+      },
+      {
+        type: "demo",
+        slug: "landing-layout",
+        title: "LandingLayout",
+        description: "Full-bleed marketing shell with a glassmorphic hero.",
+      },
+      { type: "h2", text: "Sidebar & Topbar" },
+      {
+        type: "p",
+        text: "Use `Sidebar` (driven by a `LayoutConfig` `navigation`) and `Topbar` standalone with `LayoutProvider`. This docs site is itself built from these components.",
+      },
+      {
+        type: "demo",
+        slug: "sidebar",
+        title: "Sidebar",
+        description: "Collapsible, resizable navigation rail driven by a LayoutConfig.",
+      },
+      {
+        type: "demo",
+        slug: "topbar",
+        title: "Topbar",
+        description: "Application top bar with breadcrumb, search, and actions.",
+      },
+      { type: "h2", text: "Domain presets" },
+      {
+        type: "p",
+        text: "Five `LayoutConfig` presets ship ready-made and match the auth presets: `fintechLayoutPreset`, `medLayoutPreset`, `eduLayoutPreset`, `enterpriseLayoutPreset`, `defaultLayoutPreset`.",
+      },
+      {
+        type: "p",
+        text: "Register and resolve custom presets via `registerLayoutPreset` / `getLayoutPreset` / `resolveLayoutPreset`.",
+      },
+      { type: "h2", text: "Router adapter" },
+      {
+        type: "p",
+        text: "facet never imports a router. Pass a `RouterAdapter` (or `createDefaultAdapter()`) so Sidebar, Navbar, and UserMenu render framework-native links and detect the active route. Adapters exist for Next.js App Router, Remix, and React Router.",
+      },
+      {
+        type: "code",
+        text: `<ConsoleLayout config={config} router={myRouterAdapter}>
+  ...
+</ConsoleLayout>`,
+      },
+    ],
+  },
+  {
+    path: "/foundations/icon",
+    title: "Icon",
+    section: "foundations",
+    description: "Semantic icon registry: built-in lucide map, global overrides, and per-domain context overrides.",
+    blocks: [
+      { type: "h2", text: "Why a registry" },
+      {
+        type: "p",
+        text: "Rather than importing lucide-react icons directly everywhere, facet exposes a semantic registry. Components reference icon names (\"settings\", \"logout\", ...), and consumers can swap the actual icon per domain without forking components.",
+      },
+      { type: "h2", text: "Built-in set" },
+      {
+        type: "p",
+        text: "The registry ships with a lucide-based default map using lucide-style kebab-case names: settings, logout, chevron-down, search, check, copy, moon, sun, bell, menu, close, chevron-left, chevron-right, chevron-up-down, arrow-right, sparkles, book-open, building, compass, layers, palette, key-round, users, shield, credit-card, dashboard, document, help, grid, list, triangle-alert, user, upload, qrcode, trash — plus brand icons (github, linkedin, instagram, facebook, tiktok, whatsapp, x, twitter, youtube, slack, discord, telegram, figma, spotify) as inline SVGs independent of lucide.",
+      },
+      { type: "h2", text: "Dynamic lucide names" },
+      {
+        type: "p",
+        text: "Any lucide icon resolves by its lowercase kebab name — <Icon name=\"heart\" />, <Icon name=\"alarm-clock\" />, <Icon name=\"arrow-up-right\" />. camelCase aliases (chevronDown, triangleAlert) still resolve for back-compat.",
+      },
+      { type: "h2", text: "Render an icon" },
+      {
+        type: "code",
+        lang: "tsx",
+        text: `import { Icon } from "@arcevo/facet-components";
+
+<Icon name="settings" className="size-4" />`,
+      },
+      { type: "h2", text: "Global override" },
+      {
+        type: "p",
+        text: "registerIcon replaces a semantic name everywhere (until the process reloads):",
+      },
+      {
+        type: "code",
+        lang: "tsx",
+        text: `import { registerIcon } from "@arcevo/facet-components";
+import { ShieldAlert } from "lucide-react";
+
+registerIcon("shield", ShieldAlert);`,
+      },
+      { type: "h2", text: "Per-domain override" },
+      {
+        type: "p",
+        text: "IconProvider scopes overrides to a subtree, so each domain can customize icons:",
+      },
+      {
+        type: "code",
+        lang: "tsx",
+        text: `<IconProvider overrides={{ logout: Shield }}>
+  <Icon name="logout" className="size-4" />
+</IconProvider>`,
+      },
+      {
+        type: "p",
+        text: "Provider overrides merge with parent providers, so nested domains can layer overrides.",
+      },
+      { type: "h2", text: "Types" },
+      {
+        type: "ul",
+        items: [
+          "IconName: the union of semantic names.",
+          "IconOverrides: partial map for overrides.",
+          "getIcon(name): resolve the current global icon component.",
+        ],
+      },
+    ],
+  },
+  {
+    path: "/foundations/theme",
+    title: "Theme",
+    section: "foundations",
+    description: "ThemeProvider, useTheme, and ThemeToggle for light/dark/system theming.",
+    blocks: [
+      { type: "h2", text: "ThemeProvider" },
+      {
+        type: "code",
+        lang: "tsx",
+        text: `<ThemeProvider defaultTheme="system">
+  <App />
+</ThemeProvider>`,
+      },
+      {
+        type: "p",
+        text: "Sets a data-theme attribute on <html>, persists to localStorage (\"facet-theme\"), and follows the OS preference in system mode.",
+      },
+      { type: "h2", text: "useTheme" },
+      {
+        type: "code",
+        lang: "tsx",
+        text: `const { theme, setTheme, toggleTheme, resolvedTheme } = useTheme();`,
+      },
+      {
+        type: "p",
+        text: "resolvedTheme is the concrete \"light\" | \"dark\" value after system resolution, handy for conditional rendering.",
+      },
+      { type: "h2", text: "ThemeToggle" },
+      {
+        type: "p",
+        text: "A ready-made light/dark switch that reads the current theme and toggles it. Drop it in any toolbar or navbar.",
+      },
+      { type: "h2", text: "Brand overrides" },
+      {
+        type: "code",
+        lang: "tsx",
+        text: `<ThemeProvider overrideVars={{ "--primary": "oklch(0.5 0.2 30)" }}>
+  <App />
+</ThemeProvider>`,
+      },
+      {
+        type: "p",
+        text: "Per-brand token overrides apply on <html> so every component inherits them. See the Theming guide for details.",
+      },
+    ],
+  },
+];
+

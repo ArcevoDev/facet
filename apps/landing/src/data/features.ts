@@ -14,7 +14,7 @@ import {
 
 /** Live library stats, verified against the packages on every release. */
 export const STATS = [
-  { value: "46", label: "components" },
+  { value: "57", label: "components" },
   { value: "10", label: "API SDKs" },
   { value: "5", label: "layout shells" },
   { value: "5", label: "auth presets" },
@@ -31,7 +31,7 @@ export interface Package {
 export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-components",
-    desc: "46 styled, accessible React components built on Radix primitives.",
+    desc: "57 styled, accessible React components built on Radix primitives.",
     version: "1.1.0",
     icon: Boxes,
   },
@@ -50,7 +50,7 @@ export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-layout",
     desc: "Console, auth and landing shells with a collapsible icon rail.",
-    version: "1.1.0",
+    version: "1.0.2",
     icon: Building2,
   },
   {
