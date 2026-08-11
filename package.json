@@ -19,6 +19,7 @@
     "test:watch": "vitest",
     "typecheck": "pnpm -r typecheck",
     "check:docs": "node scripts/check-docs-inventory.mjs",
+    "check:icons": "node scripts/gen-icon-map.mjs --check",
     "build:turbo": "turbo run build",
     "test:turbo": "turbo run test",
     "typecheck:turbo": "turbo run typecheck",
