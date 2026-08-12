@@ -74,27 +74,23 @@ export function DocsApp({
     <ThemeProvider defaultTheme={defaultTheme}>
       <BrowserRouter>
         <DocsAppProvider value={value}>
-          <Routes>
-            <Route
-              element={
-                <React.Suspense fallback={<PageLoader />}>
-                  <DocsLayout />
-                </React.Suspense>
-              }
-            >
-              {pages.map((page) => (
-                <Route key={page.path} path={page.path} element={<DocsContentPage />} />
-              ))}
-              {showComponents && (
-                <React.Suspense fallback={<PageLoader />}>
-                  <Route path="/components" element={<ComponentsPage />} />
-                  <Route path="/components/:slug" element={<ComponentPage />} />
-                  <Route path="/ready-to-use" element={<ReadyToUsePage />} />
-                </React.Suspense>
-              )}
-              <Route path="*" element={<DocsContentPage />} />
-            </Route>
-          </Routes>
+          <React.Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route element={<DocsLayout />}>
+                {pages.map((page) => (
+                  <Route key={page.path} path={page.path} element={<DocsContentPage />} />
+                ))}
+                {showComponents && (
+                  <>
+                    <Route path="/components" element={<ComponentsPage />} />
+                    <Route path="/components/:slug" element={<ComponentPage />} />
+                    <Route path="/ready-to-use" element={<ReadyToUsePage />} />
+                  </>
+                )}
+                <Route path="*" element={<DocsContentPage />} />
+              </Route>
+            </Routes>
+          </React.Suspense>
         </DocsAppProvider>
       </BrowserRouter>
     </ThemeProvider>
