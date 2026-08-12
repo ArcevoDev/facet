@@ -35,7 +35,7 @@ import {
 
 /* ── Types ─────────────────────────────────────────────────── */
 
-export interface DataTableColumn<T extends Record<string, unknown>> {
+export interface DataTableColumn<T extends object> {
   /** Unique key for the column; used for sorting and CSV export. */
   key: string;
   /** Column header text. */
@@ -52,7 +52,7 @@ export interface DataTableColumn<T extends Record<string, unknown>> {
   sortable?: boolean;
 }
 
-export interface DataTableProps<T extends Record<string, unknown>> {
+export interface DataTableProps<T extends object> {
   /** Column definitions. */
   columns: DataTableColumn<T>[];
   /** Row data. Each row should carry a stable `id` for selection keys. */
@@ -84,19 +84,20 @@ export interface DataTableProps<T extends Record<string, unknown>> {
 
 /* ── Helpers ───────────────────────────────────────────────── */
 
-function cellValue<T extends Record<string, unknown>>(
-  row: T,
-  column: DataTableColumn<T>,
-): string {
+function cellValue<T extends object>(row: T, column: DataTableColumn<T>): string {
   if (column.accessor) {
     const v = column.accessor(row);
     return v == null ? "" : String(v);
   }
-  const v = row[column.key];
+  const v = (row as Record<string, unknown>)[column.key];
   return v == null ? "" : String(v);
 }
 
-function toCsv<T extends Record<string, unknown>>(
+function rowKeyValue<T extends object>(row: T, rowKey: keyof T): unknown {
+  return (row as Record<string, unknown>)[rowKey as string];
+}
+
+function toCsv<T extends object>(
   columns: DataTableColumn<T>[],
   rows: T[],
 ): string {
@@ -116,7 +117,7 @@ function formatDateForExport(d: Date): string {
 
 /* ── Main component ────────────────────────────────────────── */
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T extends object>({
   columns,
   data,
   rowKey = "id" as keyof T,
@@ -198,11 +199,11 @@ export function DataTable<T extends Record<string, unknown>>({
   const shownColumns = columns.filter((c) => visibleColumns.includes(c.key));
 
   const allSelected =
-    selectable && pageRows.length > 0 && pageRows.every((row) => selected.has(String(row[rowKey])));
-  const someSelected = selectable && pageRows.some((row) => selected.has(String(row[rowKey])));
+    selectable && pageRows.length > 0 && pageRows.every((row) => selected.has(String(rowKeyValue(row, rowKey))));
+  const someSelected = selectable && pageRows.some((row) => selected.has(String(rowKeyValue(row, rowKey))));
 
   const toggleAll = () => {
-    const keys = pageRows.map((row) => String(row[rowKey]));
+    const keys = pageRows.map((row) => String(rowKeyValue(row, rowKey)));
     const next = new Set(selected);
     if (allSelected) {
       keys.forEach((k) => next.delete(k));
@@ -354,7 +355,7 @@ export function DataTable<T extends Record<string, unknown>>({
               </TableRow>
             ) : (
               pageRows.map((row) => {
-                const key = String(row[rowKey]);
+                const key = String(rowKeyValue(row, rowKey));
                 const isSelected = selected.has(key);
                 return (
                   <TableRow key={key} data-state={isSelected ? "selected" : undefined}>

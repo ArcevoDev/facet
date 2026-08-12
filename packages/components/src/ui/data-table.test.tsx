@@ -95,4 +95,28 @@ describe("DataTable", () => {
     await userEvent.type(screen.getByLabelText("Search..."), "nobody");
     expect(screen.getByText("No results found.")).toBeInTheDocument();
   });
+
+  it("accepts plain interface row types (no index signature)", () => {
+    // Regression: the generic used to be `T extends Record<string, unknown>`,
+    // which rejects interfaces (TS2344). Plain interfaces must work.
+    interface EventRow {
+      id: string;
+      title: string;
+      actor: string;
+    }
+    const eventColumns: DataTableColumn<EventRow>[] = [
+      { key: "title", header: "Title" },
+      { key: "actor", header: "Actor" },
+    ];
+    const eventRows: EventRow[] = [
+      { id: "1", title: "Login", actor: "ada" },
+      { id: "2", title: "Logout", actor: "grace" },
+    ];
+    render(<DataTable columns={eventColumns} data={eventRows} selectable />);
+    expect(screen.getByText("Login")).toBeInTheDocument();
+    expect(screen.getByText("grace")).toBeInTheDocument();
+    const rowCheckboxes = screen.getAllByLabelText("Select row");
+    fireEvent.click(rowCheckboxes[0]!);
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+  });
 });
