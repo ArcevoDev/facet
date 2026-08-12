@@ -2,9 +2,9 @@
  * @arcevo/facet-layout: ConsoleLayout
  *
  * Dashboard shell: fixed sidebar + topbar + content area.
- * On mobile the sidebar is a hover-reveal overlay: hovering the brand logo
- * (in the topbar) expands a smooth sidebar window, clicking it pins the
- * sidebar open, and clicking outside (or the trigger again) closes it.
+ * On mobile the sidebar is a click-to-open overlay: the brand trigger in
+ * the topbar morphs into a window on hover and opens the sidebar on click;
+ * clicking outside (or the trigger again) closes it.
  * Uses LayoutProvider for sidebar state.
  */
 
@@ -105,18 +105,7 @@ function ConsoleLayoutInner({
   const sidebarWidthPx = mode === "rail" && sidebarCollapsed ? 68 : sidebarWidth;
   const isOverlay = mode === "overlay";
 
-  // Hover-reveal sidebar (overlay mode, Claude/Gemini style): hovering the
-  // trigger (or the left edge) reveals a smooth overlay sidebar; clicking
-  // pins it open; clicking outside or the trigger again closes it.
-  const [sidebarHover, setSidebarHover] = React.useState(false);
-  const sidebarRevealed = sidebarOpen || sidebarHover;
-
-  // Close the pinned sidebar when the viewport grows to desktop.
-  React.useEffect(() => {
-    if (isDesktop) setSidebarOpen(false);
-  }, [isDesktop, setSidebarOpen]);
-
-  // Click outside closes the pinned sidebar.
+  // Click-outside closes the pinned sidebar.
   React.useEffect(() => {
     if (!sidebarOpen) return;
     const onPointerDown = (event: PointerEvent) => {
@@ -132,7 +121,7 @@ function ConsoleLayoutInner({
   // the content is never pushed, the sidebar floats above (or reserves a
   // slim rail on desktop when hidden).
   const classicDesktop = isDesktop && !isOverlay;
-  const padLeft = classicDesktop ? sidebarWidthPx : isOverlay && isDesktop && !sidebarRevealed ? 68 : 0;
+  const padLeft = classicDesktop ? sidebarWidthPx : isOverlay && isDesktop && !sidebarOpen ? 68 : 0;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -156,30 +145,25 @@ function ConsoleLayoutInner({
         </Sheet>
       )}
 
-      {/* Overlay mode: hover-reveal sidebar (mobile + desktop) */}
-      {isOverlay && sidebarRevealed && (
+      {/* Overlay mode: click-to-open floating sidebar (mobile + desktop) */}
+      {isOverlay && sidebarOpen && (
         <>
           <div
             className="fixed inset-0 z-20 bg-black/40 backdrop-blur-sm lg:bg-black/10"
             onClick={() => setSidebarOpen(false)}
             aria-hidden="true"
           />
-          <div
-            data-reveal-sidebar
-            className="fixed inset-y-0 left-0 z-30 shadow-xl"
-            onMouseEnter={() => setSidebarHover(true)}
-            onMouseLeave={() => setSidebarHover(false)}
-          >
+          <div data-reveal-sidebar className="fixed inset-y-0 left-0 z-30 shadow-xl">
             <Sidebar config={config} width={sidebarWidth} />
           </div>
         </>
       )}
 
-      {/* Overlay mode desktop: collapsed rail trigger (hover zone) */}
-      {isOverlay && isDesktop && !sidebarRevealed && (
+      {/* Overlay mode desktop: collapsed rail trigger (click to open) */}
+      {isOverlay && isDesktop && !sidebarOpen && (
         <div
           className="hidden w-[68px] shrink-0 lg:block"
-          onMouseEnter={() => setSidebarHover(true)}
+          onClick={() => setSidebarOpen(true)}
         >
           <Sidebar config={config} collapsed width={68} />
         </div>
@@ -201,7 +185,6 @@ function ConsoleLayoutInner({
           onTenantSwitch={onTenantSwitch}
           mode={mode}
           onMobileSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
-          onMobileSidebarHover={setSidebarHover}
         >
           {topbar}
         </Topbar>
