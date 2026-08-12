@@ -36,7 +36,7 @@ export function Topbar({
   const { toggleSidebar, sidebarCollapsed, toggleSidebarCollapsed } = useLayout();
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b bg-background/80 px-6 backdrop-blur-sm">
+    <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
       <div className="flex items-center gap-3">
         {/* Mobile hamburger (opens the sheet) */}
         <button

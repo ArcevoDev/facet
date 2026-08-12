@@ -17,6 +17,8 @@ const LINKS: NavLink[] = [
   { href: "#packages", label: "Packages" },
   { href: "#features", label: "Features" },
   { href: "#demo", label: "Demo" },
+  { href: "#roadmap", label: "Roadmap" },
+  { href: "#faq", label: "FAQ" },
   { href: "#install", label: "Install" },
   { href: "/feedback", label: "Feedback" },
 ];

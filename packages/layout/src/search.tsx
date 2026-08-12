@@ -358,7 +358,7 @@ export function CommandPalette({
     <button
       type="button"
       onClick={onClick}
-      className="flex h-9 w-64 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
+      className="flex h-9 w-40 items-center gap-2 rounded-md border border-border bg-background px-3 text-sm text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground sm:w-64"
     >
       <Icon name="search" className="size-4 shrink-0" />
       <span className="flex-1 truncate text-left">{placeholder}</span>

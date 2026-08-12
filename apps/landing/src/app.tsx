@@ -8,6 +8,8 @@ import { PackagesSection } from "./components/PackagesSection.js";
 import { FeaturesSection } from "./components/FeaturesSection.js";
 import { DemoSection } from "./components/DemoSection.js";
 import { InstallSection } from "./components/InstallSection.js";
+import { RoadmapSection } from "./components/RoadmapSection.js";
+import { FaqSection } from "./components/FaqSection.js";
 import { CTASection } from "./components/CTASection.js";
 import { Footer } from "./components/Footer.js";
 import { FeedbackPage } from "./components/FeedbackPage.js";
@@ -18,6 +20,8 @@ function HomePage() {
       <PackagesSection />
       <FeaturesSection />
       <DemoSection />
+      <RoadmapSection />
+      <FaqSection />
       <InstallSection />
       <CTASection />
     </LandingLayout>

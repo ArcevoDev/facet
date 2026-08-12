@@ -4,7 +4,7 @@ import type { IconName } from "@arcevo/facet-components";
 export const STATS = [
   { value: "57", label: "components" },
   { value: "10", label: "API SDKs" },
-  { value: "5", label: "layout shells" },
+  { value: "3", label: "layout shells" },
   { value: "5", label: "auth presets" },
 ] as const;
 
@@ -16,30 +16,30 @@ export interface Package {
   icon: IconName;
 }
 
-/** The six published packages (versions verified 2026-08 against npm). */
+/** The six published packages (versions verified 2026-08-12 against npm). */
 export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-components",
     desc: "57 styled, accessible React components built on Radix primitives.",
-    version: "1.1.0",
+    version: "1.2.0",
     icon: "boxes",
   },
   {
     name: "@arcevo/facet-docs",
     desc: "Installable docs engine: mount <DocsApp> with your own brand, nav, and pages.",
-    version: "1.1.0",
+    version: "1.2.0",
     icon: "book-open",
   },
   {
     name: "@arcevo/facet-auth",
     desc: "SignIn, SignUp, Guard, MFA and forms with per-domain presets.",
-    version: "1.0.3",
+    version: "1.1.0",
     icon: "shield-check",
   },
   {
     name: "@arcevo/facet-layout",
     desc: "Console, auth and landing shells with a collapsible icon rail.",
-    version: "1.1.0",
+    version: "1.1.1",
     icon: "building",
   },
   {
@@ -51,8 +51,14 @@ export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-tokens",
     desc: "Alpha Palette design tokens: color, type, spacing, surfaces.",
-    version: "1.0.1",
+    version: "1.1.0",
     icon: "palette",
+  },
+  {
+    name: "@arcevo/facet-cli",
+    desc: "Scaffold docs sites, audit and update your facet setup from the terminal.",
+    version: "0.2.0",
+    icon: "terminal",
   },
 ];
 
@@ -130,8 +136,8 @@ export const INSTALL_STEPS: InstallStep[] = [
   },
   {
     num: "05",
-    label: "Deploy",
-    code: "pnpm build && pnpm changeset publish",
+    label: "Deploy your app",
+    code: "pnpm build && pnpm preview",
   },
 ];
 
@@ -142,3 +148,98 @@ export const BUTTON_VARIANTS: Array<
 export const BADGE_VARIANTS: Array<
   "default" | "secondary" | "outline" | "success" | "warning" | "destructive"
 > = ["default", "secondary", "outline", "success", "warning", "destructive"];
+
+export interface RoadmapItem {
+  phase: string;
+  title: string;
+  desc: string;
+  status: "done" | "in-progress" | "planned";
+}
+
+/** Public roadmap, kept in sync with the .agent tracker and npm releases. */
+export const ROADMAP: RoadmapItem[] = [
+  {
+    phase: "Phase 1",
+    title: "Foundations",
+    desc: "Tokens, icon registry, theme system and the first 30+ Radix components.",
+    status: "done",
+  },
+  {
+    phase: "Phase 2",
+    title: "Auth + SDK",
+    desc: "SignIn/SignUp/Guard/MFA with domain presets, and the typed arc-id SDK.",
+    status: "done",
+  },
+  {
+    phase: "Phase 3",
+    title: "Layouts + Docs",
+    desc: "Console/auth/landing shells and the config-driven docs engine.",
+    status: "done",
+  },
+  {
+    phase: "Phase 4",
+    title: "CLI + DX",
+    desc: "facet pkg/doctor/update commands, -y shorthand, and a slim /light entry.",
+    status: "in-progress",
+  },
+  {
+    phase: "Phase 5",
+    title: "Component depth",
+    desc: "CountryCodeInput ISO expansion, LocationPicker depth, DataTable xlsx/pdf export, NumberInput currency.",
+    status: "planned",
+  },
+  {
+    phase: "Phase 6",
+    title: "Ecosystem tools",
+    desc: "arc-id CLI basis, tree-shakeable icon imports, stack-agnosticism assessment for non-React consumers.",
+    status: "planned",
+  },
+];
+
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
+export const FAQ: FaqItem[] = [
+  {
+    q: "Is facet free and open source?",
+    a: "Yes. Every package is MIT-licensed and published to npm under the @arcevo scope.",
+  },
+  {
+    q: "Which React version does facet require?",
+    a: "React 19. All packages list react and react-dom as peer dependencies.",
+  },
+  {
+    q: "Does facet work with Tailwind v4?",
+    a: "Yes. The tokens package ships a CSS-native Tailwind v4 theme extension plus tw-animate-css, so enter/exit utilities work out of the box.",
+  },
+  {
+    q: "Can I use the packages with a non-React stack?",
+    a: "Components, layout and auth are React-only. The SDK is framework-agnostic pure fetch (usable from any TypeScript or JS host), and the tokens are plain CSS variables any stack can consume.",
+  },
+  {
+    q: "Can I use facet without the arc-id backend?",
+    a: "Yes. Components, layout and tokens are backend-agnostic. The auth flow and SDK are optional and plug into any API.",
+  },
+  {
+    q: "Do the packages support server-side rendering (Next.js, Remix)?",
+    a: "Yes. The docs engine and layout shells work in client-rendered and SSR apps. The docs site itself runs on Next.js-compatible React Router.",
+  },
+  {
+    q: "How do I theme facet for my brand?",
+    a: "All colors and spacing are CSS variables from @arcevo/facet-tokens. Override them at runtime via ThemeProvider overrideVars or swap tokens.css with your own values.",
+  },
+  {
+    q: "Does facet work in a monorepo?",
+    a: "Yes. The CLI detects pnpm/yarn/npm workspaces, scans workspace members for facet deps, and prints workspace-aware update commands.",
+  },
+  {
+    q: "How do I update my facet packages?",
+    a: "Run `facet pkg` to see versions, then `facet update` prints the exact install command for your package manager.",
+  },
+  {
+    q: "Can I copy components into my source instead of installing the package?",
+    a: "Yes, with `facet add <component>`. Installing from the package is recommended so you get updates and tree-shaking.",
+  },
+];

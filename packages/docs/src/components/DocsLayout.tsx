@@ -2,7 +2,6 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { ConsoleLayout, CommandPalette } from "@arcevo/facet-layout";
 import {
   ThemeToggle,
-  useTheme,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -10,6 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   Icon,
+  Kbd,
   type IconName,
 } from "@arcevo/facet-components/light";
 import { buildDocsLayoutConfig } from "../lib/nav.js";
@@ -31,11 +31,10 @@ import { useDocsApp } from "../context.js";
  *   inline results panel that searches all sidebar routes and quick
  *   actions, grouped by section.
  */
-/** Settings gear dropdown: external links, and a theme quick toggle. */
+/** Settings gear dropdown: ecosystem links and helpful shortcuts. The theme
+ * toggle has its own dedicated icon in the topbar, so it is not duplicated
+ * here. */
 function SettingsMenu({ label, links }: { label: string; links: { label: string; href: string; icon?: IconName }[] }) {
-  const { setTheme, resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -48,27 +47,33 @@ function SettingsMenu({ label, links }: { label: string; links: { label: string;
           <Icon name="settings" className="size-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>{label}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {links.map((link) => (
-          <DropdownMenuItem key={link.href} asChild>
-            <a
-              href={link.href}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center gap-2"
-            >
-              {link.icon && <Icon name={link.icon} className="size-4" />}
-              {link.label}
-            </a>
-          </DropdownMenuItem>
-        ))}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setTheme(isDark ? "light" : "dark")}>
-          <Icon name={isDark ? "sun" : "moon"} className="size-4" />
-          {isDark ? "Light mode" : "Dark mode"}
-        </DropdownMenuItem>
+        {links.length > 0 && (
+          <>
+            {links.map((link) => (
+              <DropdownMenuItem key={link.href} asChild>
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2"
+                >
+                  {link.icon && <Icon name={link.icon} className="size-4" />}
+                  {link.label}
+                </a>
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSeparator />
+          </>
+        )}
+        <div className="px-2.5 py-2 text-xs text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <Icon name="search" className="size-3.5" />
+            Press <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to search docs
+          </span>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

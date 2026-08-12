@@ -137,7 +137,7 @@ function ConsoleLayoutInner({
         >
           {topbar}
         </Topbar>
-        <main className="flex-1 p-8">
+        <main className="flex-1 p-4 md:p-8">
           <div className="mx-auto w-full max-w-[1440px]">{children}</div>
         </main>
       </div>

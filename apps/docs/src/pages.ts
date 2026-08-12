@@ -644,7 +644,7 @@ function MyHeader() {
   {
     path: "/docs-package",
     title: "Docs Package",
-    section: "guides",
+    section: "ecosystem",
     description: "Install @arcevo/facet-docs in your own project: mount, config, pages, and blocks.",
     blocks: [
       {
@@ -741,7 +741,7 @@ export function App() {
   {
     path: "/layout",
     title: "Layout",
-    section: "guides",
+    section: "ecosystem",
     description: "Domain-configurable app shells and sidebar.",
     blocks: [
       {
