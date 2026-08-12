@@ -1,6 +1,6 @@
 /**
  * CountryCodeInput: a phone number input with a leading country-code
- * selector (WhatsApp-style). The dial code list is bundled locally so the
+ * selector (WhatsApp-style). Dial codes are bundled locally so the
  * component works offline; consumers can pass their own list.
  *
  * Usage:
@@ -8,6 +8,10 @@
  *     value={{ code: "+234", number: "8012345678" }}
  *     onValueChange={setPhone}
  *   />
+ *
+ * Full ISO list + regional variants:
+ *   <CountryCodeInput countries={ISO_COUNTRY_CODES} regions={["africa"]} />
+ *   <CountryCodeInput countries={ISO_COUNTRY_CODES} excludeRegions={["europe"]} />
  */
 
 import * as React from "react";
@@ -18,7 +22,17 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
+  SelectGroup,
+  SelectLabel,
 } from "./select.js";
+import {
+  ALL_COUNTRY_CODES,
+  COUNTRY_REGION_LABELS,
+  type CountryRegion,
+} from "./country-codes-data.js";
+
+export type { CountryRegion } from "./country-codes-data.js";
+export { COUNTRY_REGION_LABELS } from "./country-codes-data.js";
 
 /* ── Data ──────────────────────────────────────────────────── */
 
@@ -29,6 +43,10 @@ export interface CountryCode {
   code: string;
   /** Display label, e.g. "Nigeria (+234)". */
   label?: string;
+  /** Display name when no label is given (full-list entries). */
+  name?: string;
+  /** World region for filtering/grouping (full-list entries). */
+  region?: CountryRegion;
 }
 
 export const COMMON_COUNTRY_CODES: CountryCode[] = [
@@ -48,9 +66,35 @@ export const COMMON_COUNTRY_CODES: CountryCode[] = [
   { country: "JP", code: "+81", label: "Japan (+81)" },
 ];
 
+/** Full ISO 3166-1 dial-code list (name + code + region per entry). */
+export const ISO_COUNTRY_CODES: CountryCode[] = ALL_COUNTRY_CODES;
+
 /** Resolve the display code for a given country code (defaults to its entry). */
 export function getCountryCode(country: string, list = COMMON_COUNTRY_CODES): string {
   return list.find((c) => c.country === country)?.code ?? "+1";
+}
+
+/** Resolve the display name for a given country code. */
+export function getCountryName(country: string, list = COMMON_COUNTRY_CODES): string {
+  const entry = list.find((c) => c.country === country);
+  return entry?.label?.split(" (")[0] ?? entry?.name ?? country;
+}
+
+/**
+ * Filter a country list by region. Entries without a `region` field are
+ * kept unless `excludeRegions` removes them — so custom lists are
+ * unaffected unless they carry region metadata.
+ */
+export function filterCountryCodes(
+  list: CountryCode[],
+  regions?: CountryRegion[],
+  excludeRegions?: CountryRegion[],
+): CountryCode[] {
+  return list.filter((c) => {
+    if (regions?.length && (!c.region || !regions.includes(c.region))) return false;
+    if (excludeRegions?.length && c.region && excludeRegions.includes(c.region)) return false;
+    return true;
+  });
 }
 
 /* ── Props ─────────────────────────────────────────────────── */
@@ -69,6 +113,16 @@ export interface CountryCodeInputProps {
   onValueChange?: (value: CountryCodeValue) => void;
   /** Country-code list. Defaults to COMMON_COUNTRY_CODES. */
   countries?: CountryCode[];
+  /** Restrict to these country codes (ISO alpha-2). Applied after `include`/`exclude`. */
+  regions?: string[];
+  /** World regions to keep (include filter). E.g. `["africa"]`. */
+  includeRegions?: CountryRegion[];
+  /** World regions to drop (exclude filter). E.g. `["europe"]`. */
+  excludeRegions?: CountryRegion[];
+  /** Only show these countries (ISO alpha-2). */
+  include?: string[];
+  /** Hide these countries (ISO alpha-2). */
+  exclude?: string[];
   /** Placeholder for the number field. Default: "Phone number". */
   placeholder?: string;
   /** Label shown above the input. */
@@ -82,10 +136,28 @@ export interface CountryCodeInputProps {
 
 /* ── Component ─────────────────────────────────────────────── */
 
+function applyRestrictions(
+  countries: CountryCode[],
+  regions?: string[],
+  include?: string[],
+  exclude?: string[],
+): CountryCode[] {
+  let list = countries;
+  if (include?.length) list = list.filter((c) => include.includes(c.country));
+  if (regions?.length) list = list.filter((c) => regions.includes(c.country));
+  if (exclude?.length) list = list.filter((c) => !exclude.includes(c.country));
+  return list;
+}
+
 export function CountryCodeInput({
   value,
   onValueChange,
   countries = COMMON_COUNTRY_CODES,
+  regions,
+  includeRegions,
+  excludeRegions,
+  include,
+  exclude,
   placeholder = "Phone number",
   label,
   disabled = false,
@@ -93,8 +165,30 @@ export function CountryCodeInput({
   id,
   name,
 }: CountryCodeInputProps) {
-  const selected = value?.country ?? countries[0]?.country ?? "US";
-  const dialCode = value?.country ? getCountryCode(value.country, countries) : (countries[0]?.code ?? "+1");
+  const list = React.useMemo(() => {
+    let next = applyRestrictions(countries, regions, include, exclude);
+    next = filterCountryCodes(next, includeRegions, excludeRegions);
+    return next;
+  }, [countries, regions, include, exclude, includeRegions, excludeRegions]);
+
+  const selected =
+    value?.country && list.some((c) => c.country === value.country)
+      ? value.country
+      : (list[0]?.country ?? "");
+  const dialCode = selected ? getCountryCode(selected, list) : "";
+
+  // Group by region when the entries carry region metadata.
+  const grouped = React.useMemo(() => {
+    if (!list.some((c) => c.region)) return null;
+    const map = new Map<CountryRegion, CountryCode[]>();
+    for (const c of list) {
+      if (!c.region) continue;
+      const bucket = map.get(c.region) ?? [];
+      bucket.push(c);
+      map.set(c.region, bucket);
+    }
+    return [...map.entries()];
+  }, [list]);
 
   const setCountry = (country: string) => {
     onValueChange?.({ country, number: value?.number ?? "" });
@@ -125,15 +219,24 @@ export function CountryCodeInput({
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {countries.map((c) => (
-              <SelectItem key={`${c.country}-${c.code}`} value={c.country}>
-                <span className="flex items-center gap-2">
-                  <span className="uppercase">{c.country}</span>
-                  <span className="text-muted-foreground">{c.code}</span>
-                  {c.label && <span className="text-muted-foreground">{c.label}</span>}
-                </span>
-              </SelectItem>
-            ))}
+            {grouped ? (
+              grouped.map(([region, entries]) => (
+                <SelectGroup key={region}>
+                  <SelectLabel>{COUNTRY_REGION_LABELS[region]}</SelectLabel>
+                  {entries.map((c) => (
+                    <SelectItem key={`${c.country}-${c.code}`} value={c.country}>
+                      <CountryRow entry={c} />
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              ))
+            ) : (
+              list.map((c) => (
+                <SelectItem key={`${c.country}-${c.code}`} value={c.country}>
+                  <CountryRow entry={c} />
+                </SelectItem>
+              ))
+            )}
           </SelectContent>
         </Select>
         <input
@@ -149,5 +252,19 @@ export function CountryCodeInput({
         />
       </div>
     </div>
+  );
+}
+
+function CountryRow({ entry }: { entry: CountryCode }) {
+  return (
+    <span className="flex items-center gap-2">
+      <span className="uppercase">{entry.country}</span>
+      <span className="text-muted-foreground">{entry.code}</span>
+      {entry.label ? (
+        <span className="text-muted-foreground">{entry.label}</span>
+      ) : (
+        <span>{entry.name ?? entry.country}</span>
+      )}
+    </span>
   );
 }

@@ -1,5 +1,22 @@
 # @arcevo/facet-docs
 
+## 1.3.1
+
+### Patch Changes
+
+- DataTable: export consolidated into a single Export dropdown (CSV + pluggable exporters), plus a new overflow (⋯) actions menu for bulk row actions (select-all, mark-as-read, delete-all, custom). NavigationMenuLink is now a padded, hover-styled block link (fixes cramped dropdown items) and supports an optional description. NumberInput gains a built-in currency picker: CURRENCIES list, currencyPicker dropdown, currencyOptions override, and onCurrencyChange.
+
+  New components: DateInput (ISO date validation + native fallback), PasswordInput (show/hide toggle), and InfiniteScroll (vertical/horizontal, IntersectionObserver sentinel).
+
+  CountryCodeInput expands to the full ISO country list with regional restriction filtering (includeRegions/excludeRegions). LocationPicker deepens the country dataset (Nigeria states + LGA/LCDA) and exports typed CountryInput / StateInput / LGAInput sub-inputs. DatePicker adds a year picker. QRCode gains a logo variant with configurable position. DataTable's generic constraint is relaxed so plain interfaces work as row types.
+
+  Docs package: demos, variants, and usage snippets updated for all of the above.
+
+- Updated dependencies
+  - @arcevo/facet-components@1.4.0
+  - @arcevo/facet-auth@1.1.2
+  - @arcevo/facet-layout@1.2.1
+
 ## 1.3.0
 
 ### Minor Changes

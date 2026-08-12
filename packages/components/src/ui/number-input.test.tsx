@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { NumberInput } from "./number-input.js";
+import { NumberInput, CURRENCIES, type Currency } from "./number-input.js";
 
 describe("NumberInput", () => {
   it("renders the current value", () => {
@@ -73,5 +73,62 @@ describe("NumberInput", () => {
     await userEvent.clear(input);
     await userEvent.type(input, "30");
     expect(onValueChange).toHaveBeenLastCalledWith(30);
+  });
+
+  it("clamps negatives to zero when beyondZero is set", async () => {
+    const onValueChange = vi.fn();
+    render(<NumberInput value={5} beyondZero onValueChange={onValueChange} />);
+    const input = screen.getByRole("textbox");
+    await userEvent.clear(input);
+    await userEvent.type(input, "-3");
+    // Clamped to 0.
+    expect(onValueChange).toHaveBeenLastCalledWith(0);
+  });
+
+  it("disables the decrement button at zero when beyondZero", () => {
+    render(<NumberInput value={0} beyondZero />);
+    expect(screen.getByLabelText("Decrease value")).toBeDisabled();
+  });
+
+  it("exposes the built-in currency list", () => {
+    expect(CURRENCIES.length).toBeGreaterThan(0);
+    expect(CURRENCIES.map((c) => c.code)).toContain("USD");
+    expect(CURRENCIES.map((c) => c.code)).toContain("NGN");
+  });
+
+  it("opens the currency picker and reports the picked currency", async () => {
+    const onCurrencyChange = vi.fn();
+    render(
+      <NumberInput
+        value={25}
+        currency="$"
+        currencyPicker
+        onCurrencyChange={onCurrencyChange}
+      />,
+    );
+    await userEvent.click(screen.getByLabelText("Currency: US Dollar"));
+    await userEvent.click(screen.getByText("Nigerian Naira"));
+    expect(onCurrencyChange).toHaveBeenCalledWith(
+      expect.objectContaining<Partial<Currency>>({ code: "NGN", symbol: "₦" }),
+    );
+  });
+
+  it("pins a custom currency option list", async () => {
+    const onCurrencyChange = vi.fn();
+    const options: Currency[] = [{ code: "XBT", symbol: "₿", name: "Bitcoin" }];
+    render(
+      <NumberInput
+        value={1}
+        currency="₿"
+        currencyPicker
+        currencyOptions={options}
+        onCurrencyChange={onCurrencyChange}
+      />,
+    );
+    await userEvent.click(screen.getByLabelText("Currency: Bitcoin"));
+    await userEvent.click(screen.getByText("Bitcoin"));
+    expect(onCurrencyChange).toHaveBeenCalledWith(
+      expect.objectContaining<Partial<Currency>>({ code: "XBT", symbol: "₿" }),
+    );
   });
 });

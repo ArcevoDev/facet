@@ -5,6 +5,8 @@ import * as React from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { cn } from "../utils.js";
 
+export type QRLogoPosition = "center" | "top-left" | "top-right" | "bottom-left" | "bottom-right";
+
 export interface QRCodeProps {
   /** The value to encode. */
   value: string;
@@ -21,11 +23,41 @@ export interface QRCodeProps {
   className?: string;
   /** Accessible label for the generated image. */
   label?: string;
+  /** Optional logo image URL rendered over the QR code. */
+  logo?: string;
+  /** Logo size in pixels. Default: 40 */
+  logoSize?: number;
+  /** Logo position. Default: "center" */
+  logoPosition?: QRLogoPosition;
+}
+
+/** Map a position to absolute CSS placement over the QR area (percent + translate). */
+function positionStyle(position: QRLogoPosition, insetPct: number): React.CSSProperties {
+  switch (position) {
+    case "top-left":
+      return { top: `${insetPct}%`, left: `${insetPct}%`, transform: "translate(0, 0)" };
+    case "top-right":
+      return { top: `${insetPct}%`, right: `${insetPct}%`, transform: "translate(0, 0)" };
+    case "bottom-left":
+      return { bottom: `${insetPct}%`, left: `${insetPct}%`, transform: "translate(0, 0)" };
+    case "bottom-right":
+      return { bottom: `${insetPct}%`, right: `${insetPct}%`, transform: "translate(0, 0)" };
+    case "center":
+    default:
+      return { top: "50%", left: "50%", transform: "translate(-50%, -50%)" };
+  }
 }
 
 /**
  * A lightweight QR code renderer built on qrcode.react. Encodes any string
- * into a crisp SVG that inherits the current text color by default.
+ * into a crisp SVG that inherits the current text color by default. Pass a
+ * `logo` URL to overlay a brand mark (centered by default, or at a corner).
+ *
+ * The logo is rendered as an absolutely-positioned overlay on top of the QR
+ * SVG (not via qrcode.react's imageSettings), so it is always pixel-perfect
+ * centered or corner-placed regardless of the QR module count / scale. A
+ * small padded backdrop behind the logo keeps the code scannable by clearing
+ * the modules underneath (equivalent to "excavate").
  */
 const QRCode = React.forwardRef<HTMLDivElement, QRCodeProps>(
   (
@@ -38,26 +70,62 @@ const QRCode = React.forwardRef<HTMLDivElement, QRCodeProps>(
       level = "M",
       className,
       label = "QR code",
+      logo,
+      logoSize = 40,
+      logoPosition = "center",
     },
     ref,
-  ) => (
-    <div
-      ref={ref}
-      className={cn("inline-block rounded-md border border-border bg-background p-2", className)}
-    >
-      <QRCodeSVG
-        value={value}
-        size={size}
-        fgColor={fgColor}
-        bgColor={bgColor}
-        includeMargin={includeMargin}
-        level={level}
-        aria-label={label}
-        role="img"
-        style={{ display: "block", width: size, height: size }}
-      />
-    </div>
-  ),
+  ) => {
+    // Keep the logo inside the QR "quiet zone" for the corner positions.
+    const insetPct = Math.max(8, Math.min(16, (logoSize / size) * 100 * 0.6));
+
+    return (
+      <div
+        ref={ref}
+        className={cn("inline-block rounded-md border border-border bg-background p-2", className)}
+      >
+        <div className="relative" style={{ width: size, height: size }}>
+          <QRCodeSVG
+            value={value}
+            size={size}
+            fgColor={fgColor}
+            bgColor={bgColor}
+            includeMargin={includeMargin}
+            level={level}
+            aria-label={label}
+            role="img"
+            style={{ display: "block", width: size, height: size }}
+          />
+          {logo && (
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                ...positionStyle(logoPosition, insetPct),
+                width: logoSize,
+                height: logoSize,
+              }}
+            >
+              {/* Backdrop: pads the logo so the modules underneath are cleared,
+                  keeping the code scannable. */}
+              <div
+                className="flex h-full w-full items-center justify-center rounded-full bg-background"
+                style={{ boxShadow: "0 0 0 3px var(--background, #fff)" }}
+              >
+                <img
+                  src={logo}
+                  alt=""
+                  width={logoSize}
+                  height={logoSize}
+                  style={{ width: logoSize, height: logoSize, objectFit: "contain" }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  },
 );
 QRCode.displayName = "QRCode";
 

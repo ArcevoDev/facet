@@ -2,7 +2,7 @@ import type { IconName } from "@arcevo/facet-components";
 
 /** Live library stats, verified against the packages on every release. */
 export const STATS = [
-  { value: "57", label: "components" },
+  { value: "60", label: "components" },
   { value: "10", label: "API SDKs" },
   { value: "3", label: "layout shells" },
   { value: "5", label: "auth presets" },
@@ -20,26 +20,26 @@ export interface Package {
 export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-components",
-    desc: "57 styled, accessible React components built on Radix primitives.",
-    version: "1.2.0",
+    desc: "60 styled, accessible React components built on Radix primitives.",
+    version: "1.3.0",
     icon: "boxes",
   },
   {
     name: "@arcevo/facet-docs",
     desc: "Installable docs engine: mount <DocsApp> with your own brand, nav, and pages.",
-    version: "1.2.0",
+    version: "1.3.0",
     icon: "book-open",
   },
   {
     name: "@arcevo/facet-auth",
     desc: "SignIn, SignUp, Guard, MFA and forms with per-domain presets.",
-    version: "1.1.0",
+    version: "1.1.1",
     icon: "shield-check",
   },
   {
     name: "@arcevo/facet-layout",
     desc: "Console, auth and landing shells with a collapsible icon rail.",
-    version: "1.1.1",
+    version: "1.2.0",
     icon: "building",
   },
   {
@@ -57,7 +57,7 @@ export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-cli",
     desc: "Scaffold docs sites, audit and update your facet setup from the terminal.",
-    version: "0.2.0",
+    version: "0.3.0",
     icon: "terminal",
   },
 ];
@@ -180,19 +180,19 @@ export const ROADMAP: RoadmapItem[] = [
     phase: "Phase 4",
     title: "CLI + DX",
     desc: "facet pkg/doctor/update commands, -y shorthand, and a slim /light entry.",
-    status: "in-progress",
+    status: "done",
   },
   {
     phase: "Phase 5",
     title: "Component depth",
     desc: "CountryCodeInput ISO expansion, LocationPicker depth, DataTable xlsx/pdf export, NumberInput currency.",
-    status: "planned",
+    status: "done",
   },
   {
     phase: "Phase 6",
     title: "Ecosystem tools",
     desc: "arc-id CLI basis, tree-shakeable icon imports, stack-agnosticism assessment for non-React consumers.",
-    status: "planned",
+    status: "in-progress",
   },
 ];
 
@@ -208,7 +208,7 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "Which React version does facet require?",
-    a: "React 19. All packages list react and react-dom as peer dependencies.",
+    a: "React 18 or 19. All packages list react and react-dom as peer dependencies.",
   },
   {
     q: "Does facet work with Tailwind v4?",

@@ -117,11 +117,12 @@ Forms are independently importable: `LoginForm`, `MagicLinkForm`, `ForgotPasswor
 
 Packages publish to npm under the `@arcevo/facet-*` scope via Changesets.
 Publishing is done **locally** by the maintainer: run `pnpm changeset publish`
-from a terminal authenticated with npm (no CI publish job). The GitHub
-Actions workflow (`.github/workflows/ci-cd.yml`) is a validation gate only:
-it builds, typechecks, and runs the docs inventory check on `main`/PRs, but
-never publishes. The previous automated publish job was removed after it hit
-repo-fetch errors in CI; re-enabling it is tracked as a follow-up.
+from a terminal authenticated with npm. The GitHub Actions workflow
+(`.github/workflows/ci-cd.yml`) runs a validation gate (build, typecheck,
+docs inventory) AND an auto-VERSION job: `changesets/action@v1` opens the
+"Version Packages" PR on `main` whenever changesets land. It only versions
+(bumps versions + CHANGELOGs, opens a PR) — it never publishes to npm.
+Merge the version PR, then publish locally from a clean tree.
 
 ```sh
 pnpm changeset publish   # ships unpublished packages at their current version

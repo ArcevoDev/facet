@@ -103,6 +103,12 @@ export interface DatePickerProps {
   disabled?: (date: Date) => boolean;
   /** Disable the entire picker. */
   disabledAll?: boolean;
+  /** Show a year-jump picker inside the calendar. Default: true for vertical mode. */
+  showYearPicker?: boolean;
+  /** Earliest selectable year. Default: current year - 10. */
+  minYear?: number;
+  /** Latest selectable year. Default: current year + 10. */
+  maxYear?: number;
   /** Class name for the trigger. */
   className?: string;
   /** Align the popover. Default: "start". */
@@ -159,16 +165,23 @@ export function DatePicker({
   horizontalDays = 28,
   disabled,
   disabledAll = false,
+  showYearPicker = true,
+  minYear,
+  maxYear,
   className,
   align = "start",
 }: DatePickerProps) {
   const [open, setOpen] = React.useState(false);
   const today = new Date();
   const [viewMonth, setViewMonth] = React.useState<Date>(startOfMonth(value ?? today));
+  const [viewYear, setViewYear] = React.useState<number>(value?.getFullYear() ?? today.getFullYear());
 
   // When the picker opens, jump the view to the selected month if any.
   React.useEffect(() => {
-    if (open && value) setViewMonth(startOfMonth(value));
+    if (open && value) {
+      setViewMonth(startOfMonth(value));
+      setViewYear(value.getFullYear());
+    }
   }, [open, value]);
 
   const select = (date: Date) => {
@@ -178,11 +191,22 @@ export function DatePicker({
 
   const isDisabled = (date: Date) => (disabledAll ? true : disabled?.(date) ?? false);
 
+  const yearMin = minYear ?? today.getFullYear() - 10;
+  const yearMax = maxYear ?? today.getFullYear() + 10;
+
+  const jumpToYear = (year: number) => {
+    const clamped = Math.min(yearMax, Math.max(yearMin, year));
+    setViewYear(clamped);
+    setViewMonth(new Date(clamped, viewMonth.getMonth(), 1));
+  };
+
+  const years = Array.from({ length: yearMax - yearMin + 1 }, (_, i) => yearMin + i);
+
   const renderVertical = () => {
     const cells = buildMonthGrid(viewMonth);
     return (
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-1">
           <Button
             type="button"
             variant="ghost"
@@ -205,6 +229,42 @@ export function DatePicker({
             →
           </Button>
         </div>
+        {showYearPicker && (
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              aria-label="Previous year"
+              disabled={viewYear <= yearMin}
+              onClick={() => jumpToYear(viewYear - 1)}
+            >
+              ←
+            </Button>
+            <select
+              aria-label="Select year"
+              value={viewYear}
+              onChange={(e) => jumpToYear(Number(e.target.value))}
+              className="h-8 flex-1 rounded-md border border-input bg-transparent px-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            >
+              {years.map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              aria-label="Next year"
+              disabled={viewYear >= yearMax}
+              onClick={() => jumpToYear(viewYear + 1)}
+            >
+              →
+            </Button>
+          </div>
+        )}
         <div className="grid grid-cols-7 gap-1">
           {WEEKDAYS.map((d) => (
             <span key={d} className="text-center text-xs font-medium text-muted-foreground">

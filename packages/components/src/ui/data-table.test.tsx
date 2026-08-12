@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DataTable, type DataTableColumn } from "./data-table.js";
+import { DataTable, type DataTableColumn, type DataTableExporter } from "./data-table.js";
 
 interface Row extends Record<string, unknown> {
   id: string;
@@ -52,7 +52,7 @@ describe("DataTable", () => {
     expect(screen.getByText("Ada")).toBeInTheDocument();
     expect(screen.getByText("Grace")).toBeInTheDocument();
     expect(screen.queryByText("Linus")).not.toBeInTheDocument();
-    await userEvent.click(screen.getByRole("button", { name: "Next" }));
+    await userEvent.click(screen.getByRole("link", { name: "Go to next page" }));
     expect(screen.getByText("Linus")).toBeInTheDocument();
   });
 
@@ -71,7 +71,7 @@ describe("DataTable", () => {
     expect(screen.getByText("3 selected")).toBeInTheDocument();
   });
 
-  it("exports CSV on button click", () => {
+  it("exports CSV from the export menu", async () => {
     const revoke = vi.fn();
     const create = vi.fn(() => "blob:url");
     const click = vi.fn();
@@ -82,7 +82,8 @@ describe("DataTable", () => {
       .mockImplementation(click);
 
     render(<DataTable columns={COLUMNS} data={ROWS} exportable />);
-    fireEvent.click(screen.getByRole("button", { name: /Export CSV/ }));
+    await userEvent.click(screen.getByRole("button", { name: /Export/ }));
+    await userEvent.click(screen.getByRole("menuitem", { name: /CSV/ }));
     expect(create).toHaveBeenCalled();
     expect(clickSpy).toHaveBeenCalled();
     expect(revoke).toHaveBeenCalled();
@@ -94,6 +95,58 @@ describe("DataTable", () => {
     render(<DataTable columns={COLUMNS} data={ROWS} searchable />);
     await userEvent.type(screen.getByLabelText("Search..."), "nobody");
     expect(screen.getByText("No results found.")).toBeInTheDocument();
+  });
+
+  it("invokes custom exporters with visible columns and full rows", async () => {
+    const exportFn = vi.fn();
+    const exporter: DataTableExporter<Row> = {
+      key: "xlsx",
+      label: "Export XLSX",
+      export: exportFn,
+    };
+    render(<DataTable columns={COLUMNS} data={ROWS} exporters={[exporter]} />);
+    await userEvent.click(screen.getByRole("button", { name: /Export/ }));
+    await userEvent.click(screen.getByRole("menuitem", { name: /Export XLSX/ }));
+    expect(exportFn).toHaveBeenCalledTimes(1);
+    const [cols, rows] = exportFn.mock.calls[0] as [DataTableColumn<Row>[], Row[]];
+    expect(cols.map((c) => c.key)).toEqual(["name", "role", "active"]);
+    expect(rows).toHaveLength(3);
+  });
+
+  it("runs bulk actions from the overflow menu with selected rows", async () => {
+    const onAction = vi.fn();
+    render(
+      <DataTable
+        columns={COLUMNS}
+        data={ROWS}
+        selectable
+        actions={[{ key: "delete", label: "Delete selected", destructive: true, action: onAction }]}
+      />,
+    );
+    await userEvent.click(screen.getByLabelText("Select all rows"));
+    await userEvent.click(screen.getByRole("button", { name: "Table actions" }));
+    await userEvent.click(screen.getByRole("menuitem", { name: /Delete selected/ }));
+    expect(onAction).toHaveBeenCalledTimes(1);
+    const [allRows, selectedRows] = onAction.mock.calls[0] as [Row[], Row[]];
+    expect(allRows).toHaveLength(3);
+    expect(selectedRows).toHaveLength(3);
+  });
+
+  it("runs bulk actions with no selection when selectable is off", async () => {
+    const onAction = vi.fn();
+    render(
+      <DataTable
+        columns={COLUMNS}
+        data={ROWS}
+        actions={[{ key: "mark-read", label: "Mark all as read", action: onAction }]}
+      />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Table actions" }));
+    await userEvent.click(screen.getByRole("menuitem", { name: /Mark all as read/ }));
+    expect(onAction).toHaveBeenCalledTimes(1);
+    const [allRows, selectedRows] = onAction.mock.calls[0] as [Row[], Row[]];
+    expect(allRows).toHaveLength(3);
+    expect(selectedRows).toHaveLength(0);
   });
 
   it("accepts plain interface row types (no index signature)", () => {

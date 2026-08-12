@@ -834,6 +834,57 @@ registerIcon("shield", ShieldAlert);`,
     ],
   },
   {
+    path: "/stack-agnosticism",
+    title: "Stack Agnosticism",
+    section: "ecosystem",
+    description: "Which facet layers work outside React, and which are React-only by design.",
+    blocks: [
+      {
+        type: "p",
+        text: "facet is **not** one-size-fits-all: some layers are framework-agnostic, some are React-only by design, and the boundary is intentional. This page is the honest map so you know what works in your stack before you adopt.",
+      },
+      { type: "h2", text: "Layer matrix" },
+      {
+        type: "table",
+        headers: ["Layer", "Stack", "Works outside React?"],
+        rows: [
+          ["`@arcevo/facet-tokens`", "CSS variables + Tailwind v4 theme", "Yes, plain CSS, any framework, no JS"],
+          ["`@arcevo/facet-sdk`", "TypeScript, pure fetch", "Yes, any runtime (browser, Node, edge)"],
+          ["`@arcevo/facet-cli`", "Node CLI", "Yes, scaffolds docs for React, Next, Remix, plain JS, Python"],
+          ["`@arcevo/facet-components`", "React + Radix + tailwind-merge", "No, React 18/19 only"],
+          ["`@arcevo/facet-layout`", "React", "No, React 18/19 only"],
+          ["`@arcevo/facet-auth`", "React", "No, React 18/19 only"],
+          ["`@arcevo/facet-docs`", "React + react-router", "No, React 18/19 only"],
+        ],
+      },
+      { type: "h2", text: "Why React-only for UI" },
+      {
+        type: "p",
+        text: "The UI packages are built on React + Radix primitives for a reason: accessible behavior (focus management, keyboard nav, portals, ARIA) is hard to get right, and Radix is the battle-tested implementation. Rebuilding that in Vue, Svelte, or Web Components would multiply the surface area we must maintain for consumers who, so far, all use React.",
+      },
+      { type: "h2", text: "What you can use outside React" },
+      {
+        type: "ul",
+        items: [
+          "**Tokens only:** import `@arcevo/facet-tokens/tokens.css` in any framework for the Alpha Palette design language.",
+          "**Tailwind v4 theme:** `@arcevo/facet-tokens/tailwind.css` registers `@theme` utilities (bg-primary, text-foreground, ...) for any Tailwind v4 project.",
+          "**SDK:** `@arcevo/facet-sdk` is a dependency-free fetch client, drop it into any TypeScript backend or frontend.",
+          "**CLI scaffolding:** `facet docs init` generates plain-JS and Python docs pipelines, so a non-React team can still ship a facet-style docs site.",
+        ],
+      },
+      { type: "h2", text: "When React is the target" },
+      {
+        type: "p",
+        text: "If your app is React (18 or 19), everything works: components, layout shells, auth, and the docs engine. The docs engine requires `react-router-dom` as a peer; layout components are router-agnostic (bring your own adapter for Next/Remix/React Router).",
+      },
+      { type: "h2", text: "Decision" },
+      {
+        type: "p",
+        text: "**We are not building Vue/Svelte/Web Component adapters today.** The demand signal is weak, every current consumer is React, and a token-only + SDK + CLI surface already covers the non-React story. If a concrete non-React consumer arrives, the lowest-cost entry point is a Web Components wrapper over the tokens + a small set of headless behaviors, not a port of the full library.",
+      },
+    ],
+  },
+  {
     path: "/cli",
     title: "CLI",
     section: "ecosystem",
@@ -864,7 +915,7 @@ facet docs init -y`,
       },
       {
         type: "p",
-        text: "After scaffolding, the CLI installs the facet packages automatically at their current published versions (resolved from the npm registry at init time — no pinned guesses). If the install can't run, it prints the exact command instead.",
+        text: "After scaffolding, the CLI installs the facet packages automatically at their current published versions (resolved from the npm registry at init time, no pinned guesses). If the install can't run, it prints the exact command instead.",
       },
       { type: "h2", text: "Framework support" },
       {

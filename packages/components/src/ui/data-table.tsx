@@ -25,6 +25,14 @@ import { Button } from "./button.js";
 import { Checkbox } from "./checkbox.js";
 import { Icon } from "../icon/index.js";
 import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "./dropdown-menu.js";
+import {
   Table,
   TableHeader,
   TableBody,
@@ -32,6 +40,15 @@ import {
   TableRow,
   TableCell,
 } from "./table.js";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+} from "./pagination.js";
 
 /* ── Types ─────────────────────────────────────────────────── */
 
@@ -52,6 +69,39 @@ export interface DataTableColumn<T extends object> {
   sortable?: boolean;
 }
 
+/**
+ * A pluggable export format. The `export` callback receives the currently
+ * visible columns and the sorted (full, unpaginated) rows; it is responsible
+ * for producing and saving the file (Blob + anchor, printer dialog, etc.).
+ */
+export interface DataTableExporter<T extends object> {
+  /** Stable id for the exporter. */
+  key: string;
+  /** Dropdown item label. */
+  label: string;
+  /** Called when the dropdown item is clicked. */
+  export: (columns: DataTableColumn<T>[], rows: T[]) => void;
+}
+
+/**
+ * A row-level bulk action shown in the toolbar overflow (⋯) menu. The
+ * callback receives the full sorted rows and the currently selected rows
+ * (empty when `selectable` is off), so actions like "select all",
+ * "mark as read" or "delete all" can be implemented by the consumer.
+ */
+export interface DataTableAction<T extends object> {
+  /** Stable id for the action. */
+  key: string;
+  /** Menu item label. */
+  label: string;
+  /** Optional icon name resolved through the Icon registry. */
+  icon?: string;
+  /** Destructive actions render in the destructive color. */
+  destructive?: boolean;
+  /** Called when the menu item is clicked. */
+  action: (rows: T[], selectedRows: T[]) => void;
+}
+
 export interface DataTableProps<T extends object> {
   /** Column definitions. */
   columns: DataTableColumn<T>[];
@@ -63,10 +113,25 @@ export interface DataTableProps<T extends object> {
   searchable?: boolean;
   /** Placeholder for the search box. Default: "Search..." */
   searchPlaceholder?: string;
-  /** Show a CSV export button. */
+  /** Show a CSV export button (as the "CSV" item in the export menu). */
   exportable?: boolean;
   /** File name for the CSV export (no extension). Default: "table-export". */
   exportFileName?: string;
+  /**
+   * Additional export formats. Each entry adds a dropdown item to the
+   * Export menu that calls the provided function with the visible columns
+   * and (sorted, unfiltered by page) rows. Use this to wire xlsx/pdf/print
+   * exporters without the library depending on those formats.
+   *
+   *   exporters={[{ key: "xlsx", label: "XLSX", export: (cols, rows) => ... }]}
+   */
+  exporters?: DataTableExporter<T>[];
+  /**
+   * Bulk row actions rendered in the toolbar overflow (⋯) menu. Each
+   * action receives the full sorted rows and the currently selected rows.
+   * Use for "select all", "mark as read", "delete all", and custom flows.
+   */
+  actions?: DataTableAction<T>[];
   /** Paginate results, `pageSize` rows per page. */
   pagination?: boolean;
   /** Rows per page when `pagination` is set. Default: 10. */
@@ -115,6 +180,19 @@ function formatDateForExport(d: Date): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
+/** Page numbers with ellipsis for many pages, e.g. [1, "…", 4, 5, 6, "…", 20]. */
+function pageNumbers(current: number, total: number): (number | "ellipsis")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const pages: (number | "ellipsis")[] = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+  if (start > 2) pages.push("ellipsis");
+  for (let i = start; i <= end; i++) pages.push(i);
+  if (end < total - 1) pages.push("ellipsis");
+  pages.push(total);
+  return pages;
+}
+
 /* ── Main component ────────────────────────────────────────── */
 
 export function DataTable<T extends object>({
@@ -125,6 +203,8 @@ export function DataTable<T extends object>({
   searchPlaceholder = "Search...",
   exportable = false,
   exportFileName = "table-export",
+  exporters = [],
+  actions = [],
   pagination = false,
   pageSize = 10,
   selectable = false,
@@ -222,6 +302,11 @@ export function DataTable<T extends object>({
     });
   };
 
+  // The currently selected row objects (empty when selectable is off).
+  const selectedRows = selectable
+    ? sorted.filter((row) => selected.has(String(rowKeyValue(row, rowKey))))
+    : [];
+
   const handleExport = () => {
     const csv = toCsv(shownColumns, sorted);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -238,7 +323,7 @@ export function DataTable<T extends object>({
   return (
     <div className={cn("space-y-3", className)}>
       {/* Toolbar */}
-      {(searchable || exportable || columns.some((c) => c.hidden) || selectable) && (
+      {(searchable || exportable || exporters.length > 0 || actions.length > 0 || columns.some((c) => c.hidden) || selectable) && (
         <div className="flex flex-wrap items-center gap-2">
           {searchable && (
             <div className="relative min-w-0 flex-1">
@@ -255,27 +340,101 @@ export function DataTable<T extends object>({
             </div>
           )}
           <div className="flex flex-wrap items-center gap-2">
-            {exportable && (
-              <Button type="button" variant="outline" size="sm" onClick={handleExport}>
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mr-1.5"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M8 2V10M8 10L11 7M8 10L5 7M3 12.5V13C3 13.5523 3.44772 14 4 14H12C12.5523 14 13 13.5523 13 13V12.5"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Export CSV
-              </Button>
+            {(exportable || exporters.length > 0) && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button type="button" variant="outline" size="sm" aria-label="Export data">
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="mr-1.5"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M8 2V10M8 10L11 7M8 10L5 7M3 12.5V13C3 13.5523 3.44772 14 4 14H12C12.5523 14 13 13.5523 13 13V12.5"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    Export
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 16 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="ml-1"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M4 6L8 10L12 6"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuLabel>Export as</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {exportable && (
+                    <DropdownMenuItem onSelect={handleExport}>
+                      <Icon name="file-down" className="size-4" />
+                      CSV
+                    </DropdownMenuItem>
+                  )}
+                  {exporters.map((exporter) => (
+                    <DropdownMenuItem
+                      key={exporter.key}
+                      onSelect={() => exporter.export(shownColumns, sorted)}
+                    >
+                      <Icon name="file-down" className="size-4" />
+                      {exporter.label}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            {actions.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="size-8"
+                    aria-label="Table actions"
+                  >
+                    <Icon name="ellipsis" className="size-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {actions.map((action, index) => (
+                    <React.Fragment key={action.key}>
+                      {index > 0 && <DropdownMenuSeparator />}
+                      <DropdownMenuItem
+                        onSelect={() => action.action(sorted, selectedRows)}
+                        className={action.destructive ? "text-destructive focus:text-destructive" : undefined}
+                      >
+                        {action.icon && <Icon name={action.icon} className="size-4" />}
+                        {action.label}
+                        {action.destructive && selectedRows.length > 0 && (
+                          <span className="ml-auto text-xs text-muted-foreground">
+                            {selectedRows.length}
+                          </span>
+                        )}
+                      </DropdownMenuItem>
+                    </React.Fragment>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
             {columns.some((c) => c.hidden) && (
               <div className="flex items-center gap-1 rounded-md border border-border p-0.5">
@@ -403,29 +562,52 @@ export function DataTable<T extends object>({
           )}
         </div>
         {pagination && totalPages > 1 && (
-          <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            >
-              Previous
-            </Button>
-            <span className="tabular-nums">
-              Page {page} of {totalPages}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            >
-              Next
-            </Button>
-          </div>
+          <Pagination className="w-auto justify-end">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  aria-disabled={page <= 1}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (page > 1) setPage((p) => Math.max(1, p - 1));
+                  }}
+                  className={page <= 1 ? "pointer-events-none opacity-40" : ""}
+                />
+              </PaginationItem>
+              {pageNumbers(page, totalPages).map((n, index) =>
+                n === "ellipsis" ? (
+                  <PaginationItem key={`ellipsis-${index}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={n}>
+                    <PaginationLink
+                      href="#"
+                      isActive={n === page}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        setPage(n);
+                      }}
+                    >
+                      {n}
+                    </PaginationLink>
+                  </PaginationItem>
+                ),
+              )}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  aria-disabled={page >= totalPages}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (page < totalPages) setPage((p) => Math.min(totalPages, p + 1));
+                  }}
+                  className={page >= totalPages ? "pointer-events-none opacity-40" : ""}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         )}
       </div>
     </div>

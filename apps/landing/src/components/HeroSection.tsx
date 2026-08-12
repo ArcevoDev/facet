@@ -71,7 +71,7 @@ export function HeroSection() {
         </Button>
       </div>
       <p className="mt-4 text-xs text-muted-foreground">
-        React 19 &middot; TypeScript &middot; Radix UI &middot; Tailwind CSS v4
+        React 18/19 &middot; TypeScript &middot; Radix UI &middot; Tailwind CSS v4
       </p>
 
       <div className="mt-16 grid w-full max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">

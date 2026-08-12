@@ -1,6 +1,6 @@
 {
   "name": "@arcevo/facet-layout",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Domain-configurable app shell for the ArcevoCirqle ecosystem: Sidebar, Topbar, AuthLayout, ConsoleLayout, LandingLayout, PageHeader, TenantSwitcher, and 5 domain presets (fintech, med, edu, enterprise, default).",
   "type": "module",
   "exports": {

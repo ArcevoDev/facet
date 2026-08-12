@@ -46,10 +46,13 @@ current priority backlog.
 Packages publish to npm under the `@arcevo/facet-*` scope via Changesets.
 Publishing is done **locally** by the maintainer (`pnpm changeset publish`,
 authenticated from the terminal). The GitHub Actions workflow
-(`.github/workflows/ci-cd.yml`) is a validation gate only (build, typecheck,
-docs inventory) : it does NOT publish. The previous automated publish job
-was removed after it hit repo-fetch errors in CI; re-enabling it is a
-follow-up. See the README Publishing section.
+(`.github/workflows/ci-cd.yml`) runs a validation gate (build, typecheck,
+docs inventory) AND an auto-VERSION job: `changesets/action@v1` opens the
+"Version Packages" PR on main (needs `permissions: contents: write`, which
+the previous job was missing — it died with a 403 push error, not a
+repo-fetch issue). The CI job does NOT publish to npm; it only versions.
+Merge the version PR, then publish locally from a clean tree. See the
+README Publishing section.
 
 **Release rule:** publish ONLY from a clean working tree, AFTER `pnpm -r
 build` passes, and verify `pnpm changeset status` shows exactly the intended

@@ -14,7 +14,11 @@ import {
   DatePicker,
   NumberInput,
   CountryCodeInput,
+  ISO_COUNTRY_CODES,
   LocationPicker,
+  DateInput,
+  PasswordInput,
+  InfiniteScroll,
   type RoadmapItem,
   type DataTableColumn,
 } from "@arcevo/facet-components";
@@ -57,11 +61,49 @@ export function ColorPickerDemo() {
   );
 }
 
+const QR_BRAND_MARK =
+  "https://raw.githubusercontent.com/github/explore/main/topics/github/github.png";
+
 export function QRCodeDemo() {
+  const [position, setPosition] = React.useState<"center" | "top-left" | "top-right" | "bottom-left" | "bottom-right">(
+    "center",
+  );
   return (
-    <div className="not-prose flex flex-wrap items-center gap-6">
-      <QRCode value="https://facet.arcevocirqle.com.ng" size={140} label="facet docs QR code" />
-      <QRCode value="https://github.com/arcevodev/facet" size={140} label="facet GitHub QR code" />
+    <div className="not-prose space-y-6">
+      <div className="flex flex-wrap items-end gap-6">
+        <QRCode value="https://facet.arcevocirqle.com.ng" size={140} label="facet docs QR code" />
+        <QRCode value="https://github.com/arcevodev/facet" size={140} label="facet GitHub QR code" />
+        <QRCode
+          value="https://github.com/arcevodev/facet"
+          size={160}
+          label="QR code with brand logo"
+          logo={QR_BRAND_MARK}
+          logoSize={36}
+          logoPosition={position}
+        />
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-sm font-medium text-foreground">Logo position:</span>
+        {(["center", "top-left", "top-right", "bottom-left", "bottom-right"] as const).map((pos) => (
+          <button
+            key={pos}
+            type="button"
+            onClick={() => setPosition(pos)}
+            aria-pressed={position === pos}
+            className={`rounded-md border border-border px-3 py-1.5 text-sm font-medium transition-colors ${
+              position === pos
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            }`}
+          >
+            {pos}
+          </button>
+        ))}
+      </div>
+      <p className="text-sm text-muted-foreground">
+        Pass <code>logo</code> (any icon or brand image URL), <code>logoSize</code>, and{" "}
+        <code>logoPosition</code> to embed a brand mark in the QR code.
+      </p>
     </div>
   );
 }
@@ -150,16 +192,29 @@ const DEMO_COLUMNS: DataTableColumn<DemoRow>[] = [
 ];
 
 export function DataTableDemo() {
+  const [rows, setRows] = React.useState(DEMO_ROWS);
   return (
     <div className="not-prose">
       <DataTable
         columns={DEMO_COLUMNS}
-        data={DEMO_ROWS}
+        data={rows}
         searchable
         exportable
         pagination
         pageSize={5}
         selectable
+        exporters={[{ key: "json", label: "JSON", export: () => {} }]}
+        actions={[
+          {
+            key: "delete",
+            label: "Delete selected",
+            destructive: true,
+            action: (_rows, selected) => {
+              const keys = new Set(selected.map((r) => r.id));
+              setRows((prev) => prev.filter((r) => !keys.has(r.id)));
+            },
+          },
+        ]}
       />
     </div>
   );
@@ -182,22 +237,51 @@ export function DatePickerDemo() {
 
 export function NumberInputDemo() {
   const [count, setCount] = React.useState<number | null>(0);
+  const [currency, setCurrency] = React.useState("$");
   return (
     <div className="not-prose max-w-md space-y-6">
       <NumberInput label="Quantity" value={count} onValueChange={setCount} min={0} max={10} />
-      <p className="text-sm text-muted-foreground">Selected: {count ?? "none"}</p>
+      <NumberInput
+        label="Price"
+        value={count}
+        onValueChange={setCount}
+        min={0}
+        currency={currency}
+        currencyPicker
+        onCurrencyChange={(c) => setCurrency(c.symbol)}
+      />
+      <p className="text-sm text-muted-foreground">
+        Selected: {currency}
+        {count ?? "0"}
+      </p>
     </div>
   );
 }
 
 export function CountryCodeInputDemo() {
   const [phone, setPhone] = React.useState({ country: "NG", number: "" });
+  const [scope, setScope] = React.useState<"africa" | "world">("world");
   return (
     <div className="not-prose max-w-md space-y-6">
-      <CountryCodeInput label="Mobile number" value={phone} onValueChange={setPhone} />
-      <p className="text-sm text-muted-foreground">
-        Dialed: {phone.country} {phone.number}
-      </p>
+      <CountryCodeInput
+        label="Mobile number"
+        value={phone}
+        onValueChange={setPhone}
+        countries={ISO_COUNTRY_CODES}
+        includeRegions={scope === "africa" ? ["africa"] : undefined}
+      />
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setScope(scope === "africa" ? "world" : "africa")}
+          className="rounded-md border border-border px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          {scope === "africa" ? "Show all regions" : "Africa only"}
+        </button>
+        <p className="text-sm text-muted-foreground">
+          Dialed: {phone.country} {phone.number}
+        </p>
+      </div>
     </div>
   );
 }
@@ -221,6 +305,68 @@ export function LocationPickerDemo() {
         {[location.country, location.region, location.locality].filter(Boolean).join(" / ") ||
           "not set"}
       </p>
+    </div>
+  );
+}
+
+export function DateInputDemo() {
+  const [date, setDate] = React.useState<string | null>("2026-03-05");
+  return (
+    <div className="not-prose max-w-md space-y-6">
+      <DateInput label="Start date" value={date} onValueChange={setDate} />
+      <p className="text-sm text-muted-foreground">
+        Value: {date ?? "empty"} (ISO validated; invalid input reverts on blur)
+      </p>
+    </div>
+  );
+}
+
+export function PasswordInputDemo() {
+  const [password, setPassword] = React.useState("hunter2");
+  return (
+    <div className="not-prose max-w-md space-y-6">
+      <PasswordInput label="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+      <p className="text-sm text-muted-foreground">Value: {password}</p>
+    </div>
+  );
+}
+
+export function InfiniteScrollDemo() {
+  const [items, setItems] = React.useState<string[]>(() =>
+    Array.from({ length: 20 }, (_, i) => `Item ${i + 1}`),
+  );
+  const [loading, setLoading] = React.useState(false);
+  const [hasMore, setHasMore] = React.useState(true);
+
+  const loadMore = () => {
+    if (loading || !hasMore) return;
+    setLoading(true);
+    setTimeout(() => {
+      setItems((prev) => [
+        ...prev,
+        ...Array.from({ length: 10 }, (_, i) => `Item ${prev.length + i + 1}`),
+      ]);
+      setHasMore((prev) => prev && items.length < 60);
+      setLoading(false);
+    }, 800);
+  };
+
+  return (
+    <div className="not-prose max-w-md">
+      <InfiniteScroll
+        hasMore={hasMore}
+        onLoadMore={loadMore}
+        loading={loading}
+        className="max-h-64 overflow-y-auto rounded-lg border border-border p-3"
+      >
+        <ul className="space-y-1 text-sm text-foreground">
+          {items.map((item) => (
+            <li key={item} className="rounded-md bg-muted/40 px-3 py-1.5">
+              {item}
+            </li>
+          ))}
+        </ul>
+      </InfiniteScroll>
     </div>
   );
 }

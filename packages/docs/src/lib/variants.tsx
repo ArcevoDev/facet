@@ -163,9 +163,16 @@ import {
   useForm,
   DataTable,
   DatePicker,
+  DateInput,
+  PasswordInput,
+  InfiniteScroll,
   NumberInput,
   CountryCodeInput,
+  ISO_COUNTRY_CODES,
   LocationPicker,
+  CountryInput,
+  StateInput,
+  LGAInput,
   type RoadmapItem,
   type DataTableColumn,
 } from "@arcevo/facet-components";
@@ -1020,6 +1027,51 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           ),
         },
       ];
+    case "infinite-scroll":
+      return [
+        {
+          label: "Vertical",
+          node: (
+            <div className="max-h-48 w-full overflow-hidden rounded-md border border-border p-2">
+              <InfiniteScroll
+                hasMore={false}
+                onLoadMore={() => {}}
+                className="max-h-40 overflow-y-auto"
+              >
+                {Array.from({ length: 12 }, (_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-md border border-border bg-muted/30 px-3 py-2 text-sm"
+                  >
+                    Item {i + 1}
+                  </div>
+                ))}
+              </InfiniteScroll>
+            </div>
+          ),
+        },
+        {
+          label: "Horizontal",
+          node: (
+            <div className="w-full overflow-hidden rounded-md border border-border p-2">
+              <InfiniteScroll
+                hasMore={false}
+                onLoadMore={() => {}}
+                direction="horizontal"
+              >
+                {Array.from({ length: 12 }, (_, i) => (
+                  <div
+                    key={i}
+                    className="flex h-16 w-28 shrink-0 items-center justify-center rounded-md border border-border bg-muted/30 text-sm"
+                  >
+                    Card {i + 1}
+                  </div>
+                ))}
+              </InfiniteScroll>
+            </div>
+          ),
+        },
+      ];
     case "separator":
       return [
         {
@@ -1740,6 +1792,19 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           label: "Colored",
           node: <QRCode value="https://facet.arcevocirqle.com.ng" size={120} fgColor="#6366f1" label="branded" />,
         },
+        {
+          label: "Logo",
+          node: (
+            <QRCode
+              value="https://github.com/arcevodev/facet"
+              size={140}
+              label="QR with brand logo"
+              logo="https://raw.githubusercontent.com/github/explore/main/topics/github/github.png"
+              logoSize={32}
+              logoPosition="top-right"
+            />
+          ),
+        },
       ];
     case "marquee":
       return [
@@ -1865,6 +1930,20 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           label: "Selectable",
           node: <DataTable columns={DEMO_COLUMNS} data={DEMO_ROWS} selectable />,
         },
+        {
+          label: "Toolbar",
+          node: (
+            <DataTable
+              columns={DEMO_COLUMNS}
+              data={DEMO_ROWS}
+              searchable
+              selectable
+              exportable
+              exporters={[{ key: "json", label: "JSON", export: () => {} }]}
+              actions={[{ key: "mark", label: "Mark all as read", action: () => {} }]}
+            />
+          ),
+        },
       ];
     case "date-picker":
       return [
@@ -1881,6 +1960,44 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           node: (
             <div className="max-w-sm">
               <DatePicker label="Pick a day" scrollMode="horizontal" horizontalDays={14} />
+            </div>
+          ),
+        },
+      ];
+    case "date-input":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="max-w-xs">
+              <DateInput label="Start date" value="2026-03-05" />
+            </div>
+          ),
+        },
+        {
+          label: "Native",
+          node: (
+            <div className="max-w-xs">
+              <DateInput label="Due date" native />
+            </div>
+          ),
+        },
+      ];
+    case "password-input":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="max-w-xs">
+              <PasswordInput label="Password" placeholder="••••••••" />
+            </div>
+          ),
+        },
+        {
+          label: "No toggle",
+          node: (
+            <div className="max-w-xs">
+              <PasswordInput label="Password" showToggle={false} />
             </div>
           ),
         },
@@ -1922,6 +2039,38 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             </div>
           ),
         },
+        {
+          label: "Full ISO list",
+          node: (
+            <div className="max-w-xs">
+              <CountryCodeInput label="Mobile number" countries={ISO_COUNTRY_CODES} />
+            </div>
+          ),
+        },
+        {
+          label: "Africa only",
+          node: (
+            <div className="max-w-xs">
+              <CountryCodeInput
+                label="Mobile number"
+                countries={ISO_COUNTRY_CODES}
+                includeRegions={["africa"]}
+              />
+            </div>
+          ),
+        },
+        {
+          label: "No Europe",
+          node: (
+            <div className="max-w-xs">
+              <CountryCodeInput
+                label="Mobile number"
+                countries={ISO_COUNTRY_CODES}
+                excludeRegions={["europe"]}
+              />
+            </div>
+          ),
+        },
       ];
     case "location-picker":
       return [
@@ -1938,6 +2087,16 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           node: (
             <div className="max-w-sm">
               <LocationPicker />
+            </div>
+          ),
+        },
+        {
+          label: "Standalone levels",
+          node: (
+            <div className="max-w-sm space-y-2">
+              <CountryInput />
+              <StateInput country="NG" />
+              <LGAInput country="NG" region="lagos" />
             </div>
           ),
         },

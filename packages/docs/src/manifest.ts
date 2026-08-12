@@ -118,6 +118,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "data-display"
   },
   {
+    "name": "Date Input",
+    "slug": "date-input",
+    "description": "DateInput: a text input that parses and validates ISO (YYYY-MM-DD) dates.",
+    "category": "inputs"
+  },
+  {
     "name": "Date Picker",
     "slug": "date-picker",
     "description": "DatePicker: an in-house calendar date picker built on the facet Popover",
@@ -170,6 +176,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "input-otp",
     "description": "",
     "category": "inputs"
+  },
+  {
+    "name": "Infinite Scroll",
+    "slug": "infinite-scroll",
+    "description": "InfiniteScroll: auto-loading container that fires onLoadMore at the end (vertical or horizontal).",
+    "category": "data-display"
   },
   {
     "name": "Kbd",
@@ -230,6 +242,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "pagination",
     "description": "",
     "category": "layout"
+  },
+  {
+    "name": "Password Input",
+    "slug": "password-input",
+    "description": "PasswordInput: a password field with a built-in show/hide toggle.",
+    "category": "inputs"
   },
   {
     "name": "Popover",

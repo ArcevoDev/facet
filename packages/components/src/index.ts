@@ -314,6 +314,8 @@ export {
 
 export { type QRCodeProps, QRCode } from "./ui/qrcode.js";
 
+export { type InfiniteScrollProps, InfiniteScroll } from "./ui/infinite-scroll.js";
+
 export { type MarqueeProps, Marquee } from "./ui/marquee.js";
 
 export {
@@ -345,7 +347,12 @@ export type {
 } from "./ui/form.js";
 
 /* ── Data & input composables ───────────────────────────────── */
-export { type DataTableColumn, type DataTableProps, DataTable } from "./ui/data-table.js";
+export {
+  type DataTableColumn,
+  type DataTableExporter,
+  type DataTableProps,
+  DataTable,
+} from "./ui/data-table.js";
 
 export {
   type DatePickerProps,
@@ -360,14 +367,23 @@ export {
   formatDate,
 } from "./ui/date-picker.js";
 
-export { type NumberInputProps, NumberInput } from "./ui/number-input.js";
+export { type NumberInputProps, type Currency, NumberInput, CURRENCIES } from "./ui/number-input.js";
+
+export { type DateInputProps, DateInput, validateIsoDate } from "./ui/date-input.js";
+
+export { type PasswordInputProps, PasswordInput } from "./ui/password-input.js";
 
 export {
   type CountryCode,
+  type CountryRegion,
   type CountryCodeValue,
   type CountryCodeInputProps,
   COMMON_COUNTRY_CODES,
+  ISO_COUNTRY_CODES,
+  COUNTRY_REGION_LABELS,
   getCountryCode,
+  getCountryName,
+  filterCountryCodes,
   CountryCodeInput,
 } from "./ui/country-code-input.js";
 
@@ -380,5 +396,8 @@ export {
   DEFAULT_COUNTRIES,
   DEFAULT_REGIONS,
   DEFAULT_LOCALITIES,
+  CountryInput,
+  StateInput,
+  LGAInput,
   LocationPicker,
 } from "./ui/location-picker.js";

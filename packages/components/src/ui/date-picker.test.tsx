@@ -83,4 +83,31 @@ describe("DatePicker", () => {
     fireEvent.click(trigger);
     expect(onValueChange).not.toHaveBeenCalled();
   });
+
+  it("renders a year picker when showYearPicker is set", async () => {
+    render(<DatePicker label="Due date" value={new Date(2026, 2, 5)} />);
+    await userEvent.click(screen.getByLabelText("Due date"));
+    expect(screen.getByLabelText("Select year")).toBeInTheDocument();
+    expect(screen.getByLabelText("Previous year")).toBeInTheDocument();
+    expect(screen.getByLabelText("Next year")).toBeInTheDocument();
+  });
+
+  it("jumps to a different year via the year select", async () => {
+    render(<DatePicker label="Due date" value={new Date(2026, 2, 5)} />);
+    await userEvent.click(screen.getByLabelText("Due date"));
+    const yearSelect = screen.getByLabelText("Select year");
+    fireEvent.change(yearSelect, { target: { value: "2028" } });
+    expect(screen.getByText(/2028/)).toBeInTheDocument();
+  });
+
+  it("clamps to minYear and maxYear", async () => {
+    render(
+      <DatePicker label="Due date" value={new Date(2026, 2, 5)} minYear={2020} maxYear={2030} />,
+    );
+    await userEvent.click(screen.getByLabelText("Due date"));
+    const yearSelect = screen.getByLabelText("Select year");
+    const options = Array.from(yearSelect.querySelectorAll("option")).map((o) => Number(o.value));
+    expect(Math.min(...options)).toBe(2020);
+    expect(Math.max(...options)).toBe(2030);
+  });
 });

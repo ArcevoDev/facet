@@ -26,5 +26,35 @@ jobs:
       - run: pnpm check:docs
       - run: pnpm -r typecheck
 
-  # Publishing is done locally via `pnpm changeset publish` (authenticated
-  # from the maintainer's terminal), so no publish job runs here.
+  # Auto-open the "Version Packages" PR when changesets land on main.
+  # This only VERSIONS (bumps versions + CHANGELOGs) and opens a PR; it does
+  # NOT publish to npm. Publishing stays local via `pnpm changeset publish`
+  # (authenticated from the maintainer's terminal) after the version PR is
+  # merged and the working tree is clean.
+  #
+  # Requires `permissions: contents: write` so the GITHUB_TOKEN can push the
+  # changeset-release/main branch. The old job failed here with a 403
+  # "Permission denied to github-actions[bot]" because this block was missing.
+  changeset:
+    name: Version Packages
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - uses: changesets/action@v1
+        with:
+          title: "chore(release): version packages"
+          commit: "chore(release): version packages"
+          # No `publish` command: versioning only. npm publish stays local.
+

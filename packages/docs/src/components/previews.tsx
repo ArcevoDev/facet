@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Button,
   Badge,
@@ -155,6 +156,9 @@ import {
   NumberInputDemo,
   CountryCodeInputDemo,
   LocationPickerDemo,
+  DateInputDemo,
+  PasswordInputDemo,
+  InfiniteScrollDemo,
 } from "./ReadyToUseDemos.js";
 import { ArcProvider, SignIn, SignUp, Guard, LoginForm, MfaVerifyForm } from "@arcevo/facet-auth";
 import { ArcIdClient } from "@arcevo/facet-sdk";
@@ -178,6 +182,43 @@ const IMG =
 export interface PreviewOptions {
   variant?: string;
   size?: string;
+}
+
+/** Interactive Sheet preview: pick a side, then open. */
+function SheetPreview() {
+  const [side, setSide] = useState<"left" | "right" | "top" | "bottom">("right");
+  return (
+    <div className="w-full">
+      <div className="mb-3 flex flex-wrap items-center gap-1.5">
+        {(["left", "right", "top", "bottom"] as const).map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => setSide(s)}
+            aria-pressed={side === s}
+            className={`rounded-md border border-border px-2.5 py-1 text-xs font-medium capitalize transition-colors ${
+              side === s
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+            }`}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="outline">Open from {side}</Button>
+        </SheetTrigger>
+        <SheetContent side={side}>
+          <SheetHeader>
+            <SheetTitle>Sheet</SheetTitle>
+            <SheetDescription>Slides in from the {side}.</SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
 }
 
 /** Compact static demo for a component slug (shared by sidebar + pages). */
@@ -491,19 +532,7 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
         </DropdownMenu>
       );
     case "sheet":
-      return (
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline">Open</Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Sheet</SheetTitle>
-              <SheetDescription>Sheet content</SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
-      );
+      return <SheetPreview />;
     case "dialog":
       return (
         <Dialog>
@@ -676,6 +705,12 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
       return <LocationPickerDemo />;
     case "country-code-input":
       return <CountryCodeInputDemo />;
+    case "date-input":
+      return <DateInputDemo />;
+    case "password-input":
+      return <PasswordInputDemo />;
+    case "infinite-scroll":
+      return <InfiniteScrollDemo />;
     case "sign-in":
       return (
         <div className="w-full max-w-md">

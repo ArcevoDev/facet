@@ -638,6 +638,19 @@ function Example() {
 
 function Example() {
   return <QRCode value="https://facet.arcevocirqle.com.ng" size={140} label="facet docs" />;
+}
+
+function Branded() {
+  // Embed any icon or brand image: logo (URL), logoSize, logoPosition.
+  return (
+    <QRCode
+      value="https://github.com/arcevodev/facet"
+      size={160}
+      logo="https://raw.githubusercontent.com/github/explore/main/topics/github/github.png"
+      logoSize={36}
+      logoPosition="center"
+    />
+  );
 }`,
   marquee: `import { Marquee } from "@arcevo/facet-components";
 
@@ -705,26 +718,93 @@ const rows: Row[] = [
 
 function Example() {
   return <DataTable columns={columns} data={rows} searchable pagination />;
+}
+
+function Toolbar() {
+  // Export menu (CSV + custom formats) and a bulk-actions overflow menu:
+  return (
+    <DataTable
+      columns={columns}
+      data={rows}
+      exportable
+      exporters={[{ key: "json", label: "JSON", export: (cols, rows) => downloadJson(cols, rows) }]}
+      actions={[
+        {
+          key: "delete",
+          label: "Delete selected",
+          destructive: true,
+          action: (rows, selected) => onDelete(selected),
+        },
+      ]}
+    />
+  );
 }`,
   "date-picker": `import { DatePicker } from "@arcevo/facet-components";
 
 function Example() {
   return <DatePicker label="Due date" />;
 }`,
-  "number-input": `import { NumberInput } from "@arcevo/facet-components";
+  "number-input": `import { NumberInput, CURRENCIES } from "@arcevo/facet-components";
 
 function Example() {
   return <NumberInput label="Quantity" min={0} max={10} />;
-}`,
-  "country-code-input": `import { CountryCodeInput } from "@arcevo/facet-components";
+}
+
+function Price() {
+  // Built-in currency picker: hover/click to choose, pin via currency.
+  return (
+    <NumberInput
+      label="Price"
+      currency="$"
+      currencyPicker
+      onCurrencyChange={(c) => console.log(c.code)}
+    />
+  );
+}
+
+// Custom currency list:
+// <NumberInput currencyPicker currencyOptions={[{ code: "XBT", symbol: "₿", name: "Bitcoin" }]} />`,
+  "country-code-input": `import { CountryCodeInput, ISO_COUNTRY_CODES } from "@arcevo/facet-components";
 
 function Example() {
-  return <CountryCodeInput label="Mobile number" />;
+  // Full ISO list, Africa only
+  return (
+    <CountryCodeInput
+      label="Mobile number"
+      countries={ISO_COUNTRY_CODES}
+      includeRegions={["africa"]}
+    />
+  );
 }`,
   "location-picker": `import { LocationPicker } from "@arcevo/facet-components";
 
 function Example() {
   return <LocationPicker showLocality />;
+}
+
+// Standalone levels:
+// import { CountryInput, StateInput, LGAInput } from "@arcevo/facet-components";
+// <CountryInput value={c} onValueChange={setC} />
+// <StateInput country={c} value={s} onValueChange={setS} />
+// <LGAInput country={c} region={s} value={l} onValueChange={setL} />`,
+  "date-input": `import { DateInput } from "@arcevo/facet-components";
+
+function Example() {
+  return <DateInput label="Start date" value="2026-03-05" />;
+}`,
+  "password-input": `import { PasswordInput } from "@arcevo/facet-components";
+
+function Example() {
+  return <PasswordInput label="Password" placeholder="••••••••" />;
+}`,
+  "infinite-scroll": `import { InfiniteScroll } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <InfiniteScroll hasMore={hasMore} onLoadMore={loadMore} loading={loading}>
+      {items}
+    </InfiniteScroll>
+  );
 }`,
   "notification-drawer": `import { NotificationDrawer } from "@arcevo/facet-components";
 
@@ -1963,6 +2043,22 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     Default: `<DatePicker label="Due date" />`,
     "Horizontal strip": `<DatePicker label="Pick a day" scrollMode="horizontal" horizontalDays={14} />`,
   },
+  "date-input": {
+    Default: `<DateInput label="Start date" value="2026-03-05" />`,
+    Native: `<DateInput label="Due date" native />`,
+  },
+  "password-input": {
+    Default: `<PasswordInput label="Password" />`,
+    "No toggle": `<PasswordInput label="Password" showToggle={false} />`,
+  },
+  "infinite-scroll": {
+    Vertical: `<InfiniteScroll hasMore={hasMore} onLoadMore={loadMore} loading={loading}>
+  {items}
+</InfiniteScroll>`,
+    Horizontal: `<InfiniteScroll hasMore={hasMore} onLoadMore={loadMore} direction="horizontal">
+  {items}
+</InfiniteScroll>`,
+  },
   "number-input": {
     Default: `<NumberInput label="Quantity" min={0} max={10} />`,
     "With value": `<NumberInput label="Quantity" value={4} min={0} max={10} />`,
@@ -1970,10 +2066,16 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
   },
   "country-code-input": {
     Default: `<CountryCodeInput label="Mobile number" />`,
+    "Full ISO list": `<CountryCodeInput countries={ISO_COUNTRY_CODES} label="Mobile number" />`,
+    "Africa only": `<CountryCodeInput countries={ISO_COUNTRY_CODES} includeRegions={["africa"]} label="Mobile number" />`,
+    "No Europe": `<CountryCodeInput countries={ISO_COUNTRY_CODES} excludeRegions={["europe"]} label="Mobile number" />`,
   },
   "location-picker": {
     Default: `<LocationPicker showLocality />`,
     "Without locality": `<LocationPicker />`,
+    "Standalone levels": `<CountryInput value={c} onValueChange={setC} />
+<StateInput country={c} value={s} onValueChange={setS} />
+<LGAInput country={c} region={s} value={l} onValueChange={setL} />`,
   },
   "sign-in": {
     "Email + password": `<SignIn config={config} initialStep="login_form" />`,
