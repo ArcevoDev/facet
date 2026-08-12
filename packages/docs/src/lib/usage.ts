@@ -273,7 +273,7 @@ function Example() {
     />
   );
 }`,
-  breadcrumb: `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator } from "@arcevo/facet-components";
+  breadcrumb: `import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbPage, BreadcrumbSeparator, BreadcrumbEllipsis } from "@arcevo/facet-components";
 
 function Example() {
   return (
@@ -1189,6 +1189,25 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     </BreadcrumbItem>
   </BreadcrumbList>
 </Breadcrumb>`,
+    "Ellipsis": `<Breadcrumb>
+  <BreadcrumbList>
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/">Home</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbEllipsis />
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbLink href="/components">Components</BreadcrumbLink>
+    </BreadcrumbItem>
+    <BreadcrumbSeparator />
+    <BreadcrumbItem>
+      <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+    </BreadcrumbItem>
+  </BreadcrumbList>
+</Breadcrumb>`,
   },
   collapsible: {
     Default: `<Collapsible>
@@ -1731,6 +1750,18 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     <InputOTPSlot index={1} />
     <InputOTPSlot index={2} />
     <InputOTPSlot index={3} />
+  </InputOTPGroup>
+</InputOTP>`,
+    "8-digit": `<InputOTP maxLength={8}>
+  <InputOTPGroup>
+    <InputOTPSlot index={0} />
+    <InputOTPSlot index={1} />
+    <InputOTPSlot index={2} />
+    <InputOTPSlot index={3} />
+    <InputOTPSlot index={4} />
+    <InputOTPSlot index={5} />
+    <InputOTPSlot index={6} />
+    <InputOTPSlot index={7} />
   </InputOTPGroup>
 </InputOTP>`,
   },

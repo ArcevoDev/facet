@@ -48,6 +48,7 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
+  BreadcrumbEllipsis,
   ButtonGroup,
   Checkbox,
   Collapsible,
@@ -452,6 +453,30 @@ function BreadcrumbDemo({ custom }: { custom?: boolean }) {
   );
 }
 
+function BreadcrumbEllipsisDemo() {
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbEllipsis />
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/components">Components</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+        <BreadcrumbItem>
+          <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+}
+
 function PaginationDemo() {
   return (
     <Pagination>
@@ -735,6 +760,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
       return [
         { label: "Two levels", node: <BreadcrumbDemo /> },
         { label: "Three levels", node: <BreadcrumbDemo custom /> },
+        { label: "Ellipsis", node: <BreadcrumbEllipsisDemo /> },
       ];
     case "collapsible":
       return [
@@ -1159,6 +1185,23 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                 <InputOTPSlot index={1} />
                 <InputOTPSlot index={2} />
                 <InputOTPSlot index={3} />
+              </InputOTPGroup>
+            </InputOTP>
+          ),
+        },
+        {
+          label: "8-digit",
+          node: (
+            <InputOTP maxLength={8}>
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+                <InputOTPSlot index={6} />
+                <InputOTPSlot index={7} />
               </InputOTPGroup>
             </InputOTP>
           ),
