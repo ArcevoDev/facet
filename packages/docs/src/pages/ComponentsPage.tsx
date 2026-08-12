@@ -19,6 +19,7 @@ import {
   Icon,
 } from "@arcevo/facet-components";
 import { extendedManifest } from "../lib/manifest.js";
+import { isExtendedLayoutSlug } from "../lib/nav.js";
 import { ComponentPreview } from "../components/previews.js";
 import { ThemePreviewFrame } from "../components/ThemePreviewFrame.js";
 
@@ -58,15 +59,15 @@ function useIsDesktop() {
 }
 
 export function ComponentsPage() {
-  // Only base UI primitives in the gallery. Auth/layout surfaces have
-  // their own guide pages with interactive demos, foundations have their
-  // own docs pages, and ready-to-use extras have the /ready-to-use page.
+  // Only base UI primitives in the gallery. Auth/layout guide surfaces,
+  // foundations, and ready-to-use extras have their own pages; base layout
+  // components (Accordion, Tabs, ...) stay in the gallery.
   const allComponents = extendedManifest.filter(
     (entry) =>
       entry.category !== "foundations" &&
       entry.category !== "ready-to-use" &&
       entry.category !== "auth" &&
-      entry.category !== "layout",
+      !(entry.category === "layout" && isExtendedLayoutSlug(entry.slug)),
   );
   const [page, setPage] = React.useState(1);
   const [perPage, setPerPage] = React.useState<number>(DEFAULT_PAGE_SIZE);

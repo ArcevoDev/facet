@@ -136,13 +136,11 @@ export function buildDocsLayoutConfig(
 
 /**
  * Build the sidebar Components section from the manifest: "All components"
- * then one collapsible sub-group per manifest category. Only base UI
- * primitives live here: the auth and layout surfaces (SignIn, SignUp,
- * ConsoleLayout, ...) are excluded because they have their own guide pages
- * with interactive demos under the Auth and Layout sections. Foundations
- * (Icon, Theme) also have their own docs pages under Foundations, and the
- * Ready-to-Use components live in the dedicated "Ready to Use" section
- * (buildReadyToUseSection).
+ * then one collapsible sub-group per manifest category. Base UI primitives
+ * render here grouped by category (layout, feedback, data-display, inputs,
+ * general). The auth/layout guide-page surfaces (SignIn, SignUp,
+ * ConsoleLayout, ...), foundations (Icon, Theme), and Ready-to-Use
+ * components are excluded because they have their own guide sections.
  */
 function buildComponentsSection(): NavSection {
   const byCategory = new Map<string, typeof extendedManifest>();
@@ -150,9 +148,14 @@ function buildComponentsSection(): NavSection {
     if (
       entry.category === "foundations" ||
       entry.category === "ready-to-use" ||
-      entry.category === "auth" ||
-      entry.category === "layout"
+      entry.category === "auth"
     ) {
+      continue;
+    }
+    // The extended layout guide entries (ConsoleLayout, AuthLayout,
+    // Sidebar, Topbar, LandingLayout) are excluded by name; the base ui
+    // "layout" category (Accordion, Breadcrumb, Tabs, ...) stays.
+    if (entry.category === "layout" && isExtendedLayoutSlug(entry.slug)) {
       continue;
     }
     const list = byCategory.get(entry.category) ?? [];
@@ -174,6 +177,19 @@ function buildComponentsSection(): NavSection {
     });
   }
   return { title: "Components", id: "components", items };
+}
+
+/** Slugs of the extended @arcevo/facet-layout guide entries. */
+const EXTENDED_LAYOUT_SLUGS = new Set([
+  "console-layout",
+  "auth-layout",
+  "landing-layout",
+  "sidebar",
+  "topbar",
+]);
+
+export function isExtendedLayoutSlug(slug: string): boolean {
+  return EXTENDED_LAYOUT_SLUGS.has(slug);
 }
 
 /**
