@@ -1755,6 +1755,36 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           ),
         },
         {
+          label: "Cards",
+          node: (
+            <div className="w-full">
+              <Marquee
+                duration={20}
+                gap="1.25rem"
+                items={[
+                  "Design tokens",
+                  "Icon registry",
+                  "Auth flows",
+                  "Layout shells",
+                  "Docs engine",
+                  "CLI tooling",
+                ].map((label) => (
+                  <Card key={label} className="w-56 shrink-0">
+                    <CardHeader>
+                      <CardTitle className="text-sm">{label}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-xs text-muted-foreground">
+                        A reusable facet surface that scrolls seamlessly.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              />
+            </div>
+          ),
+        },
+        {
           label: "Reverse",
           node: (
             <div className="w-full">
@@ -1767,6 +1797,24 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                     className="rounded-full border border-border bg-background px-4 py-2 text-sm font-medium"
                   >
                     Item {letter}
+                  </span>
+                ))}
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Pause on hover",
+          node: (
+            <div className="w-full">
+              <Marquee
+                duration={18}
+                items={["Hover", "to", "pause", "the", "scroll", "motion"].map((word) => (
+                  <span
+                    key={word}
+                    className="rounded-lg bg-primary/10 px-4 py-2 text-sm font-semibold text-primary"
+                  >
+                    {word}
                   </span>
                 ))}
               />

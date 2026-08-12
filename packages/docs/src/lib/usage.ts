@@ -1882,12 +1882,34 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
   duration={16}
   items={["facet", "arc-id", "auth", "tokens", "React 19", "Radix"]}
 />`,
+    Cards: `<Marquee
+  duration={20}
+  gap="1.25rem"
+  items={["Design tokens", "Icon registry", "Auth flows"].map((label) => (
+    <Card key={label} className="w-56 shrink-0">
+      <CardHeader>
+        <CardTitle className="text-sm">{label}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-xs text-muted-foreground">Card content.</p>
+      </CardContent>
+    </Card>
+  ))}
+/>`,
     Reverse: `<Marquee
   duration={16}
   reverse
   items={["A", "B", "C", "D", "E", "F"].map((letter) => (
     <span key={letter} className="rounded-full border px-4 py-2">
       Item {letter}
+    </span>
+  ))}
+/>`,
+    "Pause on hover": `<Marquee
+  duration={18}
+  items={["Hover", "to", "pause", "the", "scroll", "motion"].map((word) => (
+    <span key={word} className="rounded-lg bg-primary/10 px-4 py-2 text-primary">
+      {word}
     </span>
   ))}
 />`,
