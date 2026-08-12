@@ -736,6 +736,14 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                 <AccordionTrigger>Item A</AccordionTrigger>
                 <AccordionContent>Content A</AccordionContent>
               </AccordionItem>
+              <AccordionItem value="b">
+                <AccordionTrigger>Item B</AccordionTrigger>
+                <AccordionContent>Content B</AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="c">
+                <AccordionTrigger>Item C</AccordionTrigger>
+                <AccordionContent>Content C</AccordionContent>
+              </AccordionItem>
             </Accordion>
           ),
         },
@@ -746,6 +754,14 @@ export function variantCells(slug: string): VariantCell[] | undefined {
               <AccordionItem value="a">
                 <AccordionTrigger>Item A</AccordionTrigger>
                 <AccordionContent>Content A</AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="b">
+                <AccordionTrigger>Item B</AccordionTrigger>
+                <AccordionContent>Content B</AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="c">
+                <AccordionTrigger>Item C</AccordionTrigger>
+                <AccordionContent>Content C</AccordionContent>
               </AccordionItem>
             </Accordion>
           ),
@@ -758,6 +774,14 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                 <AccordionTrigger>Item A</AccordionTrigger>
                 <AccordionContent>Content A</AccordionContent>
               </AccordionItem>
+              <AccordionItem variant="separated" value="b">
+                <AccordionTrigger>Item B</AccordionTrigger>
+                <AccordionContent>Content B</AccordionContent>
+              </AccordionItem>
+              <AccordionItem variant="separated" value="c">
+                <AccordionTrigger>Item C</AccordionTrigger>
+                <AccordionContent>Content C</AccordionContent>
+              </AccordionItem>
             </Accordion>
           ),
         },
@@ -769,6 +793,14 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                 <AccordionTrigger>Item A</AccordionTrigger>
                 <AccordionContent>Content A</AccordionContent>
               </AccordionItem>
+              <AccordionItem variant="ghost" value="b">
+                <AccordionTrigger>Item B</AccordionTrigger>
+                <AccordionContent>Content B</AccordionContent>
+              </AccordionItem>
+              <AccordionItem variant="ghost" value="c">
+                <AccordionTrigger>Item C</AccordionTrigger>
+                <AccordionContent>Content C</AccordionContent>
+              </AccordionItem>
             </Accordion>
           ),
         },
@@ -779,6 +811,14 @@ export function variantCells(slug: string): VariantCell[] | undefined {
               <AccordionItem variant="compact" value="a">
                 <AccordionTrigger>Item A</AccordionTrigger>
                 <AccordionContent>Content A</AccordionContent>
+              </AccordionItem>
+              <AccordionItem variant="compact" value="b">
+                <AccordionTrigger>Item B</AccordionTrigger>
+                <AccordionContent>Content B</AccordionContent>
+              </AccordionItem>
+              <AccordionItem variant="compact" value="c">
+                <AccordionTrigger>Item C</AccordionTrigger>
+                <AccordionContent>Content C</AccordionContent>
               </AccordionItem>
             </Accordion>
           ),
@@ -1731,6 +1771,10 @@ export function variantCells(slug: string): VariantCell[] | undefined {
     case "roadmap":
       return [
         { label: "Default", node: <Roadmap items={ROADMAP_ITEMS} /> },
+        {
+          label: "Timeline",
+          node: <Roadmap items={ROADMAP_ITEMS} variant="timeline" />,
+        },
         {
           label: "No line",
           node: <Roadmap items={ROADMAP_ITEMS} showLine={false} />,

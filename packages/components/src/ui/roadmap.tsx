@@ -1,5 +1,10 @@
 /**
  * Roadmap: vertical timeline of feature items with status badges.
+ * Two variants:
+ *  - "card": each item renders as a bordered card with a status badge
+ *    (default).
+ *  - "timeline": a lighter look with a status dot, a mono phase/date
+ *    label and no card chrome, for landing-page sections.
  */
 import * as React from "react";
 import { cn } from "../utils.js";
@@ -10,7 +15,7 @@ export interface RoadmapItem {
   title: string;
   description?: string;
   status: RoadmapStatus;
-  /** Optional label shown next to the status, e.g. a target date. */
+  /** Optional label shown next to the status, e.g. a target date or phase. */
   date?: string;
 }
 
@@ -19,6 +24,8 @@ export interface RoadmapProps extends React.HTMLAttributes<HTMLDivElement> {
   items: RoadmapItem[];
   /** Show the connecting line between items. Default: true */
   showLine?: boolean;
+  /** Visual style. "card" (default) or "timeline" (lighter, dot + label). */
+  variant?: "card" | "timeline";
 }
 
 const STATUS_STYLES: Record<RoadmapStatus, string> = {
@@ -40,14 +47,58 @@ const STATUS_LABEL: Record<RoadmapStatus, string> = {
 };
 
 /**
- * A data-driven roadmap timeline. Each item renders as a card with a status
- * badge and a colored dot on a vertical connector line.
+ * A data-driven roadmap timeline. Each item renders as a status-badged row
+ * on a vertical connector line. Use the `timeline` variant for a lighter
+ * dot + mono-label look in landing sections.
  */
 const Roadmap = React.forwardRef<HTMLDivElement, RoadmapProps>(
-  ({ items, showLine = true, className, ...props }, ref) => (
+  ({ items, showLine = true, variant = "card", className, ...props }, ref) => (
     <div ref={ref} className={cn("space-y-0", className)} {...props}>
       {items.map((item, i) => {
         const isLast = i === items.length - 1;
+        if (variant === "timeline") {
+          return (
+            <div key={`${item.title}-${i}`} className="relative flex gap-5 pb-8 last:pb-0">
+              {showLine && (
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute left-[11px] top-7 h-[calc(100%-1.75rem)] w-px bg-border",
+                    isLast && "hidden",
+                  )}
+                />
+              )}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "relative mt-1.5 size-[23px] shrink-0 rounded-full border-4 border-background",
+                  STATUS_DOT[item.status],
+                )}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  {item.date && (
+                    <span className="font-mono text-xs uppercase tracking-wide text-muted-foreground">
+                      {item.date}
+                    </span>
+                  )}
+                  <span
+                    className={cn(
+                      "rounded-full border px-2 py-0.5 text-[11px] font-medium",
+                      STATUS_STYLES[item.status],
+                    )}
+                  >
+                    {STATUS_LABEL[item.status]}
+                  </span>
+                </div>
+                <h3 className="mt-1 font-semibold text-foreground">{item.title}</h3>
+                {item.description && (
+                  <p className="mt-1 text-sm text-muted-foreground">{item.description}</p>
+                )}
+              </div>
+            </div>
+          );
+        }
         return (
           <div key={`${item.title}-${i}`} className="relative flex gap-4 pb-6 last:pb-0">
             {showLine && (

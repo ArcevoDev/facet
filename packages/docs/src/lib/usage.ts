@@ -1928,6 +1928,14 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     { title: "Auth presets", description: "Fintech, med, edu", status: "done", date: "v1.0" },
   ]}
 />`,
+    Timeline: `<Roadmap
+  variant="timeline"
+  items={[
+    { title: "Auth presets", description: "Fintech, med, edu", status: "done", date: "Phase 1" },
+    { title: "Passkey support", description: "WebAuthn across presets", status: "in-progress", date: "Phase 2" },
+    { title: "SAML/OIDC SSO", description: "Enterprise identity providers", status: "planned", date: "Phase 3" },
+  ]}
+/>`,
   },
   form: {
     "Basic form": `<Form form={form} onSubmit={(values) => console.log(values)}>

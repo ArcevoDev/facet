@@ -27,4 +27,13 @@ describe("Roadmap", () => {
     const { container } = render(<Roadmap items={items} showLine={false} />);
     expect(container.querySelector(".bg-border")).toBeNull();
   });
+
+  it("renders the timeline variant with the date as a phase label", () => {
+    render(<Roadmap items={items} variant="timeline" />);
+    expect(screen.getByText("Ship v1")).toBeInTheDocument();
+    expect(screen.getByText("Q1")).toBeInTheDocument();
+    expect(screen.getByText("Done")).toBeInTheDocument();
+    expect(screen.getByText("In progress")).toBeInTheDocument();
+    expect(screen.getByText("Planned")).toBeInTheDocument();
+  });
 });
