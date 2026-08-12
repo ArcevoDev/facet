@@ -38,13 +38,13 @@ export interface InitOptions {
    * (default) creates one when it fits the layout, `true` always creates,
    * `false` never touches a barrel. */
   barrel?: boolean | "auto";
-  /** Skip the interactive wizard entirely — use detected defaults. */
+  /** Skip the interactive wizard entirely: use detected defaults. */
   yes?: boolean;
 }
 
 /**
  * Interactive wizard for `facet docs init`. Detects the consumer's
- * frontend framework (ignoring backend stacks like Fastify/Express —
+ * frontend framework (ignoring backend stacks like Fastify/Express:
  * docs are a frontend concern), styling setup, and package manager, then
  * resolves the current facet package versions from the npm registry so
  * the scaffold never pins an outdated version.
@@ -112,7 +112,7 @@ export async function runInitWizard(
       name: "location",
       message: "Where should the docs scaffold live?",
       choices: [
-        { title: "Root (.)", description: "Recommended: docs at the repo root, like Docusaurus/Mintlify — all content in one place", value: "." },
+        { title: "Root (.)", description: "Recommended: docs at the repo root, like Docusaurus/Mintlify: all content in one place", value: "." },
         { title: "docs/", description: "A dedicated folder at the repo root", value: "docs" },
         { title: "src/docs/", description: "Docs under the source tree, next to your app code", value: "src/docs" },
       ],
@@ -147,7 +147,7 @@ export async function runInitWizard(
     {
       type: "toggle",
       name: "useFacetTokens",
-      message: "Wire up @arcevo/facet-tokens for theming? (recommended — saves restyling every component)",
+      message: "Wire up @arcevo/facet-tokens for theming? (recommended: saves restyling every component)",
       initial: true,
       active: "Yes, use facet tokens",
       inactive: "No, keep my styling",

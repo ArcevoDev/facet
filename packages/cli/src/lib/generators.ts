@@ -12,7 +12,7 @@ function ext(language: "typescript" | "javascript"): string {
  * Generate the thin-consumer files for a React + Vite app (like apps/docs).
  * Produces: package.json, vite.config, index.html, src/main, src/app,
  * src/pages (content), and the styling entry. The consumer's content lives
- * in their own pages file — never facet's docs.
+ * in their own pages file: never facet's docs.
  */
 export function generateReactVite(answers: DocsAnswers, cwd: string): GeneratedFile[] {
   const e = ext(answers.language);

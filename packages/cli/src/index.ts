@@ -8,12 +8,20 @@ import { writeFiles } from "./lib/writer.js";
 import {
   detectPackageManager,
   installCommand,
+  detectMonorepo,
   type DocsLocation,
   type Framework,
   type Styling,
   type TemplateKind,
 } from "./lib/types.js";
 import { facetInstallCommand } from "./lib/registry.js";
+import {
+  collectFacetPackageState,
+  formatPackageTable,
+  buildDoctorReport,
+  planUpdates,
+  updateCommand,
+} from "./lib/commands.js";
 
 const program = new Command();
 const require = createRequire(import.meta.url);
@@ -22,7 +30,11 @@ const { version } = require("../package.json") as { version: string };
 program
   .name("facet")
   .description("Scaffold and generate @arcevo/facet-docs sites. Framework/language-agnostic.")
-  .version(version);
+  .version(version)
+  .addHelpText(
+    "after",
+    "\nFull docs and examples: https://docs.facet.arcevocirqle.com.ng/cli\n",
+  );
 
 // `facet docs init`: a `docs` group with an `init` subcommand. (Commander
 // treats a two-word string as a command + required positional, so `docs`
@@ -32,7 +44,7 @@ program
   .description("Docs site commands")
   .command("init")
   .description("Scaffold a docs site in the current repo (interactive wizard)")
-  .option("--yes", "Non-interactive: decide the best setup for me (detected framework + styling)")
+  .option("-y, --yes", "Non-interactive: decide the best setup for me (detected framework + styling)")
   .option("--name <name>", "Docs site name (default: docs)")
   .option("--location <location>", "Where the scaffold lives: . (root, recommended), docs, or src/docs (default: .)")
   .option("--language <language>", "TypeScript or JavaScript (default: TypeScript)")
@@ -139,6 +151,77 @@ program
     const barrel = written.find((f) => f.endsWith(`/index.${answers.language === "javascript" ? "js" : "ts"}`));
     if (barrel) console.log(`Barrel: ${barrel}`);
     console.log("Note: importing from @arcevo/facet-components is recommended over copying source.");
+  });
+
+program
+  .command("pkg")
+  .description("Show the latest published facet package versions and what this repo has installed")
+  .action(async () => {
+    const cwd = process.cwd();
+    const infos = await collectFacetPackageState(cwd);
+    console.log("facet packages");
+    console.log("");
+    console.log(formatPackageTable(infos));
+    console.log("");
+    const outdated = infos.filter((i) => i.outdated);
+    if (outdated.length) {
+      console.log(`${outdated.length} update(s) available. Run \`facet update\` to see how.`);
+    } else {
+      console.log("All installed facet packages are up to date (or not installed here).");
+    }
+  });
+
+program
+  .command("doctor")
+  .description("Audit this repo: monorepo layout, facet deps, and best-practice suggestions")
+  .action(async () => {
+    const cwd = process.cwd();
+    const infos = await collectFacetPackageState(cwd);
+    const report = buildDoctorReport(cwd, infos);
+    console.log("facet doctor");
+    console.log("");
+    for (const f of report.findings) console.log(`  ${f}`);
+    console.log("");
+    if (report.suggestions.length) {
+      console.log("Suggestions:");
+      for (const s of report.suggestions) console.log(`  - ${s}`);
+    } else {
+      console.log("No suggestions: your facet setup looks healthy.");
+    }
+    if (report.monorepo) {
+      console.log("");
+      console.log("Monorepo detected: run \`facet update\` from the workspace root to update all members.");
+    }
+  });
+
+program
+  .command("update")
+  .description("Show (and prepare) updates for installed facet packages")
+  .option("--dry-run", "Only print the update commands without running anything", true)
+  .action(async (opts: { dryRun?: boolean }) => {
+    const cwd = process.cwd();
+    const infos = await collectFacetPackageState(cwd);
+    const outdated = planUpdates(infos);
+    if (!outdated.length) {
+      console.log("All installed facet packages are up to date.");
+      return;
+    }
+    const pm = detectPackageManager(cwd);
+    const workspace = detectMonorepo(cwd) !== null;
+    const targets = outdated
+      .filter((i): i is typeof i & { latest: string } => Boolean(i.latest))
+      .map((i) => ({ name: i.name, latest: i.latest! }));
+    console.log("Updates available:");
+    for (const t of targets) {
+      const info = infos.find((i) => i.name === t.name);
+      console.log(`  ${t.name}: ${info?.installed ?? "not installed"} -> ^${t.latest}`);
+    }
+    console.log("");
+    console.log(updateCommand(pm, targets, workspace));
+    if (opts.dryRun) {
+      console.log("");
+      console.log("(dry run) Run the command above to apply the updates.");
+    }
   });
 
 program.parse(process.argv);

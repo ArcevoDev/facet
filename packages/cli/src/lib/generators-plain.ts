@@ -14,7 +14,7 @@ function ext(language: "typescript" | "javascript"): string {
  * <location>/content and the generator compiles it into a pages array.
  *
  * Barrel: an optional `index.ts`/`index.js` re-exports `docsPages` as a
- * single entry — "auto" creates it when nothing exists yet, true always,
+ * single entry: "auto" creates it when nothing exists yet, true always,
  * false never.
  */
 export function generatePlainJs(answers: DocsAnswers, cwd: string): GeneratedFile[] {
@@ -193,9 +193,9 @@ export { docsPages } from "./pages.${e}";
  * as the React+Vite scaffold, but as a real Next route.
  *
  * Files:
- * - `src/app/docs/page.tsx`   — the docs route ("use client", renders DocsApp)
- * - `src/lib/docs/config.ts`  — DocsSiteConfig for the consumer's docs
- * - `src/lib/docs/pages.ts`   — the pages registry (consumer's content)
+ * - `src/app/docs/page.tsx`   : the docs route ("use client", renders DocsApp)
+ * - `src/lib/docs/config.ts`  : DocsSiteConfig for the consumer's docs
+ * - `src/lib/docs/pages.ts`   : the pages registry (consumer's content)
  *
  * Barrel: an optional `index.ts` re-exports the config + pages. "auto"
  * creates it when nothing exists yet, true always, false never.
@@ -278,13 +278,13 @@ export { docsPages } from "./pages.${e}";
  * Generate a Python docs scaffold: a Python markdown -> DocsPage pipeline
  * plus a starter `pages.json`. The Python consumer keeps markdown under
  * <location>/content, runs `python docs_pipeline.py`, and gets a
- * `pages.json` the docs engine (any React host) renders. No React shell —
+ * `pages.json` the docs engine (any React host) renders. No React shell:
  * the content is plain data, so a Python backend can own it and hand the
  * JSON to a React frontend for rendering.
  *
  * Files:
- * - `docs_pipeline.py` — markdown -> DocsPage JSON compiler
- * - `pages.json`       — starter registry (empty overview page)
+ * - `docs_pipeline.py` : markdown -> DocsPage JSON compiler
+ * - `pages.json`       : starter registry (empty overview page)
  *
  * Barrel: this generator emits no TS/JS barrel (it's Python); the barrel
  * option only governs the JS/TS generators. Python consumers get the
@@ -445,9 +445,9 @@ if __name__ == "__main__":
  * as the React+Vite and Next scaffolds, but as a real Remix route.
  *
  * Files:
- * - `app/routes/docs.tsx`      — the docs route ("use client", renders DocsApp)
- * - `src/lib/docs/config.ts`   — DocsSiteConfig for the consumer's docs
- * - `src/lib/docs/pages.ts`    — the pages registry (consumer's content)
+ * - `app/routes/docs.tsx`      : the docs route ("use client", renders DocsApp)
+ * - `src/lib/docs/config.ts`   : DocsSiteConfig for the consumer's docs
+ * - `src/lib/docs/pages.ts`    : the pages registry (consumer's content)
  *
  * Barrel: an optional `index.ts` re-exports the config + pages. "auto"
  * creates it when nothing exists yet, true always, false never.
@@ -571,7 +571,7 @@ export interface AddAnswers {
   dir?: string;
   /** Whether to generate/merge a barrel export. `"auto"` (default) only
    * creates one when it already exists (preserving the consumer's root
-   * barrel) — set `true` to always create, `false` to never touch one. */
+   * barrel): set `true` to always create, `false` to never touch one. */
   barrel?: boolean | "auto";
 }
 
@@ -604,7 +604,7 @@ export function resolveAddLayout(
  * The primary consumption model is npm-package install; this exists for
  * consumers who prefer a copy-into-source workflow (shadcn-style).
  *
- * Placement is flexible — see `AddPlacement`. Defaults:
+ * Placement is flexible: see `AddPlacement`. Defaults:
  * - `target`: `src/components`
  * - `placement`: `decide` (flat if the root already has a barrel, else a
  *   clean subdir)
@@ -642,7 +642,7 @@ export function generateComponentAdd(
       added.push(name);
     }
   } catch {
-    // componentDir doesn't exist yet — nothing added before.
+    // componentDir doesn't exist yet: nothing added before.
   }
   const names = [...new Set([...added, component])].sort();
 
@@ -664,7 +664,7 @@ export default ${component};
   // Barrel handling: only write a NEW barrel when the component lives in a
   // subdir (so `@/components/<dir>` works), or when the consumer asked for
   // one explicitly. When the root barrel already exists, merge a re-export
-  // into it instead of overwriting — never clobber their exports.
+  // into it instead of overwriting: never clobber their exports.
   const rootBarrel = path.join(base, `index.${isTs ? "ts" : "js"}`);
   const wantsBarrel = answers.barrel ?? "auto";
   const rootExists = existsSync(rootBarrel);
@@ -696,10 +696,10 @@ export default ${component};
  * Rebuild a barrel: keep the existing exports and append ONE re-export line
  * that references the just-added component without clobbering anything else.
  *
- * - Subdir mode (`ref` = the subdir): `export * from "./facet";` — makes the
+ * - Subdir mode (`ref` = the subdir): `export * from "./facet";` : makes the
  *   whole facet dir importable from the root barrel.
  * - Flat mode (`ref` = "."): `export { default as Button } from "./Button.tsx";`
- *   — exposes the single added component by name.
+ *   : exposes the single added component by name.
  */
 function mergeRootBarrel(
   barrelPath: string,

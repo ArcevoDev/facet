@@ -53,7 +53,7 @@ describe("generateReactVite", () => {
     const files = generateReactVite(answers, "/repo");
     const pages = files.find((f) => f.path.endsWith("pages.ts"))!.content;
     expect(pages).toContain("docsPages");
-    // The consumer's own pages file is plain data — the engine only supplies
+    // The consumer's own pages file is plain data: the engine only supplies
     // the DocsPage type, never authored content.
     expect(pages).toContain('from "@arcevo/facet-docs"'); // type-only import
     expect(pages).not.toContain("DocsApp");
@@ -272,7 +272,7 @@ describe("mergePackageJson", () => {
 
 describe("detectFramework (frontend-first, ignores backend)", () => {
   it("detects Next.js in a fullstack repo (Next + Fastify)", () => {
-    // Simulate a package.json with next AND fastify — Next wins.
+    // Simulate a package.json with next AND fastify: Next wins.
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "facet-detect-"));
     fs.writeFileSync(
       path.join(dir, "package.json"),

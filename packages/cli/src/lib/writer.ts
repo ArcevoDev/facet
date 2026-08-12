@@ -37,7 +37,7 @@ export interface MergeResult {
  * If a package.json already exists in the consumer's repo, it is PATCHED:
  * the consumer's own scripts, deps, name, and metadata are preserved, and
  * the docs scripts/deps are added on top (never overwriting existing
- * values — the docs scripts use distinct names). If none exists, a fresh
+ * values: the docs scripts use distinct names). If none exists, a fresh
  * minimal package.json is created.
  *
  * Dependencies use the resolved ranges passed in (from the npm registry),
