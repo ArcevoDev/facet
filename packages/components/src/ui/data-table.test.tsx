@@ -56,6 +56,19 @@ describe("DataTable", () => {
     expect(screen.getByText("Linus")).toBeInTheDocument();
   });
 
+  it("changes rows per page via the selector", async () => {
+    render(<DataTable columns={COLUMNS} data={ROWS} pagination pageSize={2} />);
+    // 3 rows, 2 per page -> page 1 shows Ada + Grace.
+    expect(screen.getByText("Ada")).toBeInTheDocument();
+    expect(screen.queryByText("Linus")).not.toBeInTheDocument();
+    // Switch to 50 per page -> everything fits on one page.
+    await userEvent.click(screen.getByRole("button", { name: "Rows per page" }));
+    await userEvent.click(screen.getByRole("option", { name: "50" }));
+    expect(screen.getByText("Linus")).toBeInTheDocument();
+    // Selector reflects the new value.
+    expect(screen.getByRole("button", { name: "Rows per page" })).toHaveTextContent("50");
+  });
+
   it("selects and clears rows", async () => {
     render(<DataTable columns={COLUMNS} data={ROWS} selectable />);
     const rowCheckboxes = screen.getAllByLabelText("Select row");

@@ -738,6 +738,19 @@ function Toolbar() {
       ]}
     />
   );
+}
+
+function Paged() {
+  // Pagination footer includes a "Rows per page" selector (default 10/20/50):
+  return (
+    <DataTable
+      columns={columns}
+      data={rows}
+      pagination
+      pageSize={10}
+      pageSizeOptions={[10, 25, 50]}
+    />
+  );
 }`,
   "date-picker": `import { DatePicker } from "@arcevo/facet-components";
 

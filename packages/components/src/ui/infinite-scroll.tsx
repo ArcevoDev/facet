@@ -113,7 +113,10 @@ const InfiniteScroll = React.forwardRef<HTMLDivElement, InfiniteScrollProps>(
         ref={ref}
         className={cn(
           direction === "horizontal" ? "flex items-stretch gap-3" : "flex flex-col gap-3",
-          scrollable && direction === "vertical" && "max-h-[inherit] overflow-y-auto",
+          // Scroll only when told to. The CONSUMER controls the max height
+          // (e.g. max-h-64) so the container can actually scroll; this
+          // component does not impose a height on itself.
+          scrollable && direction === "vertical" && "overflow-y-auto",
           scrollable && direction === "horizontal" && "overflow-x-auto",
           className,
         )}

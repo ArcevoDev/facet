@@ -49,6 +49,13 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "./pagination.js";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "./select.js";
 
 /* ── Types ─────────────────────────────────────────────────── */
 
@@ -134,8 +141,11 @@ export interface DataTableProps<T extends object> {
   actions?: DataTableAction<T>[];
   /** Paginate results, `pageSize` rows per page. */
   pagination?: boolean;
-  /** Rows per page when `pagination` is set. Default: 10. */
+  /** Rows per page when `pagination` is set. Default: 10 */
   pageSize?: number;
+  /** Selectable rows-per-page options shown in the pagination footer.
+   *  Default: [10, 20, 50] */
+  pageSizeOptions?: number[];
   /** Enable row selection with checkboxes. */
   selectable?: boolean;
   /** Enabled columns that cannot be hidden via the toggle. */
@@ -207,6 +217,7 @@ export function DataTable<T extends object>({
   actions = [],
   pagination = false,
   pageSize = 10,
+  pageSizeOptions = [10, 20, 50],
   selectable = false,
   requiredColumns = [],
   search: searchProp,
@@ -216,6 +227,13 @@ export function DataTable<T extends object>({
   const [internalSearch, setInternalSearch] = React.useState("");
   const searchValue = searchProp ?? internalSearch;
   const setSearch = onSearchChange ?? setInternalSearch;
+
+  // Rows per page: the `pageSize` prop seeds the initial value, then the
+  // footer Select can change it at runtime.
+  const [rowsPerPage, setRowsPerPage] = React.useState<number>(pageSize);
+  React.useEffect(() => {
+    setRowsPerPage(pageSize);
+  }, [pageSize]);
 
   const [visibleColumns, setVisibleColumns] = React.useState<string[]>(() =>
     columns.filter((c) => !c.hidden).map((c) => c.key),
@@ -270,11 +288,11 @@ export function DataTable<T extends object>({
   }, [filtered, columns, sortKey, sortDir]);
 
   // Paginate.
-  const totalPages = pagination ? Math.max(1, Math.ceil(sorted.length / pageSize)) : 1;
+  const totalPages = pagination ? Math.max(1, Math.ceil(sorted.length / rowsPerPage)) : 1;
   React.useEffect(() => {
     setPage((p) => Math.min(p, totalPages));
   }, [totalPages]);
-  const pageRows = pagination ? sorted.slice((page - 1) * pageSize, page * pageSize) : sorted;
+  const pageRows = pagination ? sorted.slice((page - 1) * rowsPerPage, page * rowsPerPage) : sorted;
 
   const shownColumns = columns.filter((c) => visibleColumns.includes(c.key));
 
@@ -561,53 +579,78 @@ export function DataTable<T extends object>({
             </span>
           )}
         </div>
-        {pagination && totalPages > 1 && (
-          <Pagination className="w-auto justify-end">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  aria-disabled={page <= 1}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    if (page > 1) setPage((p) => Math.max(1, p - 1));
-                  }}
-                  className={page <= 1 ? "pointer-events-none opacity-40" : ""}
-                />
-              </PaginationItem>
-              {pageNumbers(page, totalPages).map((n, index) =>
-                n === "ellipsis" ? (
-                  <PaginationItem key={`ellipsis-${index}`}>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                ) : (
-                  <PaginationItem key={n}>
-                    <PaginationLink
+        {pagination && (
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Rows per page</span>
+              <Select
+                value={String(rowsPerPage)}
+                onValueChange={(value) => {
+                  setRowsPerPage(Number(value));
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger aria-label="Rows per page" className="h-8 w-[4.5rem] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {pageSizeOptions.map((option) => (
+                    <SelectItem key={option} value={String(option)}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {totalPages > 1 && (
+              <Pagination className="w-auto justify-end">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
                       href="#"
-                      isActive={n === page}
+                      aria-disabled={page <= 1}
                       onClick={(event) => {
                         event.preventDefault();
-                        setPage(n);
+                        if (page > 1) setPage((p) => Math.max(1, p - 1));
                       }}
-                    >
-                      {n}
-                    </PaginationLink>
+                      className={page <= 1 ? "pointer-events-none opacity-40" : ""}
+                    />
                   </PaginationItem>
-                ),
-              )}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  aria-disabled={page >= totalPages}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    if (page < totalPages) setPage((p) => Math.min(totalPages, p + 1));
-                  }}
-                  className={page >= totalPages ? "pointer-events-none opacity-40" : ""}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+                  {pageNumbers(page, totalPages).map((n, index) =>
+                    n === "ellipsis" ? (
+                      <PaginationItem key={`ellipsis-${index}`}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    ) : (
+                      <PaginationItem key={n}>
+                        <PaginationLink
+                          href="#"
+                          isActive={n === page}
+                          onClick={(event) => {
+                            event.preventDefault();
+                            setPage(n);
+                          }}
+                        >
+                          {n}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ),
+                  )}
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      aria-disabled={page >= totalPages}
+                      onClick={(event) => {
+                        event.preventDefault();
+                        if (page < totalPages) setPage((p) => Math.min(totalPages, p + 1));
+                      }}
+                      className={page >= totalPages ? "pointer-events-none opacity-40" : ""}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            )}
+          </div>
         )}
       </div>
     </div>
