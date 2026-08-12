@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent, Icon } from "@arcevo/facet-components";
 import { FAQ } from "../data/features.js";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@arcevo/facet-components";
+import { getDocsUrl } from "../lib/docs-url.js";
 
 export function FaqSection() {
   return (
@@ -22,6 +24,27 @@ export function FaqSection() {
           </AccordionItem>
         ))}
       </Accordion>
+
+      {/* Explore / feedback strip */}
+      <div className="mt-10 flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-card p-6 text-center sm:flex-row sm:gap-6">
+        <a
+          href={getDocsUrl()}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
+        >
+          <Icon name="book-open" className="size-4" />
+          Explore the docs for a deeper view
+        </a>
+        <span className="hidden h-4 w-px bg-border sm:block" />
+        <Link
+          to="/feedback"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
+        >
+          <Icon name="message-square" className="size-4" />
+          Drop feedback or contact the maintainers
+        </Link>
+      </div>
     </section>
   );
 }

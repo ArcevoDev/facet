@@ -242,4 +242,16 @@ export const FAQ: FaqItem[] = [
     q: "Can I copy components into my source instead of installing the package?",
     a: "Yes, with `facet add <component>`. Installing from the package is recommended so you get updates and tree-shaking.",
   },
+  {
+    q: "How do I use the icon registry, and can I override it with another icon library?",
+    a: "The Icon component resolves any lucide-style kebab name out of the box. To use your own icons (react-icons, heroicons, or your own SVG components), pass them as overrides: <IconProvider overrides={{ settings: MySettingsIcon }}> for a whole app or domain, or registerIcon(\"settings\", MySettingsIcon) globally. Any component accepting className and size works.",
+  },
+  {
+    q: "Where can I see a full example of each component?",
+    a: "The docs site has a live preview and variant tabs for every component under the Components section, with copyable code that matches the selected variant.",
+  },
+  {
+    q: "How do I reach the facet team with feedback or questions?",
+    a: "Use the Feedback page (linked in the nav) to drop feedback or reach the maintainers directly.",
+  },
 ];
