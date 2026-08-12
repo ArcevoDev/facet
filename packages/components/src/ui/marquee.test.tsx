@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { Marquee } from "./marquee.js";
 
 describe("Marquee", () => {
@@ -25,9 +25,14 @@ describe("Marquee", () => {
     expect(track?.getAttribute("style")).toContain("8s linear infinite");
   });
 
-  it("renders a pause-on-hover group class when enabled", () => {
+  it("pauses on mouse enter and resumes on leave", () => {
     const { container } = render(<Marquee items={[<span key="x">X</span>]} pauseOnHover />);
+    const outer = container.querySelector("[role=marquee]");
     const track = container.querySelector("[role=marquee] > div");
-    expect(track?.className).toContain("group-hover:[animation-play-state:paused]");
+    expect(track?.getAttribute("style")).toContain("animation-play-state: running");
+    fireEvent.mouseEnter(outer!);
+    expect(track?.getAttribute("style")).toContain("animation-play-state: paused");
+    fireEvent.mouseLeave(outer!);
+    expect(track?.getAttribute("style")).toContain("animation-play-state: running");
   });
 });

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Separator, Label, Input, Textarea, Icon } from "@arcevo/facet-components";
 import { CONTACT } from "../lib/socials.js";
 import { Nav } from "./Nav.js";
@@ -19,6 +19,15 @@ export function FeedbackPage() {
   const [email, setEmail] = React.useState("");
   const [subject, setSubject] = React.useState("");
   const [message, setMessage] = React.useState("");
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,13 +41,15 @@ export function FeedbackPage() {
       <Nav />
       <div className="mx-auto max-w-3xl px-6 py-16">
         <div className="mb-8">
-          <Link
-            to="/"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          <button
+            type="button"
+            onClick={handleBack}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            &larr; Back to home
-          </Link>
-        <h1 className="mt-4 font-heading text-4xl font-bold text-foreground">Feedback &amp; contact</h1>
+            <Icon name="arrow-left" size={16} />
+            Back
+          </button>
+          <h1 className="mt-4 font-heading text-4xl font-bold text-foreground">Feedback &amp; contact</h1>
         <p className="mt-3 text-muted-foreground">
           Found a bug, want a feature, or just want to say hi? We read everything. The
           professional channel is email, but pick whatever works for you.

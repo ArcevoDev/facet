@@ -38,6 +38,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
     ref,
   ) => {
     const track = React.useMemo(() => [...items, ...items], [items]);
+    const [paused, setPaused] = React.useState(false);
 
     return (
       <div
@@ -45,17 +46,17 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
         role="marquee"
         aria-label="Scrolling content"
         className={cn("group flex w-full overflow-hidden", className)}
+        onMouseEnter={pauseOnHover ? () => setPaused(true) : undefined}
+        onMouseLeave={pauseOnHover ? () => setPaused(false) : undefined}
         {...props}
       >
         <div
-          className={cn(
-            "flex shrink-0 items-center",
-            pauseOnHover && "group-hover:[animation-play-state:paused]",
-          )}
+          className="flex shrink-0 items-center"
           style={{
             gap,
             animation: `facet-marquee ${duration}s linear infinite`,
             animationDirection: reverse ? "reverse" : "normal",
+            animationPlayState: paused ? "paused" : "running",
           }}
         >
           {track.map((item, i) => (
