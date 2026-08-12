@@ -85,7 +85,7 @@ export interface Tenant {
 /* ── Layout modes ──────────────────────────────────────────── */
 
 /** ConsoleLayout sidebar mode. "full" = always-labeled sidebar, "rail" = collapsible icon-only sidebar. */
-export type ConsoleLayoutMode = "full" | "rail";
+export type ConsoleLayoutMode = "full" | "rail" | "overlay";
 
 /* ── Layout context value ─────────────────────────────────── */
 

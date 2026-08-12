@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ConsoleLayout, CommandPalette } from "@arcevo/facet-layout";
 import {
@@ -31,10 +32,20 @@ import { useDocsApp } from "../context.js";
  *   inline results panel that searches all sidebar routes and quick
  *   actions, grouped by section.
  */
-/** Settings gear dropdown: ecosystem links and helpful shortcuts. The theme
- * toggle has its own dedicated icon in the topbar, so it is not duplicated
- * here. */
-function SettingsMenu({ label, links }: { label: string; links: { label: string; href: string; icon?: IconName }[] }) {
+/** Settings gear dropdown: ecosystem links, sidebar mode, and shortcuts. The
+ * theme toggle has its own dedicated icon in the topbar, so it is not
+ * duplicated here. */
+function SettingsMenu({
+  label,
+  links,
+  mode,
+  onModeChange,
+}: {
+  label: string;
+  links: { label: string; href: string; icon?: IconName }[];
+  mode: "rail" | "overlay";
+  onModeChange: (mode: "rail" | "overlay") => void;
+}) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -47,11 +58,16 @@ function SettingsMenu({ label, links }: { label: string; links: { label: string;
           <Icon name="settings" className="size-4" />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuLabel>{label}</DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => onModeChange(mode === "rail" ? "overlay" : "rail")}>
+          <Icon name={mode === "rail" ? "panel-left" : "layout-panel-left"} className="size-4" />
+          Sidebar: {mode === "rail" ? "Rail" : "Overlay"}
+        </DropdownMenuItem>
         {links.length > 0 && (
           <>
+            <DropdownMenuSeparator />
             {links.map((link) => (
               <DropdownMenuItem key={link.href} asChild>
                 <a
@@ -65,9 +81,9 @@ function SettingsMenu({ label, links }: { label: string; links: { label: string;
                 </a>
               </DropdownMenuItem>
             ))}
-            <DropdownMenuSeparator />
           </>
         )}
+        <DropdownMenuSeparator />
         <div className="px-2.5 py-2 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
             <Icon name="search" className="size-3.5" />
@@ -84,12 +100,13 @@ export function DocsLayout() {
   const router = useDocsRouterAdapter();
   const layoutConfig = buildDocsLayoutConfig(config, pages, showComponents);
   const navigate = useNavigate();
+  const [mode, setMode] = React.useState<"rail" | "overlay">("rail");
 
   return (
     <ConsoleLayout
       config={layoutConfig}
       router={router}
-      mode="rail"
+      mode={mode}
       topbar={
         <>
           <CommandPalette
@@ -98,7 +115,12 @@ export function DocsLayout() {
             placeholder="Search docs..."
           />
           {topbar}
-          <SettingsMenu label={config.brand?.name ?? "Docs"} links={links ?? []} />
+          <SettingsMenu
+            label={config.brand?.name ?? "Docs"}
+            links={links ?? []}
+            mode={mode}
+            onModeChange={setMode}
+          />
           <ThemeToggle />
         </>
       }
