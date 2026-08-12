@@ -66,4 +66,34 @@ describe("InputOTP", () => {
     expect(input).toBeInTheDocument();
     expect(document.querySelector('[role="separator"]')).not.toBeNull();
   });
+
+  it("supports an 8-digit 3-2-3 separated layout", async () => {
+    const user = userEvent.setup();
+    render(
+      <InputOTP maxLength={8} aria-label="One-time code">
+        <InputOTPGroup>
+          <InputOTPSlot index={0} />
+          <InputOTPSlot index={1} />
+          <InputOTPSlot index={2} />
+        </InputOTPGroup>
+        <InputOTPSeparator />
+        <InputOTPGroup>
+          <InputOTPSlot index={3} />
+          <InputOTPSlot index={4} />
+        </InputOTPGroup>
+        <InputOTPSeparator />
+        <InputOTPGroup>
+          <InputOTPSlot index={5} />
+          <InputOTPSlot index={6} />
+          <InputOTPSlot index={7} />
+        </InputOTPGroup>
+      </InputOTP>,
+    );
+    const input = screen.getByLabelText("One-time code");
+    await user.click(input);
+    await user.paste("12345678");
+    expect(input).toHaveValue("12345678");
+    // 3-2-3 grouping has two separators.
+    expect(document.querySelectorAll('[role="separator"]').length).toBe(2);
+  });
 });
