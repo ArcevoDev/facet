@@ -1779,8 +1779,14 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     <InputOTPSlot index={0} />
     <InputOTPSlot index={1} />
     <InputOTPSlot index={2} />
+  </InputOTPGroup>
+  <InputOTPSeparator />
+  <InputOTPGroup>
     <InputOTPSlot index={3} />
     <InputOTPSlot index={4} />
+  </InputOTPGroup>
+  <InputOTPSeparator />
+  <InputOTPGroup>
     <InputOTPSlot index={5} />
     <InputOTPSlot index={6} />
     <InputOTPSlot index={7} />
