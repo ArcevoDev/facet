@@ -1,4 +1,3 @@
-import { Button, Navbar } from "@arcevo/facet-components";
 import { CodeBlock } from "./CodeBlock.js";
 
 function CodeShell({
@@ -24,11 +23,10 @@ function CodeShell({
 /**
  * Preview blocks for the /layout docs page.
  *
- * Full app shells (ConsoleLayout, AuthLayout, LandingLayout) are documented
- * code-first: their sidebars/topbars use fixed positioning that escapes any
- * CSS container, which would take over the docs shell. The standalone
- * Sidebar + Topbar composition and the pill Navbar are self-contained, so
- * they get live previews.
+ * All layout surfaces are documented code-first: the full shells and even
+ * the pill Navbar use fixed/sticky positioning that escapes any CSS
+ * container and fights the docs shell, so live previews are unreliable
+ * here. Text + copyable code keeps the page accurate and stable.
  */
 export function LayoutPreviews() {
   return (
@@ -85,32 +83,25 @@ import { Navbar } from "@arcevo/facet-components";
 </LandingLayout>`}
       />
 
-      <section className="not-prose mt-8">
-        <h2 className="font-heading text-xl font-semibold text-foreground">Navbar pill</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          The pill navbar variant is the landing shell's top nav.
-        </p>
-        <div className="mt-4 overflow-hidden rounded-lg border border-border">
-          <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-4 py-2.5">
-            <span className="text-xs font-medium text-muted-foreground">Live preview</span>
-          </div>
-          <div className="relative flex items-center justify-center overflow-hidden bg-background p-4">
-            <Navbar
-              variant="pill"
-              brand={<span className="font-semibold">facet</span>}
-              links={[
-                { href: "#", label: "Features" },
-                { href: "#", label: "Docs" },
-              ]}
-              actions={
-                <div className="flex gap-2">
-                  <Button size="sm">Get started</Button>
-                </div>
-              }
-            />
-          </div>
-        </div>
-      </section>
+      <CodeShell
+        title="Navbar pill"
+        description="The pill navbar variant is the landing shell's top nav: a floating rounded bar with brand, links, and actions."
+        code={`import { Navbar } from "@arcevo/facet-components";
+
+<Navbar
+  variant="pill"
+  brand={<span className="font-semibold">facet</span>}
+  links={[
+    { href: "#", label: "Features" },
+    { href: "#", label: "Docs" },
+  ]}
+  actions={
+    <div className="flex gap-2">
+      <Button size="sm">Get started</Button>
+    </div>
+  }
+/>`}
+      />
     </div>
   );
 }

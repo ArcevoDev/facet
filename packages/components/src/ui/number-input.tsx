@@ -20,6 +20,8 @@ export interface NumberInputProps
   step?: number;
   /** Show a label above the input. */
   label?: string;
+  /** Currency symbol rendered as a prefix, e.g. "$" or "₦". */
+  currency?: string;
 }
 
 function clampNumber(value: number, min: number, max: number): number {
@@ -36,12 +38,14 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       max = Infinity,
       step = 1,
       label,
+      currency,
       className,
       ...props
     },
     ref,
   ) => {
     const display = value == null ? "" : String(value);
+    const padLeft = currency ? "pl-7" : "pr-16";
 
     const commit = (next: number | null) => {
       if (next == null) {
@@ -75,6 +79,11 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           <label className="mb-1.5 block text-sm font-medium text-foreground">{label}</label>
         )}
         <div className="relative">
+          {currency && (
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-muted-foreground">
+              {currency}
+            </span>
+          )}
           <input
             ref={ref}
             type="text"
@@ -86,7 +95,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
                 commit(Number(e.target.value));
               }
             }}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pr-16 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className={`flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${padLeft}`}
             {...props}
           />
           <div className="absolute right-1 top-1/2 flex -translate-y-1/2 gap-0.5">

@@ -680,51 +680,20 @@ export function App() {
   <YourContent />
 </ConsoleLayout>`,
       },
-      { type: "layoutPreviews" },
-      {
-        type: "demo",
-        slug: "console-layout",
-        title: "ConsoleLayout",
-        description: "Dashboard shell: sidebar + topbar + content area, full or rail mode.",
-      },
       { type: "h2", text: "AuthLayout" },
       {
         type: "p",
         text: "Branded split-panel auth page frame (login/register/MFA) with brand logo, tagline, and benefits on the left, centered card on the right.",
-      },
-      {
-        type: "demo",
-        slug: "auth-layout",
-        title: "AuthLayout",
-        description: "Branded split-panel auth page frame.",
       },
       { type: "h2", text: "LandingLayout" },
       {
         type: "p",
         text: "Full-bleed marketing page with glassmorphic hero and glow CTAs. Pair with the `Navbar` `pill` variant for a floating frosted bar.",
       },
-      {
-        type: "demo",
-        slug: "landing-layout",
-        title: "LandingLayout",
-        description: "Full-bleed marketing shell with a glassmorphic hero.",
-      },
       { type: "h2", text: "Sidebar & Topbar" },
       {
         type: "p",
         text: "Use `Sidebar` (driven by a `LayoutConfig` `navigation`) and `Topbar` standalone with `LayoutProvider`. This docs site is itself built from these components.",
-      },
-      {
-        type: "demo",
-        slug: "sidebar",
-        title: "Sidebar",
-        description: "Collapsible, resizable navigation rail driven by a LayoutConfig.",
-      },
-      {
-        type: "demo",
-        slug: "topbar",
-        title: "Topbar",
-        description: "Application top bar with breadcrumb, search, and actions.",
       },
       { type: "h2", text: "Domain presets" },
       {

@@ -1749,7 +1749,13 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             <div className="w-full">
               <Marquee
                 duration={16}
-                items={["facet", "arc-id", "auth", "tokens", "React 19", "Radix"]}
+                items={["facet", "arc-id", "auth", "tokens", "React 19", "Radix"].map(
+                  (word) => (
+                    <span key={word} className="whitespace-nowrap text-sm font-medium">
+                      {word}
+                    </span>
+                  ),
+                )}
               />
             </div>
           ),

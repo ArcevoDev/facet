@@ -49,7 +49,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
       >
         <div
           className={cn(
-            "flex shrink-0 items-center whitespace-nowrap",
+            "flex shrink-0 items-center",
             pauseOnHover && "group-hover:[animation-play-state:paused]",
           )}
           style={{

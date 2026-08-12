@@ -3,8 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  ScrollArea,
-  ScrollBar,
+  Marquee,
 } from "@arcevo/facet-components";
 import { INSTALL_STEPS } from "../data/features.js";
 
@@ -20,26 +19,28 @@ export function InstallSection() {
         </p>
       </div>
 
-      <ScrollArea type="always" className="w-full">
-        <div className="flex min-w-max gap-4 pb-4">
-          {INSTALL_STEPS.map((step) => (
-            <Card key={step.num} className="w-64 shrink-0">
-              <CardHeader>
-                <span className="inline-flex items-center justify-center size-8 rounded-full bg-primary/10 text-primary text-sm font-bold">
-                  {step.num}
-                </span>
-                <CardTitle className="text-sm font-semibold">{step.label}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <code className="block text-[11px] text-muted-foreground font-mono leading-relaxed break-all">
-                  {step.code}
-                </code>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      <Marquee
+        duration={28}
+        gap="1.25rem"
+        items={INSTALL_STEPS.map((step) => (
+          <Card key={step.num} className="w-64 shrink-0">
+            <CardHeader>
+              <span className="inline-flex size-8 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
+                {step.num}
+              </span>
+              <CardTitle className="text-sm font-semibold">{step.label}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <code className="block break-all font-mono text-[11px] leading-relaxed text-muted-foreground">
+                {step.code}
+              </code>
+            </CardContent>
+          </Card>
+        ))}
+      />
+      <p className="mt-6 text-center text-xs text-muted-foreground">
+        Hover the strip to pause the scroll.
+      </p>
     </section>
   );
 }
