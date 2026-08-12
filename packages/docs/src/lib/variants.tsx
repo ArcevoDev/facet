@@ -98,6 +98,14 @@ import {
   MenubarContent,
   MenubarItem,
   MenubarSeparator,
+  MenubarLabel,
+  MenubarCheckboxItem,
+  MenubarRadioGroup,
+  MenubarRadioItem,
+  MenubarSub,
+  MenubarSubTrigger,
+  MenubarSubContent,
+  MenubarShortcut,
   Navbar,
   NavigationMenu,
   NavigationMenuList,
@@ -338,6 +346,44 @@ function MenubarDemo() {
         <MenubarTrigger>Edit</MenubarTrigger>
         <MenubarContent>
           <MenubarItem>Undo</MenubarItem>
+        </MenubarContent>
+      </MenubarMenu>
+    </Menubar>
+  );
+}
+
+function MenubarComposedDemo() {
+  return (
+    <Menubar>
+      <MenubarMenu>
+        <MenubarTrigger>View</MenubarTrigger>
+        <MenubarContent>
+          <MenubarLabel>Appearance</MenubarLabel>
+          <MenubarRadioGroup value="system">
+            <MenubarRadioItem value="light">Light</MenubarRadioItem>
+            <MenubarRadioItem value="dark">Dark</MenubarRadioItem>
+            <MenubarRadioItem value="system">System</MenubarRadioItem>
+          </MenubarRadioGroup>
+          <MenubarSeparator />
+          <MenubarCheckboxItem checked>Show sidebar</MenubarCheckboxItem>
+          <MenubarCheckboxItem>Show status bar</MenubarCheckboxItem>
+        </MenubarContent>
+      </MenubarMenu>
+      <MenubarMenu>
+        <MenubarTrigger>Insert</MenubarTrigger>
+        <MenubarContent>
+          <MenubarSub>
+            <MenubarSubTrigger>Code block</MenubarSubTrigger>
+            <MenubarSubContent>
+              <MenubarItem>TypeScript</MenubarItem>
+              <MenubarItem>JavaScript</MenubarItem>
+            </MenubarSubContent>
+          </MenubarSub>
+          <MenubarSeparator />
+          <MenubarItem>
+            Link
+            <MenubarShortcut>mod+K</MenubarShortcut>
+          </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
@@ -788,25 +834,56 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         },
       ];
     case "menubar":
-      return [{ label: "Default", node: <MenubarDemo /> }];
+      return [
+        { label: "Default", node: <MenubarDemo /> },
+        { label: "Composed", node: <MenubarComposedDemo /> },
+      ];
     case "navbar":
       return (
-        ["default", "sticky", "glass", "bordered", "transparent", "pill"] as const
-      ).map((variant) => ({
-        label: variant,
-        node: (
-          <div className="w-full max-w-md">
-            <Navbar
-              variant={variant}
-              brand={<span className="font-semibold">facet</span>}
-              links={[
-                { href: "#", label: "Features" },
-                { href: "#", label: "Docs" },
-              ]}
-            />
-          </div>
-        ),
-      }));
+        [
+          ...(["default", "sticky", "glass", "bordered", "transparent", "pill"] as const).map(
+            (variant) => ({
+              label: variant,
+              node: (
+                <div className="w-full max-w-md">
+                  <Navbar
+                    variant={variant}
+                    brand={<span className="font-semibold">facet</span>}
+                    links={[
+                      { href: "#", label: "Features" },
+                      { href: "#", label: "Docs" },
+                    ]}
+                  />
+                </div>
+              ),
+            }),
+          ),
+          {
+            label: "With dropdown",
+            node: (
+              <div className="w-full max-w-md">
+                <Navbar
+                  variant="default"
+                  brand={<span className="font-semibold">facet</span>}
+                  links={[
+                    { href: "#", label: "Features" },
+                    {
+                      href: "#",
+                      label: "Resources",
+                      children: [
+                        { href: "#", label: "Docs", description: "Guides and API reference" },
+                        { href: "#", label: "Blog", description: "Product updates" },
+                        { href: "#", label: "Changelog", description: "Version history", badge: "New" },
+                      ],
+                    },
+                    { href: "#", label: "Pricing" },
+                  ]}
+                />
+              </div>
+            ),
+          },
+        ] as { label: string; node: React.ReactNode }[]
+      );
     case "navigation-menu":
       return [
         { label: "Default", node: <NavigationMenuDemo /> },

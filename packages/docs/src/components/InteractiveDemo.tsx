@@ -32,7 +32,7 @@ export interface InteractiveDemoProps {
  * is previewable with copyable code, not just the component gallery.
  *
  * Preview comes from lib/variants.tsx (variantCells) and the code from
- * lib/usage.ts (variantUsage) — the two stay in lockstep per slug.
+ * lib/usage.ts (variantUsage): the two stay in lockstep per slug.
  */
 export function InteractiveDemo({
   slug,

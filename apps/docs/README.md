@@ -12,7 +12,7 @@ Deployed to https://docs.facet.arcevocirqle.com.ng.
 
 - **`src/demo-config.ts`**: the `DocsSiteConfig` (brand "facet", ecosystem
   link to arc-id) and the pages registry (facet's canonical pages).
-- **`src/pages.ts`**: facet's own authored guide pages — the documentation
+- **`src/pages.ts`**: facet's own authored guide pages: the documentation
   *content*. This lives in the consumer, not in the `@arcevo/facet-docs`
   package, so installing the package never ships facet's docs.
 - **`src/app.tsx`**: mounts `<DocsApp config={demoConfig} pages={demoPages} />`.
@@ -20,7 +20,7 @@ Deployed to https://docs.facet.arcevocirqle.com.ng.
 The `/components` gallery renders the extended manifest, so the auth and
 layout surfaces (SignIn, SignUp, MfaDialog, Guard, ConsoleLayout,
 AuthLayout, LandingLayout, Sidebar, Topbar) are previewable alongside the
-UI components — each with live previews, variant galleries, and per-variant
+UI components: each with live previews, variant galleries, and per-variant
 usage tabs.
 
 ## Consume it like an external consumer

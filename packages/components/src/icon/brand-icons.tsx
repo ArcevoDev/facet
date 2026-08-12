@@ -4,7 +4,7 @@
  * lucide-react deprecated its brand/social icon set and has been removing
  * entries (13 of the former ~28 are already gone in 0.468). We keep the
  * ones consumers commonly need as first-class icons in the registry so
- * they never depend on lucide's churn — same convention as GithubIcon in
+ * they never depend on lucide's churn: same convention as GithubIcon in
  * registry.tsx.
  *
  * These follow the lucide stroke style (stroke="currentColor") so they

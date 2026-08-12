@@ -415,7 +415,7 @@ function Example() {
 function Example() {
   return <Label htmlFor="email">Email</Label>;
 }`,
-  menubar: `import { Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, MenubarSeparator } from "@arcevo/facet-components";
+  menubar: `import { Menubar, MenubarMenu, MenubarTrigger, MenubarContent, MenubarItem, MenubarSeparator, MenubarLabel, MenubarCheckboxItem, MenubarRadioGroup, MenubarRadioItem, MenubarSubTrigger, MenubarSubContent, MenubarShortcut } from "@arcevo/facet-components";
 
 function Example() {
   return (
@@ -845,7 +845,7 @@ const LUCIDE_ICONS = new Set([
 ]);
 
 /** Placeholder JSX names in snippets that are NOT real imports (e.g.
- *  `<YourContent />`, `<ProtectedPage />`) — the reader replaces these
+ *  `<YourContent />`, `<ProtectedPage />`): the reader replaces these
  *  with their own components. */
 const PLACEHOLDER_COMPONENTS = new Set([
   "YourContent",
@@ -855,7 +855,7 @@ const PLACEHOLDER_COMPONENTS = new Set([
 ]);
 
 /** Capitalized JSX element names used in a snippet (component names / icons).
- *  Only captures identifiers that appear as `<Name`, `</Name` — text content
+ *  Only captures identifiers that appear as `<Name`, `</Name`: text content
  *  like "Glass" is ignored. */
 function identifiersIn(code: string): string[] {
   const found = new Set<string>();
@@ -1230,6 +1230,39 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     </MenubarContent>
   </MenubarMenu>
 </Menubar>`,
+    Composed: `<Menubar>
+  <MenubarMenu>
+    <MenubarTrigger>View</MenubarTrigger>
+    <MenubarContent>
+      <MenubarLabel>Appearance</MenubarLabel>
+      <MenubarRadioGroup value="system">
+        <MenubarRadioItem value="light">Light</MenubarRadioItem>
+        <MenubarRadioItem value="dark">Dark</MenubarRadioItem>
+        <MenubarRadioItem value="system">System</MenubarRadioItem>
+      </MenubarRadioGroup>
+      <MenubarSeparator />
+      <MenubarCheckboxItem checked>Show sidebar</MenubarCheckboxItem>
+      <MenubarCheckboxItem>Show status bar</MenubarCheckboxItem>
+    </MenubarContent>
+  </MenubarMenu>
+  <MenubarMenu>
+    <MenubarTrigger>Insert</MenubarTrigger>
+    <MenubarContent>
+      <MenubarSub>
+        <MenubarSubTrigger>Code block</MenubarSubTrigger>
+        <MenubarSubContent>
+          <MenubarItem>TypeScript</MenubarItem>
+          <MenubarItem>JavaScript</MenubarItem>
+        </MenubarSubContent>
+      </MenubarSub>
+      <MenubarSeparator />
+      <MenubarItem>
+        Link
+        <MenubarShortcut>mod+K</MenubarShortcut>
+      </MenubarItem>
+    </MenubarContent>
+  </MenubarMenu>
+</Menubar>`,
   },
   navbar: {
     default: `<Navbar
@@ -1260,6 +1293,23 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
   variant="pill"
   brand={<span className="font-semibold">facet</span>}
   links={[{ href: "#", label: "Docs" }]}
+/>`,
+    "With dropdown": `<Navbar
+  variant="default"
+  brand={<span className="font-semibold">facet</span>}
+  links={[
+    { href: "#", label: "Features" },
+    {
+      href: "#",
+      label: "Resources",
+      children: [
+        { href: "#", label: "Docs", description: "Guides and API reference" },
+        { href: "#", label: "Blog", description: "Product updates" },
+        { href: "#", label: "Changelog", description: "Version history", badge: "New" },
+      ],
+    },
+    { href: "#", label: "Pricing" },
+  ]}
 />`,
   },
   "navigation-menu": {

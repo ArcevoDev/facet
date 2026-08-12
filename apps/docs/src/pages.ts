@@ -3,7 +3,7 @@ import type { DocsPage } from "@arcevo/facet-docs";
 /**
  * facet's own authored guide pages.
  *
- * These are facet's documentation content — NOT part of the @arcevo/facet-docs
+ * These are facet's documentation content: NOT part of the @arcevo/facet-docs
  * engine. Consumers mount <DocsApp> with their own pages; this registry is
  * just the demo consumer's content, kept out of the package so installing
  * the docs package doesn't ship facet's docs.
@@ -340,7 +340,7 @@ function MyHeader() {
       },
       {
         type: "p",
-        text: "The sign-in flow is a configurable state machine. The email/password form is the embedded default entry point; the other methods branch off it based on `config`. Head to the [Sign In](/auth/sign-in) page — it is the single home for the interactive demo: pick a method, watch the live preview, and copy the matching code.",
+        text: "The sign-in flow is a configurable state machine. The email/password form is the embedded default entry point; the other methods branch off it based on `config`. Head to the [Sign In](/auth/sign-in) page: it is the single home for the interactive demo: pick a method, watch the live preview, and copy the matching code.",
       },
       {
         type: "demo",
@@ -841,12 +841,12 @@ export function App() {
       { type: "h2", text: "Built-in set" },
       {
         type: "p",
-        text: "The registry ships with a lucide-based default map using lucide-style kebab-case names: settings, logout, chevron-down, search, check, copy, moon, sun, bell, menu, close, chevron-left, chevron-right, chevron-up-down, arrow-right, sparkles, book-open, building, compass, layers, palette, key-round, users, shield, credit-card, dashboard, document, help, grid, list, triangle-alert, user, upload, qrcode, trash — plus brand icons (github, linkedin, instagram, facebook, tiktok, whatsapp, x, twitter, youtube, slack, discord, telegram, figma, spotify) as inline SVGs independent of lucide.",
+        text: "The registry ships with a lucide-based default map using lucide-style kebab-case names: settings, logout, chevron-down, search, check, copy, moon, sun, bell, menu, close, chevron-left, chevron-right, chevron-up-down, arrow-right, sparkles, book-open, building, compass, layers, palette, key-round, users, shield, credit-card, dashboard, document, help, grid, list, triangle-alert, user, upload, qrcode, trash. It also ships brand icons (github, linkedin, instagram, facebook, tiktok, whatsapp, x, twitter, youtube, slack, discord, telegram, figma, spotify) as inline SVGs independent of lucide.",
       },
       { type: "h2", text: "Dynamic lucide names" },
       {
         type: "p",
-        text: "Any lucide icon resolves by its lowercase kebab name — <Icon name=\"heart\" />, <Icon name=\"alarm-clock\" />, <Icon name=\"arrow-up-right\" />. camelCase aliases (chevronDown, triangleAlert) still resolve for back-compat.",
+        text: "Any lucide icon resolves by its lowercase kebab name: <Icon name=\"heart\" />, <Icon name=\"alarm-clock\" />, <Icon name=\"arrow-up-right\" />. camelCase aliases (chevronDown, triangleAlert) still resolve for back-compat.",
       },
       { type: "h2", text: "Render an icon" },
       {
@@ -964,11 +964,13 @@ registerIcon("shield", ShieldAlert);`,
         lang: "bash",
         text: `facet docs init
 # or non-interactive, using detected defaults:
-facet docs init --yes`,
+facet docs init --yes
+# shorthand:
+facet docs init -y`,
       },
       {
         type: "p",
-        text: "The wizard opens with a \"Decide for me\" option — detect your stack and use the best defaults — or walks you through each choice: name (blank falls back to `docs`), location (`.` recommended, `docs/`, or `src/docs/`), language, framework, styling, template kind, and whether to create a barrel export.",
+        text: "The wizard opens with a \"Decide for me\" option: detect your stack and use the best defaults, or walk through each choice: name (blank falls back to `docs`), location (`.` recommended, `docs/`, or `src/docs/`), language, framework, styling, template kind, and whether to create a barrel export.",
       },
       { type: "h2", text: "Framework support" },
       {
@@ -984,7 +986,7 @@ facet docs init --yes`,
       },
       {
         type: "p",
-        text: "Every framework gets the same `@arcevo/facet-docs` engine — the content is plain data, so any host can render it.",
+        text: "Every framework gets the same `@arcevo/facet-docs` engine: the content is plain data, so any host can render it.",
       },
       { type: "h2", text: "Copy a component" },
       {
@@ -1001,21 +1003,76 @@ facet add Button --ui-dir ui`,
       },
       {
         type: "p",
-        text: "**Recommended:** import from `@arcevo/facet-components` instead of copying source — you get updates, tree-shaking, and the token system. Copying source means you own every future fix.",
+        text: "**Recommended:** import from `@arcevo/facet-components` instead of copying source: you get updates, tree-shaking, and the token system. Copying source means you own every future fix.",
       },
       { type: "h2", text: "How it stays current" },
       {
         type: "ul",
         items: [
-          "Detects your frontend stack (Next.js, Remix, Vite, plain JS, Python); backend frameworks are ignored — docs are a frontend concern.",
+          "Detects your frontend stack (Next.js, Remix, Vite, plain JS, Python); backend frameworks are ignored: docs are a frontend concern.",
           "Detects your package manager from the lockfile and recommends the matching install command.",
           "Resolves current published facet versions from the npm registry, so the scaffold never pins a stale version.",
           "Patches an existing package.json, preserving your scripts, deps, name, and metadata.",
         ],
       },
+      { type: "h2", text: "Commands" },
+      {
+        type: "table",
+        headers: ["Command", "Description"],
+        rows: [
+          ["`facet pkg`", "Show latest published facet versions vs what this repo declares and installs"],
+          ["`facet doctor`", "Audit the repo: layout, facet deps, best-practice suggestions"],
+          ["`facet update`", "List facet packages with newer versions and print the install command"],
+          ["`facet docs init`", "Scaffold a docs site (interactive wizard or `-y`)"],
+          ["`facet add <component>`", "Copy a component into your source (shadcn-style)"],
+        ],
+      },
+      { type: "h2", text: "Flags" },
       {
         type: "p",
-        text: "Run `facet --help` for the full flag reference. This page is facet's own ecosystem docs — the CLI is a facet package, documented alongside the rest.",
+        text: "Run `facet --help` (or `facet -h`) in any terminal to see this reference live, with the exact syntax for your installed version.",
+      },
+      { type: "h2", text: "Global flags" },
+      {
+        type: "table",
+        headers: ["Flag", "Description"],
+        rows: [
+          ["`-V, --version`", "Print the installed CLI version"],
+          ["`-h, --help`", "Show the command reference and exit"],
+        ],
+      },
+      { type: "h2", text: "facet docs init flags" },
+      {
+        type: "table",
+        headers: ["Flag", "Description"],
+        rows: [
+          ["`-y, --yes`", "Non-interactive: detect your stack and use the best defaults"],
+          ["`--name <name>`", "Docs site name (default: `docs`)"],
+          ["`--location <location>`", "`.` (root, recommended), `docs`, or `src/docs` (default: `.`)"],
+          ["`--language <language>`", "`typescript` or `javascript` (default: TypeScript)"],
+          ["`--framework <framework>`", "`react-vite`, `next`, `remix`, `plain-js`, or `python` (default: detected)"],
+          ["`--styling <styling>`", "`facet-tokens`, `tailwind`, `plain-css`, or `none` (default: detected)"],
+          ["`--no-tokens`", "Do not wire `@arcevo/facet-tokens` theming"],
+          ["`--template <template>`", "`component-library`, `api-reference`, or `product-docs` (default: `component-library`)"],
+          ["`--barrel <mode>`", "`auto` (create when it fits, default), `always`, or `never`"],
+        ],
+      },
+      { type: "h2", text: "facet add flags" },
+      {
+        type: "table",
+        headers: ["Flag", "Description"],
+        rows: [
+          ["`--js`", "Generate JavaScript instead of TypeScript"],
+          ["`--dir <dir>`", "Components directory (default: `src/components`)"],
+          ["`--ui-dir <name>`", "Subdirectory holding the copies (default: `facet`; ignored with `--flat`)"],
+          ["`--flat`", "Place components directly in `--dir` instead of a subdirectory"],
+          ["`--no-barrel`", "Do not create or update any barrel export"],
+          ["`--barrel`", "Always create a barrel export"],
+        ],
+      },
+      {
+        type: "p",
+        text: "Every prompt and flag is described inline, so you always know what a choice will do before committing.",
       },
     ],
   },

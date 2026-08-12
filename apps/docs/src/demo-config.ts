@@ -6,7 +6,7 @@ import { docsPages } from "./pages.js";
  *
  * This is exactly what an external consumer (arc-id, arcbase, arc-wallet)
  * would write: a DocsSiteConfig (brand + nav + ecosystem links) plus their
- * own pages. facet dogfoods its docs package here — the pages registry
+ * own pages. facet dogfoods its docs package here: the pages registry
  * (./pages.ts) is facet's own content, kept out of the package.
  */
 

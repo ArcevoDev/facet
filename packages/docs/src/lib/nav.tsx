@@ -137,7 +137,7 @@ export function buildDocsLayoutConfig(
 /**
  * Build the sidebar Components section from the manifest: "All components"
  * then one collapsible sub-group per manifest category. Only base UI
- * primitives live here — the auth and layout surfaces (SignIn, SignUp,
+ * primitives live here: the auth and layout surfaces (SignIn, SignUp,
  * ConsoleLayout, ...) are excluded because they have their own guide pages
  * with interactive demos under the Auth and Layout sections. Foundations
  * (Icon, Theme) also have their own docs pages under Foundations, and the

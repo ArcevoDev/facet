@@ -9,7 +9,7 @@
  * section) consumes.
  *
  * The foundations entries (Icon, Theme) stay in `docsManifest` but are
- * excluded from the Components sidebar — they have their own guide pages
+ * excluded from the Components sidebar: they have their own guide pages
  * under the Foundations section.
  */
 

@@ -119,7 +119,7 @@ import { SignIn, fintechPreset } from "@arcevo/facet-auth";
 
       <PreviewShell
         title="Sidebar & Topbar"
-        description="Use Sidebar + Topbar standalone with LayoutProvider — this docs site is built from them."
+        description="Use Sidebar + Topbar standalone with LayoutProvider: this docs site is built from them."
         code={`import { Sidebar, Topbar, LayoutProvider, fintechLayoutPreset } from "@arcevo/facet-layout";
 
 <LayoutProvider>

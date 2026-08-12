@@ -3,7 +3,7 @@
  *
  * Resolves semantic + lowercase kebab lucide icon names to components, so
  * consumers and domain presets can override icons without forking
- * components — and never need lucide-react installed themselves.
+ * components, and never need lucide-react installed themselves.
  *
  * Naming is lucide-style kebab-case throughout:
  *   <Icon name="settings" /> <Icon name="chevron-down" /> <Icon name="heart" />

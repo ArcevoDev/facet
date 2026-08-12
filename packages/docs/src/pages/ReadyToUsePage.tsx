@@ -11,7 +11,7 @@ import { useDocsKeyboardNav, useDocsNavigation } from "../lib/keyboard-nav.js";
  * Dedicated "Ready to Use" page: drop-in, higher-order components (Dropzone,
  * ColorPicker, QRCode, Marquee, Roadmap, Form) with a live preview and a
  * copyable usage snippet each. These are intentionally not part of the
- * base /components gallery — they compose the primitives into something
+ * base /components gallery: they compose the primitives into something
  * you can drop straight into a page.
  */
 export function ReadyToUsePage() {
@@ -47,7 +47,7 @@ export function ReadyToUsePage() {
       <h1 className="font-heading text-3xl font-bold text-foreground">Ready to Use</h1>
       <p className="mt-2 text-muted-foreground">
         Drop-in, higher-order components built on the facet primitives. Each one solves a
-        complete job — file upload, color picking, QR codes, timelines — with a copyable
+        complete job (file upload, color picking, QR codes, timelines) with a copyable
         snippet to drop straight into your app.
       </p>
 
