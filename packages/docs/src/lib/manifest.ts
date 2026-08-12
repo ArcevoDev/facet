@@ -45,12 +45,6 @@ export const extendedEntries: DocsManifestEntry[] = [
     description: "Renders its children only when a session is present; falls back otherwise.",
     category: "auth",
   },
-  {
-    name: "Login Form",
-    slug: "login-form",
-    description: "Independently importable email + password form with inline validation.",
-    category: "auth",
-  },
   // ── Layout (@arcevo/facet-layout) ────────────────────────────
   {
     name: "Console Layout",

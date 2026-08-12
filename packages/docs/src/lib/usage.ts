@@ -763,14 +763,6 @@ import { ArcProvider } from "@arcevo/facet-auth";
 <Guard fallback={<SignIn />}>
   <ProtectedPage />
 </Guard>`,
-  "login-form": `import { LoginForm } from "@arcevo/facet-auth";
-
-<LoginForm
-  onSubmit={async (email, password) => {
-    const res = await login({ email, password });
-    return res.error?.message ?? null;
-  }}
-/>`,
   "console-layout": `import { ConsoleLayout, defaultLayoutPreset } from "@arcevo/facet-layout";
 
 <ConsoleLayout config={defaultLayoutPreset} mode="full">
@@ -2004,15 +1996,6 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
   <ProtectedPage />
 </Guard>`,
   },
-  "login-form": {
-    Default: `<LoginForm
-  onSubmit={async (email, password) => login({ email, password })}
-/>`,
-    "With validation": `<LoginForm
-  onSubmit={async (email, password) => login({ email, password })}
-  validate
-/>`,
-  },
   "console-layout": {
     Full: `<ConsoleLayout config={defaultLayoutPreset} mode="full">
   <YourContent />
@@ -2058,7 +2041,6 @@ const PACKAGE_BY_SLUG: Record<string, string> = {
   "sign-up": "@arcevo/facet-auth",
   "mfa-dialog": "@arcevo/facet-auth",
   guard: "@arcevo/facet-auth",
-  "login-form": "@arcevo/facet-auth",
   "console-layout": "@arcevo/facet-layout",
   "auth-layout": "@arcevo/facet-layout",
   "landing-layout": "@arcevo/facet-layout",
@@ -2072,7 +2054,6 @@ const PACKAGE_IMPORTS: Record<string, string[]> = {
   "sign-up": ["SignUp"],
   "mfa-dialog": ["MfaVerifyForm", "MfaSetupForm"],
   guard: ["Guard", "SignIn"],
-  "login-form": ["LoginForm"],
   "console-layout": ["ConsoleLayout", "defaultLayoutPreset"],
   "auth-layout": ["AuthLayout", "fintechLayoutPreset", "defaultLayoutPreset"],
   "landing-layout": ["LandingLayout"],

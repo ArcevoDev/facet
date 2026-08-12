@@ -121,8 +121,7 @@ function ConsoleLayoutInner({
       </Sheet>
 
       {/* Main area */}
-      <div
-        className="flex flex-1 flex-col transition-[padding] duration-200"
+      <div className="flex min-w-0 flex-1 flex-col transition-[padding] duration-200"
         style={
           mode === "full" || !isDesktop
             ? undefined
@@ -137,7 +136,7 @@ function ConsoleLayoutInner({
         >
           {topbar}
         </Topbar>
-        <main className="flex-1 p-4 md:p-8">
+        <main className="min-w-0 flex-1 p-4 md:p-8">
           <div className="mx-auto w-full max-w-[1440px]">{children}</div>
         </main>
       </div>

@@ -25,10 +25,11 @@ export const docsPages: DocsPage[] = [
         items: [
           "`@arcevo/facet-tokens`: Alpha Palette design tokens, typography, spacing, CSS variables.",
           "`@arcevo/facet-sdk`: arc-id API client (pure fetch, typed, 10 domain SDKs).",
-          "`@arcevo/facet-components`: 52 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
+          "`@arcevo/facet-components`: 57 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
           "`@arcevo/facet-auth`: auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms.",
           "`@arcevo/facet-layout`: domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets.",
           "`@arcevo/facet-docs`: this config-driven docs engine, installable by any Arcevo project.",
+          "`@arcevo/facet-cli`: scaffold docs sites, audit and update your facet setup from the terminal.",
         ],
       },
       { type: "h2", text: "Architecture" },
@@ -41,19 +42,19 @@ export const docsPages: DocsPage[] = [
         type: "code",
         text: `pnpm install
 pnpm build
-pnpm test      # 108 tests across 4 packages (vitest)
+pnpm test      # 140+ tests across the workspace (vitest)
 pnpm typecheck # all projects`,
       },
       { type: "p", text: "Consume in your app:" },
       {
         type: "code",
         text: `import { ConsoleLayout, enterpriseLayoutPreset } from "@arcevo/facet-layout";
-import { Guard, fintechAuthPreset } from "@arcevo/facet-auth";
+import { Guard, fintechPreset } from "@arcevo/facet-auth";
 
 function App() {
   return (
     <ConsoleLayout config={enterpriseLayoutPreset} tenants={tenants}>
-      <Guard fallback={<SignIn config={fintechAuthPreset} />}>
+      <Guard fallback={<SignIn config={fintechPreset} />}>
         <YourRoutes />
       </Guard>
     </ConsoleLayout>
@@ -63,7 +64,7 @@ function App() {
       { type: "h2", text: "Publishing" },
       {
         type: "p",
-        text: "Packages publish to npm under the `@arcevo/facet-*` scope via Changesets. The GitHub Actions workflow runs `pnpm changeset publish` on `main` using the `NPM_TOKEN` secret.",
+        text: "Packages publish to npm under the `@arcevo/facet-*` scope via Changesets. Publishing is done locally by the maintainer (`pnpm changeset publish`); the GitHub Actions workflow is a validation gate (build, typecheck, docs inventory) and does not publish.",
       },
     ],
   },
@@ -356,9 +357,7 @@ function MyHeader() {
           "[Sign Up](/auth/sign-up): account creation and customization.",
           "[MFA](/auth/mfa): MfaDialog and the verify/setup/recovery forms.",
           "[Guards](/auth/guard): protect routes with `Guard`.",
-          "[Forms](/auth/forms): independently importable standalone forms.",
           "[Domain Presets](/auth/presets): fintech, med, edu, enterprise.",
-          "[Layouts](/auth/layouts): AuthLayout and app-shell integration.",
         ],
       },
     ],
@@ -523,45 +522,6 @@ function MyHeader() {
     ],
   },
   {
-    path: "/auth/forms",
-    title: "Forms",
-    section: "auth",
-    description: "Independently importable standalone auth forms.",
-    blocks: [
-      {
-        type: "p",
-        text: "Forms are independently importable from `@arcevo/facet-auth` and all use react-hook-form + zod with inline errors.",
-      },
-      {
-        type: "ul",
-        items: [
-          "`LoginForm`: email + password.",
-          "`MagicLinkForm`: passwordless email link.",
-          "`ForgotPasswordForm` / `ResetPasswordForm`.",
-          "`MfaVerifyForm` / `MfaSetupForm` / `MfaRecoveryForm`.",
-        ],
-      },
-      {
-        type: "code",
-        text: `import { LoginForm } from "@arcevo/facet-auth";
-
-<LoginForm
-  onSubmit={async (email, password) => {
-    const res = await login({ email, password });
-    return res.error?.message ?? null;
-  }}
-/>`,
-      },
-      {
-        type: "demo",
-        slug: "login-form",
-        title: "LoginForm",
-        description: "Email + password form with inline validation.",
-      },
-      { type: "authPreviews" },
-    ],
-  },
-  {
     path: "/auth/presets",
     title: "Domain Presets",
     section: "auth",
@@ -609,35 +569,6 @@ function MyHeader() {
       {
         type: "p",
         text: "Because `config` is `Partial<AuthConfig>`, any consumer can build their own presets from an existing one.",
-      },
-    ],
-  },
-  {
-    path: "/auth/layouts",
-    title: "Layouts",
-    section: "auth",
-    description: "AuthLayout and app-shell integration.",
-    blocks: [
-      {
-        type: "p",
-        text: "The layout package provides `AuthLayout`: a branded split-panel auth page frame (login/register/MFA) with brand logo, tagline, and benefits on the left, centered card on the right.",
-      },
-      {
-        type: "code",
-        text: `<AuthLayout config={enterpriseLayoutPreset}>
-  <SignIn config={enterprisePreset} />
-</AuthLayout>`,
-      },
-      {
-        type: "demo",
-        slug: "auth-layout",
-        title: "AuthLayout",
-        description: "Branded split-panel auth page frame with a live SignIn.",
-      },
-      { type: "h2", text: "Router adapter" },
-      {
-        type: "p",
-        text: "facet never imports a router. Pass a `RouterAdapter` (or `createDefaultAdapter()`) so Sidebar, Navbar, and UserMenu render framework-native links and detect the active route.",
       },
     ],
   },

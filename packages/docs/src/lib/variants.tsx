@@ -169,7 +169,7 @@ import {
   type RoadmapItem,
   type DataTableColumn,
 } from "@arcevo/facet-components";
-import { ArcProvider, SignIn, SignUp, Guard, LoginForm, MfaVerifyForm } from "@arcevo/facet-auth";
+import { ArcProvider, SignIn, SignUp, Guard, MfaVerifyForm } from "@arcevo/facet-auth";
 import { ArcIdClient } from "@arcevo/facet-sdk";
 import {
   ConsoleLayout,
@@ -2002,30 +2002,6 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           ),
         },
       ];
-    case "login-form":
-      return [
-        {
-          label: "Default",
-          node: (
-            <div className="w-full max-w-md">
-              <ArcProvider client={DEMO_CLIENT}>
-                <LoginForm onSubmit={async () => null} />
-              </ArcProvider>
-            </div>
-          ),
-        },
-        {
-          label: "With validation",
-          node: (
-            <div className="w-full max-w-md">
-              <ArcProvider client={DEMO_CLIENT}>
-                <LoginForm onSubmit={async () => null} validate />
-              </ArcProvider>
-            </div>
-          ),
-        },
-      ];
-
     /* ── Layout (@arcevo/facet-layout) ───────────────────────── */
     case "console-layout":
       return [
