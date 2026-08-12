@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import {
   GuidePage,
   H2,
@@ -112,7 +112,6 @@ function Block({ block }: { block: DocsBlock }) {
 export function DocsContentPage() {
   const { pages } = useDocsApp();
   const { pathname } = useLocation();
-  const navigate = useNavigate();
   const page = pages.find((p) => p.path === pathname);
   if (!page) return <Navigate to="/" replace />;
 
@@ -121,40 +120,8 @@ export function DocsContentPage() {
   const { prev, next } = useDocsNavigation();
   useDocsKeyboardNav();
 
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate("/");
-    }
-  };
-
   return (
     <GuidePage title={page.title} description={page.description}>
-      <button
-        type="button"
-        onClick={handleBack}
-        aria-label="Go back"
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M10 4L6 8L10 12"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        Back
-      </button>
       {page.blocks.map((block, i) => (
         <Block key={i} block={block} />
       ))}
