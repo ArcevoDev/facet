@@ -1,10 +1,17 @@
 import * as React from "react";
-import { Tabs, TabsList, TabsTrigger } from "@arcevo/facet-components";
+import { Tabs, TabsList, TabsTrigger } from "@arcevo/facet-components/light";
 import { CodeBlock } from "./CodeBlock.js";
 import { ThemePreviewFrame } from "./ThemePreviewFrame.js";
-import { variantCells } from "../lib/variants.js";
 import { variantUsage } from "../lib/usage.js";
 import { extendedManifest } from "../lib/manifest.js";
+
+// lib/variants.tsx renders every component variant, pulling in the full
+// component preview graph (the whole facet-components barrel). It is
+// lazy-loaded so importing InteractiveDemo on an eager content page does
+// not drag that heavy graph into the initial bundle.
+const VariantPreview = React.lazy(() =>
+  import("../lib/variants.js").then((m) => ({ default: m.VariantPreview })),
+);
 
 export interface InteractiveDemoProps {
   /** Manifest slug, e.g. "console-layout", "form", "sign-in". */
@@ -34,7 +41,11 @@ export interface InteractiveDemoProps {
  * Preview comes from lib/variants.tsx (variantCells) and the code from
  * lib/usage.ts (variantUsage): the two stay in lockstep per slug.
  */
-export function InteractiveDemo({
+export function InteractiveDemo(props: InteractiveDemoProps) {
+  return <InteractiveDemoBody {...props} />;
+}
+
+function InteractiveDemoBody({
   slug,
   title,
   description,
@@ -42,7 +53,6 @@ export function InteractiveDemo({
   layout = "side-by-side",
 }: InteractiveDemoProps) {
   const entry = extendedManifest.find((e) => e.slug === slug);
-  const cells = variantCells(slug);
   const tabs = variantUsage(slug);
   const [active, setActive] = React.useState(tabs[0]?.label ?? "Default");
 
@@ -56,7 +66,6 @@ export function InteractiveDemo({
     : tabs;
 
   const activeTab = visibleTabs.find((tab) => tab.label === active) ?? visibleTabs[0];
-  const activeCell = cells?.find((cell) => cell.label === activeTab?.label);
 
   const heading = title === undefined ? (entry?.name ?? slug) : title;
   const sub = title === null ? undefined : (description ?? entry?.description);
@@ -106,13 +115,13 @@ export function InteractiveDemo({
             </span>
           </div>
           <ThemePreviewFrame>
-            {activeCell ? (
-              activeCell.node
-            ) : (
-              <span className="text-sm text-muted-foreground">
-                Live preview for <code>{slug}</code> is not implemented yet.
-              </span>
-            )}
+            <React.Suspense
+              fallback={
+                <span className="text-sm text-muted-foreground">Loading preview...</span>
+              }
+            >
+              <VariantPreview slug={slug} label={activeTab?.label} />
+            </React.Suspense>
           </ThemePreviewFrame>
         </div>
 

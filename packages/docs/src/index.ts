@@ -42,21 +42,11 @@ export { InstallTabs } from "./components/InstallTabs.js";
 export type { InstallCommand } from "./components/InstallTabs.js";
 export { InteractiveDemo } from "./components/InteractiveDemo.js";
 export type { InteractiveDemoProps } from "./components/InteractiveDemo.js";
-export { AuthDemo } from "./components/AuthDemo.js";
-export type { AuthDemoProps, AuthDemoConfig, AuthDemoStep } from "./components/AuthDemo.js";
-export { AuthPreviews } from "./components/AuthPreviews.js";
-export { LayoutPreviews } from "./components/LayoutPreviews.js";
-export { KeyboardShortcuts } from "./components/KeyboardShortcuts.js";
-export type { KeyboardShortcutsProps, KeyboardShortcut } from "./components/KeyboardShortcuts.js";
 export { ThemePreviewFrame } from "./components/ThemePreviewFrame.js";
 export type { ThemePreviewFrameProps } from "./components/ThemePreviewFrame.js";
-export { Playground, useControl } from "./components/Playground.js";
-export type { Control, PlaygroundProps } from "./components/Playground.js";
 
 // Content engine
 export { DocsContentPage } from "./pages/DocsContentPage.js";
-export { ComponentsPage } from "./pages/ComponentsPage.js";
-export { ComponentPage } from "./pages/ComponentPage.js";
 
 // Component manifest (auto-generated)
 export { docsManifest } from "./manifest.js";

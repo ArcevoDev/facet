@@ -1,5 +1,5 @@
 import * as React from "react";
-import type { IconName } from "@arcevo/facet-components";
+import type { IconName } from "@arcevo/facet-components/light";
 import type { DocsPage } from "./lib/pages.js";
 import type { DocsSiteConfig } from "./lib/nav.js";
 

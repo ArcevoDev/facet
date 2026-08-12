@@ -2117,6 +2117,21 @@ export function variantCells(slug: string): VariantCell[] | undefined {
   }
 }
 
+/** Renders the live preview cell for a slug + variant label. Exported so
+ * InteractiveDemo can lazy-load this module (and its heavy preview graph)
+ * only when a demo actually renders. */
+export function VariantPreview({
+  slug,
+  label,
+}: {
+  slug: string;
+  label: string | undefined;
+}): React.ReactNode {
+  const cells = variantCells(slug);
+  const cell = cells?.find((c) => c.label === label) ?? cells?.[0];
+  return cell ? cell.node : null;
+}
+
 function BasicFormDemo() {
   const form = useForm<{ name: string; email: string }>({
     defaultValues: { name: "", email: "" },

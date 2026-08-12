@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import {
   GuidePage,
@@ -10,14 +11,24 @@ import {
 import { DocsTable } from "../components/DocsTable.js";
 import { CodeBlock } from "../components/CodeBlock.js";
 import { InstallTabs } from "../components/InstallTabs.js";
-import { AuthDemo } from "../components/AuthDemo.js";
-import { AuthPreviews } from "../components/AuthPreviews.js";
-import { LayoutPreviews } from "../components/LayoutPreviews.js";
 import { InteractiveDemo } from "../components/InteractiveDemo.js";
 import { KeyboardShortcuts } from "../components/KeyboardShortcuts.js";
 import type { DocsBlock } from "../lib/pages.js";
 import { useDocsApp } from "../context.js";
 import { useDocsKeyboardNav, useDocsNavigation } from "../lib/keyboard-nav.js";
+
+// The auth/layout demo blocks pull the heavy facet component graph; they
+// are only rendered for specific block types, so they are lazy-loaded to
+// keep the eager content-page bundle light.
+const AuthDemo = React.lazy(() =>
+  import("../components/AuthDemo.js").then((m) => ({ default: m.AuthDemo })),
+);
+const AuthPreviews = React.lazy(() =>
+  import("../components/AuthPreviews.js").then((m) => ({ default: m.AuthPreviews })),
+);
+const LayoutPreviews = React.lazy(() =>
+  import("../components/LayoutPreviews.js").then((m) => ({ default: m.LayoutPreviews })),
+);
 
 /** Render a single structured content block. */
 function Block({ block }: { block: DocsBlock }) {
@@ -51,7 +62,11 @@ function Block({ block }: { block: DocsBlock }) {
         </Link>
       );
     case "authDemo":
-      return <AuthDemo />;
+      return (
+        <React.Suspense fallback={<p className="text-sm text-muted-foreground">Loading demo...</p>}>
+          <AuthDemo />
+        </React.Suspense>
+      );
     case "demo":
       return (
         <InteractiveDemo
@@ -62,9 +77,17 @@ function Block({ block }: { block: DocsBlock }) {
         />
       );
     case "authPreviews":
-      return <AuthPreviews />;
+      return (
+        <React.Suspense fallback={<p className="text-sm text-muted-foreground">Loading previews...</p>}>
+          <AuthPreviews />
+        </React.Suspense>
+      );
     case "layoutPreviews":
-      return <LayoutPreviews />;
+      return (
+        <React.Suspense fallback={<p className="text-sm text-muted-foreground">Loading previews...</p>}>
+          <LayoutPreviews />
+        </React.Suspense>
+      );
     case "keyboardShortcuts":
       return (
         <KeyboardShortcuts

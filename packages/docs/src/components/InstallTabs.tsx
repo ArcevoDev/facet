@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@arcevo/facet-components";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@arcevo/facet-components/light";
 
 export interface InstallCommand {
   /** Package spec as it appears in the command, e.g. "@arcevo/facet-components". */

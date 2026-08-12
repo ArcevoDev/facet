@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   Icon,
   type IconName,
-} from "@arcevo/facet-components";
+} from "@arcevo/facet-components/light";
 import { buildDocsLayoutConfig } from "../lib/nav.js";
 import { useDocsRouterAdapter } from "../lib/docs-router.js";
 import { useDocsApp } from "../context.js";

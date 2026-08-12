@@ -1,15 +1,41 @@
 import * as React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import type { IconName } from "@arcevo/facet-components";
-import { ThemeProvider } from "@arcevo/facet-components";
+import type { IconName } from "@arcevo/facet-components/light";
+import { ThemeProvider } from "@arcevo/facet-components/light";
 import { DocsAppProvider, type DocsAppValue } from "./context.js";
-import { DocsLayout } from "./components/DocsLayout.js";
 import { DocsContentPage } from "./pages/DocsContentPage.js";
-import { ComponentsPage } from "./pages/ComponentsPage.js";
-import { ComponentPage } from "./pages/ComponentPage.js";
-import { ReadyToUsePage } from "./pages/ReadyToUsePage.js";
+
+// The layout shell (ConsoleLayout + CommandPalette) pulls the heavy
+// facet-layout/components graph, so it is lazy-loaded: the eager entry is
+// just the theme provider + router + a minimal fallback.
+const DocsLayout = React.lazy(() =>
+  import("./components/DocsLayout.js").then((m) => ({ default: m.DocsLayout })),
+);
+
+// The component gallery pages pull in the full component-preview machinery
+// (every variant preview + the whole components barrel), so they are
+// lazy-loaded too.
+const ComponentsPage = React.lazy(() =>
+  import("./pages/ComponentsPage.js").then((m) => ({ default: m.ComponentsPage })),
+);
+const ComponentPage = React.lazy(() =>
+  import("./pages/ComponentPage.js").then((m) => ({ default: m.ComponentPage })),
+);
+const ReadyToUsePage = React.lazy(() =>
+  import("./pages/ReadyToUsePage.js").then((m) => ({ default: m.ReadyToUsePage })),
+);
+
 import type { DocsSiteConfig } from "./lib/nav.js";
 import type { DocsPage } from "./lib/pages.js";
+
+/** Suspense fallback shown while a lazy route chunk loads. */
+function PageLoader() {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center text-sm text-muted-foreground">
+      Loading...
+    </div>
+  );
+}
 
 export interface DocsAppProps {
   /** Brand, nav sections, and ecosystem links for the layout shell. */
@@ -49,16 +75,22 @@ export function DocsApp({
       <BrowserRouter>
         <DocsAppProvider value={value}>
           <Routes>
-            <Route element={<DocsLayout />}>
+            <Route
+              element={
+                <React.Suspense fallback={<PageLoader />}>
+                  <DocsLayout />
+                </React.Suspense>
+              }
+            >
               {pages.map((page) => (
                 <Route key={page.path} path={page.path} element={<DocsContentPage />} />
               ))}
               {showComponents && (
-                <>
+                <React.Suspense fallback={<PageLoader />}>
                   <Route path="/components" element={<ComponentsPage />} />
                   <Route path="/components/:slug" element={<ComponentPage />} />
                   <Route path="/ready-to-use" element={<ReadyToUsePage />} />
-                </>
+                </React.Suspense>
               )}
               <Route path="*" element={<DocsContentPage />} />
             </Route>
