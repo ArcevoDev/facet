@@ -1903,6 +1903,14 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             </div>
           ),
         },
+        {
+          label: "Currency",
+          node: (
+            <div className="max-w-xs">
+              <NumberInput label="Amount" value={2500} currency="₦" min={0} />
+            </div>
+          ),
+        },
       ];
     case "country-code-input":
       return [

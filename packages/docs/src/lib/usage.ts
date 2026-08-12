@@ -1966,6 +1966,7 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
   "number-input": {
     Default: `<NumberInput label="Quantity" min={0} max={10} />`,
     "With value": `<NumberInput label="Quantity" value={4} min={0} max={10} />`,
+    Currency: `<NumberInput label="Amount" value={2500} currency="₦" min={0} />`,
   },
   "country-code-input": {
     Default: `<CountryCodeInput label="Mobile number" />`,

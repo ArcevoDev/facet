@@ -63,4 +63,15 @@ describe("NumberInput", () => {
     render(<NumberInput value={1} label="Quantity" />);
     expect(screen.getByText("Quantity")).toBeInTheDocument();
   });
+
+  it("renders a currency prefix and keeps numeric value", async () => {
+    const onValueChange = vi.fn();
+    render(<NumberInput value={25} currency="$" onValueChange={onValueChange} />);
+    expect(screen.getByText("$")).toBeInTheDocument();
+    const input = screen.getByRole("textbox");
+    expect(input).toHaveValue("25");
+    await userEvent.clear(input);
+    await userEvent.type(input, "30");
+    expect(onValueChange).toHaveBeenLastCalledWith(30);
+  });
 });
