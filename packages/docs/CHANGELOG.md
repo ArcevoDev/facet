@@ -1,5 +1,112 @@
 # @arcevo/facet-docs
 
+## 1.3.0
+
+### Minor Changes
+
+- 865bf7e: perf(docs): lazy-load the layout shell, component gallery, and demo blocks
+
+  The docs engine now code-splits its heavy surfaces so the initial bundle
+  stays small for consumers:
+
+  - `DocsLayout` (ConsoleLayout + CommandPalette) is lazy-loaded.
+  - The `/components`, `/components/:slug`, and `/ready-to-use` routes are
+    lazy-loaded.
+  - The auth/layout demo blocks (`AuthDemo`, `AuthPreviews`,
+    `LayoutPreviews`) are lazy-loaded inside the content page.
+  - `InteractiveDemo` lazy-loads the heavy `variants` preview graph.
+  - The barrel no longer statically re-exports the heavy internal demo/page
+    modules (ComponentsPage, ComponentPage, AuthDemo, Playground, ...) which
+    were never part of the public contract.
+
+  Measured on the facet docs site: initial-load JS dropped ~33% (1.44 MB to
+  ~960 KB), and the heavy component-preview code now only downloads when a
+  user visits the component gallery.
+
+### Patch Changes
+
+- 251a0e4: fix: alert success/warning colors, mobile table overflow, auth docs cleanup
+
+  - components: Alert success and warning variants now use their semantic
+    text colors (text-success green, text-warning amber) matching the
+    destructive variant, instead of text-foreground. Added an alert test.
+  - layout: the ConsoleLayout main area gets min-w-0 so wide tables scroll
+    inside their own overflow-x-auto container instead of overflowing the
+    page on mobile.
+  - docs: remove the /auth/forms page (its LoginForm demo rendered a blank
+    page) and the redundant /auth/layouts page (covered by the Ecosystem
+    Layout page). Cleaned up the login-form manifest entry, variant, and
+    usage. Fixed stale docs claims: 52 -> 57 components, added facet-cli to
+    the package list, corrected the publishing note (CI is validation-only)
+    and the fintechAuthPreset -> fintechPreset snippet name.
+
+- df7c8f6: fix(docs): auth pages render again; remove crashing live demos
+
+  The SignUp, MFA, and Guard pages rendered a blank screen because their live
+  demos wrapped auth forms in ArcProvider with a dead demo endpoint, which
+  suspended the render without an error. Converted those pages to code-first
+  documentation (accurate importable snippets + full prose) and removed the
+  crashing sign-up/mfa-dialog/guard entries from the gallery manifest,
+  variant cells, and usage snippets. SignIn keeps its working live demo.
+
+  Verified in the browser: /auth/sign-up, /auth/mfa, and /auth/guard all
+  render their content again.
+
+- 00fcbb4: docs: add Breadcrumb ellipsis + InputOTP 8-digit variants
+
+  - Breadcrumb: new "Ellipsis" demo/usage showing BreadcrumbEllipsis between
+    items (component already existed; it's now showcased).
+  - InputOTP: new "8-digit" demo/usage. Paste-spread, 8-digit maxLength, and
+    cap-at-maxLength behavior verified by a new component test
+    (packages/components input-otp.test.tsx, 4 tests).
+
+- 2dae8e2: fix: mobile overflow, contained layout docs, settings menu cleanup
+
+  - layout: responsive `p-4 md:p-8` main padding, `px-4 md:px-6` topbar,
+    and a `w-40 sm:w-64` search trigger so the docs shell fits phones.
+  - docs: the /layout page documents full app shells code-first (their
+    fixed-position sidebars escaped the docs shell); standalone Sidebar +
+    Topbar and pill Navbar keep live previews.
+  - docs: settings gear no longer duplicates the theme toggle (it has its
+    own icon); it now shows ecosystem links + a Ctrl+K search hint.
+  - docs: accordion previews now show 3 items so spacing consistency is
+    visible; Docs Package + Layout pages moved under the Ecosystem section.
+  - apps/docs + apps/landing vercel.json SPA-fallback rewrites fix 404s on
+    deep-route refresh.
+
+- 91da99d: docs: Menubar composability + Navbar dropdown variants; emdash purge
+
+  - Menubar: new "Composed" variant showing radio groups, checkboxes,
+    submenus, and shortcuts (the tabs composability story).
+  - Navbar: new "With dropdown" variant using link children (nested links
+    with descriptions + badge).
+  - Purge em dashes from all repo copy and comments per the style rule.
+
+- b878bfd: fix(docs): layout page no longer takes over the shell; back button; marquee
+
+  - docs: the /layout page had live layout demo blocks whose fixed-position
+    sidebars escaped and covered the docs shell (the arc-id demo sidebar).
+    Removed every live demo block from the page; it is now text + copyable
+    code only. Verified in the browser: the facet sidebar renders normally.
+  - docs: add a Back button at the top of every content page body (goes back
+    in history, falls back to /) so routing between pages is easier.
+  - components: Marquee track no longer forces whitespace-nowrap, so card
+    children wrap naturally instead of clipping; the default text variant
+    wraps its items in nowrap spans.
+  - landing: the install steps strip switched from ScrollArea to the facet
+    Marquee (pause-on-hover), dogfooding the component internally.
+
+- Updated dependencies [251a0e4]
+- Updated dependencies
+- Updated dependencies [865bf7e]
+- Updated dependencies [69c1fec]
+- Updated dependencies [2dae8e2]
+- Updated dependencies [b878bfd]
+- Updated dependencies [6bb55a2]
+  - @arcevo/facet-components@1.3.0
+  - @arcevo/facet-layout@1.2.0
+  - @arcevo/facet-auth@1.1.1
+
 ## 1.2.0
 
 ### Minor Changes

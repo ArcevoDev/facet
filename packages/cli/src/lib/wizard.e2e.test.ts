@@ -8,19 +8,28 @@ import { generateReactVite } from "./generators.js";
 import { writeFiles } from "./writer.js";
 import { resolveFacetVersions } from "./registry.js";
 
-// Simulate a consumer answering the wizard: accept all defaults.
+// Simulate a consumer answering the wizard. The first prompts call is the
+// mode question (decide-for-me vs walk); the second is the walk-through
+// questions. Return both based on call order.
 vi.mock("prompts", () => ({
-  default: vi.fn(async () => ({
-    decide: "walk", // walk through it (not decide-for-me)
-    name: "demo",
-    location: ".",
-    language: true, // TypeScript toggle
-    framework: "react-vite",
-    styling: "facet-tokens",
-    useFacetTokens: true,
-    template: "component-library",
-    barrel: "auto",
-  })),
+  default: vi.fn(async () => {
+    const call = vi.mocked(prompts).mock.calls.length - 1;
+    if (call === 0) {
+      // Mode question: "walk me through it".
+      return { decide: "walk" };
+    }
+    // Walk-through questions.
+    return {
+      name: "demo",
+      location: ".",
+      language: true, // TypeScript toggle
+      framework: "react-vite",
+      styling: "facet-tokens",
+      useFacetTokens: true,
+      template: "component-library",
+      barrel: "auto",
+    };
+  }),
 }));
 
 const mockPrompts = vi.mocked(prompts);

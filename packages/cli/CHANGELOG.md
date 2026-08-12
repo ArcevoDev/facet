@@ -1,5 +1,67 @@
 # @arcevo/facet-cli
 
+## 0.3.0
+
+### Minor Changes
+
+- feat(cli): add clean/scripts/prep/up commands + doctor dep detection + alias-aware imports; layout: full/rail sidebar + verified section behavior
+
+  CLI — new commands for consumer-safety and repo hygiene:
+
+  - `facet clean`: detects dependencies already bundled by @arcevo/facet-components
+    (radix primitives, lucide-react, cmdk, input-otp, qrcode.react, react-hook-form,
+    sonner, class-variance-authority, clsx, tailwind-merge), removes them from the
+    consumer's manifests, rewrites shadcn/ui-style imports (and direct radix/lucide
+    imports) to `@arcevo/facet-components`, and deletes dead local `ui/` components.
+    Safe by default: `--dry-run` shows the plan, prompts for confirmation (or `-y`),
+    and prints the exact remove command for the detected package manager instead of
+    auto-running it.
+  - `facet scripts`: adds useful npm scripts (docs:dev/build/preview, quality
+    lint/typecheck/test/build, facet:doctor/clean/prep) to package.json, never
+    overwriting scripts the consumer already has.
+  - `facet prep`: pre-go-live sync — checks facet deps are current (pkg), audits
+    repo health (doctor), and runs the consumer's own typecheck/build/test when the
+    scripts exist. Non-destructive.
+  - `facet up`: applies the facet package updates (non-dry-run sibling of
+    `facet update`) using the detected package manager.
+  - `facet doctor` now also reports dependencies that @arcevo/facet-components
+    already bundles and suggests `facet clean`.
+  - `facet docs init` UX fixes: "Decide for me" now skips the question prompts
+    (it previously asked everything then discarded the answers); the summary says
+    where files actually land per framework (Next: src/app/docs + src/lib/docs;
+    Remix: app/routes/docs + src/lib/docs); and it installs the facet packages
+    automatically at the resolved latest versions instead of printing the command.
+  - Alias-aware imports: the generators read tsconfig/jsconfig `paths` (and common
+    framework aliases like `@/`, `~/`) and emit a configured alias when one fits,
+    else a correct relative path. Fixes generated route imports that pointed at
+    the wrong location.
+
+  Layout — ConsoleLayout keeps `mode="full"` and `mode="rail"` only (the overlay
+  variant is removed; it was never released and did not display as intended). The
+  sidebar section expand/collapse + auto-open-active-section behavior is now
+  covered by tests, and the mobile Sheet close behavior is verified.
+
+- 502a54c: feat(cli): add pkg/doctor/update commands; -y shorthand; help docs link
+
+  New commands for inspecting and maintaining a consumer's facet setup:
+
+  - `facet pkg`: lists every published @arcevo/facet-* package with the latest
+    registry version, the declared range in the consumer's manifests, and the
+    resolved installed version. Flags `(update available)` when outdated.
+  - `facet doctor`: audits the current repo (package manager, monorepo layout,
+    facet usage) and suggests best practices (wire facet-tokens when components
+    are used without it, swap workspace:* ranges before publishing, run
+    `facet update` when packages are stale).
+  - `facet update`: lists outdated facet packages and prints the exact install
+    command for the detected package manager, workspace-aware.
+
+  These are the foundation of a shared command core: the registry resolver,
+  monorepo/workspace detection, and dependency scanning live in reusable lib
+  modules so future product CLIs (e.g. an arcid CLI) can build on them.
+
+  Also: `-y` shorthand for `--yes` on `facet docs init`, and a docs link
+  (https://docs.facet.arcevocirqle.com.ng/cli) in `facet --help`.
+
 ## 0.2.0
 
 ### Minor Changes

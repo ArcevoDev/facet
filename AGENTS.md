@@ -50,3 +50,9 @@ authenticated from the terminal). The GitHub Actions workflow
 docs inventory) : it does NOT publish. The previous automated publish job
 was removed after it hit repo-fetch errors in CI; re-enabling it is a
 follow-up. See the README Publishing section.
+
+**Release rule:** publish ONLY from a clean working tree, AFTER `pnpm -r
+build` passes, and verify `pnpm changeset status` shows exactly the intended
+set. Publishing from a dirty tree ships a stale `dist` — that is how
+`@arcevo/facet-cli@0.2.0` went out without the `pkg`/`doctor`/`update`
+commands and `@arcevo/facet-layout@1.1.1` without the overlay sidebar.

@@ -21,7 +21,7 @@ export interface TopbarProps {
   /** Override sign out handler */
   onSignOut?: () => void;
   /** Rail mode: show the desktop collapse toggle. Default: "full" */
-  mode?: "full" | "rail" | "overlay";
+  mode?: "full" | "rail";
   /** Mobile: brand logo acts as the sidebar trigger. Click toggles. */
   onMobileSidebarToggle?: () => void;
   /** Mobile: brand logo node to show in place of the hamburger. */

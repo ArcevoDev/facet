@@ -43,8 +43,8 @@ function SettingsMenu({
 }: {
   label: string;
   links: { label: string; href: string; icon?: IconName }[];
-  mode: "rail" | "overlay";
-  onModeChange: (mode: "rail" | "overlay") => void;
+  mode: "full" | "rail";
+  onModeChange: (mode: "full" | "rail") => void;
 }) {
   return (
     <DropdownMenu>
@@ -61,9 +61,9 @@ function SettingsMenu({
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuLabel>{label}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onModeChange(mode === "rail" ? "overlay" : "rail")}>
+        <DropdownMenuItem onClick={() => onModeChange(mode === "rail" ? "full" : "rail")}>
           <Icon name={mode === "rail" ? "panel-left" : "layout-panel-left"} className="size-4" />
-          Sidebar: {mode === "rail" ? "Rail" : "Overlay"}
+          Sidebar: {mode === "rail" ? "Rail" : "Full"}
         </DropdownMenuItem>
         {links.length > 0 && (
           <>
@@ -100,7 +100,7 @@ export function DocsLayout() {
   const router = useDocsRouterAdapter();
   const layoutConfig = buildDocsLayoutConfig(config, pages, showComponents);
   const navigate = useNavigate();
-  const [mode, setMode] = React.useState<"rail" | "overlay">("rail");
+  const [mode, setMode] = React.useState<"full" | "rail">("rail");
 
   return (
     <ConsoleLayout

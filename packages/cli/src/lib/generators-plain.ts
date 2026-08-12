@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import type { AddTarget, DocsAnswers, GeneratedFile } from "./types.js";
+import { importSpecifier } from "./deps.js";
 
 /** Extension for the consumer's language (.ts vs .js). */
 function ext(language: "typescript" | "javascript"): string {
@@ -205,11 +206,17 @@ export function generateNext(answers: DocsAnswers, cwd: string): GeneratedFile[]
   const tsx = answers.language === "typescript" ? "tsx" : "jsx";
   const base = path.join(cwd, answers.location === "." ? "" : answers.location);
 
+  // The route file lives at src/app/docs/page.tsx and must reach the
+  // config/pages in src/lib/docs. Prefer a configured path alias when one
+  // exists (e.g. "@/lib/docs/config"), else use the correct relative path.
+  const routeDir = path.posix.join(base.replace(/\\/g, "/"), "src/app/docs");
+  const docsDir = path.posix.join(base.replace(/\\/g, "/"), "src/lib/docs");
+  const configImport = importSpecifier(cwd, path.join(routeDir, `page.${tsx}`), docsDir);
   const routeFile = `"use client";
 
 import { DocsApp } from "@arcevo/facet-docs";
-import { docsConfig } from "./config.${e}";
-import { docsPages } from "./pages.${e}";
+import { docsConfig } from "${configImport}/config.${e}";
+import { docsPages } from "${configImport}/pages.${e}";
 
 /** Docs route. Renders the facet docs app with the consumer's own content. */
 export default function DocsPage() {
@@ -457,11 +464,16 @@ export function generateRemix(answers: DocsAnswers, cwd: string): GeneratedFile[
   const tsx = answers.language === "typescript" ? "tsx" : "jsx";
   const base = path.join(cwd, answers.location === "." ? "" : answers.location);
 
+  // The route lives at app/routes/docs.tsx and must reach src/lib/docs.
+  // Prefer a configured path alias when one exists, else a correct relative.
+  const routeDir = path.posix.join(base.replace(/\\/g, "/"), "app/routes");
+  const docsDir = path.posix.join(base.replace(/\\/g, "/"), "src/lib/docs");
+  const configImport = importSpecifier(cwd, path.join(routeDir, `docs.${tsx}`), docsDir);
   const routeFile = `"use client";
 
 import { DocsApp } from "@arcevo/facet-docs";
-import { docsConfig } from "../../src/lib/docs/config.${e}";
-import { docsPages } from "../../src/lib/docs/pages.${e}";
+import { docsConfig } from "${configImport}/config.${e}";
+import { docsPages } from "${configImport}/pages.${e}";
 
 /** Docs route. Renders the facet docs app with the consumer's own content. */
 export default function DocsRoute() {

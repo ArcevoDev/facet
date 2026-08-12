@@ -60,6 +60,56 @@ List the facet packages that have newer published versions and print the
 exact install command for your package manager. In a monorepo it detects the
 workspace layout and includes the root/workspace flag.
 
+### `facet up`
+
+Apply the facet package updates (the non-dry-run sibling of `facet update`):
+installs the outdated `@arcevo/facet-*` packages at their latest published
+versions using the detected package manager. Pass `--dry-run` to only print
+the command.
+
+### `facet clean`
+
+Consumer-safety cleanup for repos that use `@arcevo/facet-components`. It
+finds dependencies the package already bundles (radix primitives,
+`lucide-react`, `cmdk`, `input-otp`, `qrcode.react`, `react-hook-form`,
+`sonner`, `class-variance-authority`, `clsx`, `tailwind-merge`), removes them
+from your manifests, rewrites shadcn/ui-style imports (and direct
+radix/lucide imports) to `@arcevo/facet-components`, and deletes dead local
+`ui/` components.
+
+Safe by default:
+
+- `--dry-run` shows the full plan without touching anything.
+- Without `--dry-run` it prompts for confirmation (or `-y`).
+- It prints the exact remove command (`pnpm remove ...` / `npm uninstall ...`)
+  instead of auto-running it, so you control the lockfile change.
+
+### `facet scripts`
+
+Add useful npm scripts to your `package.json`, preserving anything you
+already have:
+
+- **Docs**: `docs:dev`, `docs:build`, `docs:preview`
+- **Quality**: `lint`, `typecheck`, `test`, `build`
+- **facet convenience**: `facet:doctor`, `facet:clean`, `facet:prep`
+- **Pre-go-live**: `facet:prep`
+
+Prompts for which presets to add (or `-y` to add all). Existing scripts are
+never overwritten.
+
+### `facet prep`
+
+Pre-go-live sync. Runs read-only checks plus your own gates:
+
+1. `facet pkg` — are your facet deps current?
+2. `facet doctor` — is your setup healthy (tokens wired, no unnecessary
+   bundled deps)?
+3. Your own `typecheck` / `build` / `test` scripts, when they exist.
+4. `pnpm changeset status` — in a monorepo, the pending release set.
+
+Prints a PASS/FAIL summary per step; exits non-zero when something needs
+fixing before go-live.
+
 ### `facet docs init`
 
 Interactive wizard that scaffolds a docs site in the current repo. It opens
@@ -78,6 +128,12 @@ you through each choice:
 
 Every prompt describes what the choice represents, so you know what each
 step will generate before committing.
+
+After scaffolding, the CLI **installs the facet packages automatically** at
+their current published versions (the CLI resolves them from the npm
+registry, so you always get the latest safe release — no pinned guesses).
+If the install can't run (offline, no package manager), it prints the exact
+command instead.
 
 For **React+Vite** it generates a complete thin-consumer app (like facet's
 own `apps/docs`): `package.json`, Vite config, `src/main`, `src/app`, and a

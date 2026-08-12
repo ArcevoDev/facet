@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join as pathJoin } from "node:path";
 import { ALL_FACET_PACKAGES } from "./registry.js";
+import { scanUnnecessaryDeps } from "./deps.js";
 import {
   compareVersions,
   collectFacetDeps,
@@ -147,12 +148,21 @@ export function buildDoctorReport(cwd: string, infos: FacetPackageInfo[]) {
   const hasTokens = infos.some((i) => i.name === "@arcevo/facet-tokens" && (i.declared || i.installed));
   const outdated = infos.filter((i) => i.outdated);
 
+  // Deps that @arcevo/facet-components already bundles (radix, lucide, ...).
+  const unnecessary = scanUnnecessaryDeps(cwd);
+  const unnecessaryNames = unnecessary.flatMap((e) => e.deps.map((d) => d.name));
+
   findings.push(`Package manager: ${pm}`);
   findings.push(
     mono
       ? `Repo layout: monorepo (workspaces: ${mono.join(", ")})`
       : "Repo layout: single package",
   );
+
+  if (unnecessaryNames.length) {
+    findings.push(`Unnecessary deps (bundled by @arcevo/facet-components): ${unnecessaryNames.join(", ")}`);
+    suggestions.push(`These are already provided by @arcevo/facet-components. Remove them: \`facet clean\` does this automatically (rewrites imports + deletes dead local components).`);
+  }
 
   if (!hasComponents && !hasTokens) {
     findings.push("facet usage: none detected");

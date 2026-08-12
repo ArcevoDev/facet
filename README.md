@@ -127,6 +127,20 @@ repo-fetch errors in CI; re-enabling it is tracked as a follow-up.
 pnpm changeset publish   # ships unpublished packages at their current version
 ```
 
+**Release checklist** (prevents publishing a stale `dist`): only publish
+from a clean working tree, and only after the build passes.
+
+1. `git status` clean — no uncommitted source changes (the published tarball
+   must match `packages/*/dist` built from HEAD).
+2. `pnpm -r build` passes (all packages build against the bumped versions).
+3. `pnpm changeset status` shows exactly the intended release set (no
+   stragglers, no forgotten changesets).
+4. `pnpm changeset publish` — then push the version-bump commit + tags to
+   `origin/main`.
+
+Publishing from a dirty tree is how a release has shipped without the latest
+commands: always build first, then publish, then push.
+
 ## Dev Preview
 
 ```sh

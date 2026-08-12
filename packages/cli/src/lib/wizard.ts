@@ -82,25 +82,50 @@ export async function runInitWizard(
     return { answers: initial, decided: true };
   }
 
+  // Ask the mode question FIRST. When the consumer picks "Decide for me",
+  // skip every other prompt and use detected defaults (the whole point of
+  // the mode is "don't make me answer questions"). When they pick "Walk me
+  // through it", ask the tailored questions below.
+  const mode = await prompts({
+    type: "select",
+    name: "decide",
+    message: "How do you want to set up your docs site?",
+    choices: [
+      {
+        title: "Decide for me",
+        description: `Recommended: detect my stack (${detectedFramework} + ${detectedStyling}) and use the best defaults`,
+        value: "decide",
+      },
+      {
+        title: "Walk me through it",
+        description: "Answer a few questions to tailor the scaffold to your needs",
+        value: "walk",
+      },
+    ],
+    initial: 0,
+  });
+
+  // "Decide for me": no further prompts, use detected defaults + any
+  // explicit flags. The CLI prints a summary of what was chosen.
+  if (mode.decide === "decide") {
+    return {
+      answers: {
+        ...initial,
+        name: (options.name ?? initial.name).trim() || "docs",
+        location: (options.location ?? initial.location) as DocsLocation,
+        language: options.language ?? initial.language,
+        framework: options.framework ?? initial.framework,
+        styling: options.styling ?? initial.styling,
+        useFacetTokens: options.useFacetTokens ?? initial.useFacetTokens,
+        template: options.template ?? initial.template,
+        barrel: options.barrel ?? initial.barrel ?? "auto",
+      },
+      decided: true,
+    };
+  }
+
+  // "Walk me through it": ask the tailored questions. Explicit options win.
   const res = await prompts([
-    {
-      type: "select",
-      name: "decide",
-      message: "How do you want to set up your docs site?",
-      choices: [
-        {
-          title: "Decide for me",
-          description: `Recommended: detect my stack (${detectedFramework} + ${detectedStyling}) and use the best defaults`,
-          value: "decide",
-        },
-        {
-          title: "Walk me through it",
-          description: "Answer a few questions to tailor the scaffold to your needs",
-          value: "walk",
-        },
-      ],
-      initial: 0,
-    },
     {
       type: "text",
       name: "name",
@@ -171,25 +196,6 @@ export async function runInitWizard(
       initial: 0,
     },
   ]);
-
-  // "Decide for me" was the first-choice prompt: short-circuit to defaults
-  // but keep the interactive summary so the consumer knows what was chosen.
-  if (res.decide === "decide") {
-    return {
-      answers: {
-        ...initial,
-        name: (options.name ?? initial.name).trim() || "docs",
-        location: (options.location ?? initial.location) as DocsLocation,
-        language: options.language ?? initial.language,
-        framework: options.framework ?? initial.framework,
-        styling: options.styling ?? initial.styling,
-        useFacetTokens: options.useFacetTokens ?? initial.useFacetTokens,
-        template: options.template ?? initial.template,
-        barrel: options.barrel ?? initial.barrel ?? "auto",
-      },
-      decided: true,
-    };
-  }
 
   const language: "typescript" | "javascript" =
     options.language ?? (res.language ? "typescript" : "javascript");

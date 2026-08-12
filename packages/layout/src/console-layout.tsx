@@ -2,9 +2,8 @@
  * @arcevo/facet-layout: ConsoleLayout
  *
  * Dashboard shell: fixed sidebar + topbar + content area.
- * On mobile the sidebar is a click-to-open overlay: the brand trigger in
- * the topbar morphs into a window on hover and opens the sidebar on click;
- * clicking outside (or the trigger again) closes it.
+ * On mobile the sidebar is a click-to-open Sheet; the brand trigger in the
+ * topbar opens it, and clicking outside (or the trigger again) closes it.
  * Uses LayoutProvider for sidebar state.
  */
 
@@ -103,25 +102,22 @@ function ConsoleLayoutInner({
   }
 
   const sidebarWidthPx = mode === "rail" && sidebarCollapsed ? 68 : sidebarWidth;
-  const isOverlay = mode === "overlay";
 
-  // Click-outside closes the pinned sidebar.
+  // Click-outside closes the mobile sidebar.
   React.useEffect(() => {
     if (!sidebarOpen) return;
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target?.closest("[data-reveal-sidebar]")) return;
+      if (target?.closest("[data-sidebar]")) return;
       setSidebarOpen(false);
     };
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [sidebarOpen, setSidebarOpen]);
 
-  // Classic mode: the sidebar is persistent and pushes content. Overlay mode:
-  // the content is never pushed, the sidebar floats above (or reserves a
-  // slim rail on desktop when hidden).
-  const classicDesktop = isDesktop && !isOverlay;
-  const padLeft = classicDesktop ? sidebarWidthPx : isOverlay && isDesktop && !sidebarOpen ? 68 : 0;
+  // Classic mode: the sidebar is persistent and pushes content (full/rail).
+  const classicDesktop = isDesktop;
+  const padLeft = classicDesktop ? sidebarWidthPx : 0;
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -137,47 +133,17 @@ function ConsoleLayoutInner({
       )}
 
       {/* Classic mode mobile: Sheet overlay */}
-      {!isOverlay && !isDesktop && (
+      {!isDesktop && (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-          <SheetContent side="left" className="w-[260px] p-0">
+          <SheetContent side="left" className="w-[260px] p-0" data-sidebar>
             <Sidebar config={config} />
           </SheetContent>
         </Sheet>
       )}
 
-      {/* Overlay mode: click-to-open floating sidebar (mobile + desktop) */}
-      {isOverlay && sidebarOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-20 bg-black/40 backdrop-blur-sm lg:bg-black/10"
-            onClick={() => setSidebarOpen(false)}
-            aria-hidden="true"
-          />
-          <div data-reveal-sidebar className="fixed inset-y-0 left-0 z-30 shadow-xl">
-            <Sidebar config={config} width={sidebarWidth} />
-          </div>
-        </>
-      )}
-
-      {/* Overlay mode desktop: collapsed rail trigger (click to open) */}
-      {isOverlay && isDesktop && !sidebarOpen && (
-        <div
-          className="hidden w-[68px] shrink-0 lg:block"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <Sidebar config={config} collapsed width={68} />
-        </div>
-      )}
-
       {/* Main area */}
       <div className="flex min-w-0 flex-1 flex-col transition-[padding] duration-200"
-        style={
-          classicDesktop
-            ? { paddingLeft: `${sidebarWidthPx}px` }
-            : padLeft > 0
-              ? { paddingLeft: `${padLeft}px` }
-              : undefined
-        }
+        style={padLeft > 0 ? { paddingLeft: `${padLeft}px` } : undefined}
       >
         <Topbar
           tenants={tenants}

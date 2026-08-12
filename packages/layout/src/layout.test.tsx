@@ -131,6 +131,96 @@ describe("Sidebar", () => {
       "/projects/archived",
     );
   });
+
+  it("section headers toggle open/closed and persist via localStorage", async () => {
+    const config: LayoutConfig = {
+      brand: { name: "App" },
+      navigation: [
+        { title: "Overview", id: "overview", items: [{ href: "/dashboard", label: "Dashboard" }] },
+        { title: "Account", id: "account", items: [{ href: "/settings/profile", label: "Profile" }] },
+      ],
+    };
+    renderSidebar(config);
+
+    const overview = screen.getByRole("button", { name: /overview/i });
+    // Open by default (absent key => open), so aria-expanded is true.
+    expect(overview).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: /dashboard/i })).toBeInTheDocument();
+
+    // Click collapses the section and persists the choice.
+    await userEvent.click(overview);
+    expect(overview).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("link", { name: /dashboard/i })).toBeNull();
+
+    const stored = JSON.parse(localStorage.getItem("facet:sidebar-sections") ?? "{}");
+    expect(stored).toMatchObject({ overview: true });
+
+    // Re-open restores the links.
+    await userEvent.click(overview);
+    expect(overview).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: /dashboard/i })).toBeInTheDocument();
+  });
+
+  it("a section containing the active route auto-opens regardless of persisted collapse", async () => {
+    window.history.pushState({}, "", "/settings/profile");
+    const config: LayoutConfig = {
+      brand: { name: "App" },
+      navigation: [
+        {
+          title: "Account",
+          id: "account",
+          items: [{ href: "/settings/profile", label: "Profile" }],
+        },
+      ],
+    };
+    // Pre-collapse it, as if the user had closed it earlier.
+    localStorage.setItem("facet:sidebar-sections", JSON.stringify({ account: true }));
+    renderSidebar(config);
+
+    const account = screen.getByRole("button", { name: /account/i });
+    // Active section force-opens: aria-expanded is true even though persisted.
+    expect(account).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: /profile/i })).toHaveAttribute(
+      "href",
+      "/settings/profile",
+    );
+    window.history.pushState({}, "", "/");
+  });
+
+  it("leaf item click closes the mobile sidebar (setSidebarOpen(false))", async () => {
+    function SidebarOpenProbe() {
+      const { sidebarOpen, setSidebarOpen } = useLayout();
+      return (
+        <div>
+          <button type="button" onClick={() => setSidebarOpen(true)}>
+            open
+          </button>
+          <Sidebar config={testConfig} />
+          <output data-testid="sidebar-open">{String(sidebarOpen)}</output>
+        </div>
+      );
+    }
+    const testConfig: LayoutConfig = {
+      brand: { name: "App" },
+      navigation: [
+        {
+          title: "Overview",
+          id: "overview",
+          items: [{ href: "/dashboard", label: "Dashboard" }],
+        },
+      ],
+    };
+    render(
+      <LayoutProvider>
+        <SidebarOpenProbe />
+      </LayoutProvider>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: "open" }));
+    expect(screen.getByTestId("sidebar-open")).toHaveTextContent("true");
+
+    await userEvent.click(screen.getByRole("link", { name: /dashboard/i }));
+    expect(screen.getByTestId("sidebar-open")).toHaveTextContent("false");
+  });
 });
 
 describe("Sidebar collapsed (rail mode)", () => {
