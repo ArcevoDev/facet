@@ -169,7 +169,7 @@ import {
   type RoadmapItem,
   type DataTableColumn,
 } from "@arcevo/facet-components";
-import { ArcProvider, SignIn, SignUp, Guard, MfaVerifyForm } from "@arcevo/facet-auth";
+import { ArcProvider, SignIn } from "@arcevo/facet-auth";
 import { ArcIdClient } from "@arcevo/facet-sdk";
 import {
   ConsoleLayout,
@@ -1924,79 +1924,6 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             <div className="w-full max-w-md">
               <ArcProvider client={DEMO_CLIENT}>
                 <SignIn config={{}} step="forgot_password" />
-              </ArcProvider>
-            </div>
-          ),
-        },
-      ];
-    case "sign-up":
-      return [
-        {
-          label: "Default",
-          node: (
-            <div className="w-full max-w-md">
-              <ArcProvider client={DEMO_CLIENT}>
-                <SignUp config={{}} />
-              </ArcProvider>
-            </div>
-          ),
-        },
-        {
-          label: "Passkey + magic link",
-          node: (
-            <div className="w-full max-w-md">
-              <ArcProvider client={DEMO_CLIENT}>
-                <SignUp config={{ allowPasskey: true, allowMagicLink: true }} />
-              </ArcProvider>
-            </div>
-          ),
-        },
-      ];
-    case "mfa-dialog":
-      return [
-        {
-          label: "Verify",
-          node: (
-            <ArcProvider client={DEMO_CLIENT}>
-              <MfaVerifyForm onVerify={async () => {}} onRecovery={() => {}} onCancel={() => {}} />
-            </ArcProvider>
-          ),
-        },
-        {
-          label: "Setup",
-          node: (
-            <ArcProvider client={DEMO_CLIENT}>
-              <MfaVerifyForm onVerify={async () => {}} onRecovery={() => {}} onCancel={() => {}} />
-            </ArcProvider>
-          ),
-        },
-      ];
-    case "guard":
-      return [
-        {
-          label: "Unauthenticated",
-          node: (
-            <div className="w-full max-w-md">
-              <ArcProvider client={DEMO_CLIENT}>
-                <Guard fallback={<SignIn />}>
-                  <div className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
-                    Signed in content would render here.
-                  </div>
-                </Guard>
-              </ArcProvider>
-            </div>
-          ),
-        },
-        {
-          label: "Authenticated",
-          node: (
-            <div className="w-full max-w-md">
-              <ArcProvider client={DEMO_CLIENT}>
-                <Guard fallback={<SignIn />}>
-                  <div className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
-                    Signed in content would render here.
-                  </div>
-                </Guard>
               </ArcProvider>
             </div>
           ),

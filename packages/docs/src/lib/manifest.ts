@@ -27,24 +27,6 @@ export const extendedEntries: DocsManifestEntry[] = [
       "Configurable sign-in state machine: email + password, magic link, passkey, OAuth, and forgot password.",
     category: "auth",
   },
-  {
-    name: "Sign Up",
-    slug: "sign-up",
-    description: "Account creation with appearance / config / slots customization.",
-    category: "auth",
-  },
-  {
-    name: "MFA Dialog",
-    slug: "mfa-dialog",
-    description: "The MFA challenge in a dialog, with verify / setup / recovery phases.",
-    category: "auth",
-  },
-  {
-    name: "Guard",
-    slug: "guard",
-    description: "Renders its children only when a session is present; falls back otherwise.",
-    category: "auth",
-  },
   // ── Layout (@arcevo/facet-layout) ────────────────────────────
   {
     name: "Console Layout",

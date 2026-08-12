@@ -435,13 +435,6 @@ function MyHeader() {
   onSuccess={(result) => router.push("/dashboard")}
 />`,
       },
-      { type: "authPreviews" },
-      {
-        type: "demo",
-        slug: "sign-up",
-        title: "Sign Up",
-        description: "Account creation with appearance / config / slots customization.",
-      },
       { type: "h2", text: "Slots" },
       {
         type: "ul",
@@ -464,12 +457,16 @@ function MyHeader() {
         text: "MFA is config-driven: `config.requireMfa` controls whether the `check_mfa` gate forces a second factor. The MFA forms are independently importable.",
       },
       {
-        type: "demo",
-        slug: "mfa-dialog",
-        title: "MFA challenge",
-        description: "Live preview of the verify / setup / recovery forms.",
+        type: "code",
+        text: `import { MfaDialog } from "@arcevo/facet-auth";
+
+<MfaDialog
+  open
+  sessionId={pendingSessionId}
+  onVerified={() => router.push("/dashboard")}
+  onCancel={() => setOpen(false)}
+/>`,
       },
-      { type: "authPreviews" },
       { type: "h2", text: "MfaDialog" },
       {
         type: "p",
@@ -507,13 +504,6 @@ function MyHeader() {
   <ProtectedPage />
 </Guard>`,
       },
-      {
-        type: "demo",
-        slug: "guard",
-        title: "Guard",
-        description: "Renders children only when a session is present; falls back otherwise.",
-      },
-      { type: "authPreviews" },
       { type: "h2", text: "Customization" },
       {
         type: "p",

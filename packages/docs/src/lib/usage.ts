@@ -743,26 +743,6 @@ import { ArcProvider } from "@arcevo/facet-auth";
 <ArcProvider client={client}>
   <SignIn config={fintechPreset} />
 </ArcProvider>`,
-  "sign-up": `import { SignUp } from "@arcevo/facet-auth";
-
-<SignUp
-  config={eduPreset}
-  onSuccess={(result) => router.push("/dashboard")}
-/>`,
-  "mfa-dialog": `import { MfaDialog } from "@arcevo/facet-auth";
-
-<MfaDialog
-  open={open}
-  onOpenChange={setOpen}
-  client={client}
-  sessionId={sessionId}
-  onComplete={(result) => console.log(result)}
-/>`,
-  guard: `import { Guard, SignIn } from "@arcevo/facet-auth";
-
-<Guard fallback={<SignIn />}>
-  <ProtectedPage />
-</Guard>`,
   "console-layout": `import { ConsoleLayout, defaultLayoutPreset } from "@arcevo/facet-layout";
 
 <ConsoleLayout config={defaultLayoutPreset} mode="full">
@@ -1972,29 +1952,6 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     Passkey: `<SignIn config={{ ...config, allowPasskey: true }} initialStep="passkey_auth" />`,
     OAuth: `<SignIn config={{ ...config, oauthProviders: ["google", "github"] }} />`,
     "Forgot password": `<SignIn config={config} step="forgot_password" onStepChange={setStep} />`,
-  },
-  "sign-up": {
-    Default: `<SignUp config={config} />`,
-    "Passkey + magic link": `<SignUp config={{ allowPasskey: true, allowMagicLink: true }} />`,
-  },
-  "mfa-dialog": {
-    Verify: `<MfaVerifyForm
-  onVerify={async (code) => verifyMfa(code, sessionId)}
-  onRecovery={() => {}}
-  onCancel={() => {}}
-/>`,
-    Setup: `<MfaSetupForm
-  onComplete={(result) => console.log(result)}
-  onCancel={() => {}}
-/>`,
-  },
-  guard: {
-    Unauthenticated: `<Guard fallback={<SignIn />}>
-  <ProtectedPage />
-</Guard>`,
-    Authenticated: `<Guard fallback={<SignIn />}>
-  <ProtectedPage />
-</Guard>`,
   },
   "console-layout": {
     Full: `<ConsoleLayout config={defaultLayoutPreset} mode="full">
