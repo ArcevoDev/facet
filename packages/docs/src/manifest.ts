@@ -28,6 +28,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "feedback"
   },
   {
+    "name": "Animated",
+    "slug": "animated",
+    "description": "@arcevo/facet-components: Animated backgrounds & micro-interactions",
+    "category": "general"
+  },
+  {
     "name": "Avatar",
     "slug": "avatar",
     "description": "Avatar behavior.",
@@ -120,8 +126,8 @@ export const docsManifest: DocsManifestEntry[] = [
   {
     "name": "Date Input",
     "slug": "date-input",
-    "description": "DateInput: a text input that parses and validates ISO (YYYY-MM-DD) dates.",
-    "category": "inputs"
+    "description": "DateInput: a text input that parses and validates ISO (YYYY-MM-DD) dates,",
+    "category": "general"
   },
   {
     "name": "Date Picker",
@@ -144,7 +150,7 @@ export const docsManifest: DocsManifestEntry[] = [
   {
     "name": "Dropzone",
     "slug": "dropzone",
-    "description": "Dropzone: click or drag-and-drop file upload area with keyboard support.",
+    "description": "Dropzone: click or drag-and-drop file upload area with keyboard support",
     "category": "ready-to-use"
   },
   {
@@ -152,6 +158,18 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "empty-state",
     "description": "",
     "category": "feedback"
+  },
+  {
+    "name": "Feedback Page",
+    "slug": "feedback-page",
+    "description": "@arcevo/facet-components: FeedbackPage",
+    "category": "general"
+  },
+  {
+    "name": "Footer",
+    "slug": "footer",
+    "description": "@arcevo/facet-components: Footer",
+    "category": "general"
   },
   {
     "name": "Form",
@@ -166,6 +184,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "feedback"
   },
   {
+    "name": "Infinite Scroll",
+    "slug": "infinite-scroll",
+    "description": "InfiniteScroll: an auto-loading container that fires `onLoadMore` when the",
+    "category": "general"
+  },
+  {
     "name": "Input",
     "slug": "input",
     "description": "",
@@ -176,12 +200,6 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "input-otp",
     "description": "",
     "category": "inputs"
-  },
-  {
-    "name": "Infinite Scroll",
-    "slug": "infinite-scroll",
-    "description": "InfiniteScroll: auto-loading container that fires onLoadMore at the end (vertical or horizontal).",
-    "category": "data-display"
   },
   {
     "name": "Kbd",
@@ -247,7 +265,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Password Input",
     "slug": "password-input",
     "description": "PasswordInput: a password field with a built-in show/hide toggle.",
-    "category": "inputs"
+    "category": "general"
   },
   {
     "name": "Popover",

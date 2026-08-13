@@ -403,3 +403,31 @@ export {
   LGAInput,
   LocationPicker,
 } from "./ui/location-picker.js";
+
+/* ── Animated surfaces & ready-to-use pages ────────────────── */
+export {
+  type SpotlightProps,
+  Spotlight,
+  type AuroraProps,
+  Aurora,
+  type BeamsProps,
+  Beams,
+  type GridPatternProps,
+  GridPattern,
+  type SparkleButtonProps,
+  SparkleButton,
+} from "./ui/animated.js";
+
+export {
+  type FooterLink,
+  type FooterColumn,
+  type FooterSocial,
+  type FooterProps,
+  Footer,
+} from "./ui/footer.js";
+
+export {
+  type FeedbackChannel,
+  type FeedbackPageProps,
+  FeedbackPage,
+} from "./ui/feedback-page.js";

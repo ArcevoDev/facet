@@ -171,6 +171,13 @@ import {
   CountryCodeInput,
   ISO_COUNTRY_CODES,
   LocationPicker,
+  Aurora,
+  Beams,
+  GridPattern,
+  Spotlight,
+  SparkleButton,
+  Footer,
+  FeedbackPage,
   CountryInput,
   StateInput,
   LGAInput,
@@ -1904,6 +1911,89 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                     {word}
                   </span>
                 ))}
+              />
+            </div>
+          ),
+        },
+      ];
+    case "animated":
+      return [
+        {
+          label: "Layers",
+          node: (
+            <div className="relative flex h-64 w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
+              <Aurora className="absolute inset-0" />
+              <Beams count={3} className="absolute inset-0" />
+              <GridPattern className="absolute inset-0" />
+              <p className="relative z-10 text-lg font-bold">Aurora + Beams + Grid</p>
+            </div>
+          ),
+        },
+        {
+          label: "Spotlight",
+          node: (
+            <div className="relative flex h-48 w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
+              <Spotlight className="relative flex h-full w-full items-center justify-center">
+                <p className="text-lg font-bold">Move your cursor here</p>
+              </Spotlight>
+            </div>
+          ),
+        },
+        {
+          label: "Sparkle button",
+          node: <SparkleButton label="Click me" />,
+        },
+      ];
+    case "footer":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="w-full rounded-lg border border-border">
+              <Footer
+                brand={{ name: "facet", tagline: "The Arcevo UI system" }}
+                columns={[
+                  {
+                    title: "Product",
+                    links: [
+                      { label: "Components", href: "#" },
+                      { label: "Tokens", href: "#" },
+                    ],
+                  },
+                  {
+                    title: "Resources",
+                    links: [
+                      { label: "Docs", href: "#" },
+                      { label: "CLI", href: "#" },
+                    ],
+                  },
+                ]}
+                socials={[{ label: "GitHub", href: "#", icon: "github" }]}
+                bottomLinks={[{ label: "Feedback", href: "#" }]}
+                legal="© 2026 facet. MIT License."
+              />
+            </div>
+          ),
+        },
+      ];
+    case "feedback-page":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="w-full rounded-lg border border-border">
+              <FeedbackPage
+                title="Feedback & contact"
+                description="Found a bug? Want a feature? We read everything."
+                email="hello@arcevo.com"
+                channels={[
+                  {
+                    label: "WhatsApp",
+                    href: "#",
+                    icon: "message-circle",
+                    description: "Chat with us directly",
+                  },
+                ]}
               />
             </div>
           ),

@@ -885,6 +885,44 @@ import { Navbar } from "@arcevo/facet-components";
 <LayoutProvider>
   <Topbar />
 </LayoutProvider>`,
+  animated: `import { Spotlight, Aurora, Beams, GridPattern, SparkleButton } from "@arcevo/facet-components";
+
+// Hero section with animated layers under your content.
+<div className="relative flex h-[60vh] items-center justify-center overflow-hidden">
+  <Aurora className="absolute inset-0" />
+  <Beams count={3} className="absolute inset-0" />
+  <GridPattern className="absolute inset-0" />
+  <Spotlight className="relative z-10">
+    <h1 className="text-5xl font-bold">Build something great</h1>
+  </Spotlight>
+</div>
+
+// CTA with a sparkle burst on click.
+<SparkleButton label="Get started" />`,
+  footer: `import { Footer } from "@arcevo/facet-components";
+
+<Footer
+  brand={{ name: "facet", tagline: "The Arcevo UI system" }}
+  columns={[
+    { title: "Product", links: [{ label: "Components", href: "/components" }] },
+    { title: "Resources", links: [{ label: "Docs", href: "/docs" }] },
+  ]}
+  socials={[{ label: "GitHub", href: "https://github.com/arcevodev", icon: "github" }]}
+  bottomLinks={[{ label: "Feedback", href: "/feedback" }]}
+  legal={\`© \${new Date().getFullYear()} facet. MIT License.\`}
+/>`,
+  "feedback-page": `import { FeedbackPage } from "@arcevo/facet-components";
+
+<FeedbackPage
+  title="Feedback & contact"
+  description="Found a bug? Want a feature? We read everything."
+  email="hello@arcevo.com"
+  back={{ onClick: () => history.back() }}
+  channels={[
+    { label: "WhatsApp", href: "https://wa.me/123456", icon: "message-circle", description: "Chat with us" },
+    { label: "LinkedIn", href: "https://linkedin.com/company/arcevo", icon: "linkedin", description: "Company page" },
+  ]}
+/>`,
 };
 
 /** Minimal import + usage snippet for a component slug. */

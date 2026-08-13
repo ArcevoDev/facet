@@ -267,7 +267,16 @@ program
     const cwd = process.cwd();
     const infos = await collectFacetPackageState(cwd);
     const outdated = planUpdates(infos);
+    const unverified = infos.filter((i) => i.unverified);
     if (!outdated.length) {
+      if (unverified.length > 0) {
+        console.log(
+          `Could not verify the latest version for: ${unverified.map((i) => i.name).join(", ")}.`,
+        );
+        console.log("Run `facet update` once more, or check your network / registry access.");
+        process.exitCode = 2;
+        return;
+      }
       console.log("All installed facet packages are up to date.");
       return;
     }

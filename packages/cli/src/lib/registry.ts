@@ -67,13 +67,38 @@ export async function resolveFacetVersions(): Promise<Record<FacetPackage, strin
 }
 
 /** Resolve the latest published version of a single npm package. Returns
- * undefined when the registry is unreachable or the package 404s. */
+ * undefined when the registry is unreachable or the package 404s.
+ *
+ * Robust against registry flakiness: retries once, then falls back to the
+ * full packument's dist-tags.latest (the /latest endpoint can 429 or drop
+ * connections under rate limiting). This matters for `facet up`/`facet
+ * update` — a missed latest must never be reported as "up to date".
+ */
 export async function resolveLatestVersion(name: string): Promise<string | undefined> {
+  // Try the lightweight /latest endpoint first (2 attempts).
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`https://registry.npmjs.org/${name}/latest`, {
+        headers: { "User-Agent": "facet-cli" },
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { version?: string };
+        if (data.version) return data.version;
+      } else if (res.status !== 429 && res.status !== 503) {
+        return undefined; // 404 or other hard error: package not found.
+      }
+    } catch {
+      // network error; retry once below
+    }
+  }
+  // Fallback: full packument -> dist-tags.latest (single retry).
   try {
-    const res = await fetch(`https://registry.npmjs.org/${name}/latest`);
+    const res = await fetch(`https://registry.npmjs.org/${name}`, {
+      headers: { "User-Agent": "facet-cli" },
+    });
     if (!res.ok) return undefined;
-    const data = (await res.json()) as { version?: string };
-    return data.version;
+    const data = (await res.json()) as { "dist-tags"?: { latest?: string } };
+    return data["dist-tags"]?.latest;
   } catch {
     return undefined;
   }

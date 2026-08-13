@@ -109,6 +109,10 @@
   --animate-pulse-ring: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-facet-marquee: facet-marquee 20s linear infinite;
   --animate-caret-blink: caret-blink 1s step-end infinite;
+  --animate-facet-ripple: facet-ripple 0.6s ease-out;
+  --animate-facet-aurora: facet-aurora 18s ease-in-out infinite alternate;
+  --animate-facet-beam: facet-beam 7s ease-in-out infinite;
+  --animate-facet-sparkle: facet-sparkle 0.7s ease-out;
 }
 
 @keyframes accordion-down {
@@ -159,6 +163,55 @@
   }
   20%,
   50% {
+    opacity: 0;
+  }
+}
+
+@keyframes facet-ripple {
+  from {
+    transform: scale(0);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes facet-aurora {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(90deg) scale(1.15);
+  }
+  100% {
+    transform: rotate(180deg) scale(1);
+  }
+}
+
+@keyframes facet-beam {
+  0%,
+  100% {
+    transform: translateX(-120%) skewX(-12deg);
+    opacity: 0;
+  }
+  35%,
+  65% {
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(320%) skewX(-12deg);
+  }
+}
+
+@keyframes facet-sparkle {
+  from {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: translate(var(--dx), var(--dy)) scale(0);
     opacity: 0;
   }
 }

@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join as pathJoin } from "node:path";
-import { ALL_FACET_PACKAGES } from "./registry.js";
+import { ALL_FACET_PACKAGES, resolveLatestVersion } from "./registry.js";
 import { scanUnnecessaryDeps } from "./deps.js";
 import {
   compareVersions,
@@ -14,21 +14,11 @@ export interface FacetPackageInfo {
   name: string;
   latest?: string;
   installed?: string;
-  /** Declared range in the consumer's manifests (e.g. "^1.2.0"). */
+  /** Range the consumer declares (e.g. "^1.1.0"). */
   declared?: string;
   outdated: boolean;
-}
-
-/** Resolve the latest published version of one npm package (network). */
-async function latestOf(name: string): Promise<string | undefined> {
-  try {
-    const res = await fetch(`https://registry.npmjs.org/${name}/latest`);
-    if (!res.ok) return undefined;
-    const data = (await res.json()) as { version?: string };
-    return data.version;
-  } catch {
-    return undefined;
-  }
+  /** True when installed but latest could not be verified (registry hiccup). */
+  unverified?: boolean;
 }
 
 /**
@@ -36,6 +26,12 @@ async function latestOf(name: string): Promise<string | undefined> {
  * published (latest), what the consumer declares (range), and what is
  * installed (resolved from node_modules). Works in single packages and
  * monorepos alike.
+ *
+ * `outdated` is deliberately CONSERVATIVE: a package is flagged outdated
+ * whenever the installed version is older than latest. If the latest
+ * could not be resolved (registry hiccup) but the package IS installed,
+ * we report unknown (not "up to date") so `facet up` never falsely
+ * claims everything is current.
  */
 export async function collectFacetPackageState(cwd: string): Promise<FacetPackageInfo[]> {
   const declared = collectFacetDeps(cwd);
@@ -43,18 +39,22 @@ export async function collectFacetPackageState(cwd: string): Promise<FacetPackag
   const infos: FacetPackageInfo[] = await Promise.all(
     ALL_FACET_PACKAGES.map(async (name) => {
       const [latest, installed] = await Promise.all([
-        latestOf(name),
+        resolveLatestVersion(name),
         readInstalledVersion(searchDirs, name),
       ]);
       const range = declared[name];
+      const outdated =
+        latest && installed ? compareVersions(installed, latest) < 0 : false;
+      const unverified = !latest && Boolean(installed);
       return {
         name,
         latest,
         installed,
         declared: range,
-        outdated: Boolean(
-          latest && installed && compareVersions(installed, latest) < 0,
-        ),
+        outdated,
+        // True when we could not verify latest but the package is present,
+        // so callers can warn instead of claiming "all up to date".
+        unverified,
       };
     }),
   );
