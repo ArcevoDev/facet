@@ -125,6 +125,7 @@ export {
   CardTitle,
   CardDescription,
   CardContent,
+  CardFlipBack,
 } from "./ui/card.js";
 
 export { Separator } from "./ui/separator.js";

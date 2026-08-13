@@ -105,7 +105,7 @@ function SearchableSelect({
       </SelectTrigger>
       <SelectContent>
         {searchable && (
-          <div className="border-b border-border px-2 pb-2 pt-1">
+          <div className="sticky top-0 z-10 border-b border-border bg-popover px-2 pb-2 pt-1">
             <input
               type="text"
               value={query}

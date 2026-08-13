@@ -163,13 +163,13 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Feedback Page",
     "slug": "feedback-page",
     "description": "@arcevo/facet-components: FeedbackPage",
-    "category": "general"
+    "category": "pages"
   },
   {
     "name": "Footer",
     "slug": "footer",
     "description": "@arcevo/facet-components: Footer",
-    "category": "general"
+    "category": "pages"
   },
   {
     "name": "Form",

@@ -55,10 +55,10 @@ export function buildDocsLayoutConfig(
   const bySection = (section: DocsPage["section"]) =>
     pages.filter((page) => page.section === section);
 
-  // The Components and Ready-to-Use sections are inserted after the Auth
-  // section so the gallery follows auth in the sidebar. They render before
-  // the remaining page-driven sections (foundations, ecosystem).
-  const ORDER = ["guides", "auth", "components", "ready-to-use", "foundations", "ecosystem"];
+  // The Components, Ready-to-Use and Pages sections are inserted after the
+  // Auth section so the gallery follows auth in the sidebar. They render
+  // before the remaining page-driven sections (foundations, ecosystem).
+  const ORDER = ["guides", "auth", "components", "ready-to-use", "pages", "foundations", "ecosystem"];
   const seen = new Set(ORDER);
   const ordered = [...ORDER];
   for (const page of pages) {
@@ -68,20 +68,25 @@ export function buildDocsLayoutConfig(
     }
   }
 
-  // Build the components + ready-to-use sections first so we can insert
-  // them at the right positions in the ordered sections below.
+  // Build the components + ready-to-use + pages sections first so we can
+  // insert them at the right positions in the ordered sections below.
   const componentsSection = showComponents ? buildComponentsSection() : undefined;
   const readyToUseSection = showComponents ? buildReadyToUseSection() : undefined;
+  const pagesSection = showComponents ? buildPagesSection() : undefined;
 
   for (const section of ordered) {
-    // The components / ready-to-use sections are assembled from the
-    // manifest, not pages.
+    // The components / ready-to-use / pages sections are assembled from
+    // the manifest, not pages.
     if (section === "components") {
       if (componentsSection) navigation.push(componentsSection);
       continue;
     }
     if (section === "ready-to-use") {
       if (readyToUseSection) navigation.push(readyToUseSection);
+      continue;
+    }
+    if (section === "pages") {
+      if (pagesSection) navigation.push(pagesSection);
       continue;
     }
     const sectionPages = bySection(section);
@@ -148,6 +153,7 @@ function buildComponentsSection(): NavSection {
     if (
       entry.category === "foundations" ||
       entry.category === "ready-to-use" ||
+      entry.category === "pages" ||
       entry.category === "auth"
     ) {
       continue;
@@ -203,6 +209,23 @@ export function buildReadyToUseSection(): NavSection {
     title: "Ready to Use",
     id: "ready-to-use",
     items: readyToUse.map((entry) => ({
+      href: `/components/${entry.slug}`,
+      label: entry.name,
+    })),
+  };
+}
+
+/**
+ * Build the dedicated "Pages" sidebar section from the manifest: full-page
+ * components (FeedbackPage, Footer, ...) rendered as top-level items with
+ * their gallery pages. New page components added over time land here.
+ */
+export function buildPagesSection(): NavSection {
+  const pages = extendedManifest.filter((entry) => entry.category === "pages");
+  return {
+    title: "Pages",
+    id: "pages",
+    items: pages.map((entry) => ({
       href: `/components/${entry.slug}`,
       label: entry.name,
     })),

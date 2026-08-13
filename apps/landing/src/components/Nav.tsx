@@ -1,7 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Navbar,
-  ThemeToggle,
   Tooltip,
   TooltipTrigger,
   TooltipContent,
@@ -110,6 +109,7 @@ export function Nav() {
       links={LINKS}
       onNavigate={handleNav}
       mobileMenu={<MobileMenu onNavigate={handleNav} />}
+      showThemeToggle
       actions={
         <div className="flex items-center gap-2">
           <a
@@ -119,7 +119,6 @@ export function Nav() {
             <GithubIcon size={16} />
             GitHub
           </a>
-          <ThemeToggle />
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>

@@ -1,10 +1,13 @@
 /**
  * @arcevo/facet-layout: Topbar
  *
- * Sticky top bar with mobile hamburger, tenant switcher, and user menu.
+ * Sticky top bar with mobile hamburger, tenant switcher, user menu, and an
+ * optional built-in theme toggle (renders @arcevo/facet-components'
+ * ThemeToggle; requires a ThemeProvider ancestor).
  */
 
 import * as React from "react";
+import { ThemeToggle } from "@arcevo/facet-components";
 import { useLayout } from "./layout-context.js";
 import { UserMenu } from "./user-menu.js";
 import { TenantSwitcher } from "./tenant-switcher.js";
@@ -16,6 +19,8 @@ export interface TopbarProps {
   onTenantSwitch?: (tenantId: string) => void;
   /** Rendered after the user menu (notifications, theme toggle, etc.) */
   children?: React.ReactNode;
+  /** Render the built-in theme toggle (requires a ThemeProvider ancestor). */
+  themeToggle?: boolean;
   /** Path to settings page */
   settingsPath?: string;
   /** Override sign out handler */
@@ -33,6 +38,7 @@ export function Topbar({
   activeTenant = null,
   onTenantSwitch,
   children,
+  themeToggle = false,
   settingsPath,
   onSignOut,
   mode = "full",
@@ -120,6 +126,7 @@ export function Topbar({
       </div>
 
       <div className="flex items-center gap-3">
+        {themeToggle && <ThemeToggle />}
         {children}
         <UserMenu settingsPath={settingsPath} onSignOut={onSignOut} />
       </div>

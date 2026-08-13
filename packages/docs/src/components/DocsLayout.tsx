@@ -2,7 +2,6 @@ import * as React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ConsoleLayout, CommandPalette } from "@arcevo/facet-layout";
 import {
-  ThemeToggle,
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
@@ -107,6 +106,7 @@ export function DocsLayout() {
       config={layoutConfig}
       router={router}
       mode={mode}
+      themeToggle
       topbar={
         <>
           <CommandPalette
@@ -121,7 +121,6 @@ export function DocsLayout() {
             mode={mode}
             onModeChange={setMode}
           />
-          <ThemeToggle />
         </>
       }
     >

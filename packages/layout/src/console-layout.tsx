@@ -40,6 +40,8 @@ export interface ConsoleLayoutProps {
   router?: RouterAdapter;
   /** Extra content rendered at the right side of the topbar (links, toggles). */
   topbar?: React.ReactNode;
+  /** Render the built-in theme toggle in the topbar (needs a ThemeProvider ancestor). */
+  themeToggle?: boolean;
   children: React.ReactNode;
 }
 
@@ -50,6 +52,7 @@ function ConsoleLayoutInner({
   onTenantSwitch,
   mode = "full",
   topbar,
+  themeToggle = false,
   children,
 }: ConsoleLayoutProps) {
   const { sidebarOpen, setSidebarOpen, sidebarCollapsed, sidebarWidth, toggleSidebarCollapsed } =
@@ -150,6 +153,7 @@ function ConsoleLayoutInner({
           activeTenant={activeTenant}
           onTenantSwitch={onTenantSwitch}
           mode={mode}
+          themeToggle={themeToggle}
           onMobileSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
         >
           {topbar}

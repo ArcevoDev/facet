@@ -12,6 +12,7 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
+  CardFlipBack,
   Progress,
   Spinner,
   Switch,
@@ -1217,26 +1218,57 @@ export function variantCells(slug: string): VariantCell[] | undefined {
       ];
     case "card":
       return (
-        ["default", "glass", "frost", "glow", "ghost", "outline", "elevated", "interactive"] as const
-      ).map((variant) => ({
-        label: variant,
-        node: (
-          <Card variant={variant} className="w-full">
-            <CardHeader>
-              <CardTitle className="capitalize">{variant}</CardTitle>
-              <CardDescription>The {variant} card variant.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Card content area.</p>
-            </CardContent>
-            <CardFooter className="justify-end">
-              <Button size="sm" variant="outline">
-                Action
-              </Button>
-            </CardFooter>
-          </Card>
-        ),
-      }));
+        [
+          ...(["default", "glass", "frost", "glow", "ghost", "outline", "elevated", "interactive",
+            "tilt", "gradient-border", "zoom"] as const).map((variant) => ({
+              label: variant,
+              node: (
+                <Card variant={variant} className="w-full">
+                  <CardHeader>
+                    <CardTitle className="capitalize">{variant}</CardTitle>
+                    <CardDescription>The {variant} card variant.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {variant === "zoom" ? (
+                      <div className="-mx-6 -mt-6 mb-4 overflow-hidden">
+                        <img
+                          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=300&fit=crop"
+                          alt=""
+                          className="h-40 w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">Card content area.</p>
+                    )}
+                  </CardContent>
+                  <CardFooter className="justify-end">
+                    <Button size="sm" variant="outline">
+                      Action
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ),
+            })),
+          {
+            label: "Flip",
+            node: (
+              <Card variant="flip" className="h-56 w-full" flipDirection="horizontal">
+                <div className="flex h-full items-center justify-center rounded-[inherit] bg-card p-6">
+                  <CardTitle>Hover (or tap) to flip</CardTitle>
+                </div>
+                <CardFlipBack>
+                  <div className="text-center">
+                    <CardTitle>Surprise!</CardTitle>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      The back face reveals on hover, and returns on mouse-out.
+                    </p>
+                  </div>
+                </CardFlipBack>
+              </Card>
+            ),
+          },
+        ] as { label: string; node: React.ReactNode }[]
+      );
     case "table":
       return [
         {

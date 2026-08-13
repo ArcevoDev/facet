@@ -80,6 +80,9 @@ const CATEGORY = {
   marquee: "ready-to-use",
   qrcode: "ready-to-use",
   roadmap: "ready-to-use",
+  // Full page components (new "Pages" section)
+  "feedback-page": "pages",
+  footer: "pages",
 };
 
 function firstDocLine(filePath) {

@@ -24,6 +24,9 @@ const ComponentPage = React.lazy(() =>
 const ReadyToUsePage = React.lazy(() =>
   import("./pages/ReadyToUsePage.js").then((m) => ({ default: m.ReadyToUsePage })),
 );
+const PagesPage = React.lazy(() =>
+  import("./pages/PagesPage.js").then((m) => ({ default: m.PagesPage })),
+);
 
 import type { DocsSiteConfig } from "./lib/nav.js";
 import type { DocsPage } from "./lib/pages.js";
@@ -85,6 +88,7 @@ export function DocsApp({
                     <Route path="/components" element={<ComponentsPage />} />
                     <Route path="/components/:slug" element={<ComponentPage />} />
                     <Route path="/ready-to-use" element={<ReadyToUsePage />} />
+                    <Route path="/pages" element={<PagesPage />} />
                   </>
                 )}
                 <Route path="*" element={<DocsContentPage />} />
