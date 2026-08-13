@@ -110,9 +110,26 @@ describe("LocationPicker", () => {
     }
   });
 
-  it("has LGA depth for the major Nigerian states", () => {
+  it("has full LGA depth for all Nigerian states", () => {
+    // The full official dataset: 36 states + FCT, ~774 LGAs.
     expect(DEFAULT_LOCALITIES.NG!.lagos!.length).toBeGreaterThan(10);
-    expect(DEFAULT_LOCALITIES.NG!.fct!.some((l) => l.id === "bwari")).toBe(true);
+    expect(DEFAULT_LOCALITIES.NG!.fct!.some((l) => l.id === "fct-bwari")).toBe(true);
+    // Spot-check a few states have LGA lists now.
+    expect(DEFAULT_LOCALITIES.NG!.kaduna!.length).toBeGreaterThan(5);
+    expect(DEFAULT_LOCALITIES.NG!.kano!.length).toBeGreaterThan(10);
+    // Every state in DEFAULT_REGIONS.NG has a localities entry.
+    for (const region of DEFAULT_REGIONS.NG!) {
+      expect(
+        DEFAULT_LOCALITIES.NG![region.id]?.length,
+        `missing LGAs for ${region.id}`,
+      ).toBeGreaterThan(0);
+    }
+    // Roughly the official 774 (we ship 775 with the FCT municipality).
+    const total = Object.values(DEFAULT_LOCALITIES.NG!).reduce(
+      (sum, list) => sum + list.length,
+      0,
+    );
+    expect(total).toBeGreaterThanOrEqual(774);
   });
 });
 
@@ -133,6 +150,19 @@ describe("CountryInput / StateInput / LGAInput", () => {
     trigger.focus();
     fireEvent.keyDown(trigger, { key: "ArrowDown" });
     expect(await screen.findByText("Greater Accra")).toBeInTheDocument();
+  });
+
+  it("StateInput renders a resolved country tag on the trigger", () => {
+    render(<StateInput country="NG" />);
+    // The trigger shows the country code badge resolved from DEFAULT_COUNTRIES.
+    expect(screen.getByLabelText("Region")).toHaveTextContent("NG");
+    expect(screen.getByLabelText("Region")).toHaveTextContent("Nigeria");
+  });
+
+  it("LGAInput renders a resolved country tag", () => {
+    render(<LGAInput country="NG" region="lagos" />);
+    expect(screen.getByLabelText("Locality")).toHaveTextContent("NG");
+    expect(screen.getByLabelText("Locality")).toHaveTextContent("Nigeria");
   });
 
   it("StateInput is inert without a country", () => {
