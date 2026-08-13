@@ -32,11 +32,13 @@ export function AuthLayout({ config, children, brandPanel, brandPanelClassName }
 
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Left panel: hidden below lg */}
+      {/* Left panel: hidden below lg. Theme-token driven by default
+          (bg-primary + text-primary-foreground), fully overridable via
+          brandPanelClassName / brandPanel. */}
       <div
         className={
           brandPanelClassName ??
-          "hidden flex-col justify-between bg-[#0A1A2F] p-8 lg:flex lg:w-1/2"
+          "hidden flex-col justify-between bg-primary p-8 lg:flex lg:w-1/2"
         }
       >
         {brandPanel ? (
@@ -52,7 +54,7 @@ export function AuthLayout({ config, children, brandPanel, brandPanelClassName }
                     height="40"
                     viewBox="0 0 24 24"
                     fill="none"
-                    className="text-[#4AD3F5]"
+                    className="text-primary-foreground/80"
                   >
                     <path
                       d="M12 2L4 6V12C4 17.52 7.58 22.48 12 24C16.42 22.48 20 17.52 20 12V6L12 2Z"
@@ -66,11 +68,15 @@ export function AuthLayout({ config, children, brandPanel, brandPanelClassName }
                     />
                   </svg>
                 )}
-                <span className="font-heading text-2xl font-bold text-white">{brand.name}</span>
+                <span className="font-heading text-2xl font-bold text-primary-foreground">
+                  {brand.name}
+                </span>
               </div>
 
               {/* Tagline */}
-              {brand.tagline && <p className="text-lg text-white/80">{brand.tagline}</p>}
+              {brand.tagline && (
+                <p className="text-lg text-primary-foreground/80">{brand.tagline}</p>
+              )}
 
               {/* Benefits */}
               {brand.benefits && brand.benefits.length > 0 && (
@@ -82,22 +88,24 @@ export function AuthLayout({ config, children, brandPanel, brandPanelClassName }
                         height="16"
                         viewBox="0 0 24 24"
                         fill="none"
-                        stroke="#4AD3F5"
+                        stroke="currentColor"
                         strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className="shrink-0"
+                        className="shrink-0 text-primary-foreground/80"
                       >
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
-                      <span className="text-sm text-white/70">{benefit}</span>
+                      <span className="text-sm text-primary-foreground/70">{benefit}</span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-            <p className="text-xs text-[#D4AF37]">ArcevoCirqle Ecosystem</p>
+            {brand.footerText && (
+              <p className="text-xs text-primary-foreground/60">{brand.footerText}</p>
+            )}
           </>
         )}
       </div>

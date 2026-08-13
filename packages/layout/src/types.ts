@@ -52,6 +52,8 @@ export interface BrandConfig {
   tagline?: string;
   /** Benefit bullet points in the auth page left panel */
   benefits?: string[];
+  /** Small footer text in the auth page left panel (e.g. "© 2026 Acme") */
+  footerText?: string;
 }
 
 /* ── Feature toggles ──────────────────────────────────────── */
