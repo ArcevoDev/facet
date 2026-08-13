@@ -431,18 +431,21 @@ function Example() {
     </Menubar>
   );
 }`,
-  navbar: `import { Navbar } from "@arcevo/facet-components";
+  navbar: `import { Navbar, ThemeProvider } from "@arcevo/facet-components";
 
 function Example() {
   return (
-    <Navbar
-      variant="sticky"
-      brand={<span className="font-semibold">facet</span>}
-      links={[
-        { href: "#", label: "Features" },
-        { href: "#", label: "Docs" },
-      ]}
-    />
+    <ThemeProvider defaultTheme="system">
+      <Navbar
+        variant="sticky"
+        brand={<span className="font-semibold">facet</span>}
+        links={[
+          { href: "#", label: "Features" },
+          { href: "#", label: "Docs" },
+        ]}
+        showThemeToggle
+      />
+    </ThemeProvider>
   );
 }`,
   "navigation-menu": `import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuTrigger, NavigationMenuContent, NavigationMenuLink } from "@arcevo/facet-components";
@@ -845,6 +848,18 @@ import { ArcProvider } from "@arcevo/facet-auth";
 import { SignIn, fintechPreset } from "@arcevo/facet-auth";
 
 <AuthLayout config={fintechLayoutPreset}>
+  <SignIn config={fintechPreset} />
+</AuthLayout>
+
+// Custom left panel: video, slideshow, Lottie, or anything else.
+<AuthLayout
+  config={fintechLayoutPreset}
+  brandPanel={
+    <div className="flex h-full items-center justify-center">
+      <video src="/hero.mp4" className="h-full w-full object-cover" autoPlay muted loop />
+    </div>
+  }
+>
   <SignIn config={fintechPreset} />
 </AuthLayout>`,
   "landing-layout": `import { LandingLayout } from "@arcevo/facet-layout";
@@ -1376,6 +1391,14 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     { href: "#", label: "Pricing" },
   ]}
 />`,
+    "Theme toggle": `<ThemeProvider defaultTheme="system">
+  <Navbar
+    variant="sticky"
+    brand={<span className="font-semibold">facet</span>}
+    links={[{ href: "#", label: "Docs" }]}
+    showThemeToggle
+  />
+</ThemeProvider>`,
   },
   "navigation-menu": {
     Default: `<NavigationMenu>
@@ -2178,6 +2201,16 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
 </AuthLayout>`,
     Default: `<AuthLayout config={defaultLayoutPreset}>
   <SignIn config={defaultPreset} />
+</AuthLayout>`,
+    "Custom brand panel": `<AuthLayout
+  config={fintechLayoutPreset}
+  brandPanel={
+    <div className="flex h-full items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700">
+      <p className="text-2xl font-bold text-white">Anything goes here</p>
+    </div>
+  }
+>
+  <SignIn config={fintechPreset} />
 </AuthLayout>`,
   },
   "landing-layout": {

@@ -107,6 +107,7 @@ import {
   MenubarSubContent,
   MenubarShortcut,
   Navbar,
+  ThemeProvider,
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
@@ -926,6 +927,21 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                     { href: "#", label: "Pricing" },
                   ]}
                 />
+              </div>
+            ),
+          },
+          {
+            label: "Theme toggle",
+            node: (
+              <div className="w-full max-w-md">
+                <ThemeProvider defaultTheme="system">
+                  <Navbar
+                    variant="sticky"
+                    brand={<span className="font-semibold">facet</span>}
+                    links={[{ href: "#", label: "Docs" }]}
+                    showThemeToggle
+                  />
+                </ThemeProvider>
               </div>
             ),
           },
@@ -2250,6 +2266,28 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                       type="password"
                     />
                   </div>
+                  <Button className="w-full">Sign in</Button>
+                </div>
+              </AuthLayout>
+            </div>
+          ),
+        },
+        {
+          label: "Custom brand panel",
+          node: (
+            <div className="h-96 w-full overflow-hidden rounded-md border border-border">
+              <AuthLayout
+                config={fintechLayoutPreset}
+                brandPanel={
+                  <div className="flex h-full items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-700">
+                    <p className="px-4 text-2xl font-bold text-white">
+                      Slideshow / video / Lottie goes here
+                    </p>
+                  </div>
+                }
+              >
+                <div className="space-y-2 text-sm">
+                  <p className="font-medium">Sign in</p>
                   <Button className="w-full">Sign in</Button>
                 </div>
               </AuthLayout>

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../utils.js";
+import { ThemeToggle } from "../theme/theme-toggle.js";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -99,6 +100,9 @@ export interface NavbarProps
   router?: NavbarRouter;
   /** Right-side actions (buttons, avatar, notification bell, etc.) */
   actions?: React.ReactNode;
+  /** Render the built-in theme toggle in the actions area.
+   *  Requires a <ThemeProvider> ancestor (from @arcevo/facet-components). */
+  showThemeToggle?: boolean;
   /** Mobile menu content: defaults to a stacked list of links */
   mobileMenu?: React.ReactNode;
   /** Show mobile hamburger. Default: true when links/mobileMenu provided */
@@ -117,6 +121,7 @@ export function Navbar({
   onNavigate,
   router,
   actions,
+  showThemeToggle = false,
   mobileMenu,
   showMobileMenu,
   children,
@@ -167,6 +172,7 @@ export function Navbar({
 
       {/* Actions + mobile toggle */}
       <div className="flex shrink-0 items-center gap-2">
+        {showThemeToggle && <ThemeToggle />}
         {actions}
         {showHamburger && (
           <button

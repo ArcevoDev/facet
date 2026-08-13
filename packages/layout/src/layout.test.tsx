@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LayoutProvider, useLayout } from "./layout-context.js";
 import { Sidebar } from "./sidebar.js";
+import { AuthLayout } from "./auth-layout.js";
 import {
   defaultLayoutPreset,
   enterpriseLayoutPreset,
@@ -273,5 +274,49 @@ describe("LayoutProvider collapsed state", () => {
     expect(toggle).toHaveAttribute("aria-pressed", "false");
     await userEvent.click(toggle);
     expect(toggle).toHaveAttribute("aria-pressed", "true");
+  });
+});
+
+describe("AuthLayout", () => {
+  it("renders the default config-driven brand panel", () => {
+    render(
+      <AuthLayout config={fintechLayoutPreset}>
+        <div>Sign in form</div>
+      </AuthLayout>,
+    );
+    expect(screen.getByText("Sign in form")).toBeInTheDocument();
+    expect(screen.getByText(fintechLayoutPreset.brand.name)).toBeInTheDocument();
+  });
+
+  it("replaces the left panel with a custom brandPanel", () => {
+    render(
+      <AuthLayout
+        config={fintechLayoutPreset}
+        brandPanel={
+          <div className="flex h-full items-center justify-center">
+            <video src="/hero.mp4" data-testid="hero-video" />
+          </div>
+        }
+      >
+        <div>Sign in form</div>
+      </AuthLayout>,
+    );
+    // The custom panel (video) replaces the default logo/name block.
+    expect(screen.getByTestId("hero-video")).toBeInTheDocument();
+    expect(screen.queryByText(fintechLayoutPreset.brand.name)).not.toBeInTheDocument();
+    // The form still renders on the right.
+    expect(screen.getByText("Sign in form")).toBeInTheDocument();
+  });
+
+  it("applies a custom brandPanelClassName to the left panel", () => {
+    const { container } = render(
+      <AuthLayout
+        config={fintechLayoutPreset}
+        brandPanelClassName="hidden bg-gradient-to-br from-indigo-600 to-purple-700 lg:flex lg:w-1/2"
+      >
+        <div>Sign in form</div>
+      </AuthLayout>,
+    );
+    expect(container.querySelector(".bg-gradient-to-br")).not.toBeNull();
   });
 });
