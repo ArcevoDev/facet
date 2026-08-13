@@ -89,13 +89,13 @@ function readdirSafe(p: string): string[] {
 
 /** Read the resolved version of `name` from node_modules across `dirs`
  * (cwd first, then workspace members), walking up from each. */
-function readInstalledVersion(dirs: string[], name: string): string | undefined {
+export function readInstalledVersion(dirs: string[], name: string): string | undefined {
   const parts = name.split("/"); // "@arcevo/facet-auth" -> ["@arcevo", "facet-auth"]
   const paths: string[] = [];
   for (const dir of dirs) {
-    paths.push(pathJoin(dir, "node_modules", ...parts));
+    paths.push(pathJoin(dir, "node_modules", ...parts, "package.json"));
     for (const ancestor of walkUp(dir)) {
-      paths.push(pathJoin(ancestor, "node_modules", ...parts));
+      paths.push(pathJoin(ancestor, "node_modules", ...parts, "package.json"));
     }
   }
   for (const p of paths) {

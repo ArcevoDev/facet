@@ -6,6 +6,7 @@ import {
   buildDoctorReport,
   formatPackageTable,
   planUpdates,
+  readInstalledVersion,
   updateCommand,
   type FacetPackageInfo,
 } from "./commands.js";
@@ -188,6 +189,30 @@ describe("collectFacetDeps", () => {
       const deps = collectFacetDeps(dir);
       expect(deps["@arcevo/facet-components"]).toBe("1.2.0");
       expect(deps["@arcevo/facet-tokens"]).toBe("1.1.0");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("readInstalledVersion", () => {
+  it("reads the version from node_modules/<pkg>/package.json", () => {
+    const dir = tmp();
+    try {
+      const pkgDir = path.join(dir, "node_modules", "@arcevo", "facet-auth");
+      fs.mkdirSync(pkgDir, { recursive: true });
+      writePkg(pkgDir, { name: "@arcevo/facet-auth", version: "1.1.1" });
+      expect(readInstalledVersion([dir], "@arcevo/facet-auth")).toBe("1.1.1");
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("returns undefined when the package is not installed", () => {
+    const dir = tmp();
+    try {
+      writePkg(dir, { name: "app" });
+      expect(readInstalledVersion([dir], "@arcevo/facet-not-there")).toBeUndefined();
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
