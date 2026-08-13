@@ -98,7 +98,6 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     // beyondZero: floor negatives at the effective minimum (0 unless overridden).
     const effectiveMin = Math.max(min, beyondZero ? 0 : -Infinity);
     const display = value == null ? "" : String(value);
-    const padLeft = currency ? "pl-9" : "pr-16";
 
     // The active currency object: prefer a matching option, else fall back
     // to the plain symbol (kept as-is when no picker is enabled).
@@ -107,9 +106,33 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       [currencyOptions, currency],
     );
 
+    // Dynamic left padding: the currency trigger grows with the symbol
+    // ("$" fits pl-9, "KSh" / "C$" need more).
+    const symbolLen = (activeCurrency?.symbol ?? currency ?? "").length;
+    const padLeft = currency
+      ? symbolLen >= 3
+        ? "pl-16"
+        : symbolLen >= 2
+          ? "pl-12"
+          : "pl-9"
+      : "pr-16";
+
     const pickCurrency = (next: Currency) => {
       onCurrencyChange?.(next);
     };
+
+    // Currency picker search.
+    const [currencyQuery, setCurrencyQuery] = React.useState("");
+    const filteredCurrencies = React.useMemo(() => {
+      const q = currencyQuery.trim().toLowerCase();
+      if (!q) return currencyOptions;
+      return currencyOptions.filter(
+        (c) =>
+          c.name.toLowerCase().includes(q) ||
+          c.code.toLowerCase().includes(q) ||
+          c.symbol.toLowerCase().includes(q),
+      );
+    }, [currencyOptions, currencyQuery]);
 
     const commit = (next: number | null) => {
       if (next == null) {
@@ -171,20 +194,37 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
                   </svg>
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="max-h-64 w-48 overflow-y-auto">
+              <DropdownMenuContent align="start" className="max-h-72 w-56 overflow-hidden">
                 <DropdownMenuLabel>Currency</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {currencyOptions.map((option) => (
-                  <DropdownMenuItem
-                    key={option.code}
-                    onSelect={() => pickCurrency(option)}
-                    className="flex items-center gap-2"
-                  >
-                    <span className="w-8 shrink-0 text-sm font-medium">{option.symbol}</span>
-                    <span className="min-w-0 flex-1 truncate">{option.name}</span>
-                    <span className="text-xs text-muted-foreground">{option.code}</span>
-                  </DropdownMenuItem>
-                ))}
+                <div className="border-b border-border px-2 pb-2 pt-1">
+                  <input
+                    type="text"
+                    value={currencyQuery}
+                    onChange={(e) => setCurrencyQuery(e.target.value)}
+                    placeholder="Search currency or code..."
+                    className="h-8 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none focus:ring-1 focus:ring-ring"
+                  />
+                </div>
+                <div className="max-h-48 overflow-y-auto">
+                  {filteredCurrencies.map((option) => (
+                    <DropdownMenuItem
+                      key={option.code}
+                      onSelect={() => {
+                        pickCurrency(option);
+                        setCurrencyQuery("");
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <span className="min-w-0 shrink-0 text-sm font-medium">{option.symbol}</span>
+                      <span className="min-w-0 flex-1 truncate">{option.name}</span>
+                      <span className="text-xs text-muted-foreground">{option.code}</span>
+                    </DropdownMenuItem>
+                  ))}
+                  {filteredCurrencies.length === 0 && (
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground">No matches</div>
+                  )}
+                </div>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (

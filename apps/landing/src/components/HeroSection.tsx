@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button, Badge, Icon } from "@arcevo/facet-components";
+import { Button, Badge, Icon, GridPattern, Aurora, Beams, SparkleButton } from "@arcevo/facet-components";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { STATS } from "../data/features.js";
 
@@ -18,31 +18,14 @@ export function HeroSection() {
     }
   };
   return (
-    <div className="relative flex flex-col items-center text-center">
-      {/* Tech grid background (fades out toward the edges) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)",
-          backgroundSize: "44px 44px",
-          maskImage:
-            "radial-gradient(ellipse 70% 60% at 50% 35%, black 30%, transparent 75%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 70% 60% at 50% 35%, black 30%, transparent 75%)",
-        }}
-      />
-      {/* Soft glow behind the headline */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-72 w-[42rem] max-w-full -translate-x-1/2 rounded-full opacity-40"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, oklch(0.58 0.23 273 / 25%), transparent 70%)",
-          filter: "blur(40px)",
-        }}
-      />
+    <div className="relative flex flex-col items-center overflow-hidden text-center">
+      {/* Animated layers: aurora + beams + masked grid (zero-dep facet
+          animated surfaces). */}
+      <Aurora className="absolute inset-0 -z-20" />
+      <Beams count={3} className="absolute inset-0 -z-10" />
+      <GridPattern className="absolute inset-0 -z-10" />
+      {/* Spotlight follows the cursor over the headline */}
+      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true" />
       <Badge
         variant="outline"
         icon={<Icon name="sparkles" size={12} />}
@@ -58,10 +41,11 @@ export function HeroSection() {
         dark mode, and a pluggable auth flow that fits your domain.
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-        <Button size="lg" className="gap-2" onClick={() => window.open(getDocsUrl())}>
-          Browse components
-          <Icon name="arrow-right" size={16} />
-        </Button>
+        <SparkleButton
+          label="Browse components"
+          onClick={() => window.open(getDocsUrl())}
+          className="h-10 px-8"
+        />
         <Button
           variant="glass"
           size="lg"

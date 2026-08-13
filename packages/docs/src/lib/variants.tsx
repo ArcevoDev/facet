@@ -476,6 +476,25 @@ function TooltipDemo() {
   );
 }
 
+function NotificationDrawerToolbarDemo() {
+  const [items, setItems] = React.useState([
+    { id: "1", title: "New message", description: "Ada sent you a message", time: "2m", read: false, type: "info" as const },
+    { id: "2", title: "Build passed", description: "CI pipeline succeeded", time: "1h", read: false, type: "success" as const },
+    { id: "3", title: "Password changed", description: "Your password was updated", time: "1d", read: true, type: "warning" as const },
+  ]);
+  return (
+    <NotificationDrawer
+      notifications={items}
+      onSearchChange={() => {}}
+      onFilterChange={() => {}}
+      onMarkAllRead={() => setItems((prev) => prev.map((n) => ({ ...n, read: true })))}
+      onMarkRead={(n) => setItems((prev) => prev.map((x) => (x.id === n.id ? { ...x, read: true } : x)))}
+      onDelete={(n) => setItems((prev) => prev.filter((x) => x.id !== n.id))}
+      onDismiss={(n) => setItems((prev) => prev.filter((x) => x.id !== n.id))}
+    />
+  );
+}
+
 function NavigationMenuDemo() {
   return (
     <NavigationMenu>
@@ -1324,14 +1343,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         },
         {
           label: "With notifications",
-          node: (
-            <NotificationDrawer
-              notifications={[
-                { id: "1", title: "New message", description: "Ada sent you a message", time: "2m", read: false, type: "info" },
-                { id: "2", title: "Build passed", description: "CI pipeline succeeded", time: "1h", read: false, type: "success" },
-              ]}
-            />
-          ),
+          node: <NotificationDrawerToolbarDemo />,
         },
       ];
 
@@ -1794,6 +1806,45 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                   <Button variant="outline">Hover</Button>
                 </TooltipTrigger>
                 <TooltipContent side="top">Top tooltip</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ),
+        },
+        {
+          label: "Bottom",
+          node: (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">Hover</Button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Bottom tooltip</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ),
+        },
+        {
+          label: "Left",
+          node: (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">Hover</Button>
+                </TooltipTrigger>
+                <TooltipContent side="left">Left tooltip</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ),
+        },
+        {
+          label: "Right",
+          node: (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">Hover</Button>
+                </TooltipTrigger>
+                <TooltipContent side="right">Right tooltip</TooltipContent>
               </Tooltip>
             </TooltipProvider>
           ),

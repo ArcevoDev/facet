@@ -34,6 +34,19 @@ export interface NotificationDrawerProps {
   onMarkRead?: (notification: Notification) => void;
   /** Called when a notification is dismissed (remove from list) */
   onDismiss?: (notification: Notification) => void;
+  /** Called when a notification is deleted (hard remove, distinct from dismiss) */
+  onDelete?: (notification: Notification) => void;
+  /** Show the toolbar (search + filter + actions). Default: true when any
+   *  of onSearchChange/onFilterChange/onMarkAllRead/onDelete is provided. */
+  showToolbar?: boolean;
+  /** Controlled search query (defaults to internal state). */
+  search?: string;
+  /** Called when the search box changes. */
+  onSearchChange?: (query: string) => void;
+  /** Controlled read filter. Default: "all". */
+  filter?: "all" | "unread";
+  /** Called when the read filter changes. */
+  onFilterChange?: (filter: "all" | "unread") => void;
   /** Custom trigger element */
   trigger?: React.ReactNode;
   /** Drawer side */
@@ -68,6 +81,12 @@ export function NotificationDrawer({
   onMarkAllRead,
   onMarkRead,
   onDismiss,
+  onDelete,
+  showToolbar,
+  search: searchProp,
+  onSearchChange,
+  filter: filterProp,
+  onFilterChange,
   trigger,
   side = "right",
   showFooter = true,
@@ -76,12 +95,36 @@ export function NotificationDrawer({
   header,
   className,
 }: NotificationDrawerProps) {
+  const [internalSearch, setInternalSearch] = React.useState("");
+  const [internalFilter, setInternalFilter] = React.useState<"all" | "unread">("all");
+  const search = searchProp ?? internalSearch;
+  const setSearch = onSearchChange ?? setInternalSearch;
+  const filter = filterProp ?? internalFilter;
+  const setFilter = onFilterChange ?? setInternalFilter;
+
   const count = unreadCount ?? notifications.filter((n) => n.read !== true).length;
+
+  // Toolbar is shown when explicitly requested OR any action/search/filter
+  // handler is wired (so a bare drawer stays clean).
+  const toolbarEnabled =
+    showToolbar ??
+    Boolean(onSearchChange || onFilterChange || onMarkAllRead || onDelete);
 
   const handleClick = (n: Notification) => {
     if (n.read !== true) onMarkRead?.(n);
     onNotificationClick?.(n);
   };
+
+  // Filter by read state + search across title/description.
+  const q = search.trim().toLowerCase();
+  const visible = notifications.filter((n) => {
+    if (filter === "unread" && n.read !== false) return false;
+    if (!q) return true;
+    return (
+      n.title.toLowerCase().includes(q) || (n.description ?? "").toLowerCase().includes(q)
+    );
+  });
+  const hasUnread = notifications.some((n) => n.read !== true);
 
   return (
     <Sheet>
@@ -115,6 +158,66 @@ export function NotificationDrawer({
           </SheetHeader>
         )}
 
+        {toolbarEnabled && notifications.length > 0 && (
+          <div className="flex flex-col gap-2 border-b px-4 py-2">
+            {/* Search */}
+            <div className="relative">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search notifications..."
+                className="h-8 w-full rounded-md border border-input bg-transparent pl-8 pr-2.5 text-sm outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
+            {/* Filter + actions */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-1 rounded-md border border-border p-0.5">
+                {(["all", "unread"] as const).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => setFilter(f)}
+                    aria-pressed={filter === f}
+                    className={cn(
+                      "rounded px-2 py-0.5 text-xs font-medium capitalize transition-colors",
+                      filter === f
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                    )}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+              {onMarkAllRead && hasUnread && (
+                <button
+                  type="button"
+                  onClick={onMarkAllRead}
+                  className="text-xs text-primary hover:underline"
+                >
+                  Mark all read
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {notifications.length === 0 ? (
           (emptyState ?? (
             <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
@@ -122,10 +225,14 @@ export function NotificationDrawer({
               <p className="text-sm text-muted-foreground">No notifications</p>
             </div>
           ))
+        ) : visible.length === 0 ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
+            <p className="text-sm text-muted-foreground">No notifications match.</p>
+          </div>
         ) : (
           <ScrollArea className="flex-1">
             <div className="flex flex-col gap-1 p-2">
-              {notifications.map((n) => {
+              {visible.map((n) => {
                 const style = typeStyles[n.type ?? "default"];
                 return (
                   <div
@@ -166,19 +273,45 @@ export function NotificationDrawer({
                       )}
                     </div>
 
-                    {/* Dismiss */}
-                    {onDismiss && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDismiss(n);
-                        }}
-                        aria-label={`Dismiss ${n.title}`}
-                        className="shrink-0 rounded-sm p-1 text-muted-foreground/50 opacity-0 transition-opacity hover:bg-muted hover:text-foreground group-hover:opacity-100"
-                      >
-                        <XIcon />
-                      </button>
-                    )}
+                    {/* Actions: mark read, delete, dismiss */}
+                    <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+                      {n.read === false && onMarkRead && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onMarkRead(n);
+                          }}
+                          aria-label={`Mark ${n.title} as read`}
+                          className="rounded-sm p-1 text-muted-foreground/50 hover:bg-muted hover:text-foreground"
+                        >
+                          <CheckIcon />
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(n);
+                          }}
+                          aria-label={`Delete ${n.title}`}
+                          className="rounded-sm p-1 text-muted-foreground/50 hover:bg-destructive/10 hover:text-destructive"
+                        >
+                          <TrashIcon />
+                        </button>
+                      )}
+                      {onDismiss && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onDismiss(n);
+                          }}
+                          aria-label={`Dismiss ${n.title}`}
+                          className="rounded-sm p-1 text-muted-foreground/50 hover:bg-muted hover:text-foreground"
+                        >
+                          <XIcon />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -233,6 +366,42 @@ function XIcon() {
     >
       <path d="M18 6 6 18" />
       <path d="m6 6 12 12" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M3 6h18" />
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
     </svg>
   );
 }

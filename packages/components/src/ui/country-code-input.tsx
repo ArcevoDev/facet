@@ -24,6 +24,7 @@ import {
   SelectItem,
   SelectGroup,
   SelectLabel,
+  SelectSearch,
 } from "./select.js";
 import {
   ALL_COUNTRY_CODES,
@@ -198,6 +199,30 @@ export function CountryCodeInput({
     onValueChange?.({ country: selected, number: e.target.value });
   };
 
+  // WhatsApp-style search: type the country name, ISO code, or dial code
+  // to filter the list without scrolling the whole ISO set.
+  const [query, setQuery] = React.useState("");
+  const q = query.trim().toLowerCase();
+  const searchable = list.length > 12;
+  const filtered = React.useMemo(() => {
+    if (!q) return list;
+    return list.filter((c) => {
+      const name = (c.label ?? c.name ?? c.country).toLowerCase();
+      return (
+        name.includes(q) ||
+        c.country.toLowerCase().includes(q) ||
+        c.code.replace("+", "").startsWith(q.replace("+", ""))
+      );
+    });
+  }, [list, q]);
+
+  const renderItems = (entries: CountryCode[]) =>
+    entries.map((c) => (
+      <SelectItem key={`${c.country}-${c.code}`} value={c.country}>
+        <CountryRow entry={c} />
+      </SelectItem>
+    ));
+
   return (
     <div className={cn("w-full", className)}>
       {label && (
@@ -219,23 +244,24 @@ export function CountryCodeInput({
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {grouped ? (
+            {searchable && (
+              <SelectSearch
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search country or code..."
+              />
+            )}
+            {filtered.length === 0 ? (
+              <div className="px-2 py-1.5 text-sm text-muted-foreground">No matches</div>
+            ) : grouped && !q ? (
               grouped.map(([region, entries]) => (
                 <SelectGroup key={region}>
                   <SelectLabel>{COUNTRY_REGION_LABELS[region]}</SelectLabel>
-                  {entries.map((c) => (
-                    <SelectItem key={`${c.country}-${c.code}`} value={c.country}>
-                      <CountryRow entry={c} />
-                    </SelectItem>
-                  ))}
+                  {renderItems(entries)}
                 </SelectGroup>
               ))
             ) : (
-              list.map((c) => (
-                <SelectItem key={`${c.country}-${c.code}`} value={c.country}>
-                  <CountryRow entry={c} />
-                </SelectItem>
-              ))
+              renderItems(filtered)
             )}
           </SelectContent>
         </Select>
