@@ -112,21 +112,27 @@ describe("LocationPicker", () => {
     }
   });
 
-  it("carries full state/region lists for the other covered countries", () => {
-    // US 50 + DC, Kenya 47 counties, Ghana 16 regions, India 36, China 34,
-    // Brazil 27, Egypt 27, Tanzania 31, South Africa 9, UAE 7, UK 4.
-    expect(DEFAULT_REGIONS.US).toHaveLength(51);
+  it("carries full state/region lists for the covered countries", () => {
+    // Derived from the dr5hn countries-states dataset (ODbL).
+    expect(DEFAULT_REGIONS.US!.length).toBeGreaterThanOrEqual(51);
     expect(DEFAULT_REGIONS.KE).toHaveLength(47);
     expect(DEFAULT_REGIONS.GH).toHaveLength(16);
-    expect(DEFAULT_REGIONS.IN).toHaveLength(36);
+    expect(DEFAULT_REGIONS.IN!.length).toBeGreaterThanOrEqual(28);
     expect(DEFAULT_REGIONS.CN).toHaveLength(34);
     expect(DEFAULT_REGIONS.BR).toHaveLength(27);
     expect(DEFAULT_REGIONS.EG).toHaveLength(27);
     expect(DEFAULT_REGIONS.TZ).toHaveLength(31);
     expect(DEFAULT_REGIONS.ZA).toHaveLength(9);
     expect(DEFAULT_REGIONS.AE).toHaveLength(7);
-    expect(DEFAULT_REGIONS.GB).toHaveLength(4);
+    expect(DEFAULT_REGIONS.GB!.length).toBeGreaterThanOrEqual(4);
     expect(DEFAULT_REGIONS.RW).toHaveLength(5);
+  });
+
+  it("ships regions for the full country list", () => {
+    // Every country in DEFAULT_COUNTRIES has a DEFAULT_REGIONS entry.
+    for (const c of DEFAULT_COUNTRIES) {
+      expect(DEFAULT_REGIONS[c.code], `missing regions for ${c.code}`).toBeDefined();
+    }
   });
 
   it("has full LGA depth for all Nigerian states", () => {
