@@ -48,12 +48,11 @@ program
     "\nFull docs and examples: https://docs.facet.arcevocirqle.com.ng/cli\n",
   );
 
-// `facet docs init`: a `docs` group with an `init` subcommand. (Commander
-// treats a two-word string as a command + required positional, so `docs`
-// must be its own command with `init` nested under it.)
-program
-  .command("docs")
-  .description("Docs site commands")
+// `facet docs init` + `facet docs scan`: a `docs` group with subcommands.
+// (Commander treats a two-word string as a command + required positional,
+// so `docs` must be its own command with subcommands nested under it.)
+const docsCommand = program.command("docs").description("Docs site commands");
+docsCommand
   .command("init")
   .description("Scaffold a docs site in the current repo (interactive wizard)")
   .option("-y, --yes", "Non-interactive: decide the best setup for me (detected framework + styling)")
@@ -159,6 +158,44 @@ program
     for (const [name, range] of Object.entries(answers.facetVersions)) {
       console.log(`  ${name}@${range}`);
     }
+  });
+docsCommand
+  .command("scan")
+  .description("Read this repo and draft a documentation layer (pages + sidebar + API reference) for review")
+  .option("--out <outDir>", "Where the draft lands (default: docs)", "docs")
+  .option("-y, --yes", "Write the draft without confirmation")
+  .action(async (opts: { out?: string; yes?: boolean }) => {
+    const cwd = process.cwd();
+    const { scanRepo, draftDocs } = await import("./lib/scan.js");
+    const { writeFiles } = await import("./lib/writer.js");
+    const scan = scanRepo(cwd);
+    const outDir = opts.out ?? "docs";
+
+    console.log("facet docs scan\n");
+    for (const line of scan.summaryLines) console.log(`  ${line}`);
+    console.log("");
+
+    const files = draftDocs(scan, outDir);
+    console.log(`Drafting ${files.length} file(s) into ${outDir}/:`);
+    for (const f of files) console.log(`  ${f.path.replace(cwd, ".")}`);
+
+    if (!opts.yes) {
+      // Non-destructive: refuse to overwrite existing draft files.
+      const { existsSync } = await import("node:fs");
+      const existing = files.filter((f) => existsSync(f.path));
+      if (existing.length > 0) {
+        console.log(
+          `\nRefusing to overwrite existing files (${existing.length}). Use a different --out or review the drafts.`,
+        );
+        process.exitCode = 2;
+        return;
+      }
+    }
+
+    await writeFiles(files);
+    console.log("\nDraft written. Next:");
+    console.log(`  - Review the drafted pages under ${outDir}/`);
+    console.log(`  - Run \`facet docs init\` to mount the docs site, then point it at the drafted pages.`);
   });
 
 program
