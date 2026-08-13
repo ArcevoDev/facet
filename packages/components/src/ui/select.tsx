@@ -176,6 +176,37 @@ const SelectSeparator = React.forwardRef<
 ));
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 
+/** A search input meant to be the FIRST child of <SelectContent>. Renders
+ * sticky at the top so it stays visible while the option list scrolls.
+ * Wire it to your own filtering of the SelectItem children.
+ *
+ *   const [q, setQ] = useState("");
+ *   <Select>
+ *     <SelectTrigger>...</SelectTrigger>
+ *     <SelectContent>
+ *       <SelectSearch value={q} onChange={setQ} placeholder="Search..." />
+ *       {items.filter(...).map(...)}
+ *     </SelectContent>
+ *   </Select>
+ */
+const SelectSearch = React.forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>(({ className, ...props }, ref) => (
+  <div className="sticky top-0 z-10 border-b border-border bg-popover px-2 pb-2 pt-1">
+    <input
+      ref={ref}
+      type="text"
+      className={cn(
+        "h-8 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none focus:ring-1 focus:ring-ring",
+        className,
+      )}
+      {...props}
+    />
+  </div>
+));
+SelectSearch.displayName = "SelectSearch";
+
 export {
   Select,
   SelectGroup,
@@ -185,6 +216,7 @@ export {
   SelectLabel,
   SelectItem,
   SelectSeparator,
+  SelectSearch,
   SelectScrollUpButton,
   SelectScrollDownButton,
 };

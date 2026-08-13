@@ -1,7 +1,7 @@
 {
   "name": "@arcevo/facet-components",
   "version": "1.4.0",
-  "description": "Radix-based UI component library for the ArcevoCirqle ecosystem: 57 accessible, styled components using the Alpha Palette design tokens",
+  "description": "Radix-based UI component library for the ArcevoCirqle ecosystem: 63 accessible, styled components using the Alpha Palette design tokens",
   "type": "module",
   "exports": {
     ".": {

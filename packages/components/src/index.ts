@@ -168,6 +168,7 @@ export {
   SelectLabel,
   SelectItem,
   SelectSeparator,
+  SelectSearch,
   SelectScrollUpButton,
   SelectScrollDownButton,
 } from "./ui/select.js";

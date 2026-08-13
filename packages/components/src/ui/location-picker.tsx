@@ -24,6 +24,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
+  SelectSearch,
 } from "./select.js";
 
 /* ── Data ──────────────────────────────────────────────────── */
@@ -105,15 +106,11 @@ function SearchableSelect({
       </SelectTrigger>
       <SelectContent>
         {searchable && (
-          <div className="sticky top-0 z-10 border-b border-border bg-popover px-2 pb-2 pt-1">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={searchPlaceholder}
-              className="h-8 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none focus:ring-1 focus:ring-ring"
-            />
-          </div>
+          <SelectSearch
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={searchPlaceholder}
+          />
         )}
         {filtered.length > 0 ? filtered : <div className="px-2 py-1.5 text-sm text-muted-foreground">No matches</div>}
       </SelectContent>

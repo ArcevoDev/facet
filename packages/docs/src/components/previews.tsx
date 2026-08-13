@@ -821,7 +821,7 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
             }
             footer={
               <div className="px-8 py-4 text-sm text-muted-foreground">
-                © {new Date().getFullYear()} ArcevoCirqle Ecosystem
+                © {new Date().getFullYear()} facet
               </div>
             }
           >
