@@ -1,6 +1,6 @@
 {
   "name": "@arcevo/facet-cli",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Scaffold and generate @arcevo/facet-docs sites. Framework/language-agnostic docs init + component add.",
   "type": "module",
   "bin": {
