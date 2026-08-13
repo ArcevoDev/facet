@@ -23,6 +23,60 @@ export interface Locality {
 }
 
 /**
+ * The term each country uses for its first-level division (what the
+ * "state" select shows). Falls back to "region".
+ */
+export const REGION_LABELS: Record<string, string> = {
+  NG: "state",
+  US: "state",
+  IN: "state",
+  BR: "state",
+  MX: "state",
+  AU: "state",
+  KE: "county",
+  IE: "county",
+  GB: "country",
+  GH: "region",
+  TZ: "region",
+  ET: "region",
+  UG: "region",
+  RW: "province",
+  ZA: "province",
+  CN: "province",
+  EG: "governorate",
+  SA: "region",
+  AE: "emirate",
+  CA: "province",
+  JP: "prefecture",
+};
+
+/**
+ * The term each country uses for its second-level division (what the
+ * "LGA/locality" select shows). Falls back to "locality".
+ */
+export const LOCALITY_LABELS: Record<string, string> = {
+  NG: "LGA",
+  US: "county",
+  KE: "sub-county",
+  GB: "district",
+  GH: "district",
+  IN: "district",
+  CN: "county",
+  BR: "municipality",
+  JP: "municipality",
+};
+
+/** Resolve the region term for a country (e.g. "NG" -> "state"). */
+export function getRegionLabel(country?: string): string {
+  return (country && REGION_LABELS[country]) || "region";
+}
+
+/** Resolve the locality term for a country (e.g. "NG" -> "LGA"). */
+export function getLocalityLabel(country?: string): string {
+  return (country && LOCALITY_LABELS[country]) || "locality";
+}
+
+/**
  * Bundled static dataset — every African country plus the major
  * non-African markets.
  */

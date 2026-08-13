@@ -1944,6 +1944,18 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             />
           ),
         },
+        {
+          label: "Rows per page",
+          node: (
+            <DataTable
+              columns={DEMO_COLUMNS}
+              data={DEMO_ROWS}
+              pagination
+              pageSize={10}
+              pageSizeOptions={[10, 20, 50]}
+            />
+          ),
+        },
       ];
     case "date-picker":
       return [
@@ -2025,6 +2037,20 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           node: (
             <div className="max-w-xs">
               <NumberInput label="Amount" value={2500} currency="₦" min={0} />
+            </div>
+          ),
+        },
+        {
+          label: "Currency picker",
+          node: (
+            <div className="max-w-xs">
+              <NumberInput
+                label="Price"
+                value={100}
+                currency="$"
+                currencyPicker
+                onCurrencyChange={() => {}}
+              />
             </div>
           ),
         },

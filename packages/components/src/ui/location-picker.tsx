@@ -32,13 +32,94 @@ import {
   DEFAULT_COUNTRIES,
   DEFAULT_REGIONS,
   DEFAULT_LOCALITIES,
+  getRegionLabel,
+  getLocalityLabel,
   type Country,
   type Region,
   type Locality,
 } from "./location-data.js";
 
-export { DEFAULT_COUNTRIES, DEFAULT_REGIONS, DEFAULT_LOCALITIES };
+export { DEFAULT_COUNTRIES, DEFAULT_REGIONS, DEFAULT_LOCALITIES, getRegionLabel, getLocalityLabel };
 export type { Country, Region, Locality };
+
+/* ── Searchable select helper ──────────────────────────────── */
+
+interface SearchableSelectProps {
+  value: string;
+  onValueChange?: (value: string) => void;
+  disabled?: boolean;
+  triggerClassName?: string;
+  placeholder?: string;
+  /** Accessible name for the trigger (e.g. "Country"). */
+  ariaLabel?: string;
+  /** Items rendered inside the content (SelectItem nodes). */
+  children: React.ReactNode;
+  /** When true, render a search box that filters SelectItems by text. */
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  /** Extra node rendered at the top of the content (e.g. a tag). */
+  prefix?: React.ReactNode;
+}
+
+/**
+ * A Select with an optional search box. When `searchable` is set, an input
+ * filters the SelectItem children by their text content so users can type
+ * to find long lists (countries, states, LGAs) instead of scrolling.
+ */
+function SearchableSelect({
+  value,
+  onValueChange,
+  disabled,
+  triggerClassName,
+  placeholder,
+  ariaLabel,
+  children,
+  searchable = false,
+  searchPlaceholder = "Search...",
+  prefix,
+}: SearchableSelectProps) {
+  const [query, setQuery] = React.useState("");
+
+  // Reset the filter each time the select opens.
+  React.useEffect(() => {
+    if (!value) setQuery("");
+  }, [value]);
+
+  const q = query.trim().toLowerCase();
+  const filtered = React.Children.toArray(children).filter((child) => {
+    if (!q) return true;
+    if (!React.isValidElement(child)) return true;
+    const props = child.props as { children?: React.ReactNode };
+    const text = String(props.children ?? "");
+    return text.toLowerCase().includes(q);
+  });
+
+  return (
+    <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+      <SelectTrigger aria-label={ariaLabel ?? placeholder} className={cn("h-9 w-full text-sm", triggerClassName)}>
+        {prefix ? (
+          <span className="inline-flex items-center gap-1.5 truncate">{prefix}</span>
+        ) : (
+          <SelectValue placeholder={placeholder} />
+        )}
+      </SelectTrigger>
+      <SelectContent>
+        {searchable && (
+          <div className="border-b border-border px-2 pb-2 pt-1">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={searchPlaceholder}
+              className="h-8 w-full rounded-md border border-input bg-transparent px-2.5 text-sm outline-none focus:ring-1 focus:ring-ring"
+            />
+          </div>
+        )}
+        {filtered.length > 0 ? filtered : <div className="px-2 py-1.5 text-sm text-muted-foreground">No matches</div>}
+      </SelectContent>
+    </Select>
+  );
+}
 
 
 export interface LocationValue {
@@ -75,6 +156,8 @@ interface CountryInputProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  /** Show a search box to filter the country list. Default: true */
+  searchable?: boolean;
 }
 
 /** A single country select. */
@@ -85,20 +168,25 @@ export function CountryInput({
   placeholder = "Select country",
   disabled = false,
   className,
+  searchable = true,
 }: CountryInputProps) {
   return (
-    <Select value={value ?? ""} onValueChange={onValueChange} disabled={disabled}>
-      <SelectTrigger aria-label="Country" className={cn("h-9 w-full text-sm", className)}>
-        <SelectValue placeholder={placeholder} />
-      </SelectTrigger>
-      <SelectContent>
-        {countries.map((c) => (
-          <SelectItem key={c.code} value={c.code}>
-            {c.name}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <SearchableSelect
+      value={value ?? ""}
+      onValueChange={onValueChange}
+      disabled={disabled}
+      placeholder={placeholder}
+      ariaLabel="Country"
+      triggerClassName={className}
+      searchable={searchable}
+      searchPlaceholder="Search countries..."
+    >
+      {countries.map((c) => (
+        <SelectItem key={c.code} value={c.code}>
+          {c.name}
+        </SelectItem>
+      ))}
+    </SearchableSelect>
   );
 }
 
@@ -113,6 +201,8 @@ interface StateInputProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  /** Show a search box to filter the region list. Default: true */
+  searchable?: boolean;
 }
 
 /** A single state/region select for a given country. */
@@ -122,45 +212,54 @@ export function StateInput({
   country,
   regions = DEFAULT_REGIONS,
   countries = DEFAULT_COUNTRIES,
-  placeholder = "Select state / region",
+  placeholder,
   disabled = false,
   className,
+  searchable = true,
 }: StateInputProps) {
   const list = country ? regions[country] : undefined;
   const countryName = country
     ? countries.find((c) => c.code === country)?.name
     : undefined;
+  // Dynamic label: "state" for NG/US, "county" for KE, "province" for
+  // ZA/CA/RW, "governorate" for EG, "emirate" for AE, etc.
+  const regionTerm = getRegionLabel(country);
+  const resolvedPlaceholder =
+    placeholder ?? (list?.length ? `Select ${regionTerm}` : "Select a country first");
+
   return (
-    <Select value={value ?? ""} onValueChange={onValueChange} disabled={disabled || !country}>
-      <SelectTrigger
-        aria-label="Region"
-        className={cn("h-9 w-full text-sm", className)}
-      >
-        {countryName ? (
-          <span className="inline-flex items-center gap-1.5 truncate">
+    <SearchableSelect
+      value={value ?? ""}
+      onValueChange={onValueChange}
+      disabled={disabled || !country}
+      placeholder={resolvedPlaceholder}
+      ariaLabel="Region"
+      triggerClassName={className}
+      searchable={searchable}
+      searchPlaceholder={`Search ${regionTerm}s...`}
+      prefix={
+        countryName ? (
+          <>
             <span className="rounded-sm border border-border bg-muted/40 px-1.5 py-px text-[11px] font-medium uppercase text-muted-foreground">
               {country}
             </span>
-            <SelectValue placeholder={list?.length ? placeholder : "No regions available"} />
-          </span>
-        ) : (
-          <SelectValue placeholder={list?.length ? placeholder : "Select a country first"} />
-        )}
-      </SelectTrigger>
-      <SelectContent>
-        {list?.length ? (
-          list.map((r) => (
-            <SelectItem key={r.id} value={r.id}>
-              {r.name}
-            </SelectItem>
-          ))
-        ) : (
-          <SelectItem value="__none" disabled>
-            {country ? "No regions available" : "Select a country first"}
+            <SelectValue placeholder={list?.length ? resolvedPlaceholder : `No ${regionTerm}s available`} />
+          </>
+        ) : undefined
+      }
+    >
+      {list?.length ? (
+        list.map((r) => (
+          <SelectItem key={r.id} value={r.id}>
+            {r.name}
           </SelectItem>
-        )}
-      </SelectContent>
-    </Select>
+        ))
+      ) : (
+        <SelectItem value="__none" disabled>
+          {country ? `No ${regionTerm}s available` : "Select a country first"}
+        </SelectItem>
+      )}
+    </SearchableSelect>
   );
 }
 
@@ -177,6 +276,8 @@ interface LGAInputProps {
   placeholder?: string;
   disabled?: boolean;
   className?: string;
+  /** Show a search box to filter the locality list. Default: true */
+  searchable?: boolean;
 }
 
 /** A single locality/LGA select for a given country + state. */
@@ -187,42 +288,53 @@ export function LGAInput({
   region,
   localities = DEFAULT_LOCALITIES,
   countries = DEFAULT_COUNTRIES,
-  placeholder = "Select LGA / locality",
+  placeholder,
   disabled = false,
   className,
+  searchable = true,
 }: LGAInputProps) {
   const list = country && region ? localities[country]?.[region] : undefined;
   const countryName = country
     ? countries.find((c) => c.code === country)?.name
     : undefined;
+  // Dynamic label: "LGA" for NG, "county" for US, "district" for GB/GH.
+  const localityTerm = getLocalityLabel(country);
+  const resolvedPlaceholder =
+    placeholder ?? (list?.length ? `Select ${localityTerm}` : "Select a state first");
+
   return (
-    <Select value={value ?? ""} onValueChange={onValueChange} disabled={disabled || !list}>
-      <SelectTrigger aria-label="Locality" className={cn("h-9 w-full text-sm", className)}>
-        {countryName ? (
-          <span className="inline-flex items-center gap-1.5 truncate">
+    <SearchableSelect
+      value={value ?? ""}
+      onValueChange={onValueChange}
+      disabled={disabled || !list}
+      placeholder={resolvedPlaceholder}
+      ariaLabel="Locality"
+      triggerClassName={className}
+      searchable={searchable}
+      searchPlaceholder={`Search ${localityTerm}s...`}
+      prefix={
+        countryName ? (
+          <>
             <span className="rounded-sm border border-border bg-muted/40 px-1.5 py-px text-[11px] font-medium uppercase text-muted-foreground">
               {country}
             </span>
-            <SelectValue placeholder={list?.length ? placeholder : "No localities available"} />
-          </span>
-        ) : (
-          <SelectValue placeholder={list?.length ? placeholder : "Select a state first"} />
-        )}
-      </SelectTrigger>
-      <SelectContent>
-        {list?.length ? (
-          list.map((l) => (
-            <SelectItem key={l.id} value={l.id}>
-              {l.name}
-            </SelectItem>
-          ))
-        ) : (
-          <SelectItem value="__none" disabled>
-            {country && region ? "No localities available" : "Select a state first"}
+            <SelectValue placeholder={list?.length ? resolvedPlaceholder : `No ${localityTerm}s available`} />
+          </>
+        ) : undefined
+      }
+    >
+      {list?.length ? (
+        list.map((l) => (
+          <SelectItem key={l.id} value={l.id}>
+            {l.name}
           </SelectItem>
-        )}
-      </SelectContent>
-    </Select>
+        ))
+      ) : (
+        <SelectItem value="__none" disabled>
+          {country && region ? `No ${localityTerm}s available` : "Select a state first"}
+        </SelectItem>
+      )}
+    </SearchableSelect>
   );
 }
 
@@ -283,73 +395,101 @@ export function LocationPicker({
         ? DEFAULT_LOCALITIES[value.country]?.[value.region]
         : null) ?? null;
 
+  const regionTerm = getRegionLabel(value?.country);
+  const localityTerm = getLocalityLabel(value?.country);
+
   return (
     <div className={cn("space-y-2", className)}>
-      <Select
+      <SearchableSelect
         value={value?.country ?? ""}
         onValueChange={handleCountry}
         disabled={disabled}
+        placeholder={placeholders.country ?? "Select country"}
+        ariaLabel="Country"
+        searchable
+        searchPlaceholder="Search countries..."
       >
-        <SelectTrigger aria-label="Country" className="h-9 w-full text-sm">
-          <SelectValue placeholder={placeholders.country ?? "Select country"} />
-        </SelectTrigger>
-        <SelectContent>
-          {countries.map((c) => (
-            <SelectItem key={c.code} value={c.code}>
-              {c.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        {countries.map((c) => (
+          <SelectItem key={c.code} value={c.code}>
+            {c.name}
+          </SelectItem>
+        ))}
+      </SearchableSelect>
 
       {value?.country && (
-        <Select
+        <SearchableSelect
           value={value?.region ?? ""}
           onValueChange={handleRegion}
           disabled={disabled || loadingRegions}
+          placeholder={placeholders.region ?? `Select ${regionTerm}`}
+          ariaLabel="Region"
+          searchable
+          searchPlaceholder={`Search ${regionTerm}s...`}
+          prefix={
+            <>
+              <span className="rounded-sm border border-border bg-muted/40 px-1.5 py-px text-[11px] font-medium uppercase text-muted-foreground">
+                {value.country}
+              </span>
+              <SelectValue
+                placeholder={
+                  regionList?.length
+                    ? (placeholders.region ?? `Select ${regionTerm}`)
+                    : `No ${regionTerm}s available`
+                }
+              />
+            </>
+          }
         >
-          <SelectTrigger aria-label="Region" className="h-9 w-full text-sm">
-            <SelectValue placeholder={placeholders.region ?? "Select state / region"} />
-          </SelectTrigger>
-          <SelectContent>
-            {regionList?.length ? (
-              regionList.map((r) => (
-                <SelectItem key={r.id} value={r.id}>
-                  {r.name}
-                </SelectItem>
-              ))
-            ) : (
-              <SelectItem value="__none" disabled>
-                {loadingRegions ? "Loading..." : "No regions available"}
+          {regionList?.length ? (
+            regionList.map((r) => (
+              <SelectItem key={r.id} value={r.id}>
+                {r.name}
               </SelectItem>
-            )}
-          </SelectContent>
-        </Select>
+            ))
+          ) : (
+            <SelectItem value="__none" disabled>
+              {loadingRegions ? "Loading..." : `No ${regionTerm}s available`}
+            </SelectItem>
+          )}
+        </SearchableSelect>
       )}
 
       {showLocality && value?.region && (
-        <Select
+        <SearchableSelect
           value={value?.locality ?? ""}
           onValueChange={(locality) => setValue({ ...value, locality })}
           disabled={disabled || loadingLocalities}
+          placeholder={placeholders.locality ?? `Select ${localityTerm}`}
+          ariaLabel="Locality"
+          searchable
+          searchPlaceholder={`Search ${localityTerm}s...`}
+          prefix={
+            <>
+              <span className="rounded-sm border border-border bg-muted/40 px-1.5 py-px text-[11px] font-medium uppercase text-muted-foreground">
+                {value.country}
+              </span>
+              <SelectValue
+                placeholder={
+                  localityList?.length
+                    ? (placeholders.locality ?? `Select ${localityTerm}`)
+                    : `No ${localityTerm}s available`
+                }
+              />
+            </>
+          }
         >
-          <SelectTrigger aria-label="Locality" className="h-9 w-full text-sm">
-            <SelectValue placeholder={placeholders.locality ?? "Select LGA / locality"} />
-          </SelectTrigger>
-          <SelectContent>
-            {localityList?.length ? (
-              localityList.map((l) => (
-                <SelectItem key={l.id} value={l.id}>
-                  {l.name}
-                </SelectItem>
-              ))
-            ) : (
-              <SelectItem value="__none" disabled>
-                {loadingLocalities ? "Loading..." : "No localities available"}
+          {localityList?.length ? (
+            localityList.map((l) => (
+              <SelectItem key={l.id} value={l.id}>
+                {l.name}
               </SelectItem>
-            )}
-          </SelectContent>
-        </Select>
+            ))
+          ) : (
+            <SelectItem value="__none" disabled>
+              {loadingLocalities ? "Loading..." : `No ${localityTerm}s available`}
+            </SelectItem>
+          )}
+        </SearchableSelect>
       )}
     </div>
   );

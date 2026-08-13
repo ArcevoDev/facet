@@ -396,6 +396,8 @@ export {
   DEFAULT_COUNTRIES,
   DEFAULT_REGIONS,
   DEFAULT_LOCALITIES,
+  getRegionLabel,
+  getLocalityLabel,
   CountryInput,
   StateInput,
   LGAInput,

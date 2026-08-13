@@ -305,6 +305,10 @@ export function LocationPickerDemo() {
         {[location.country, location.region, location.locality].filter(Boolean).join(" / ") ||
           "not set"}
       </p>
+      <p className="text-xs text-muted-foreground">
+        The region label adapts to the country (state, county, province, emirate...), and every
+        level has a search box to filter long lists.
+      </p>
     </div>
   );
 }

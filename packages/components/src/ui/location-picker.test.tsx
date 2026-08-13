@@ -9,6 +9,8 @@ import {
   DEFAULT_REGIONS,
   DEFAULT_COUNTRIES,
   DEFAULT_LOCALITIES,
+  getRegionLabel,
+  getLocalityLabel,
 } from "./location-picker.js";
 
 describe("LocationPicker", () => {
@@ -198,5 +200,50 @@ describe("CountryInput / StateInput / LGAInput", () => {
   it("LGAInput is inert without a state", () => {
     render(<LGAInput country="NG" />);
     expect(screen.getByLabelText("Locality")).toBeDisabled();
+  });
+
+  it("resolves dynamic region labels per country", () => {
+    // Nigeria calls its divisions states; Kenya calls them counties.
+    expect(getRegionLabel("NG")).toBe("state");
+    expect(getRegionLabel("KE")).toBe("county");
+    expect(getRegionLabel("ZA")).toBe("province");
+    expect(getRegionLabel("AE")).toBe("emirate");
+    expect(getRegionLabel("EG")).toBe("governorate");
+    expect(getRegionLabel("CN")).toBe("province");
+    expect(getRegionLabel(undefined)).toBe("region");
+  });
+
+  it("resolves dynamic locality labels per country", () => {
+    expect(getLocalityLabel("NG")).toBe("LGA");
+    expect(getLocalityLabel("US")).toBe("county");
+    expect(getLocalityLabel("GB")).toBe("district");
+    expect(getLocalityLabel(undefined)).toBe("locality");
+  });
+
+  it("StateInput shows the dynamic region term in its placeholder", () => {
+    render(<StateInput country="KE" />);
+    // Kenya -> county, so the trigger placeholder says "Select county".
+    expect(screen.getByLabelText("Region")).toHaveTextContent("Select county");
+  });
+
+  it("StateInput shows a search box when searchable", async () => {
+    render(<StateInput country="NG" />);
+    const trigger = screen.getByLabelText("Region");
+    trigger.focus();
+    fireEvent.keyDown(trigger, { key: "ArrowDown" });
+    // The search input appears inside the select content.
+    expect(await screen.findByPlaceholderText("Search states...")).toBeInTheDocument();
+  });
+
+  it("CountryInput shows a search box and filters by text", async () => {
+    render(<CountryInput />);
+    const trigger = screen.getByLabelText("Country");
+    trigger.focus();
+    fireEvent.keyDown(trigger, { key: "ArrowDown" });
+    const search = await screen.findByPlaceholderText("Search countries...");
+    fireEvent.change(search, { target: { value: "nig" } });
+    // Nigeria remains; unrelated entries are filtered out.
+    expect(screen.getByText("Nigeria")).toBeInTheDocument();
+    expect(screen.queryByText("Algeria")).not.toBeInTheDocument();
   });
 });

@@ -1955,6 +1955,17 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
   onFiles={(files) => console.log(files)}
 />`,
     Disabled: `<Dropzone label="Uploads disabled" disabled />`,
+    "Accept filter": `<Dropzone
+  label="Images only"
+  accept="image/*"
+  onFiles={(files) => console.log(files)}
+/>`,
+    Paste: `<Dropzone
+  label="Paste an image (Ctrl/Cmd+V)"
+  accept="image/*"
+  allowPaste
+  onFiles={(files) => console.log(files)}
+/>`,
   },
   "color-picker": {
     Default: `<ColorPicker value="#6366f1" label="Brand accent" />`,
@@ -1968,6 +1979,13 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
   size={120}
   fgColor="#6366f1"
   label="branded"
+/>`,
+    Logo: `<QRCode
+  value="https://github.com/arcevodev/facet"
+  size={160}
+  logo="/brand.png"
+  logoSize={36}
+  logoPosition="center"
 />`,
   },
   marquee: {
@@ -2040,10 +2058,21 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
   </FormField>
   <Button type="submit">Submit</Button>
 </Form>`,
-    "With validation": `<Form form={form} onSubmit={(values) => console.log(values)}>
+    "With validation": `<Form
+  form={form}
+  onSubmit={(values) => console.log(values)}
+  schema={z.object({
+    email: z.string().email("Enter a valid email"),
+    name: z.string().min(2, "Name is too short"),
+  })}
+>
+  <FormField name="name" label="Name" required>
+    <Input placeholder="Ada Lovelace" />
+  </FormField>
   <FormField name="email" label="Work email" required>
     <Input placeholder="you@company.com" type="email" />
   </FormField>
+  <FormMessage />
   <Button type="submit">Continue</Button>
 </Form>`,
   },
@@ -2051,6 +2080,18 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     Default: `<DataTable columns={columns} data={rows} />`,
     Searchable: `<DataTable columns={columns} data={rows} searchable />`,
     Selectable: `<DataTable columns={columns} data={rows} selectable />`,
+    Toolbar: `<DataTable
+  columns={columns}
+  data={rows}
+  searchable
+  selectable
+  exportable
+  exporters={[{ key: "json", label: "JSON", export: (cols, rows) => downloadJson(cols, rows) }]}
+  actions={[
+    { key: "delete", label: "Delete selected", destructive: true, action: (rows, selected) => onDelete(selected) },
+  ]}
+/>`,
+    "Rows per page": `<DataTable columns={columns} data={rows} pagination pageSize={10} pageSizeOptions={[10, 25, 50]} />`,
   },
   "date-picker": {
     Default: `<DatePicker label="Due date" />`,
@@ -2065,17 +2106,39 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     "No toggle": `<PasswordInput label="Password" showToggle={false} />`,
   },
   "infinite-scroll": {
-    Vertical: `<InfiniteScroll hasMore={hasMore} onLoadMore={loadMore} loading={loading}>
+    Vertical: `<InfiniteScroll
+  hasMore={hasMore}
+  onLoadMore={loadMore}
+  loading={loading}
+  className="max-h-96"
+>
   {items}
 </InfiniteScroll>`,
-    Horizontal: `<InfiniteScroll hasMore={hasMore} onLoadMore={loadMore} direction="horizontal">
+    Horizontal: `<InfiniteScroll
+  hasMore={hasMore}
+  onLoadMore={loadMore}
+  direction="horizontal"
+>
   {items}
 </InfiniteScroll>`,
   },
   "number-input": {
     Default: `<NumberInput label="Quantity" min={0} max={10} />`,
     "With value": `<NumberInput label="Quantity" value={4} min={0} max={10} />`,
-    Currency: `<NumberInput label="Amount" value={2500} currency="₦" min={0} />`,
+    Currency: `<NumberInput
+  label="Amount"
+  value={2500}
+  currency="₦"
+  min={0}
+/>`,
+    "Currency picker": `<NumberInput
+  label="Price"
+  value={price}
+  onValueChange={setPrice}
+  currency="$"
+  currencyPicker
+  onCurrencyChange={(c) => console.log(c.code)}
+/>`,
   },
   "country-code-input": {
     Default: `<CountryCodeInput label="Mobile number" />`,
@@ -2084,8 +2147,12 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     "No Europe": `<CountryCodeInput countries={ISO_COUNTRY_CODES} excludeRegions={["europe"]} label="Mobile number" />`,
   },
   "location-picker": {
-    Default: `<LocationPicker showLocality />`,
-    "Without locality": `<LocationPicker />`,
+    Default: `<LocationPicker
+  value={location}
+  onValueChange={setLocation}
+  showLocality
+/>`,
+    "Without locality": `<LocationPicker value={location} onValueChange={setLocation} />`,
     "Standalone levels": `<CountryInput value={c} onValueChange={setC} />
 <StateInput country={c} value={s} onValueChange={setS} />
 <LGAInput country={c} region={s} value={l} onValueChange={setL} />`,
