@@ -3,13 +3,19 @@
  * user reaches the end (vertical) or right edge (horizontal) of the content.
  *
  * Usage:
- *   <InfiniteScroll hasMore={hasMore} onLoadMore={loadMore} loading={loading}>
+ *   <InfiniteScroll hasMore={hasMore} onLoadMore={loadMore} loading={loading} className="max-h-64">
  *     {items}
  *   </InfiniteScroll>
  *
  * Direction:
  *   - "vertical": a scrollable viewport with a bottom sentinel.
  *   - "horizontal": a scrollable row with a right-edge sentinel.
+ *
+ * The consumer controls the scrollable height/width via className
+ * (e.g. max-h-64); the component adds the overflow scrolling. An
+ * IntersectionObserver watches a sentinel INSIDE the scroll container
+ * (container as root), so it fires exactly when the sentinel scrolls into
+ * the container's visible area.
  */
 
 import * as React from "react";
@@ -30,7 +36,7 @@ export interface InfiniteScrollProps extends React.HTMLAttributes<HTMLDivElement
   direction?: "vertical" | "horizontal";
   /** Pixel distance from the edge that triggers a load. Default: 200 */
   threshold?: number;
-  /** Render a viewport wrapper (scrollable). Default: true. */
+  /** Render the scroll container (overflow + flex). Default: true. */
   scrollable?: boolean;
   /** Initial items to render. */
   children: React.ReactNode;
@@ -44,9 +50,10 @@ const DEFAULT_LOADER = (
 );
 
 /**
- * Uses an IntersectionObserver on a sentinel element. When the sentinel
- * intersects the viewport (within `threshold`), `onLoadMore` fires if
- * `hasMore` is true and not already loading.
+ * Uses an IntersectionObserver on a sentinel element INSIDE the scroll
+ * container (container as `root`), so it fires exactly when the sentinel
+ * scrolls into the container's visible area. A negative rootMargin extends
+ * the trigger zone by `threshold` px before the edge.
  */
 const InfiniteScroll = React.forwardRef<HTMLDivElement, InfiniteScrollProps>(
   (
@@ -65,12 +72,21 @@ const InfiniteScroll = React.forwardRef<HTMLDivElement, InfiniteScrollProps>(
     },
     ref,
   ) => {
+    const containerRef = React.useRef<HTMLDivElement | null>(null);
     const sentinelRef = React.useRef<HTMLDivElement | null>(null);
     const [inView, setInView] = React.useState(false);
 
     React.useEffect(() => {
+      const container = containerRef.current;
       const node = sentinelRef.current;
-      if (!node || typeof IntersectionObserver === "undefined") return;
+      if (!container || !node || typeof IntersectionObserver === "undefined") return;
+
+      // root = the scroll container; rootMargin pulls the boundary inward by
+      // `threshold` px so loading starts before the exact edge.
+      const margin =
+        direction === "vertical"
+          ? `0px 0px ${threshold}px 0px`
+          : `0px ${threshold}px 0px 0px`;
 
       const observer = new IntersectionObserver(
         (entries) => {
@@ -78,7 +94,7 @@ const InfiniteScroll = React.forwardRef<HTMLDivElement, InfiniteScrollProps>(
           if (entry?.isIntersecting) setInView(true);
           else setInView(false);
         },
-        { rootMargin: `${direction === "vertical" ? "0px 0px" : "0px"} ${threshold}px 0px 0px` },
+        { root: container, rootMargin: margin },
       );
       observer.observe(node);
       return () => observer.disconnect();
@@ -100,22 +116,27 @@ const InfiniteScroll = React.forwardRef<HTMLDivElement, InfiniteScrollProps>(
     const inner = (
       <>
         {children}
+        {/* A sentinel with real height so the observer can see it cross the
+            container's visible area reliably. */}
         <div
           ref={sentinelRef}
           aria-hidden="true"
-          className={cn("w-full shrink-0", direction === "horizontal" && "h-full w-px")}
+          className={cn("shrink-0", direction === "vertical" ? "h-1 w-full" : "h-full w-px")}
         />
       </>
     );
 
     return (
       <div
-        ref={ref}
+        ref={(node) => {
+          containerRef.current = node;
+          if (typeof ref === "function") ref(node);
+          else if (ref) ref.current = node;
+        }}
         className={cn(
           direction === "horizontal" ? "flex items-stretch gap-3" : "flex flex-col gap-3",
-          // Scroll only when told to. The CONSUMER controls the max height
-          // (e.g. max-h-64) so the container can actually scroll; this
-          // component does not impose a height on itself.
+          // The CONSUMER controls the max height (e.g. max-h-64) so the
+          // container can actually scroll; this component adds the overflow.
           scrollable && direction === "vertical" && "overflow-y-auto",
           scrollable && direction === "horizontal" && "overflow-x-auto",
           className,

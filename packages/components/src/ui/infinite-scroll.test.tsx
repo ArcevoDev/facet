@@ -6,9 +6,12 @@ function mockIntersectionObserver() {
   const observe = vi.fn();
   const disconnect = vi.fn();
   let callback: IntersectionObserverCallback = () => {};
+  const captured: { root?: Element | Document | null; rootMargin?: string } = {};
   class MockIO {
-    constructor(cb: IntersectionObserverCallback) {
+    constructor(cb: IntersectionObserverCallback, options?: IntersectionObserverInit) {
       callback = cb;
+      captured.root = options?.root ?? null;
+      captured.rootMargin = options?.rootMargin ?? "";
     }
     observe = observe;
     disconnect = disconnect;
@@ -28,6 +31,7 @@ function mockIntersectionObserver() {
     },
     observe,
     disconnect,
+    captured,
   };
 }
 
@@ -57,6 +61,21 @@ describe("InfiniteScroll", () => {
     expect(onLoadMore).not.toHaveBeenCalled();
     io.fire(true);
     expect(onLoadMore).toHaveBeenCalledTimes(1);
+  });
+
+  it("observes the sentinel with the scroll container as root", () => {
+    const io = mockIntersectionObserver();
+    render(
+      <InfiniteScroll hasMore onLoadMore={vi.fn()} threshold={120}>
+        <div>Item</div>
+      </InfiniteScroll>,
+    );
+    // The observer must root on the component itself (not the window),
+    // with a negative bottom margin extending the trigger zone.
+    expect(io.observe).toHaveBeenCalledTimes(1);
+    expect(io.captured.root).toBeInstanceOf(HTMLDivElement);
+    expect(io.captured.rootMargin).toContain("120px");
+    expect(io.captured.rootMargin).toContain("0px");
   });
 
   it("does not call onLoadMore when hasMore is false", () => {
