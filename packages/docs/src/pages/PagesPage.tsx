@@ -67,7 +67,7 @@ export function PagesPage() {
                   {entry.name}
                 </h2>
                 {entry.description && (
-                  <p className="mt-0.5 text-sm text-muted-foreground">{entry.description}</p>
+                  <p className="mt-2 text-sm text-muted-foreground">{entry.description}</p>
                 )}
               </div>
               <Link
