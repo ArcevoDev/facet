@@ -57,6 +57,7 @@ export type {
   ClientCredentialsParams,
   AuthorizeUrlParams,
   SwitchContextParams,
+  AuthorizeResult,
 } from "./auth.sdk.js";
 
 export type {

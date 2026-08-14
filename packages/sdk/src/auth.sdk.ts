@@ -97,6 +97,16 @@ export type SwitchContextParams = {
   tenantId: string;
 };
 
+/**
+ * Result of GET /oauth/authorize (arc-id's JSON authorize API):
+ * an authorization code plus echo of state and consent outcome.
+ */
+export type AuthorizeResult = {
+  code: string;
+  state?: string;
+  consentRequired: boolean;
+};
+
 /* ── SDK Module ────────────────────────────────────────────── */
 
 export class AuthSdk {
@@ -312,9 +322,35 @@ export class AuthSdk {
   }
 
   /**
-   * Build the OAuth2 / OIDC authorize redirect URL (GET /oauth/authorize).
-   * For PKCE, generate a code_verifier/code_challenge (S256) yourself and
-   * pass `codeChallenge`; exchange the returned code with `exchangeCode`.
+   * GET /oauth/authorize — arc-id's authorize endpoint is a JSON API
+   * (not a browser redirect): pass the caller's bearer token and it
+   * returns `{ code, state, consentRequired }`. Exchange the code with
+   * `exchangeCode()`. For PKCE, generate a code_verifier/code_challenge
+   * (S256) and pass `codeChallenge`.
+   */
+  async authorize(params: AuthorizeUrlParams): Promise<ApiResponse<AuthorizeResult>> {
+    const qs = new URLSearchParams({
+      client_id: params.clientId ?? this.client.getClientId() ?? "",
+      response_type: "code",
+      redirect_uri: params.redirectUri,
+    });
+    if (params.scope) qs.set("scope", params.scope);
+    if (params.state) qs.set("state", params.state);
+    if (params.nonce) qs.set("nonce", params.nonce);
+    if (params.codeChallenge) {
+      qs.set("code_challenge", params.codeChallenge);
+      qs.set("code_challenge_method", params.codeChallengeMethod ?? "S256");
+    }
+    if (params.prompt) qs.set("prompt", params.prompt);
+    if (params.maxAge != null) qs.set("max_age", String(params.maxAge));
+    return this.client.get<AuthorizeResult>(`/oauth/authorize?${qs.toString()}`);
+  }
+
+  /**
+   * Build the OAuth2 / OIDC authorize URL for the redirect-flow model.
+   * arc-id's own /oauth/authorize is a JSON API (see `authorize()`), but
+   * this helper is kept for frontends that proxy the OIDC redirect or for
+   * documentation. For PKCE, pass the S256 `codeChallenge`.
    */
   authorizeUrl(params: AuthorizeUrlParams): string {
     const qs = new URLSearchParams({

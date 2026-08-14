@@ -223,6 +223,29 @@ describe("AuthSdk", () => {
     });
   });
 
+  it("authorize GETs the JSON authorize API and returns the code", async () => {
+    mockJson({ success: true, data: { code: "auth-code-123", state: "xyz", consentRequired: false } });
+    const configured = new ArcIdClient({
+      baseUrl: "https://auth.arcevo.dev/api/v1",
+      clientId: "my-app",
+    });
+    const authSdk = new AuthSdk(configured);
+
+    const res = await authSdk.authorize({
+      redirectUri: "https://app.dev/callback",
+      scope: "openid profile",
+      codeChallenge: "challenge",
+      state: "xyz",
+    });
+
+    const [url, init] = lastCall();
+    expect(url).toContain("/oauth/authorize?");
+    expect(url).toContain("client_id=my-app");
+    expect(url).toContain("code_challenge=challenge");
+    expect(init.method).toBe("GET");
+    expect(res.data).toEqual({ code: "auth-code-123", state: "xyz", consentRequired: false });
+  });
+
   it("authorizeUrl builds the OIDC authorize redirect with PKCE + prompt", () => {
     const url = auth.authorizeUrl({
       clientId: "my-app",

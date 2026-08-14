@@ -77,7 +77,7 @@ export class TenantSdk {
   /* ── Invites ──────────────────────────────────────────────── */
 
   acceptInvite(data: { token: string }): Promise<ApiResponse<InviteAcceptResult>> {
-    return this.client.post<InviteAcceptResult>("/tenants/invites/accept", data);
+    return this.client.post<InviteAcceptResult>("/invites/accept", data);
   }
 
   /* ── DID ──────────────────────────────────────────────────── */

@@ -1,8 +1,9 @@
 /**
  * Billing SDK: Subscription only
  *
- * arc-id: Only GET /billing/subscription. Self-service plan changes
- * intentionally removed (returns 410 Gone).
+ * arc-id: GET /subscription — returns the calling user's active tenant
+ * subscription. Self-service plan changes intentionally removed
+ * (POST /subscription/upgrade returns 410 Gone).
  */
 
 import { ArcIdClient } from "./client.js";
@@ -15,6 +16,6 @@ export class BillingSdk {
   constructor(private client: ArcIdClient) {}
 
   getSubscription(): Promise<ApiResponse<Subscription>> {
-    return this.client.get<Subscription>("/billing/subscription");
+    return this.client.get<Subscription>("/subscription");
   }
 }
