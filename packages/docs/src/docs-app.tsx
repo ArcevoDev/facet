@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import type { IconName } from "@arcevo/facet-components/light";
+import type { IconName } from "@arcevo/facet-components";
 import { ThemeProvider } from "@arcevo/facet-components/light";
 import { DocsAppProvider, type DocsAppValue } from "./context.js";
 import { DocsContentPage } from "./pages/DocsContentPage.js";

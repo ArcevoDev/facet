@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Button, Icon } from "@arcevo/facet-components/light";
+import { Button } from "@arcevo/facet-components/light";
+import { Icon } from "@arcevo/facet-components";
 
 export interface CodeBlockProps {
   /** Optional heading above the code block. */

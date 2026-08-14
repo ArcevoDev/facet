@@ -8,9 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  Icon,
+  LightIcon,
   Kbd,
-  type IconName,
 } from "@arcevo/facet-components/light";
 import { buildDocsLayoutConfig } from "../lib/nav.js";
 import { useDocsRouterAdapter } from "../lib/docs-router.js";
@@ -41,7 +40,7 @@ function SettingsMenu({
   onModeChange,
 }: {
   label: string;
-  links: { label: string; href: string; icon?: IconName }[];
+  links: { label: string; href: string; icon?: string }[];
   mode: "full" | "rail";
   onModeChange: (mode: "full" | "rail") => void;
 }) {
@@ -54,14 +53,14 @@ function SettingsMenu({
           title="Settings"
           className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <Icon name="settings" className="size-4" />
+          <LightIcon name="settings" className="size-4" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuLabel>{label}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => onModeChange(mode === "rail" ? "full" : "rail")}>
-          <Icon name={mode === "rail" ? "panel-left" : "layout-panel-left"} className="size-4" />
+          <LightIcon name={mode === "rail" ? "panel-left" : "layout-panel-left"} className="size-4" />
           Sidebar: {mode === "rail" ? "Rail" : "Full"}
         </DropdownMenuItem>
         {links.length > 0 && (
@@ -75,7 +74,7 @@ function SettingsMenu({
                   rel="noreferrer"
                   className="flex items-center gap-2"
                 >
-                  {link.icon && <Icon name={link.icon} className="size-4" />}
+                  {link.icon && <LightIcon name={link.icon} className="size-4" />}
                   {link.label}
                 </a>
               </DropdownMenuItem>
@@ -85,7 +84,7 @@ function SettingsMenu({
         <DropdownMenuSeparator />
         <div className="px-2.5 py-2 text-xs text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <Icon name="search" className="size-3.5" />
+            <LightIcon name="search" className="size-3.5" />
             Press <Kbd>Ctrl</Kbd> + <Kbd>K</Kbd> to search docs
           </span>
         </div>

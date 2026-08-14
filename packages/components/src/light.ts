@@ -15,17 +15,13 @@ export { cn, isMac, getModSymbol } from "./utils.js";
 /* ── Button ──────────────────────────────────────────────────── */
 export { type ButtonProps, Button, buttonVariants } from "./ui/button.js";
 
-/* ── Icon registry ──────────────────────────────────────────── */
-export { IconProvider, Icon, registerIcon, resetIconRegistry, getIcon, lucideIconMap, lucideIconNames, toKebab } from "./icon/index.js";
-export type {
-  IconComponent,
-  IconName,
-  SemanticIconName,
-  LucideIconName,
-  IconOverrides,
-  IconProps,
-  IconProviderProps,
-} from "./icon/index.js";
+/* ── Icon registry (slim: semantic + brand, no full lucide map) ── */
+// The full <Icon> registry lives in the main barrel (it pulls the full
+// lucide map). /light ships LightIcon for eager shells that only need
+// common semantic/brand icons.
+export { LightIcon } from "./icon/light-icon.js";
+export type { LightIconProps } from "./icon/light-icon.js";
+export { toKebab } from "./icon/registry.js";
 
 /* ── Theme system ────────────────────────────────────────────── */
 export { ThemeProvider, useTheme, ThemeToggle } from "./theme/index.js";
