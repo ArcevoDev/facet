@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { InfiniteScroll } from "./infinite-scroll.js";
 
 function mockIntersectionObserver() {
@@ -50,7 +50,7 @@ describe("InfiniteScroll", () => {
     expect(screen.getByText("No more")).toBeInTheDocument();
   });
 
-  it("calls onLoadMore when the sentinel is visible", () => {
+  it("calls onLoadMore when the sentinel is visible", async () => {
     const io = mockIntersectionObserver();
     const onLoadMore = vi.fn();
     render(
@@ -60,7 +60,8 @@ describe("InfiniteScroll", () => {
     );
     expect(onLoadMore).not.toHaveBeenCalled();
     io.fire(true);
-    expect(onLoadMore).toHaveBeenCalledTimes(1);
+    // onLoadMore fires via state (inView -> effect), so flush React.
+    await waitFor(() => expect(onLoadMore).toHaveBeenCalledTimes(1));
   });
 
   it("observes the sentinel with the scroll container as root", () => {
@@ -90,7 +91,7 @@ describe("InfiniteScroll", () => {
     expect(onLoadMore).not.toHaveBeenCalled();
   });
 
-  it("does not re-fire while loading", () => {
+  it("does not re-fire while loading", async () => {
     const io = mockIntersectionObserver();
     const onLoadMore = vi.fn();
     const { rerender } = render(
@@ -99,13 +100,14 @@ describe("InfiniteScroll", () => {
       </InfiniteScroll>,
     );
     io.fire(true);
-    expect(onLoadMore).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(onLoadMore).toHaveBeenCalledTimes(1));
     // Keep it in view + loading: no new fire.
     rerender(
       <InfiniteScroll hasMore onLoadMore={onLoadMore} loading>
         <div>Item</div>
       </InfiniteScroll>,
     );
+    await new Promise((r) => setTimeout(r, 10));
     expect(onLoadMore).toHaveBeenCalledTimes(1);
   });
 
