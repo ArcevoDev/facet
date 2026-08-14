@@ -22,9 +22,14 @@ const LINKS: NavLink[] = [
   { href: "/feedback", label: "Feedback" },
 ];
 
-function Brand() {
+function Brand({ onHome }: { onHome: () => void }) {
   return (
-    <div className="flex items-center gap-2.5">
+    <button
+      type="button"
+      onClick={onHome}
+      className="flex items-center gap-2.5"
+      aria-label="facet home"
+    >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-primary">
         <path
           d="M12 2L4 6V12C4 17.52 7.58 22.48 12 24C16.42 22.48 20 17.52 20 12V6L12 2Z"
@@ -38,7 +43,7 @@ function Brand() {
         />
       </svg>
       <span className="font-heading text-lg font-bold text-foreground">facet</span>
-    </div>
+    </button>
   );
 }
 
@@ -105,7 +110,7 @@ export function Nav() {
   return (
     <Navbar
       variant="pill"
-      brand={<Brand />}
+      brand={<Brand onHome={() => handleNav("/")} />}
       links={LINKS}
       onNavigate={handleNav}
       mobileMenu={<MobileMenu onNavigate={handleNav} />}
