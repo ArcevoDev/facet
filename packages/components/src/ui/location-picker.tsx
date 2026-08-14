@@ -240,6 +240,7 @@ export function StateInput({
             <span className="rounded-sm border border-border bg-muted/40 px-1.5 py-px text-[11px] font-medium uppercase text-muted-foreground">
               {country}
             </span>
+            <span className="truncate text-xs text-muted-foreground">{countryName}</span>
             <SelectValue placeholder={list?.length ? resolvedPlaceholder : `No ${regionTerm}s available`} />
           </>
         ) : undefined
@@ -315,6 +316,7 @@ export function LGAInput({
             <span className="rounded-sm border border-border bg-muted/40 px-1.5 py-px text-[11px] font-medium uppercase text-muted-foreground">
               {country}
             </span>
+            <span className="truncate text-xs text-muted-foreground">{countryName}</span>
             <SelectValue placeholder={list?.length ? resolvedPlaceholder : `No ${localityTerm}s available`} />
           </>
         ) : undefined
