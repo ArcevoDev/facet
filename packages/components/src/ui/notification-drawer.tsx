@@ -66,10 +66,10 @@ export interface NotificationDrawerProps {
 
 const typeStyles: Record<NotificationType, { dot: string; icon: string }> = {
   default: { dot: "bg-muted-foreground", icon: "text-muted-foreground" },
-  success: { dot: "bg-emerald-500", icon: "text-emerald-500" },
-  warning: { dot: "bg-amber-500", icon: "text-amber-500" },
-  error: { dot: "bg-red-500", icon: "text-red-500" },
-  info: { dot: "bg-sky-500", icon: "text-sky-500" },
+  success: { dot: "bg-success", icon: "text-success" },
+  warning: { dot: "bg-warning", icon: "text-warning" },
+  error: { dot: "bg-destructive", icon: "text-destructive" },
+  info: { dot: "bg-primary", icon: "text-primary" },
 };
 
 /* ── Component ─────────────────────────────────────────────── */

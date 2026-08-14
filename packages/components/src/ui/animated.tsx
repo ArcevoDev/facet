@@ -18,7 +18,7 @@ import { cn } from "../utils.js";
 /* ── Spotlight ─────────────────────────────────────────────── */
 
 export interface SpotlightProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Accent color of the glow. Default: indigo. */
+  /** Accent color of the glow. Default: var(--primary) with alpha. */
   color?: string;
   /** Blur radius in px. Default: 80. */
   blur?: number;
@@ -62,7 +62,7 @@ Spotlight.displayName = "Spotlight";
 /* ── Aurora ────────────────────────────────────────────────── */
 
 export interface AuroraProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Gradient stops. Default: indigo/fuchsia/cyan. */
+  /** Gradient stops. Default: var(--primary), fuchsia, var(--alpha-electric-cyan). */
   colors?: string[];
   /** Opacity of the aurora layer. Default: 0.5. */
   opacity?: number;
@@ -70,7 +70,12 @@ export interface AuroraProps extends React.HTMLAttributes<HTMLDivElement> {
 
 /** Slow-moving conic gradient blobs (pure CSS animation). */
 export const Aurora = React.forwardRef<HTMLDivElement, AuroraProps>(
-  ({ className, colors = ["#6366f1", "#d946ef", "#06b6d4"], opacity = 0.5, ...props }, ref) => (
+  ({
+    className,
+    colors = ["var(--primary, #6366f1)", "#d946ef", "var(--alpha-electric-cyan, #06b6d4)"],
+    opacity = 0.5,
+    ...props
+  }, ref) => (
     <div ref={ref} className={cn("relative overflow-hidden", className)} aria-hidden="true" {...props}>
       <div
         className="absolute -inset-1/2 animate-[facet-aurora_18s_ease-in-out_infinite_alternate]"
@@ -91,13 +96,13 @@ Aurora.displayName = "Aurora";
 export interface BeamsProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Number of beams. Default: 3. */
   count?: number;
-  /** Beam color. Default: indigo at low opacity. */
+  /** Beam color. Default: var(--primary) at low opacity. */
   color?: string;
 }
 
 /** Diagonal light beams sweeping across a container. */
 export const Beams = React.forwardRef<HTMLDivElement, BeamsProps>(
-  ({ className, count = 3, color = "rgba(99,102,241,0.25)", ...props }, ref) => (
+  ({ className, count = 3, color = "var(--primary, rgba(99,102,241,0.25))", ...props }, ref) => (
     <div ref={ref} className={cn("relative overflow-hidden", className)} aria-hidden="true" {...props}>
       {Array.from({ length: count }, (_, i) => (
         <div

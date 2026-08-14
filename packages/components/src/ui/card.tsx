@@ -16,9 +16,11 @@ const cardVariants = cva("rounded-xl border shadow", {
         "bg-card text-card-foreground shadow transition-colors hover:bg-accent/50 cursor-pointer",
       /** 3D tilt that follows the cursor (pointer handler). */
       tilt: "bg-card text-card-foreground shadow transition-transform duration-200 will-change-transform",
-      /** Animated gradient border (pure CSS, mask trick). */
+      /** Animated gradient border (pure CSS, mask trick). Uses the
+       * consumer's tokens: primary -> alpha-electric-cyan, so it follows
+       * brand customization. */
       "gradient-border":
-        "relative bg-card text-card-foreground shadow before:absolute before:-inset-px before:-z-10 before:rounded-[inherit] before:bg-gradient-to-br before:from-indigo-500 before:via-fuchsia-500 before:to-cyan-400 before:content-['']",
+        "relative bg-card text-card-foreground shadow before:absolute before:-inset-px before:-z-10 before:rounded-[inherit] before:bg-gradient-to-br before:from-primary before:via-primary/60 before:to-alpha-electric-cyan before:content-['']",
       /** Image cards: first child image zooms on hover. */
       zoom: "group bg-card text-card-foreground shadow overflow-hidden",
       /** 3D flip reveal: front (children) flips away on hover/click, back (CardFlipBack) shows. */
