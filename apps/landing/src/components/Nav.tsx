@@ -1,12 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import {
-  Navbar,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-  Icon,
-} from "@arcevo/facet-components";
+import { Navbar, Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@arcevo/facet-components";
+import { LightIcon } from "@arcevo/facet-components/light";
 import type { NavLink } from "@arcevo/facet-components";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { GithubIcon } from "./BrandIcons.js";
@@ -134,7 +128,7 @@ export function Nav() {
                   title="Browse components"
                   onClick={() => window.open(getDocsUrl())}
                 >
-                  <Icon name="grid" size={16} />
+                  <LightIcon name="grid" size={16} />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="bottom">Browse components</TooltipContent>

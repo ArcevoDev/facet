@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Separator, Icon } from "@arcevo/facet-components";
+import { Separator } from "@arcevo/facet-components";
+import { LightIcon } from "@arcevo/facet-components/light";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { CONTACT } from "../lib/socials.js";
 import {
@@ -30,7 +31,7 @@ export function Footer() {
             to="/feedback"
             className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
-            <Icon name="mail" size={14} />
+            <LightIcon name="mail" size={14} />
             Feedback
           </Link>
           <a
@@ -44,7 +45,7 @@ export function Footer() {
             href={getDocsUrl()}
             className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
-            <Icon name="book-open" size={14} />
+            <LightIcon name="book-open" size={14} />
             Documentation
           </a>
         </div>
@@ -54,7 +55,7 @@ export function Footer() {
           Feedback: <a href={`mailto:${CONTACT.email}`} className="hover:text-foreground">{CONTACT.email}</a>
           {" "}· WhatsApp:{" "}
           <a href={CONTACT.whatsapp} target="_blank" rel="noreferrer" className="hover:text-foreground">
-            <Icon name="message-circle" size={12} className="inline" /> Chat
+                <LightIcon name="message-circle" size={12} className="inline" /> Chat
           </a>
         </p>
         <div className="flex items-center gap-4">

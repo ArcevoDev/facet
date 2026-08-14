@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { LightIcon } from "@arcevo/facet-components/light";
 import {
   Button,
   Badge,
-  Icon,
   Card,
   CardHeader,
   CardTitle,
@@ -230,8 +230,8 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
       return (
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant={variant as never}>Default</Badge>
-          <Badge icon={<Icon name="sparkles" className="size-3" />}>New</Badge>
-          <Badge variant="success" iconOnly icon={<Icon name="check" className="size-3.5" />} aria-label="Verified" />
+          <Badge icon={<LightIcon name="sparkles" className="size-3" />}>New</Badge>
+          <Badge variant="success" iconOnly icon={<LightIcon name="check" className="size-3.5" />} aria-label="Verified" />
         </div>
       );
     case "card":

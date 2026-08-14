@@ -16,8 +16,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Icon,
 } from "@arcevo/facet-components";
+import { LightIcon } from "@arcevo/facet-components/light";
 import { extendedManifest } from "../lib/manifest.js";
 import { isExtendedLayoutSlug } from "../lib/nav.js";
 import { ComponentPreview } from "../components/previews.js";
@@ -149,7 +149,7 @@ export function ComponentsPage() {
 
         {/* Local search for this gallery (not the global search palette). */}
         <div className="relative w-full max-w-xs">
-          <Icon
+          <LightIcon
             name="search"
             className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
           />
@@ -215,7 +215,7 @@ export function ComponentsPage() {
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               }`}
             >
-              <Icon name="grid" className="size-4" />
+              <LightIcon name="grid" className="size-4" />
             </button>
             <button
               type="button"
@@ -228,7 +228,7 @@ export function ComponentsPage() {
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               }`}
             >
-              <Icon name="list" className="size-4" />
+              <LightIcon name="list" className="size-4" />
             </button>
           </div>
         </div>
@@ -271,7 +271,7 @@ export function ComponentsPage() {
 
       {components.length === 0 && (
         <div className="mt-10 flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border px-6 py-16 text-center">
-          <Icon name="search" className="size-8 text-muted-foreground/40" />
+          <LightIcon name="search" className="size-8 text-muted-foreground/40" />
           <h3 className="text-base font-semibold text-foreground">No components found</h3>
           <p className="max-w-sm text-sm text-muted-foreground">
             Nothing matches "{query.trim()}". Try a different name, slug, or category.
@@ -372,7 +372,7 @@ function ComponentCard({
               <span className="block truncate text-sm text-muted-foreground">{description}</span>
             )}
           </span>
-          <Icon
+          <LightIcon
             name="chevron-down"
             className={`size-4 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
           />

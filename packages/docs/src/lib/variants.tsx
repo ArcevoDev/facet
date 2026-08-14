@@ -1,11 +1,11 @@
 import * as React from "react";
+import { LightIcon } from "@arcevo/facet-components/light";
 import {
   Alert,
   AlertTitle,
   AlertDescription,
   Badge,
   Button,
-  Icon,
   Card,
   CardHeader,
   CardTitle,
@@ -635,11 +635,11 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             node: <Badge variant={variant}>{variant}</Badge>,
           }),
         ),
-        { label: "with icon", node: <Badge icon={<Icon name="sparkles" className="size-3" />}>New</Badge> },
+        { label: "with icon", node: <Badge icon={<LightIcon name="sparkles" className="size-3" />}>New</Badge> },
         {
           label: "icon only",
           node: (
-            <Badge variant="success" iconOnly icon={<Icon name="check" className="size-3.5" />} aria-label="Verified" />
+            <Badge variant="success" iconOnly icon={<LightIcon name="check" className="size-3.5" />} aria-label="Verified" />
           ),
         },
       ];
@@ -678,7 +678,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           label: "With icon",
           node: (
             <EmptyState
-              icon={<Icon name="search" className="size-6" />}
+              icon={<LightIcon name="search" className="size-6" />}
               title="Nothing here"
               description="No items match your search."
             />
@@ -688,7 +688,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           label: "With action",
           node: (
             <EmptyState
-              icon={<Icon name="document" className="size-6" />}
+              icon={<LightIcon name="document" className="size-6" />}
               title="No documents"
               description="Create your first document to get started."
               action={<Button size="sm">New document</Button>}
@@ -748,11 +748,11 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           node: (
             <div className="w-64 space-y-2 rounded-lg border border-border bg-background p-3 text-sm">
               <div className="flex items-center gap-2">
-                <Icon name="check" className="size-4 text-success" />
+                <LightIcon name="check" className="size-4 text-success" />
                 <span className="text-foreground">Saved successfully</span>
               </div>
               <div className="flex items-center gap-2">
-                <Icon name="triangle-alert" className="size-4 text-warning" />
+                <LightIcon name="triangle-alert" className="size-4 text-warning" />
                 <span className="text-foreground">Check your connection</span>
               </div>
             </div>
@@ -948,10 +948,10 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                       columns: 2,
                       panelWidth: "w-[30rem]",
                       children: [
-                        { href: "#", label: "Docs", description: "Guides and API reference", icon: <Icon name="book-open" className="size-4" /> },
-                        { href: "#", label: "Blog", description: "Product updates", icon: <Icon name="sparkles" className="size-4" /> },
-                        { href: "#", label: "Changelog", description: "Version history", badge: "New", icon: <Icon name="list" className="size-4" /> },
-                        { href: "#", label: "Community", description: "Discussions and support", icon: <Icon name="users" className="size-4" /> },
+                        { href: "#", label: "Docs", description: "Guides and API reference", icon: <LightIcon name="book-open" className="size-4" /> },
+                        { href: "#", label: "Blog", description: "Product updates", icon: <LightIcon name="sparkles" className="size-4" /> },
+                        { href: "#", label: "Changelog", description: "Version history", badge: "New", icon: <LightIcon name="list" className="size-4" /> },
+                        { href: "#", label: "Community", description: "Discussions and support", icon: <LightIcon name="users" className="size-4" /> },
                       ],
                     },
                     { href: "#", label: "Pricing" },
@@ -1586,7 +1586,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             label: "With icon",
             children: (
               <>
-                <Icon name="settings" className="size-4" /> Settings
+                <LightIcon name="settings" className="size-4" /> Settings
               </>
             ),
           },
@@ -1730,10 +1730,10 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                 <ContextMenuLabel>Actions</ContextMenuLabel>
                 <ContextMenuSeparator />
                 <ContextMenuItem>
-                  <Icon name="copy" className="size-4" /> Copy
+                  <LightIcon name="copy" className="size-4" /> Copy
                 </ContextMenuItem>
                 <ContextMenuItem>
-                  <Icon name="list" className="size-4" /> Paste
+                  <LightIcon name="list" className="size-4" /> Paste
                 </ContextMenuItem>
               </ContextMenuContent>
             </ContextMenu>
@@ -1778,10 +1778,10 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                 <DropdownMenuLabel>Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <Icon name="users" className="size-4" /> Profile
+                  <LightIcon name="users" className="size-4" /> Profile
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Icon name="settings" className="size-4" /> Settings
+                  <LightIcon name="settings" className="size-4" /> Settings
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

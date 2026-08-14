@@ -1,6 +1,5 @@
 import * as React from "react";
-import { Button } from "@arcevo/facet-components/light";
-import { Icon } from "@arcevo/facet-components";
+import { Button, LightIcon } from "@arcevo/facet-components/light";
 
 export interface CodeBlockProps {
   /** Optional heading above the code block. */
@@ -32,7 +31,7 @@ export function CodeBlock({ title, code }: CodeBlockProps) {
           <span />
         )}
         <Button size="sm" variant="outline" onClick={handleCopy} className="h-7 gap-1.5 text-xs">
-          {copied ? <Icon name="check" className="size-3.5" /> : <Icon name="copy" className="size-3.5" />}
+          {copied ? <LightIcon name="check" className="size-3.5" /> : <LightIcon name="copy" className="size-3.5" />}
           {copied ? "Copied" : "Copy"}
         </Button>
       </div>

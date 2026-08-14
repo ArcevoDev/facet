@@ -1,5 +1,5 @@
 import { FEATURES } from "../data/features.js";
-import { Icon } from "@arcevo/facet-components";
+import { LightIcon } from "@arcevo/facet-components/light";
 
 export function FeaturesSection() {
   return (
@@ -18,7 +18,7 @@ export function FeaturesSection() {
             key={f.title}
             className="glass-card rounded-xl p-6 transition-all hover:translate-y-[-2px]"
           >
-            <Icon name={f.icon} className="size-6 text-primary" />
+            <LightIcon name={f.icon} className="size-6 text-primary" />
             <h3 className="mt-4 font-semibold text-foreground">{f.title}</h3>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
           </div>

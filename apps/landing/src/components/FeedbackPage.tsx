@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Separator, Label, Input, Textarea, Icon } from "@arcevo/facet-components";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Separator, Label, Input, Textarea } from "@arcevo/facet-components";
+import { LightIcon } from "@arcevo/facet-components/light";
 import { CONTACT } from "../lib/socials.js";
 import { Nav } from "./Nav.js";
 import {
@@ -46,7 +47,7 @@ export function FeedbackPage() {
             onClick={handleBack}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            <Icon name="arrow-left" size={16} />
+            <LightIcon name="arrow-left" size={16} />
             Back
           </button>
           <h1 className="mt-4 font-heading text-4xl font-bold text-foreground">Feedback &amp; contact</h1>
@@ -60,7 +61,7 @@ export function FeedbackPage() {
       <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Icon name="mail" size={18} className="text-primary" />
+            <LightIcon name="mail" size={18} className="text-primary" />
             Send feedback by email
           </CardTitle>
           <CardDescription>
@@ -116,7 +117,7 @@ export function FeedbackPage() {
           rel="noreferrer"
           className="flex items-center gap-3 rounded-lg border border-border bg-background p-4 transition-colors hover:bg-accent/50"
         >
-          <Icon name="message-circle" size={20} className="text-primary" />
+          <LightIcon name="message-circle" size={20} className="text-primary" />
           <div>
             <div className="text-sm font-medium text-foreground">WhatsApp</div>
             <div className="text-xs text-muted-foreground">Chat with us directly</div>

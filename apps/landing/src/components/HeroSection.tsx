@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button, Badge, Icon, GridPattern, Aurora, Beams, SparkleButton, Spotlight } from "@arcevo/facet-components";
+import { Button, Badge, GridPattern, Aurora, Beams, SparkleButton, Spotlight } from "@arcevo/facet-components";
+import { LightIcon } from "@arcevo/facet-components/light";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { STATS } from "../data/features.js";
 
@@ -27,7 +28,7 @@ export function HeroSection() {
       <Spotlight className="absolute inset-0 -z-10" color="rgba(129,140,248,0.5)" />
       <Badge
         variant="outline"
-        icon={<Icon name="sparkles" size={12} />}
+        icon={<LightIcon name="sparkles" size={12} />}
         className="mb-6 border-primary/30 text-primary text-xs tracking-wider uppercase px-4 py-1"
       >
         Open source &middot; Radix powered &middot; MIT

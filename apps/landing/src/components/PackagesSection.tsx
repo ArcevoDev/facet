@@ -1,5 +1,5 @@
 import { PACKAGES } from "../data/features.js";
-import { Icon } from "@arcevo/facet-components";
+import { LightIcon } from "@arcevo/facet-components/light";
 
 export function PackagesSection() {
   return (
@@ -19,7 +19,7 @@ export function PackagesSection() {
             className="glass-card rounded-xl p-6 transition-all hover:translate-y-[-2px]"
           >
             <div className="flex items-center justify-between gap-3">
-              <Icon name={pkg.icon} className="size-6 text-primary" />
+              <LightIcon name={pkg.icon} className="size-6 text-primary" />
               <span className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
                 {pkg.version}
               </span>

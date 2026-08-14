@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent, Icon } from "@arcevo/facet-components";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@arcevo/facet-components";
+import { LightIcon } from "@arcevo/facet-components/light";
 import { FAQ } from "../data/features.js";
 import { getDocsUrl } from "../lib/docs-url.js";
 
@@ -33,7 +34,7 @@ export function FaqSection() {
           rel="noreferrer"
           className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
         >
-          <Icon name="book-open" className="size-4" />
+          <LightIcon name="book-open" className="size-4" />
           Explore the docs for a deeper view
         </a>
         <span className="hidden h-4 w-px bg-border sm:block" />
@@ -41,7 +42,7 @@ export function FaqSection() {
           to="/feedback"
           className="inline-flex items-center gap-2 text-sm font-semibold text-foreground/80 hover:text-foreground"
         >
-          <Icon name="message-square" className="size-4" />
+          <LightIcon name="message-square" className="size-4" />
           Drop feedback or contact the maintainers
         </Link>
       </div>
