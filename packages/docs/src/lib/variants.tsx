@@ -2039,8 +2039,8 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           label: "Layers",
           node: (
             <div className="relative flex h-64 w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
-              <Aurora className="absolute inset-0" />
-              <Beams count={3} className="absolute inset-0" />
+              <Aurora className="absolute inset-0" opacity={0.75} />
+              <Beams count={4} className="absolute inset-0" color="rgba(129,140,248,0.35)" />
               <GridPattern className="absolute inset-0" />
               <p className="relative z-10 text-lg font-bold">Aurora + Beams + Grid</p>
             </div>

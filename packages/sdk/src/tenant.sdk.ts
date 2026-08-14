@@ -35,8 +35,8 @@ export class TenantSdk {
     return this.client.get<Tenant>(`/tenants/${slug}`);
   }
 
-  create(data: { name: string; slug: string }): Promise<ApiResponse<void>> {
-    return this.client.post<void>("/tenants", data);
+  create(data: { name: string; slug: string }): Promise<ApiResponse<Tenant>> {
+    return this.client.post<Tenant>("/tenants", data);
   }
 
   /* ── Context Switching ────────────────────────────────────── */

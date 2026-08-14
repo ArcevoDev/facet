@@ -1025,5 +1025,109 @@ facet add Button --ui-dir ui`,
       },
     ],
   },
+  {
+    path: "/sdk",
+    title: "SDK",
+    section: "ecosystem",
+    description: "The typed arc-id API client (@arcevo/facet-sdk): first-party sessions + OAuth2/OIDC for external integrations.",
+    blocks: [
+      {
+        type: "p",
+        text: "`@arcevo/facet-sdk` is a pure-fetch, framework-agnostic TypeScript client for arc-id. It mirrors arc-id's full REST surface (62 routes across auth, identity, oauth, tenants, credentials, billing, audit, webhooks, idp) and normalizes the `{ success, data }` envelope so SDK methods return the inner payload directly.",
+      },
+      { type: "h2", text: "Install" },
+      {
+        type: "install",
+        pkg: "@arcevo/facet-sdk",
+      },
+      { type: "h2", text: "First-party app (own arc-id backend)" },
+      {
+        type: "code",
+        text: `import { ArcIdClient, AuthSdk } from "@arcevo/facet-sdk";
+
+const client = new ArcIdClient({ baseUrl: "https://auth.example.com/api/v1" });
+const auth = new AuthSdk(client);
+
+const { data, error } = await auth.login("user@example.com", "pw");
+// data = { identity, sessionId, requiresMfa, accessToken?, refreshToken? }`,
+      },
+      {
+        type: "p",
+        text: "Session-based flows (`login`/`register`/`logout`/`me`/MFA/magic-link/passkeys) need no client credentials — the direct client is implied.",
+      },
+      { type: "h2", text: "External integration (OAuth2/OIDC)" },
+      {
+        type: "p",
+        text: "For third-party apps talking to a shared arc-id instance, configure the registered OAuth client and use the OIDC flow:",
+      },
+      {
+        type: "code",
+        text: `const client = new ArcIdClient({
+  baseUrl: "https://auth.example.com/api/v1",
+  clientId: "my-app-id",
+  clientSecret: "…", // confidential clients only
+});
+
+// 1. Authorize: arc-id's /oauth/authorize is a JSON API (bearer auth)
+//    returning an authorization code, not a browser redirect.
+const { data } = await auth.authorize({
+  redirectUri: "https://app.example.com/callback",
+  scope: "openid profile email",
+  codeChallenge: "s256-hash-of-verifier",
+});
+// data = { code, state?, consentRequired }
+
+// 2. Exchange the code for tokens (PKCE verifier).
+const tokens = await auth.exchangeCode({
+  code: data.code,
+  redirectUri: "https://app.example.com/callback",
+  codeVerifier: "the-verifier",
+});
+
+// 3. Refresh later — client_id is sent automatically.
+const next = await auth.refresh(tokens.data.refreshToken!);`,
+      },
+      { type: "h2", text: "Service-to-service" },
+      {
+        type: "p",
+        text: "`clientCredentials()` issues tokens for machine clients (grant_type=client_credentials), for background jobs and server integrations.",
+      },
+      { type: "h2", text: "Auto-refresh on 401" },
+      {
+        type: "p",
+        text: "Wire `onTokenRefresh` to retry any request once after refreshing the token, and `onAuthCleared` to handle unrecoverable sessions:",
+      },
+      {
+        type: "code",
+        text: `const client = new ArcIdClient({
+  baseUrl,
+  onTokenRefresh: async () => (await auth.refresh(refreshToken)).data?.accessToken ?? null,
+  onAuthCleared: () => redirectToLogin(),
+});`,
+      },
+      { type: "h2", text: "Modules" },
+      {
+        type: "table",
+        headers: ["Module", "Covers"],
+        rows: [
+          ["`AuthSdk`", "login, register, MFA, sessions, magic-link, password, step-up, switch-context, OAuth authorize/exchange/refresh/client-credentials"],
+          ["`IdentitySdk`", "profile, admin (list/suspend/reinstate), devices, linked accounts, delegations, onboarding, wallet DID"],
+          ["`OAuthSdk`", "clients, consent, tokens, introspection, revocation, userinfo, jwks"],
+          ["`PasskeySdk`", "WebAuthn registration + authentication options/verify"],
+          ["`TenantSdk`", "tenants, members, policies, signing keys, DID, invites"],
+          ["`CredentialsSdk`", "issue, verify, revoke, status lists, offers"],
+          ["`VcSdk`", "verifiable credential workflows"],
+          ["`WebhooksSdk`", "endpoint management + events + retry"],
+          ["`BillingSdk`", "subscription"],
+          ["`AuditSdk`", "audit logs"],
+          ["`IdpSdk`", "SSO connections (OIDC/SAML)"],
+        ],
+      },
+      {
+        type: "p",
+        text: "Every endpoint string in the SDK is audited against arc-id's `ROUTES` index (`scripts/audit-sdk-coverage.cjs` reports 62/62 covered).",
+      },
+    ],
+  },
 ];
 
