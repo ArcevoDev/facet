@@ -62,11 +62,12 @@ describe("DataTable", () => {
     expect(screen.getByText("Ada")).toBeInTheDocument();
     expect(screen.queryByText("Linus")).not.toBeInTheDocument();
     // Switch to 50 per page -> everything fits on one page.
-    await userEvent.click(screen.getByRole("button", { name: "Rows per page" }));
+    const selector = screen.getByRole("combobox", { name: "Rows per page" });
+    fireEvent.keyDown(selector, { key: "ArrowDown" });
     await userEvent.click(screen.getByRole("option", { name: "50" }));
     expect(screen.getByText("Linus")).toBeInTheDocument();
     // Selector reflects the new value.
-    expect(screen.getByRole("button", { name: "Rows per page" })).toHaveTextContent("50");
+    expect(screen.getByRole("combobox", { name: "Rows per page" })).toHaveTextContent("50");
   });
 
   it("selects and clears rows", async () => {
