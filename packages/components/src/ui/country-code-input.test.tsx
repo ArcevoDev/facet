@@ -118,6 +118,7 @@ describe("CountryCodeInput", () => {
     const trigger = screen.getByLabelText("Country code");
     trigger.focus();
     fireEvent.keyDown(trigger, { key: "ArrowDown" });
+    // COMMON list rows carry a combined label.
     expect(await screen.findByText("United States (+1)")).toBeInTheDocument();
     expect(screen.queryByText("Nigeria (+234)")).not.toBeInTheDocument();
     unmount();
@@ -126,8 +127,9 @@ describe("CountryCodeInput", () => {
     const t2 = screen.getByLabelText("Country code");
     t2.focus();
     fireEvent.keyDown(t2, { key: "ArrowDown" });
-    expect(await screen.findByText("United Kingdom (+44)")).toBeInTheDocument();
-    expect(screen.queryByText("United States (+1)")).not.toBeInTheDocument();
+    // ISO rows render the bare country name.
+    expect(await screen.findByText("United Kingdom")).toBeInTheDocument();
+    expect(screen.queryByText("United States")).not.toBeInTheDocument();
   });
 
   it("defaults to the first available country when restricted", () => {

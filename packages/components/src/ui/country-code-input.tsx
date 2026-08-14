@@ -92,7 +92,9 @@ export function filterCountryCodes(
   excludeRegions?: CountryRegion[],
 ): CountryCode[] {
   return list.filter((c) => {
-    if (regions?.length && (!c.region || !regions.includes(c.region))) return false;
+    // Region filter: keep entries whose region is in the include list.
+    // Entries WITHOUT a region (e.g. generic dial codes) are always kept.
+    if (regions?.length && c.region && !regions.includes(c.region)) return false;
     if (excludeRegions?.length && c.region && excludeRegions.includes(c.region)) return false;
     return true;
   });
