@@ -97,7 +97,9 @@ describe("DatePicker", () => {
     await userEvent.click(screen.getByLabelText("Due date"));
     const yearSelect = screen.getByLabelText("Select year");
     fireEvent.change(yearSelect, { target: { value: "2028" } });
-    expect(screen.getByText(/2028/)).toBeInTheDocument();
+    // The calendar header reflects the new month+year (the year select
+    // also shows 2028, so match the header span specifically).
+    expect(screen.getByText(/March 2028/)).toBeInTheDocument();
   });
 
   it("clamps to minYear and maxYear", async () => {

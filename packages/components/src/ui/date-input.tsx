@@ -45,6 +45,7 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     ref,
   ) => {
     const [draft, setDraft] = React.useState<string>(value ?? "");
+    const inputId = React.useId();
 
     // Sync external value changes into the draft.
     React.useEffect(() => {
@@ -74,10 +75,13 @@ export const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
     return (
       <div className={cn("w-full", className)}>
         {label && (
-          <label className="mb-1.5 block text-sm font-medium text-foreground">{label}</label>
+          <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-foreground">
+            {label}
+          </label>
         )}
         <input
           ref={ref}
+          id={inputId}
           type={native ? "date" : "text"}
           inputMode={native ? undefined : "numeric"}
           placeholder={native ? undefined : "YYYY-MM-DD"}
