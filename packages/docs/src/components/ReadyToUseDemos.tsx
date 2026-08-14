@@ -109,7 +109,7 @@ export function QRCodeDemo() {
 }
 
 export function MarqueeDemo() {
-  const items = ["facet", "arc-id", "auth", "design tokens", "React 19", "Radix", "TypeScript"];
+  const items = ["facet", "auth", "design tokens", "React 19", "Radix", "TypeScript"];
   return (
     <div className="not-prose">
       <Marquee

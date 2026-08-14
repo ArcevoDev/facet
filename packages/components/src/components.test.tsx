@@ -385,6 +385,46 @@ describe("NotificationDrawer", () => {
 
     expect(onMarkAllRead).toHaveBeenCalledTimes(1);
   });
+
+  it("reveals a selection checkbox on hover and bulk-acts via onMarkReadMany", async () => {
+    const onMarkReadMany = vi.fn();
+    render(<NotificationDrawer notifications={notifications} onMarkReadMany={onMarkReadMany} />);
+
+    await userEvent.click(screen.getByRole("button"));
+    const checkbox = await screen.findByRole("checkbox", { name: /select new sign-in/i });
+    await userEvent.click(checkbox);
+
+    // Bulk bar appears with the count.
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: /mark read/i }));
+    expect(onMarkReadMany).toHaveBeenCalledWith(["1"]);
+  });
+
+  it("falls back to per-item onDelete when no bulk callback is wired", async () => {
+    const onDelete = vi.fn();
+    render(<NotificationDrawer notifications={notifications} onDelete={onDelete} />);
+
+    await userEvent.click(screen.getByRole("button"));
+    const checkbox = await screen.findByRole("checkbox", { name: /select new sign-in/i });
+    await userEvent.click(checkbox);
+
+    await userEvent.click(screen.getByRole("button", { name: /^delete$/i }));
+    expect(onDelete).toHaveBeenCalledWith(notifications[0]);
+  });
+
+  it("clears selection when the drawer closes", async () => {
+    render(<NotificationDrawer notifications={notifications} onMarkReadMany={vi.fn()} />);
+
+    await userEvent.click(screen.getByRole("button"));
+    const checkbox = await screen.findByRole("checkbox", { name: /select new sign-in/i });
+    await userEvent.click(checkbox);
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+
+    // Close via the X (SheetClose button).
+    await userEvent.click(screen.getByRole("button", { name: /close/i }));
+    await userEvent.click(screen.getByRole("button")); // reopen
+    expect(screen.queryByText("1 selected")).not.toBeInTheDocument();
+  });
 });
 
 describe("Alert", () => {

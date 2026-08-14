@@ -660,7 +660,7 @@ function Branded() {
 function Example() {
   return (
     <Marquee
-      items={["facet", "arc-id", "auth", "tokens", "React 19", "Radix"]}
+      items={["facet", "auth", "tokens", "React 19", "Radix"]}
       duration={18}
     />
   );

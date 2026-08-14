@@ -44,14 +44,23 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
       onVisibleChange?.(next);
     };
 
+    // Associate the label with the input; fall back to an accessible name
+    // so the field is always reachable by role (a11y).
+    const inputId = React.useId();
+    const ariaName = label ? undefined : "Password";
+
     return (
       <div className={cn("w-full", className)}>
         {label && (
-          <label className="mb-1.5 block text-sm font-medium text-foreground">{label}</label>
+          <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-foreground">
+            {label}
+          </label>
         )}
         <div className="relative">
           <input
             ref={ref}
+            id={inputId}
+            aria-label={ariaName}
             type={visible ? "text" : "password"}
             className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pr-9 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
             {...props}

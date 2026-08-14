@@ -32,10 +32,14 @@ export interface NotificationDrawerProps {
   onMarkAllRead?: () => void;
   /** Called when a single notification is marked read */
   onMarkRead?: (notification: Notification) => void;
+  /** Called with the ids of a bulk "mark read" (when several are selected) */
+  onMarkReadMany?: (ids: string[]) => void;
   /** Called when a notification is dismissed (remove from list) */
   onDismiss?: (notification: Notification) => void;
   /** Called when a notification is deleted (hard remove, distinct from dismiss) */
   onDelete?: (notification: Notification) => void;
+  /** Called with the ids of a bulk delete (when several are selected) */
+  onDeleteMany?: (ids: string[]) => void;
   /** Show the toolbar (search + filter + actions). Default: true when any
    *  of onSearchChange/onFilterChange/onMarkAllRead/onDelete is provided. */
   showToolbar?: boolean;
@@ -64,12 +68,12 @@ export interface NotificationDrawerProps {
 
 /* ── Type styling ──────────────────────────────────────────── */
 
-const typeStyles: Record<NotificationType, { dot: string; icon: string }> = {
-  default: { dot: "bg-muted-foreground", icon: "text-muted-foreground" },
-  success: { dot: "bg-success", icon: "text-success" },
-  warning: { dot: "bg-warning", icon: "text-warning" },
-  error: { dot: "bg-destructive", icon: "text-destructive" },
-  info: { dot: "bg-primary", icon: "text-primary" },
+const typeStyles: Record<NotificationType, string> = {
+  default: "text-muted-foreground",
+  success: "text-success",
+  warning: "text-warning",
+  error: "text-destructive",
+  info: "text-primary",
 };
 
 /* ── Component ─────────────────────────────────────────────── */
@@ -80,8 +84,10 @@ export function NotificationDrawer({
   onNotificationClick,
   onMarkAllRead,
   onMarkRead,
+  onMarkReadMany,
   onDismiss,
   onDelete,
+  onDeleteMany,
   showToolbar,
   search: searchProp,
   onSearchChange,
@@ -97,6 +103,7 @@ export function NotificationDrawer({
 }: NotificationDrawerProps) {
   const [internalSearch, setInternalSearch] = React.useState("");
   const [internalFilter, setInternalFilter] = React.useState<"all" | "unread">("all");
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
   const search = searchProp ?? internalSearch;
   const setSearch = onSearchChange ?? setInternalSearch;
   const filter = filterProp ?? internalFilter;
@@ -108,11 +115,48 @@ export function NotificationDrawer({
   // handler is wired (so a bare drawer stays clean).
   const toolbarEnabled =
     showToolbar ??
-    Boolean(onSearchChange || onFilterChange || onMarkAllRead || onDelete);
+    Boolean(
+      onSearchChange ||
+        onFilterChange ||
+        onMarkAllRead ||
+        onMarkReadMany ||
+        onDelete ||
+        onDeleteMany,
+    );
 
   const handleClick = (n: Notification) => {
     if (n.read !== true) onMarkRead?.(n);
     onNotificationClick?.(n);
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const clearSelection = () => setSelectedIds(new Set());
+
+  // Bulk helpers: prefer the dedicated bulk callbacks, else fan out the
+  // single-item ones so a consumer wiring just onMarkRead/onDelete gets
+  // bulk actions for free.
+  const bulkMarkRead = () => {
+    const ids = [...selectedIds];
+    if (ids.length === 0) return;
+    if (onMarkReadMany) onMarkReadMany(ids);
+    else notifications.filter((n) => ids.includes(n.id)).forEach((n) => onMarkRead?.(n));
+    clearSelection();
+  };
+
+  const bulkDelete = () => {
+    const ids = [...selectedIds];
+    if (ids.length === 0) return;
+    if (onDeleteMany) onDeleteMany(ids);
+    else notifications.filter((n) => ids.includes(n.id)).forEach((n) => onDelete?.(n));
+    clearSelection();
   };
 
   // Filter by read state + search across title/description.
@@ -125,9 +169,10 @@ export function NotificationDrawer({
     );
   });
   const hasUnread = notifications.some((n) => n.read !== true);
+  const selecting = selectedIds.size > 0;
 
   return (
-    <Sheet>
+    <Sheet onOpenChange={(open) => !open && clearSelection()}>
       <SheetTrigger asChild>
         {trigger ?? (
           <Button
@@ -150,11 +195,6 @@ export function NotificationDrawer({
         {header ?? (
           <SheetHeader className="flex flex-row items-center justify-between gap-4 border-b px-4 py-3">
             <SheetTitle>Notifications</SheetTitle>
-            {count > 0 && onMarkAllRead && (
-              <button onClick={onMarkAllRead} className="text-xs text-primary hover:underline">
-                Mark all as read
-              </button>
-            )}
           </SheetHeader>
         )}
 
@@ -185,36 +225,71 @@ export function NotificationDrawer({
                 className="h-8 w-full rounded-md border border-input bg-transparent pl-8 pr-2.5 text-sm outline-none focus:ring-1 focus:ring-ring"
               />
             </div>
-            {/* Filter + actions */}
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1 rounded-md border border-border p-0.5">
-                {(["all", "unread"] as const).map((f) => (
+
+            {selecting ? (
+              /* Bulk action bar: replaces the filter row while items are selected */
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-xs font-medium text-foreground">
+                  {selectedIds.size} selected
+                </p>
+                <div className="flex items-center gap-1">
                   <button
-                    key={f}
                     type="button"
-                    onClick={() => setFilter(f)}
-                    aria-pressed={filter === f}
-                    className={cn(
-                      "rounded px-2 py-0.5 text-xs font-medium capitalize transition-colors",
-                      filter === f
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                    )}
+                    onClick={bulkMarkRead}
+                    className="rounded-md px-2 py-1 text-xs font-medium text-primary hover:bg-accent hover:text-accent-foreground"
                   >
-                    {f}
+                    Mark read
                   </button>
-                ))}
+                  {(onDelete || onDeleteMany) && (
+                    <button
+                      type="button"
+                      onClick={bulkDelete}
+                      className="rounded-md px-2 py-1 text-xs font-medium text-destructive hover:bg-destructive/10"
+                    >
+                      Delete
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={clearSelection}
+                    className="rounded-md px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-              {onMarkAllRead && hasUnread && (
-                <button
-                  type="button"
-                  onClick={onMarkAllRead}
-                  className="text-xs text-primary hover:underline"
-                >
-                  Mark all read
-                </button>
-              )}
-            </div>
+            ) : (
+              /* Filter + single mark-all */
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1 rounded-md border border-border p-0.5">
+                  {(["all", "unread"] as const).map((f) => (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => setFilter(f)}
+                      aria-pressed={filter === f}
+                      className={cn(
+                        "rounded px-2 py-0.5 text-xs font-medium capitalize transition-colors",
+                        filter === f
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                      )}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+                {onMarkAllRead && hasUnread && (
+                  <button
+                    type="button"
+                    onClick={onMarkAllRead}
+                    className="text-xs font-medium text-primary hover:underline"
+                  >
+                    Mark all read
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -233,29 +308,40 @@ export function NotificationDrawer({
           <ScrollArea className="flex-1">
             <div className="flex flex-col gap-1 p-2">
               {visible.map((n) => {
-                const style = typeStyles[n.type ?? "default"];
+                const iconColor = typeStyles[n.type ?? "default"];
+                const isSelected = selectedIds.has(n.id);
                 return (
                   <div
                     key={n.id}
                     className={cn(
-                      "group relative flex cursor-pointer gap-3 rounded-lg py-2.5 pl-4 pr-2 text-left text-sm transition-colors hover:bg-accent",
+                      "group relative flex cursor-pointer gap-3 rounded-lg py-2.5 pl-2 pr-2 text-left text-sm transition-colors hover:bg-accent",
                       n.read === false && "bg-accent/50",
+                      isSelected && "bg-accent",
                     )}
                     onClick={() => handleClick(n)}
                   >
-                    {/* Unread indicator: fixed gutter, never overlaps text */}
-                    {n.read === false && (
-                      <span
-                        className={cn(
-                          "absolute left-1.5 top-1/2 size-1.5 -translate-y-1/2 rounded-full",
-                          style.dot,
-                        )}
+                    {/* Selection checkbox: appears on hover (LinkedIn-style),
+                        persistent while the drawer is open. Always clickable
+                        (touch devices + tests), subtly visible by default. */}
+                    <span
+                      className={cn(
+                        "flex shrink-0 items-center pt-px transition-opacity",
+                        isSelected ? "opacity-100" : "opacity-50 group-hover:opacity-100",
+                      )}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleSelect(n.id)}
+                        aria-label={`Select ${n.title}`}
+                        className="size-4 accent-[var(--primary)]"
                       />
-                    )}
+                    </span>
 
                     {/* Icon slot (aligned with the title line) */}
                     {n.icon ? (
-                      <span className={cn("mt-px size-4 shrink-0", style.icon)}>{n.icon}</span>
+                      <span className={cn("mt-px size-4 shrink-0", iconColor)}>{n.icon}</span>
                     ) : null}
 
                     {/* Content */}
@@ -277,20 +363,8 @@ export function NotificationDrawer({
                       )}
                     </div>
 
-                    {/* Actions: mark read, delete, dismiss */}
+                    {/* Per-row actions (delete/dismiss) */}
                     <div className="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                      {n.read === false && onMarkRead && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onMarkRead(n);
-                          }}
-                          aria-label={`Mark ${n.title} as read`}
-                          className="rounded-sm p-1 text-muted-foreground/50 hover:bg-muted hover:text-foreground"
-                        >
-                          <CheckIcon />
-                        </button>
-                      )}
                       {onDelete && (
                         <button
                           onClick={(e) => {
@@ -370,23 +444,6 @@ function XIcon() {
     >
       <path d="M18 6 6 18" />
       <path d="m6 6 12 12" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg
-      width="14"
-      height="14"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M20 6 9 17l-5-5" />
     </svg>
   );
 }

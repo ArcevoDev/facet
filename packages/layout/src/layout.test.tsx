@@ -235,16 +235,18 @@ describe("Sidebar collapsed (rail mode)", () => {
 
   it("hides brand name and section titles when collapsed", () => {
     renderCollapsedSidebar();
-    expect(screen.queryByText("ArcID")).toBeNull();
+    expect(screen.queryByText("facet")).toBeNull();
     expect(screen.queryByText("Overview")).toBeNull();
     expect(screen.queryByText("Security")).toBeNull();
   });
 
-  it("keeps links reachable with aria-labels when collapsed", () => {
+  it("collapsed rail shows one expandable button per section", () => {
     renderCollapsedSidebar();
-    const dashboard = screen.getByRole("link", { name: /dashboard/i });
-    expect(dashboard).toHaveAttribute("href", "/dashboard");
-    expect(dashboard).toHaveAttribute("aria-label", "Dashboard");
+    // Rail mode: each section collapses to a single icon button that
+    // expands the sidebar (YouTube-style), not a list of links.
+    const overview = screen.getByRole("button", { name: /overview/i });
+    expect(overview).toHaveAttribute("aria-label", "Overview");
+    expect(screen.queryByRole("link", { name: /dashboard/i })).toBeNull();
   });
 
   it("collapsed links are icon-only (label text not rendered)", () => {
@@ -285,7 +287,8 @@ describe("AuthLayout", () => {
       </AuthLayout>,
     );
     expect(screen.getByText("Sign in form")).toBeInTheDocument();
-    expect(screen.getByText(fintechLayoutPreset.brand.name)).toBeInTheDocument();
+    // Brand name appears in the desktop panel and the mobile header.
+    expect(screen.getAllByText(fintechLayoutPreset.brand.name).length).toBeGreaterThan(0);
   });
 
   it("replaces the left panel with a custom brandPanel", () => {

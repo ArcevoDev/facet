@@ -47,7 +47,7 @@ describe("QRCode", () => {
         logoPosition="top-right"
       />,
     );
-    const overlay = container.querySelector('[aria-hidden="true"]')! as HTMLElement;
+    const overlay = container.querySelector("[data-logo-overlay]")! as HTMLElement;
     const style = overlay.style;
     // Top-right: anchored to the top/right with no translate.
     expect(style.top).toBeTruthy();
@@ -64,7 +64,7 @@ describe("QRCode", () => {
         logoPosition="center"
       />,
     );
-    const overlay = container.querySelector('[aria-hidden="true"]')! as HTMLElement;
+    const overlay = container.querySelector("[data-logo-overlay]")! as HTMLElement;
     expect(overlay.style.top).toBe("50%");
     expect(overlay.style.left).toBe("50%");
     expect(overlay.style.transform).toBe("translate(-50%, -50%)");

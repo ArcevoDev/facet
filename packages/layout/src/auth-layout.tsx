@@ -112,23 +112,26 @@ export function AuthLayout({ config, children, brandPanel, brandPanelClassName }
 
       {/* Right panel: centered card */}
       <div className="flex flex-1 flex-col items-center justify-center p-4 lg:p-8">
-        {/* Mobile logo (hidden on lg+) */}
-        <div className="mb-8 flex flex-col items-center gap-2 lg:hidden">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="text-primary">
-            <path
-              d="M12 2L4 6V12C4 17.52 7.58 22.48 12 24C16.42 22.48 20 17.52 20 12V6L12 2Z"
-              fill="currentColor"
-              opacity="0.8"
-            />
-            <path
-              d="M12 6L8 8V12C8 14.5 9.67 16.8 12 17.5C14.33 16.8 16 14.5 16 12V8L12 6Z"
-              fill="currentColor"
-              opacity="0.4"
-            />
-          </svg>
-          <h1 className="text-xl font-bold text-foreground">{brand.name}</h1>
-          {brand.tagline && <p className="text-sm text-muted-foreground">{brand.tagline}</p>}
-        </div>
+        {/* Mobile logo (hidden on lg+). Suppressed when a custom brandPanel
+            replaces the left panel — the consumer owns the brand story then. */}
+        {!brandPanel && (
+          <div className="mb-8 flex flex-col items-center gap-2 lg:hidden">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="text-primary">
+              <path
+                d="M12 2L4 6V12C4 17.52 7.58 22.48 12 24C16.42 22.48 20 17.52 20 12V6L12 2Z"
+                fill="currentColor"
+                opacity="0.8"
+              />
+              <path
+                d="M12 6L8 8V12C8 14.5 9.67 16.8 12 17.5C14.33 16.8 16 14.5 16 12V8L12 6Z"
+                fill="currentColor"
+                opacity="0.4"
+              />
+            </svg>
+            <h1 className="text-xl font-bold text-foreground">{brand.name}</h1>
+            {brand.tagline && <p className="text-sm text-muted-foreground">{brand.tagline}</p>}
+          </div>
+        )}
 
         <div className="w-full max-w-md rounded-xl border bg-card p-6 shadow-lg">{children}</div>
       </div>

@@ -25,6 +25,8 @@ export interface QRCodeProps {
   label?: string;
   /** Optional logo image URL rendered over the QR code. */
   logo?: string;
+  /** Accessible name for the logo image. Default: the logo URL. */
+  logoAlt?: string;
   /** Logo size in pixels. Default: 40 */
   logoSize?: number;
   /** Logo position. Default: "center" */
@@ -71,6 +73,7 @@ const QRCode = React.forwardRef<HTMLDivElement, QRCodeProps>(
       className,
       label = "QR code",
       logo,
+      logoAlt,
       logoSize = 40,
       logoPosition = "center",
     },
@@ -98,7 +101,7 @@ const QRCode = React.forwardRef<HTMLDivElement, QRCodeProps>(
           />
           {logo && (
             <div
-              aria-hidden="true"
+              data-logo-overlay
               style={{
                 position: "absolute",
                 ...positionStyle(logoPosition, insetPct),
@@ -109,12 +112,13 @@ const QRCode = React.forwardRef<HTMLDivElement, QRCodeProps>(
               {/* Backdrop: pads the logo so the modules underneath are cleared,
                   keeping the code scannable. */}
               <div
+                aria-hidden="true"
                 className="flex h-full w-full items-center justify-center rounded-full bg-background"
                 style={{ boxShadow: "0 0 0 3px var(--background, #fff)" }}
               >
                 <img
                   src={logo}
-                  alt=""
+                  alt={logoAlt ?? logo}
                   width={logoSize}
                   height={logoSize}
                   style={{ width: logoSize, height: logoSize, objectFit: "contain" }}
