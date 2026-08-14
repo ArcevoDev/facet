@@ -143,6 +143,120 @@ describe("AuthSdk", () => {
     expect(res.data?.expiresIn).toBe(900);
   });
 
+  it("refresh sends client_id + client_secret when the client is configured", async () => {
+    mockJson({
+      access_token: "new-at",
+      refresh_token: "new-rt",
+      expires_in: 900,
+      token_type: "Bearer",
+    });
+    const configured = new ArcIdClient({
+      baseUrl: "https://auth.arcevo.dev/api/v1",
+      clientId: "my-app",
+      clientSecret: "s3cret",
+    });
+    const authSdk = new AuthSdk(configured);
+
+    await authSdk.refresh("old-rt");
+
+    const [, init] = lastCall();
+    expect(JSON.parse(init.body as string)).toEqual({
+      grant_type: "refresh_token",
+      refresh_token: "old-rt",
+      client_id: "my-app",
+      client_secret: "s3cret",
+    });
+  });
+
+  it("exchangeCode posts authorization_code grant with PKCE + client_id", async () => {
+    mockJson({
+      access_token: "at",
+      refresh_token: "rt",
+      expires_in: 900,
+      token_type: "Bearer",
+    });
+    const configured = new ArcIdClient({
+      baseUrl: "https://auth.arcevo.dev/api/v1",
+      clientId: "my-app",
+    });
+    const authSdk = new AuthSdk(configured);
+
+    const res = await authSdk.exchangeCode({
+      code: "auth-code",
+      redirectUri: "https://app.dev/callback",
+      codeVerifier: "pkce-verifier",
+    });
+
+    const [url, init] = lastCall();
+    expect(url).toContain("/oauth/token");
+    expect(JSON.parse(init.body as string)).toEqual({
+      grant_type: "authorization_code",
+      code: "auth-code",
+      redirect_uri: "https://app.dev/callback",
+      client_id: "my-app",
+      code_verifier: "pkce-verifier",
+    });
+    expect(res.data?.accessToken).toBe("at");
+  });
+
+  it("clientCredentials posts client_credentials grant", async () => {
+    mockJson({
+      access_token: "svc-at",
+      expires_in: 3600,
+      token_type: "Bearer",
+    });
+    const configured = new ArcIdClient({
+      baseUrl: "https://auth.arcevo.dev/api/v1",
+      clientId: "svc-client",
+      clientSecret: "svc-secret",
+    });
+    const authSdk = new AuthSdk(configured);
+
+    await authSdk.clientCredentials({ scope: "openid profile" });
+
+    const [, init] = lastCall();
+    expect(JSON.parse(init.body as string)).toEqual({
+      grant_type: "client_credentials",
+      client_id: "svc-client",
+      client_secret: "svc-secret",
+      scope: "openid profile",
+    });
+  });
+
+  it("authorizeUrl builds the OIDC authorize redirect with PKCE + prompt", () => {
+    const url = auth.authorizeUrl({
+      clientId: "my-app",
+      redirectUri: "https://app.dev/callback",
+      scope: "openid profile email",
+      state: "xyz",
+      codeChallenge: "challenge",
+      prompt: "consent",
+    });
+
+    expect(url).toBe(
+      "https://auth.arcevo.dev/api/v1/oauth/authorize?client_id=my-app&response_type=code&redirect_uri=https%3A%2F%2Fapp.dev%2Fcallback&scope=openid+profile+email&state=xyz&code_challenge=challenge&code_challenge_method=S256&prompt=consent",
+    );
+  });
+
+  it("switchContext posts tenantId to /auth/switch-context", async () => {
+    mockJson({
+      success: true,
+      data: {
+        accessToken: "scoped-at",
+        refreshToken: "scoped-rt",
+        idToken: null,
+        expiresIn: 900,
+      },
+    });
+
+    const res = await auth.switchContext({ tenantId: "clx123" });
+
+    const [url, init] = lastCall();
+    expect(url).toContain("/auth/switch-context");
+    expect(JSON.parse(init.body as string)).toEqual({ tenantId: "clx123" });
+    expect(res.data?.accessToken).toBe("scoped-at");
+  });
+
   it("revokeSession DELETEs the session endpoint", async () => {
     mockJson({ success: true, data: {} });
 

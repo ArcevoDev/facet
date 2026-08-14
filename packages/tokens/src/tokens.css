@@ -100,6 +100,20 @@
 
 /* ── Light theme ──────────────────────────────────────────────── */
 [data-theme="light"] {
+  /* Alpha palette (theme-independent; declared so a light-only subtree
+   * is self-contained). */
+  --alpha-deep-space: #0a1a2f;
+  --alpha-electric-cyan: #4ad3f5;
+  --alpha-mist-gray: #e0e5e8;
+  --alpha-logic-gold: #d4af37;
+  --alpha-base-white: #ffffff;
+
+  /* Typography */
+  --font-heading: "Montserrat", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-technical: "Rajdhani", sans-serif;
+
   --background: oklch(0.97 0.01 240);
   --foreground: oklch(0.15 0.02 240);
 
@@ -124,9 +138,25 @@
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.99 0 0);
 
+  /* Success: green (light-optimized) */
+  --success: oklch(0.52 0.15 150);
+  --success-foreground: oklch(0.99 0 0);
+
+  /* Warning: amber (light-optimized) */
+  --warning: oklch(0.65 0.17 80);
+  --warning-foreground: oklch(0.2 0.02 240);
+
   --border: oklch(0.85 0.02 240);
   --input: oklch(0.85 0.02 240);
   --ring: oklch(0.52 0.23 273 / 50%);
+  --radius: 0.5rem;
+
+  /* Charts (light-optimized: darker, higher-contrast hues) */
+  --chart-1: oklch(0.52 0.23 273);
+  --chart-2: oklch(0.55 0.15 162);
+  --chart-3: oklch(0.4 0.08 227);
+  --chart-4: oklch(0.72 0.19 84);
+  --chart-5: oklch(0.68 0.19 70);
 
   --sidebar: oklch(0.95 0.01 240);
   --sidebar-foreground: oklch(0.15 0.02 240);
@@ -135,6 +165,21 @@
   --sidebar-accent: oklch(0.9 0.02 240);
   --sidebar-accent-foreground: oklch(0.15 0.02 240);
   --sidebar-border: oklch(0.85 0.02 240);
+  --sidebar-ring: oklch(0.52 0.23 273 / 50%);
+
+  /* Radius scale (identical values; declared here so the light theme is
+   * self-contained for consumers that set [data-theme="light"] on a
+   * subtree without the :root block). */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+
+  /* Sub-brand accent override (set via JS at runtime) */
+  --sub-brand-accent: var(--primary);
+  --sub-brand-accent-foreground: var(--primary-foreground);
 
   .glow-indigo {
     box-shadow:

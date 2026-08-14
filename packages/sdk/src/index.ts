@@ -3,12 +3,35 @@
  *
  * Pure fetch. No framework dependencies.
  *
- * Usage:
+ * First-party app (own arc-id backend — session-based auth):
  *   import { ArcIdClient, AuthSdk } from "@arcevo/facet-sdk";
  *
  *   const client = new ArcIdClient({ baseUrl: "https://auth.arcevo.dev/api/v1" });
  *   const auth = new AuthSdk(client);
  *   const { data, error } = await auth.login("email", "password");
+ *
+ * Third-party / external integration (shared arc-id instance — OAuth2/OIDC):
+ *   const client = new ArcIdClient({
+ *     baseUrl: "https://auth.arcevo.dev/api/v1",
+ *     clientId: "my-app-id",          // registered OAuth client
+ *     clientSecret: "…",              // only for confidential clients
+ *   });
+ *   const auth = new AuthSdk(client);
+ *
+ *   // 1. Send the user to the authorize URL (PKCE recommended).
+ *   const url = auth.authorizeUrl({
+ *     redirectUri: "https://app.dev/callback",
+ *     scope: "openid profile email",
+ *     codeChallenge: "…",             // S256 hash of your verifier
+ *   });
+ *   // 2. Exchange the returned ?code= for tokens.
+ *   const { data } = await auth.exchangeCode({
+ *     code: "…",
+ *     redirectUri: "https://app.dev/callback",
+ *     codeVerifier: "…",
+ *   });
+ *   // 3. Refresh later (client_id is sent automatically).
+ *   const next = await auth.refresh(data.refreshToken!);
  */
 
 export { ArcIdClient } from "./client.js";
@@ -30,6 +53,10 @@ export type {
   UserProfile,
   SwitchContextResult,
   RefreshResult,
+  ExchangeCodeParams,
+  ClientCredentialsParams,
+  AuthorizeUrlParams,
+  SwitchContextParams,
 } from "./auth.sdk.js";
 
 export type {

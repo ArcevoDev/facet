@@ -40,6 +40,16 @@ export interface RequestOptions {
 export interface ArcIdClientConfig {
   baseUrl: string;
   apiKey?: string;
+  /**
+   * OAuth client id for this application. Required for third-party /
+   * external integrations that talk to a shared arc-id instance via
+   * `/oauth/token` (authorization_code or refresh_token grants). For a
+   * first-party app wired to its own arc-id backend this can be omitted —
+   * the backend defaults to its direct client.
+   */
+  clientId?: string;
+  /** OAuth client secret for confidential (non-public) clients. */
+  clientSecret?: string;
   fetchInit?: RequestInit;
   /**
    * Optional 401 auto-refresh hook.
@@ -81,6 +91,30 @@ export class ArcIdClient {
   /** Current bearer token, if any. */
   getAccessToken(): string | null {
     return this.accessToken;
+  }
+
+  /** Configured base URL (trailing slash stripped). */
+  getBaseUrl(): string {
+    return this.config.baseUrl;
+  }
+
+  /** Configured OAuth client id (for /oauth/token grants). */
+  getClientId(): string | undefined {
+    return this.config.clientId;
+  }
+
+  /** Configured OAuth client secret (confidential clients). */
+  getClientSecret(): string | undefined {
+    return this.config.clientSecret;
+  }
+
+  /**
+   * Set the OAuth client credentials at runtime. Useful for dynamically
+   * configured integrations where the client is resolved after construction.
+   */
+  setClientCredentials(clientId: string, clientSecret?: string): void {
+    this.config.clientId = clientId;
+    this.config.clientSecret = clientSecret;
   }
 
   private async request<T>(

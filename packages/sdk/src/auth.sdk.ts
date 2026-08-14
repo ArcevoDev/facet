@@ -44,7 +44,16 @@ export type StepUpResult = {
 
 export type UserProfile = User;
 
-export type SwitchContextResult = TokenBundle;
+/**
+ * Result of POST /auth/switch-context: a new token bundle scoped to the
+ * selected tenant (verified against arc-id's switch-context.route.ts).
+ */
+export type SwitchContextResult = {
+  accessToken: string;
+  refreshToken: string;
+  idToken: string | null;
+  expiresIn: number;
+};
 
 /** Normalized refresh result from the bare RFC 6749 token endpoint. */
 export type RefreshResult = {
@@ -52,6 +61,40 @@ export type RefreshResult = {
   refreshToken?: string;
   idToken?: string | null;
   expiresIn?: number;
+};
+
+/** Params for POST /oauth/token with grant_type=authorization_code. */
+export type ExchangeCodeParams = {
+  code: string;
+  redirectUri: string;
+  clientId?: string;
+  clientSecret?: string;
+  codeVerifier?: string;
+};
+
+/** Params for POST /oauth/token with grant_type=client_credentials. */
+export type ClientCredentialsParams = {
+  clientId?: string;
+  clientSecret?: string;
+  scope?: string;
+};
+
+/** Params for building the OAuth2 / OIDC authorize redirect URL. */
+export type AuthorizeUrlParams = {
+  clientId?: string;
+  redirectUri: string;
+  scope?: string;
+  state?: string;
+  nonce?: string;
+  codeChallenge?: string;
+  codeChallengeMethod?: "S256" | "plain";
+  prompt?: "none" | "login" | "consent" | "select_account";
+  maxAge?: number;
+};
+
+/** Params for POST /auth/switch-context. */
+export type SwitchContextParams = {
+  tenantId: string;
 };
 
 /* ── SDK Module ────────────────────────────────────────────── */
@@ -174,13 +217,19 @@ export class AuthSdk {
   /**
    * POST /oauth/token (bare RFC 6749 response).
    * Normalizes snake_case access_token/refresh_token to camelCase.
+   *
+   * Sends `client_id` when the client was configured with one (required by
+   * arc-id for all third-party clients per TokenExchangeSchema).
    */
   async refresh(refreshToken: string): Promise<ApiResponse<RefreshResult>> {
+    const clientId = this.client.getClientId();
     const res = await this.client.post<OAuthTokenResponse>(
       "/oauth/token",
       {
         grant_type: "refresh_token",
         refresh_token: refreshToken,
+        client_id: clientId,
+        client_secret: this.client.getClientSecret(),
       },
       { bare: true },
     );
@@ -196,6 +245,102 @@ export class AuthSdk {
       };
     }
     return res as unknown as ApiResponse<RefreshResult>;
+  }
+
+  /**
+   * POST /oauth/token with grant_type=authorization_code (OAuth2 / OIDC).
+   * Exchanges an authorization code for tokens. For PKCE clients pass the
+   * same `codeVerifier` used to build the authorize URL.
+   */
+  async exchangeCode(params: ExchangeCodeParams): Promise<ApiResponse<RefreshResult>> {
+    const clientId = params.clientId ?? this.client.getClientId();
+    const res = await this.client.post<OAuthTokenResponse>(
+      "/oauth/token",
+      {
+        grant_type: "authorization_code",
+        code: params.code,
+        redirect_uri: params.redirectUri,
+        client_id: clientId,
+        client_secret: params.clientSecret ?? this.client.getClientSecret(),
+        code_verifier: params.codeVerifier,
+      },
+      { bare: true },
+    );
+    if (res.data) {
+      return {
+        data: {
+          accessToken: res.data.access_token,
+          refreshToken: res.data.refresh_token,
+          idToken: res.data.id_token ?? null,
+          expiresIn: res.data.expires_in,
+        },
+        error: null,
+      };
+    }
+    return res as unknown as ApiResponse<RefreshResult>;
+  }
+
+  /**
+   * POST /oauth/token with grant_type=client_credentials.
+   * Service-to-service tokens. Requires client_id (+ secret for
+   * confidential clients).
+   */
+  async clientCredentials(params?: ClientCredentialsParams): Promise<ApiResponse<RefreshResult>> {
+    const clientId = params?.clientId ?? this.client.getClientId();
+    const res = await this.client.post<OAuthTokenResponse>(
+      "/oauth/token",
+      {
+        grant_type: "client_credentials",
+        client_id: clientId,
+        client_secret: params?.clientSecret ?? this.client.getClientSecret(),
+        scope: params?.scope,
+      },
+      { bare: true },
+    );
+    if (res.data) {
+      return {
+        data: {
+          accessToken: res.data.access_token,
+          refreshToken: res.data.refresh_token,
+          idToken: res.data.id_token ?? null,
+          expiresIn: res.data.expires_in,
+        },
+        error: null,
+      };
+    }
+    return res as unknown as ApiResponse<RefreshResult>;
+  }
+
+  /**
+   * Build the OAuth2 / OIDC authorize redirect URL (GET /oauth/authorize).
+   * For PKCE, generate a code_verifier/code_challenge (S256) yourself and
+   * pass `codeChallenge`; exchange the returned code with `exchangeCode`.
+   */
+  authorizeUrl(params: AuthorizeUrlParams): string {
+    const qs = new URLSearchParams({
+      client_id: params.clientId ?? this.client.getClientId() ?? "",
+      response_type: "code",
+      redirect_uri: params.redirectUri,
+    });
+    if (params.scope) qs.set("scope", params.scope);
+    if (params.state) qs.set("state", params.state);
+    if (params.nonce) qs.set("nonce", params.nonce);
+    if (params.codeChallenge) {
+      qs.set("code_challenge", params.codeChallenge);
+      qs.set("code_challenge_method", params.codeChallengeMethod ?? "S256");
+    }
+    if (params.prompt) qs.set("prompt", params.prompt);
+    if (params.maxAge != null) qs.set("max_age", String(params.maxAge));
+    const base = this.client.getBaseUrl();
+    return `${base}/oauth/authorize?${qs.toString()}`;
+  }
+
+  /**
+   * POST /auth/switch-context: swap the active tenant context and receive a
+   * new token bundle scoped to that tenant (tid claim).
+   */
+  switchContext(params: SwitchContextParams): Promise<ApiResponse<SwitchContextResult>> {
+    return this.client.post<SwitchContextResult>("/auth/switch-context", params);
   }
 
   setUsername(name: string): Promise<ApiResponse<void>> {
