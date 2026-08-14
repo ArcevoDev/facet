@@ -7,7 +7,8 @@
  * applied (resolved) theme.
  */
 
-import { Icon } from "../icon/index.js";
+import * as React from "react";
+import { LightIcon } from "../icon/light-icon.js";
 import { cn } from "../utils.js";
 import { useTheme } from "./theme-provider.js";
 
@@ -19,6 +20,10 @@ export interface ThemeToggleProps {
 
 export function ThemeToggle({ className, label = "Toggle theme" }: ThemeToggleProps) {
   const { setTheme, resolvedTheme } = useTheme();
+  // SSR-safe: the resolved theme is unknown until the client mounts, so
+  // render the icon only after mount to avoid a server/client mismatch.
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
 
   const isDark = resolvedTheme === "dark";
   const TriggerIcon = isDark ? "moon" : "sun";
@@ -34,7 +39,7 @@ export function ThemeToggle({ className, label = "Toggle theme" }: ThemeTogglePr
         className,
       )}
     >
-      <Icon name={TriggerIcon} className="size-4" />
+      {mounted ? <LightIcon name={TriggerIcon} className="size-4" /> : <span className="size-4" />}
     </button>
   );
 }

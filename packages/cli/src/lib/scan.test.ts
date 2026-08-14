@@ -105,6 +105,9 @@ describe("draftDocs", () => {
         name: "api",
         dependencies: { "@fastify/swagger": "^9" },
       });
+      // The fixture uses .ts source files, so a tsconfig makes the language
+      // detection agree and the draft pages/config are emitted as .ts.
+      fs.writeFileSync(path.join(dir, "tsconfig.json"), JSON.stringify({ compilerOptions: {} }));
       fs.mkdirSync(path.join(dir, "src/api/plugins"), { recursive: true });
       fs.mkdirSync(path.join(dir, "src/api/routes"), { recursive: true });
       fs.writeFileSync(

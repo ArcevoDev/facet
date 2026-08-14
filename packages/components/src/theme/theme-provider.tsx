@@ -75,17 +75,20 @@ export function ThemeProvider({
   themes,
   overrideVars,
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = React.useState<Theme>(defaultTheme);
-
   // Initialise from localStorage without a flash of the wrong theme.
-  React.useLayoutEffect(() => {
-    const stored = window.localStorage.getItem(storageKey);
-    if (stored === "light" || stored === "dark") {
-      setThemeState(stored);
-    } else if (stored != null && themes?.includes(stored)) {
-      setThemeState(stored as Theme);
+  // Read synchronously in the state initializer (not an effect) so the
+  // first client render already matches the shell's no-flash script.
+  const [theme, setThemeState] = React.useState<Theme>(() => {
+    if (typeof window === "undefined") return defaultTheme;
+    try {
+      const stored = window.localStorage.getItem(storageKey);
+      if (stored === "light" || stored === "dark") return stored;
+      if (stored != null && themes?.includes(stored)) return stored as Theme;
+    } catch {
+      // Storage unavailable (private mode): fall back to the default.
     }
-  }, [storageKey, themes]);
+    return defaultTheme;
+  });
 
   React.useEffect(() => {
     applyTheme(theme, { attribute, enableSystem });

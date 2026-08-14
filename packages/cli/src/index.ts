@@ -198,6 +198,62 @@ docsCommand
     console.log(`  - Run \`facet docs init\` to mount the docs site, then point it at the drafted pages.`);
   });
 
+// `facet icons generate`: scan the consumer's icon call sites and emit a
+// slim generated registry (direct lucide imports for exactly the used set).
+const iconsCommand = program.command("icons").description("Icon registry commands");
+iconsCommand
+  .command("generate")
+  .description(
+    "Scan this repo for icon usage and generate a slim lucide registry (exactly the icons you use, tree-shaken)",
+  )
+  .option("--path <path>", "Where to write icons.generated.tsx (default: detected from repo layout)")
+  .option("-y, --yes", "Overwrite an existing generated registry without confirmation")
+  .action(async (opts: { path?: string; yes?: boolean }) => {
+    const cwd = process.cwd();
+    const { scanIcons, buildLucideCatalog, resolveUsedIcons, generateIconRegistry } =
+      await import("./lib/icons.js");
+    const { writeFiles } = await import("./lib/writer.js");
+    const scan = opts.path
+      ? { ...scanIcons(cwd), targetDir: path.resolve(cwd, opts.path) }
+      : scanIcons(cwd);
+    const catalog = buildLucideCatalog(cwd);
+    const resolved = resolveUsedIcons(scan.kebabNames, catalog);
+
+    console.log("facet icons generate\n");
+    console.log(`  Scanned ${scan.files.length} source file(s) for icon call sites.`);
+    if (scan.names.length) {
+      console.log(`  Icons referenced: ${scan.names.length} (${scan.kebabNames.length} unique)`);
+    } else {
+      console.log("  No icon call sites found — writing the default semantic set.");
+    }
+    if (resolved.renamed.length) {
+      console.log(`  Legacy names mapped to current lucide icons: ${resolved.renamed.join(", ")}`);
+    }
+    if (resolved.unresolved.length) {
+      console.log(
+        `  Unresolved names (not in lucide v${resolved.version}, likely form-field props): ${resolved.unresolved.join(", ")}`,
+      );
+    }
+    console.log(`  Resolving against lucide-react v${resolved.version}.`);
+    console.log(`  Writing ${resolved.used.size} icon(s) into ${scan.targetDir.replace(cwd, ".")}/`);
+
+    if (!opts.yes && scan.hasExisting) {
+      console.log(
+        `\n${scan.targetDir.replace(cwd, ".")}/icons.generated.tsx already exists. Re-run with -y to regenerate.`,
+      );
+      process.exitCode = 2;
+      return;
+    }
+
+    const file = generateIconRegistry(scan, resolved);
+    await writeFiles([file]);
+    console.log("\nWrote:");
+    console.log(`  ${file.path.replace(cwd, ".")}`);
+    console.log("\nNext:");
+    console.log("  - Import GeneratedIcon from that file anywhere you use icons.");
+    console.log("  - Re-run `facet icons generate` after adding/removing icons to keep the set exact.");
+  });
+
 program
   .command("add <component>")
   .description("Copy a component into your source (shadcn-style). Recommended: import from the package instead.")
