@@ -8,6 +8,9 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from "./dropdown-menu.js";
 
 /** Minimal router abstraction so Navbar can render framework-native links. */
@@ -71,6 +74,8 @@ export interface NavChildLink {
   icon?: React.ReactNode;
   /** Optional badge ("New", count, etc.) */
   badge?: string | number;
+  /** Nested sub-links (rendered as a second-level sub-menu). */
+  children?: NavChildLink[];
 }
 
 export interface NavLink {
@@ -86,6 +91,11 @@ export interface NavLink {
   badge?: string | number;
   /** Optional sub-links rendered in a dropdown menu */
   children?: NavChildLink[];
+  /** Render the dropdown as a wide multi-column panel (megamenu, OpenAI-style).
+   *  e.g. 2 = two columns of children. Default: 1 (single list). */
+  columns?: number;
+  /** Width override for the dropdown panel (e.g. "w-[36rem]"). Default: "w-64". */
+  panelWidth?: string;
 }
 
 export interface NavbarProps
@@ -254,6 +264,8 @@ function NavLinkItem({
 
   // Link with sub-links → render a dropdown (OpenAI-style)
   if (link.children?.length) {
+    const isMega = (link.columns ?? 1) > 1;
+    const panelWidth = link.panelWidth ?? (isMega ? "w-[32rem]" : "w-64");
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -281,31 +293,110 @@ function NavLinkItem({
             </svg>
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-64">
-          {link.children.map((child, index) => (
-            <React.Fragment key={child.href}>
-              {index > 0 && <DropdownMenuSeparator />}
-              <DropdownMenuItem
-                onSelect={() => onNavigate(child.href)}
-                className="flex cursor-pointer flex-col items-start gap-0.5 py-2.5"
-              >
-                <span className="flex items-center gap-2 font-medium">
-                  {child.icon && (
-                    <span className="size-4 shrink-0 text-muted-foreground">{child.icon}</span>
-                  )}
-                  {child.label}
-                  {child.badge != null && (
-                    <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
-                      {child.badge}
+        <DropdownMenuContent
+          align="start"
+          side="bottom"
+          sideOffset={8}
+          className={cn("p-2", panelWidth)}
+        >
+          {isMega ? (
+            /* Wide multi-column megamenu (OpenAI-style) */
+            <div
+              className="grid gap-2"
+              style={{ gridTemplateColumns: `repeat(${Math.min(link.columns ?? 2, 4)}, minmax(0,1fr))` }}
+            >
+              {link.children.map((child) => (
+                <DropdownMenuItem
+                  key={child.href}
+                  onSelect={() => onNavigate(child.href)}
+                  className="flex cursor-pointer flex-col items-start gap-1 rounded-md px-3 py-2.5"
+                >
+                  <span className="flex items-center gap-2 text-sm font-medium">
+                    {child.icon && (
+                      <span className="size-4 shrink-0 text-muted-foreground">{child.icon}</span>
+                    )}
+                    {child.label}
+                    {child.badge != null && (
+                      <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
+                        {child.badge}
+                      </span>
+                    )}
+                  </span>
+                  {child.description && (
+                    <span className="text-xs leading-snug text-muted-foreground">
+                      {child.description}
                     </span>
                   )}
-                </span>
-                {child.description && (
-                  <span className="pl-6 text-xs text-muted-foreground">{child.description}</span>
-                )}
-              </DropdownMenuItem>
-            </React.Fragment>
-          ))}
+                </DropdownMenuItem>
+              ))}
+            </div>
+          ) : (
+            /* Single-column list with optional nested sub-menus */
+            <div className="flex flex-col gap-0.5">
+              {link.children.map((child, index) => (
+                <React.Fragment key={child.href}>
+                  {index > 0 && !child.children && <DropdownMenuSeparator />}
+                  {child.children?.length ? (
+                    /* Nested sub-menu */
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="flex cursor-pointer items-center gap-2 py-2">
+                        {child.icon && (
+                          <span className="size-4 shrink-0 text-muted-foreground">{child.icon}</span>
+                        )}
+                        <span className="flex-1 font-medium">{child.label}</span>
+                        {child.badge != null && (
+                          <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
+                            {child.badge}
+                          </span>
+                        )}
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent className="w-56">
+                        {child.children.map((nested) => (
+                          <DropdownMenuItem
+                            key={nested.href}
+                            onSelect={() => onNavigate(nested.href)}
+                            className="flex cursor-pointer items-center gap-2 py-2"
+                          >
+                            {nested.icon && (
+                              <span className="size-4 shrink-0 text-muted-foreground">
+                                {nested.icon}
+                              </span>
+                            )}
+                            <span className="flex-1">{nested.label}</span>
+                            {nested.badge != null && (
+                              <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
+                                {nested.badge}
+                              </span>
+                            )}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+                  ) : (
+                    <DropdownMenuItem
+                      onSelect={() => onNavigate(child.href)}
+                      className="flex cursor-pointer flex-col items-start gap-0.5 py-2.5"
+                    >
+                      <span className="flex items-center gap-2 font-medium">
+                        {child.icon && (
+                          <span className="size-4 shrink-0 text-muted-foreground">{child.icon}</span>
+                        )}
+                        {child.label}
+                        {child.badge != null && (
+                          <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
+                            {child.badge}
+                          </span>
+                        )}
+                      </span>
+                      {child.description && (
+                        <span className="pl-6 text-xs text-muted-foreground">{child.description}</span>
+                      )}
+                    </DropdownMenuItem>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     );

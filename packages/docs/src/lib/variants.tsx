@@ -945,13 +945,47 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                     {
                       href: "#",
                       label: "Resources",
+                      columns: 2,
+                      panelWidth: "w-[30rem]",
                       children: [
-                        { href: "#", label: "Docs", description: "Guides and API reference" },
-                        { href: "#", label: "Blog", description: "Product updates" },
-                        { href: "#", label: "Changelog", description: "Version history", badge: "New" },
+                        { href: "#", label: "Docs", description: "Guides and API reference", icon: <Icon name="book-open" className="size-4" /> },
+                        { href: "#", label: "Blog", description: "Product updates", icon: <Icon name="sparkles" className="size-4" /> },
+                        { href: "#", label: "Changelog", description: "Version history", badge: "New", icon: <Icon name="list" className="size-4" /> },
+                        { href: "#", label: "Community", description: "Discussions and support", icon: <Icon name="users" className="size-4" /> },
                       ],
                     },
                     { href: "#", label: "Pricing" },
+                  ]}
+                />
+              </div>
+            ),
+          },
+          {
+            label: "Nested links",
+            node: (
+              <div className="w-full max-w-md">
+                <Navbar
+                  variant="default"
+                  brand={<span className="font-semibold">facet</span>}
+                  links={[
+                    {
+                      href: "#",
+                      label: "Product",
+                      children: [
+                        { href: "#", label: "Overview", description: "What facet is" },
+                        {
+                          href: "#",
+                          label: "Components",
+                          children: [
+                            { href: "#", label: "Buttons" },
+                            { href: "#", label: "Cards" },
+                            { href: "#", label: "Forms" },
+                          ],
+                        },
+                        { href: "#", label: "Pricing", badge: "New" },
+                      ],
+                    },
+                    { href: "#", label: "Docs" },
                   ]}
                 />
               </div>
