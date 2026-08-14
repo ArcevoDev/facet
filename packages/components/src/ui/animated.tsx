@@ -64,18 +64,20 @@ Spotlight.displayName = "Spotlight";
 export interface AuroraProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Gradient stops. Default: indigo/fuchsia/cyan. */
   colors?: string[];
+  /** Opacity of the aurora layer. Default: 0.5. */
+  opacity?: number;
 }
 
 /** Slow-moving conic gradient blobs (pure CSS animation). */
 export const Aurora = React.forwardRef<HTMLDivElement, AuroraProps>(
-  ({ className, colors = ["#6366f1", "#d946ef", "#06b6d4"], ...props }, ref) => (
+  ({ className, colors = ["#6366f1", "#d946ef", "#06b6d4"], opacity = 0.5, ...props }, ref) => (
     <div ref={ref} className={cn("relative overflow-hidden", className)} aria-hidden="true" {...props}>
       <div
         className="absolute -inset-1/2 animate-[facet-aurora_18s_ease-in-out_infinite_alternate]"
         style={{
           background: `conic-gradient(from 180deg at 50% 50%, ${colors.join(", ")})`,
           filter: "blur(60px)",
-          opacity: 0.5,
+          opacity,
         }}
       />
       {props.children}

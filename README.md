@@ -10,16 +10,15 @@ design manual (Alpha Palette), and your auth requirements differ per sector
 
 | Package              | Description                                                                                         | Status  |
 | -------------------- | --------------------------------------------------------------------------------------------------- | ------- |
-| `@arcevo/facet-tokens`     | Design tokens: Alpha Palette, typography, spacing, CSS vars                                         | ✅ 1.0.1 |
+| `@arcevo/facet-tokens`     | Design tokens: Alpha Palette, typography, spacing, CSS vars                                         | ✅ 1.1.0 |
 | `@arcevo/facet-sdk`        | arc-id API client (pure fetch, typed, 10 domain SDKs)                                               | ✅ 1.0.1 |
-| `@arcevo/facet-components` | 57 styled UI components (Radix + tailwind-merge + variants)                               | ✅ 1.1.0 |
-| `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.0.3 |
-| `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.1.0 |
-| `@arcevo/facet-docs`       | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages                          | 📦 1.1.0 |
-| `@arcevo/facet-cli`        | Scaffold a docs site (`facet docs init`) + copy components (`facet add`)                            | 🧪 0.1.0 |
+| `@arcevo/facet-components` | 63 styled UI components (Radix + tailwind-merge + variants)                               | ✅ 1.5.0 |
+| `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.1.3 |
+| `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.3.0 |
+| `@arcevo/facet-docs`       | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages                          | ✅ 1.4.0 |
+| `@arcevo/facet-cli`        | Scaffold docs (`facet docs init` + `facet docs scan`), audit/update (`facet pkg/up/doctor`), copy components (`facet add`) | ✅ 0.4.0 |
 
-Published to npm: components/layout at 1.1.0, auth at 1.0.3, tokens/sdk at 1.0.1, docs at 1.1.0.
-Components 1.1.0 shipped 11 new components (color-picker, country-code-input, data-table, date-picker, dropzone, form, location-picker, marquee, number-input, qrcode, roadmap) and removed `notification-bell`.
+Published to npm: components 1.5.0, layout 1.3.0, docs 1.4.0, auth 1.1.3, cli 0.4.0, tokens 1.1.0, sdk 1.0.1.
 
 ## Sites
 
