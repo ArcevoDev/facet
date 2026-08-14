@@ -112,7 +112,6 @@ const QRCode = React.forwardRef<HTMLDivElement, QRCodeProps>(
               {/* Backdrop: pads the logo so the modules underneath are cleared,
                   keeping the code scannable. */}
               <div
-                aria-hidden="true"
                 className="flex h-full w-full items-center justify-center rounded-full bg-background"
                 style={{ boxShadow: "0 0 0 3px var(--background, #fff)" }}
               >

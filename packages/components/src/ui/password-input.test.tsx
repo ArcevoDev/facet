@@ -5,15 +5,17 @@ import { PasswordInput } from "./password-input.js";
 
 describe("PasswordInput", () => {
   it("renders as a password field by default", () => {
-    render(<PasswordInput value="secret" />);
-    expect(screen.getByRole("textbox", { hidden: true })).toHaveAttribute("type", "password");
+    const { container } = render(<PasswordInput value="secret" />);
+    const input = container.querySelector("input");
+    expect(input).toHaveAttribute("type", "password");
+    expect(input).toHaveAttribute("aria-label", "Password");
   });
 
   it("toggles visibility on click", async () => {
-    render(<PasswordInput value="secret" />);
+    const { container } = render(<PasswordInput value="secret" />);
     const toggle = screen.getByLabelText("Show password");
     await userEvent.click(toggle);
-    expect(screen.getByRole("textbox", { hidden: true })).toHaveAttribute("type", "text");
+    expect(container.querySelector("input")).toHaveAttribute("type", "text");
     expect(screen.getByLabelText("Hide password")).toBeInTheDocument();
   });
 
@@ -24,10 +26,12 @@ describe("PasswordInput", () => {
 
   it("respects controlled visibility", async () => {
     const onVisibleChange = vi.fn();
-    render(<PasswordInput value="secret" visible={false} onVisibleChange={onVisibleChange} />);
+    const { container } = render(
+      <PasswordInput value="secret" visible={false} onVisibleChange={onVisibleChange} />,
+    );
     await userEvent.click(screen.getByLabelText("Show password"));
     expect(onVisibleChange).toHaveBeenCalledWith(true);
     // Controlled: stays hidden because visible prop is still false.
-    expect(screen.getByRole("textbox", { hidden: true })).toHaveAttribute("type", "password");
+    expect(container.querySelector("input")).toHaveAttribute("type", "password");
   });
 });

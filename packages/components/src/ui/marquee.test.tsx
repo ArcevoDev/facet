@@ -35,4 +35,26 @@ describe("Marquee", () => {
     fireEvent.mouseLeave(outer!);
     expect(track?.getAttribute("style")).toContain("animation-play-state: running");
   });
+
+  it("defaults the gap to 16px", () => {
+    const { container } = render(<Marquee items={[<span key="x">X</span>]} />);
+    const track = container.querySelector("[role=marquee] > div");
+    expect(track?.getAttribute("style")).toContain("gap: 16px");
+  });
+
+  it("clamps a numeric gap into the 4-32px safe band", () => {
+    const { container } = render(<Marquee items={[<span key="x">X</span>]} gap={96} />);
+    const track = container.querySelector("[role=marquee] > div");
+    expect(track?.getAttribute("style")).toContain("gap: 32px");
+
+    const tiny = render(<Marquee items={[<span key="y">Y</span>]} gap={1} />);
+    const tinyTrack = tiny.container.querySelector("[role=marquee] > div");
+    expect(tinyTrack?.getAttribute("style")).toContain("gap: 4px");
+  });
+
+  it("passes a CSS length string gap through untouched", () => {
+    const { container } = render(<Marquee items={[<span key="x">X</span>]} gap="1.5rem" />);
+    const track = container.querySelector("[role=marquee] > div");
+    expect(track?.getAttribute("style")).toContain("gap: 1.5rem");
+  });
 });

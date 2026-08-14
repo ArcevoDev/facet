@@ -13,8 +13,11 @@ export interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
   reverse?: boolean;
   /** Pause scrolling while the pointer is over the track. Default: true */
   pauseOnHover?: boolean;
-  /** Gap between items. Default: 1rem */
-  gap?: string;
+  /**
+   * Gap between items. Accepts a number (px, clamped to 4-32) or any CSS
+   * length string ("0.5rem", "20px", ...). Default: 16 (px).
+   */
+  gap?: number | string;
 }
 
 /**
@@ -31,7 +34,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
       duration = 20,
       reverse = false,
       pauseOnHover = true,
-      gap = "1rem",
+      gap = 16,
       className,
       ...props
     },
@@ -39,6 +42,10 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
   ) => {
     const track = React.useMemo(() => [...items, ...items], [items]);
     const [paused, setPaused] = React.useState(false);
+
+    // Normalize gap: numeric px (clamped to a safe 4-32px band so spacing
+    // never collapses or explodes), or a passthrough CSS length string.
+    const gapCss = typeof gap === "number" ? `${Math.min(32, Math.max(4, gap))}px` : gap;
 
     return (
       <div
@@ -53,7 +60,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
         <div
           className="flex shrink-0 items-center"
           style={{
-            gap,
+            gap: gapCss,
             animation: `facet-marquee ${duration}s linear infinite`,
             animationDirection: reverse ? "reverse" : "normal",
             animationPlayState: paused ? "paused" : "running",
@@ -62,7 +69,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
           {track.map((item, i) => (
             <React.Fragment key={i}>
               {item}
-              <span aria-hidden="true" style={{ width: gap }} />
+              <span aria-hidden="true" style={{ width: gapCss }} />
             </React.Fragment>
           ))}
         </div>
