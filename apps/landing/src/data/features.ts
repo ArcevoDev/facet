@@ -56,7 +56,7 @@ export const PACKAGES: Package[] = [
   },
   {
     name: "@arcevo/facet-cli",
-    desc: "Scaffold docs sites, audit and update your facet setup from the terminal.",
+    desc: "Scaffold docs sites, audit/update your facet setup, and generate a tree-shaken icon registry from the terminal.",
     version: "0.4.0",
     icon: "terminal",
   },
