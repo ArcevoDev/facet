@@ -1,5 +1,12 @@
 # @arcevo/facet-docs-site
 
+## 1.0.6
+
+### Patch Changes
+
+- @arcevo/facet-docs@1.4.1
+- @arcevo/facet-layout@1.3.1
+
 ## 1.0.5
 
 ### Patch Changes

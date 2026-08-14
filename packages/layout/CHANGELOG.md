@@ -1,5 +1,11 @@
 # @arcevo/facet-layout
 
+## 1.3.1
+
+### Patch Changes
+
+- @arcevo/facet-auth@1.1.4
+
 ## 1.3.0
 
 ### Minor Changes
