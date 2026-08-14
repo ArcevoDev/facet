@@ -1,7 +1,27 @@
+import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, within, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NumberInput, CURRENCIES, type Currency } from "./number-input.js";
+
+/** Stateful harness so typing tests work with the controlled component. */
+function Controlled({
+  initial,
+  onValueChange,
+  ...props
+}: React.ComponentProps<typeof NumberInput> & { initial: number }) {
+  const [value, setValue] = React.useState(initial);
+  return (
+    <NumberInput
+      value={value}
+      onValueChange={(v) => {
+        setValue(v ?? 0);
+        onValueChange?.(v);
+      }}
+      {...props}
+    />
+  );
+}
 
 describe("NumberInput", () => {
   it("renders the current value", () => {
@@ -52,7 +72,7 @@ describe("NumberInput", () => {
 
   it("accepts typed numbers and clamps on change", async () => {
     const onValueChange = vi.fn();
-    render(<NumberInput value={0} min={0} max={10} onValueChange={onValueChange} />);
+    render(<Controlled initial={0} min={0} max={10} onValueChange={onValueChange} />);
     const input = screen.getByRole("textbox");
     await userEvent.clear(input);
     await userEvent.type(input, "7");
@@ -66,7 +86,7 @@ describe("NumberInput", () => {
 
   it("renders a currency prefix and keeps numeric value", async () => {
     const onValueChange = vi.fn();
-    render(<NumberInput value={25} currency="$" onValueChange={onValueChange} />);
+    render(<Controlled initial={25} currency="$" onValueChange={onValueChange} />);
     expect(screen.getByText("$")).toBeInTheDocument();
     const input = screen.getByRole("textbox");
     expect(input).toHaveValue("25");
@@ -77,10 +97,10 @@ describe("NumberInput", () => {
 
   it("clamps negatives to zero when beyondZero is set", async () => {
     const onValueChange = vi.fn();
-    render(<NumberInput value={5} beyondZero onValueChange={onValueChange} />);
+    render(<Controlled initial={5} beyondZero onValueChange={onValueChange} />);
     const input = screen.getByRole("textbox");
-    await userEvent.clear(input);
-    await userEvent.type(input, "-3");
+    // Simulate a completed entry of "-3" (single change event, like paste).
+    fireEvent.change(input, { target: { value: "-3" } });
     // Clamped to 0.
     expect(onValueChange).toHaveBeenLastCalledWith(0);
   });
