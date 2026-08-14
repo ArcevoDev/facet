@@ -16,7 +16,7 @@ design manual (Alpha Palette), and your auth requirements differ per sector
 | `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.1.3 |
 | `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.3.0 |
 | `@arcevo/facet-docs`       | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages                          | ✅ 1.4.0 |
-| `@arcevo/facet-cli`        | Scaffold docs (`facet docs init` + `facet docs scan`), audit/update (`facet pkg/up/doctor`), copy components (`facet add`) | ✅ 0.4.0 |
+| `@arcevo/facet-cli`        | Scaffold docs (`facet docs init` + `facet docs scan`), audit/update (`facet pkg/up/doctor`), copy components (`facet add`), generate a tree-shaken icon registry (`facet icons generate`) | ✅ 0.4.0 |
 
 Published to npm: components 1.5.0, layout 1.3.0, docs 1.4.0, auth 1.1.3, cli 0.4.0, tokens 1.1.0, sdk 1.0.1.
 
@@ -45,6 +45,7 @@ wizard, or copy a component into your source:
 ```sh
 npx @arcevo/facet-cli docs init   # pick name, location, stack, styling
 npx @arcevo/facet-cli add button  # shadcn-style copy (package import recommended)
+npx @arcevo/facet-cli icons generate  # scan repo, emit a tree-shaken icons.generated.tsx
 ```
 
 The wizard detects your frontend framework (ignoring backend stacks), your
