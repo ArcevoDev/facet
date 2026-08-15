@@ -15,7 +15,6 @@ import { defaultResetPasswordCopy } from "../../types.js";
 
 import {
   Button,
-  Input,
   Label,
   PasswordInput,
   AnimatedButton,

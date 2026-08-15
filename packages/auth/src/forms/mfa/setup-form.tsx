@@ -11,7 +11,6 @@ import type { MfaSetupResult } from "@arcevo/facet-sdk";
 import type { Appearance } from "../../types.js";
 
 import {
-  Button,
   Label,
   InputOTP,
   InputOTPGroup,
