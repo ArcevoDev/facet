@@ -394,6 +394,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "feedback"
   },
   {
+    "name": "Typewriter Text",
+    "slug": "typewriter-text",
+    "description": "@arcevo/facet-components: TypewriterText",
+    "category": "general"
+  },
+  {
     "name": "Icon",
     "slug": "icon",
     "description": "Semantic icon registry: built-in lucide map, registerIcon overrides, IconProvider per-domain overrides.",

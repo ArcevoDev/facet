@@ -177,6 +177,7 @@ import {
   GridPattern,
   Spotlight,
   SparkleButton,
+  TypewriterText,
   Footer,
   FeedbackPage,
   BillingPage,
@@ -2105,6 +2106,34 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Sparkle button",
           node: <SparkleButton label="Click me" />,
+        },
+      ];
+    case "typewriter-text":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <TypewriterText
+                phrases={["one identity", "every door", "your key"]}
+                className="font-heading text-xl font-bold text-foreground"
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Fast cycle",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <TypewriterText
+                phrases={["build", "ship", "scale"]}
+                typeSpeed={45}
+                eraseSpeed={25}
+                delay={900}
+                className="font-heading text-xl font-bold text-foreground"
+              />
+            </div>
+          ),
         },
       ];
     case "footer":

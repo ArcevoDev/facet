@@ -421,6 +421,11 @@ export {
 } from "./ui/animated.js";
 
 export {
+  type TypewriterTextProps,
+  TypewriterText,
+} from "./ui/typewriter-text.js";
+
+export {
   type FooterLink,
   type FooterColumn,
   type FooterSocial,

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Badge, Aurora, Beams, SparkleButton, Spotlight } from "@arcevo/facet-components";
+import { Badge, Aurora, Beams, SparkleButton, Spotlight, TypewriterText } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { STATS } from "../data/features.js";
@@ -38,6 +38,20 @@ export function HeroSection() {
       <p className="mt-6 max-w-2xl text-lg text-muted-foreground">
         Copy-paste ready components for React, TypeScript and Tailwind CSS v4. Radix primitives,
         dark mode, and a pluggable auth flow that fits your domain.
+      </p>
+      <p className="mt-4 font-heading text-xl font-semibold text-primary sm:text-2xl">
+        <TypewriterText
+          phrases={[
+            "64 Radix components",
+            "Auth presets for every domain",
+            "Alpha Palette design tokens",
+            "Console, auth and landing shells",
+            "A typed arc-id SDK",
+            "Framework-agnostic email templates",
+            "A CLI that scaffolds it all",
+          ]}
+          className="text-primary"
+        />
       </p>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
         <SparkleButton

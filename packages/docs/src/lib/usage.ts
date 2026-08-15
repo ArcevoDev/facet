@@ -899,6 +899,14 @@ import { Navbar } from "@arcevo/facet-components";
 
 // CTA with a sparkle burst on click.
 <SparkleButton label="Get started" />`,
+  "typewriter-text": `import { TypewriterText } from "@arcevo/facet-components";
+
+// Cycle through phrases with a type/erase loop and a blinking caret.
+<TypewriterText
+  phrases={["one identity", "every door", "your key"]}
+  className="font-heading text-2xl font-bold text-foreground"
+  caretClassName="ml-0.5 inline-block w-0.5 animate-pulse text-primary"
+/>`,
   footer: `import { Footer } from "@arcevo/facet-components";
 
 <Footer

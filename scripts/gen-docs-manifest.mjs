@@ -80,7 +80,8 @@ const CATEGORY = {
   marquee: "ready-to-use",
   qrcode: "ready-to-use",
   roadmap: "ready-to-use",
-  // Full page components (new "Pages" section)
+  // Animated text + full page components (new "Pages" section)
+  "typewriter-text": "general",
   "feedback-page": "pages",
   footer: "pages",
   "billing-page": "pages",
