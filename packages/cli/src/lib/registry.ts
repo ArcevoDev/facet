@@ -10,6 +10,7 @@ export const ALL_FACET_PACKAGES = [
   "@arcevo/facet-cli",
   "@arcevo/facet-components",
   "@arcevo/facet-docs",
+  "@arcevo/facet-emails",
   "@arcevo/facet-layout",
   "@arcevo/facet-sdk",
   "@arcevo/facet-tokens",

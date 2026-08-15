@@ -36,8 +36,12 @@ export interface FacetPackageInfo {
 export async function collectFacetPackageState(cwd: string): Promise<FacetPackageInfo[]> {
   const declared = collectFacetDeps(cwd);
   const searchDirs = [cwd, ...workspaceMemberDirs(cwd)];
+  // The known facet scope plus any @arcevo/facet-* the consumer declares
+  // that isn't in the hardcoded list (so a newly published package shows
+  // up even before the CLI ships it in ALL_FACET_PACKAGES).
+  const names = Array.from(new Set([...ALL_FACET_PACKAGES, ...Object.keys(declared)]));
   const infos: FacetPackageInfo[] = await Promise.all(
-    ALL_FACET_PACKAGES.map(async (name) => {
+    names.map(async (name) => {
       const [latest, installed] = await Promise.all([
         resolveLatestVersion(name),
         readInstalledVersion(searchDirs, name),
