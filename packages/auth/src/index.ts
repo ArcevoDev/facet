@@ -68,6 +68,18 @@ export type {
   SignInStep,
   MfaMethod,
   MfaFlowState,
+  SignUpCopy,
+  LoginCopy,
+  ResetPasswordCopy,
+  MfaCopy,
+} from "./types.js";
+
+/* ── Default copy ──────────────────────────────────────────── */
+export {
+  defaultSignUpCopy,
+  defaultLoginCopy,
+  defaultResetPasswordCopy,
+  defaultMfaCopy,
 } from "./types.js";
 
 /* ── Validators ────────────────────────────────────────────── */

@@ -433,6 +433,27 @@ function MyHeader() {
           "complete: replaces the success state.",
         ],
       },
+      { type: "h2", text: "Copy" },
+      {
+        type: "p",
+        text: "Every label, placeholder, button text, and error message is editable via the `copy` prop (falls back to defaults when omitted):",
+      },
+      {
+        type: "code",
+        text: `<SignUp
+  copy={{
+    title: "Join the platform",
+    nameLabel: "Your name",
+    emailLabel: "Work email",
+    passwordLabel: "Secret",
+    confirmLabel: "Repeat secret",
+    submitLabel: "Sign up now",
+    alreadyHaveAccount: "Have an account?",
+    signInLink: "Log in",
+  }}
+  onSuccess={() => router.push("/dashboard")}
+/>`,
+      },
     ],
   },
   {

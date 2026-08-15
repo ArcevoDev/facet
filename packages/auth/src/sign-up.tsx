@@ -8,7 +8,8 @@
 import * as React from "react";
 import { useAuth } from "./provider.js";
 import { defaultConfig } from "./types.js";
-import type { AuthConfig, Appearance, ComponentSlots } from "./types.js";
+import type { AuthConfig, Appearance, ComponentSlots, SignUpCopy } from "./types.js";
+import { defaultSignUpCopy } from "./types.js";
 
 import {
   Button,
@@ -29,14 +30,17 @@ export interface SignUpProps {
   appearance?: Appearance;
   config?: Partial<AuthConfig>;
   slots?: ComponentSlots;
+  /** Override any form copy (labels, placeholders, buttons, errors). */
+  copy?: SignUpCopy;
   onSuccess?: () => void;
 }
 
 /* ── Component ─────────────────────────────────────────────── */
 
-export function SignUp({ appearance, config: configOverrides, slots, onSuccess }: SignUpProps) {
+export function SignUp({ appearance, config: configOverrides, slots, copy, onSuccess }: SignUpProps) {
   const cfg = { ...defaultConfig, ...configOverrides };
   const { register } = useAuth();
+  const c = { ...defaultSignUpCopy, ...copy };
 
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -50,12 +54,12 @@ export function SignUp({ appearance, config: configOverrides, slots, onSuccess }
     setError(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(c.passwordMismatch ?? "Passwords do not match");
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters");
+      setError(c.passwordTooShort ?? "Password must be at least 8 characters");
       return;
     }
 
@@ -77,17 +81,17 @@ export function SignUp({ appearance, config: configOverrides, slots, onSuccess }
   return (
     <Card className={appearance?.className}>
       <CardHeader>
-        {slots?.title ?? <CardTitle>Create an Account</CardTitle>}
-        {slots?.description ?? <CardDescription>Enter your details to get started</CardDescription>}
+        {slots?.title ?? <CardTitle>{c.title}</CardTitle>}
+        {slots?.description ?? <CardDescription>{c.description}</CardDescription>}
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="signup-name">Full Name</Label>
+            <Label htmlFor="signup-name">{c.nameLabel}</Label>
             <Input
               id="signup-name"
               type="text"
-              placeholder="John Doe"
+              placeholder={c.namePlaceholder}
               autoComplete="name"
               required
               value={name}
@@ -95,11 +99,11 @@ export function SignUp({ appearance, config: configOverrides, slots, onSuccess }
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="signup-email">Email</Label>
+            <Label htmlFor="signup-email">{c.emailLabel}</Label>
             <Input
               id="signup-email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={c.emailPlaceholder}
               autoComplete="email"
               required
               value={email}
@@ -107,10 +111,10 @@ export function SignUp({ appearance, config: configOverrides, slots, onSuccess }
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="signup-password">Password</Label>
+            <Label htmlFor="signup-password">{c.passwordLabel}</Label>
             <PasswordInput
               id="signup-password"
-              placeholder="At least 8 characters"
+              placeholder={c.passwordPlaceholder}
               autoComplete="new-password"
               required
               minLength={8}
@@ -119,10 +123,10 @@ export function SignUp({ appearance, config: configOverrides, slots, onSuccess }
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="signup-confirm">Confirm Password</Label>
+            <Label htmlFor="signup-confirm">{c.confirmLabel}</Label>
             <PasswordInput
               id="signup-confirm"
-              placeholder="Re-enter your password"
+              placeholder={c.confirmPlaceholder}
               autoComplete="new-password"
               required
               minLength={8}
@@ -139,16 +143,16 @@ export function SignUp({ appearance, config: configOverrides, slots, onSuccess }
           )}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? "Creating account…" : "Create Account"}
+            {isSubmitting ? c.submittingLabel : c.submitLabel}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="justify-center text-sm text-muted-foreground">
         {slots?.footer ?? (
           <span>
-            Already have an account?{" "}
+            {c.alreadyHaveAccount}{" "}
             <Button variant="link" className="h-auto p-0 text-sm">
-              Sign in
+              {c.signInLink}
             </Button>
           </span>
         )}

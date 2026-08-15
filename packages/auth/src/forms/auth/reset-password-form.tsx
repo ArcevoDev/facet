@@ -10,7 +10,8 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema } from "../../validators.js";
-import type { Appearance } from "../../types.js";
+import type { Appearance, ResetPasswordCopy } from "../../types.js";
+import { defaultResetPasswordCopy } from "../../types.js";
 
 import {
   Button,
@@ -29,6 +30,8 @@ import {
 
 export interface ResetPasswordFormProps {
   appearance?: Appearance;
+  /** Override any form copy (labels, placeholders, buttons). */
+  copy?: ResetPasswordCopy;
   /** Reset token from the email link (extracted by the consuming app). */
   token: string;
   /** Called with token + new password. Return error string or null/undefined on success. */
@@ -45,12 +48,14 @@ type ResetValues = { password: string; confirm: string };
 
 export function ResetPasswordForm({
   appearance,
+  copy,
   token,
   onSubmit,
   onSuccess,
   onBack,
   validate = false,
 }: ResetPasswordFormProps) {
+  const c = { ...defaultResetPasswordCopy, ...copy };
   const [password, setPassword] = React.useState("");
   const [confirm, setConfirm] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
@@ -123,18 +128,18 @@ export function ResetPasswordForm({
     return (
       <Card className={appearance?.className}>
         <CardHeader>
-          <CardTitle>Password Reset</CardTitle>
-          <CardDescription>Your password has been successfully reset.</CardDescription>
+          <CardTitle>{c.successTitle}</CardTitle>
+          <CardDescription>{c.successDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            You can now sign in with your new password.
+            {c.successBody}
           </p>
         </CardContent>
         {onBack && (
           <CardFooter className="justify-center">
             <Button variant="link" size="sm" onClick={onBack}>
-              Back to sign in
+              {c.backLabel}
             </Button>
           </CardFooter>
         )}
@@ -145,16 +150,16 @@ export function ResetPasswordForm({
   return (
     <Card className={appearance?.className}>
       <CardHeader>
-        <CardTitle>Set New Password</CardTitle>
-        <CardDescription>Enter your new password below.</CardDescription>
+        <CardTitle>{c.title}</CardTitle>
+        <CardDescription>{c.description}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4" noValidate={validate}>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="reset-password">New Password</Label>
+            <Label htmlFor="reset-password">{c.passwordLabel}</Label>
             <PasswordInput
               id="reset-password"
-              placeholder="At least 8 characters"
+              placeholder={c.passwordPlaceholder}
               autoComplete="new-password"
               required
               minLength={8}
@@ -164,10 +169,10 @@ export function ResetPasswordForm({
             {passwordError && <p className="text-sm text-destructive">{passwordError}</p>}
           </div>
           <div className="flex flex-col gap-2">
-            <Label htmlFor="reset-confirm">Confirm Password</Label>
+            <Label htmlFor="reset-confirm">{c.confirmLabel}</Label>
             <PasswordInput
               id="reset-confirm"
-              placeholder="Re-enter your password"
+              placeholder={c.confirmPlaceholder}
               autoComplete="new-password"
               required
               minLength={8}
@@ -178,14 +183,14 @@ export function ResetPasswordForm({
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" disabled={isSubmitting} className="w-full">
-            {isSubmitting ? "Resetting…" : "Reset Password"}
+            {isSubmitting ? c.submittingLabel : c.submitLabel}
           </Button>
         </form>
       </CardContent>
       {onBack && (
         <CardFooter className="justify-center">
           <Button variant="link" size="sm" onClick={onBack}>
-            Back to sign in
+            {c.backLabel}
           </Button>
         </CardFooter>
       )}

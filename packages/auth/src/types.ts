@@ -127,3 +127,122 @@ export type Appearance = {
 };
 
 export type ComponentSlots = Record<string, React.ReactNode>;
+
+/* ── Form copy (all strings editable, fall back to defaults) ── */
+
+export interface SignUpCopy {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  nameLabel?: string;
+  emailLabel?: string;
+  passwordLabel?: string;
+  confirmLabel?: string;
+  namePlaceholder?: string;
+  emailPlaceholder?: string;
+  passwordPlaceholder?: string;
+  confirmPlaceholder?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
+  alreadyHaveAccount?: string;
+  signInLink?: string;
+  passwordMismatch?: string;
+  passwordTooShort?: string;
+}
+
+export interface LoginCopy {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  emailLabel?: string;
+  passwordLabel?: string;
+  emailPlaceholder?: string;
+  passwordPlaceholder?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
+  forgotPassword?: string;
+  backLabel?: string;
+  emailError?: string;
+  passwordError?: string;
+}
+
+export interface ResetPasswordCopy {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  passwordLabel?: string;
+  confirmLabel?: string;
+  passwordPlaceholder?: string;
+  confirmPlaceholder?: string;
+  submitLabel?: string;
+  submittingLabel?: string;
+  backLabel?: string;
+  successTitle?: React.ReactNode;
+  successDescription?: React.ReactNode;
+  successBody?: string;
+}
+
+export interface MfaCopy {
+  title?: React.ReactNode;
+  description?: React.ReactNode;
+  cancelLabel?: string;
+  verifyLabel?: string;
+  setupTitle?: React.ReactNode;
+  setupDescription?: React.ReactNode;
+  recoveryTitle?: React.ReactNode;
+  codeLabel?: string;
+}
+
+/** Default copy used when a consumer doesn't override it. */
+export const defaultSignUpCopy: SignUpCopy = {
+  title: "Create an Account",
+  description: "Enter your details to get started",
+  nameLabel: "Full Name",
+  emailLabel: "Email",
+  passwordLabel: "Password",
+  confirmLabel: "Confirm Password",
+  namePlaceholder: "John Doe",
+  emailPlaceholder: "you@example.com",
+  passwordPlaceholder: "At least 8 characters",
+  confirmPlaceholder: "Re-enter your password",
+  submitLabel: "Create Account",
+  submittingLabel: "Creating account…",
+  alreadyHaveAccount: "Already have an account?",
+  signInLink: "Sign in",
+  passwordMismatch: "Passwords do not match",
+  passwordTooShort: "Password must be at least 8 characters",
+};
+
+export const defaultLoginCopy: LoginCopy = {
+  title: "Sign In",
+  description: "Enter your credentials",
+  emailLabel: "Email",
+  passwordLabel: "Password",
+  emailPlaceholder: "you@example.com",
+  passwordPlaceholder: "········",
+  submitLabel: "Sign In",
+  submittingLabel: "Signing in…",
+  forgotPassword: "Forgot password?",
+  backLabel: "Back to sign-in options",
+};
+
+export const defaultResetPasswordCopy: ResetPasswordCopy = {
+  title: "Set New Password",
+  description: "Enter your new password below.",
+  passwordLabel: "New Password",
+  confirmLabel: "Confirm Password",
+  passwordPlaceholder: "At least 8 characters",
+  confirmPlaceholder: "Re-enter your password",
+  submitLabel: "Reset Password",
+  submittingLabel: "Resetting…",
+  backLabel: "Back to sign in",
+  successTitle: "Password Reset",
+  successDescription: "Your password has been successfully reset.",
+  successBody: "You can now sign in with your new password.",
+};
+
+export const defaultMfaCopy: MfaCopy = {
+  title: "Two-Factor Authentication",
+  cancelLabel: "Cancel",
+  verifyLabel: "Verify",
+  setupTitle: "Set Up Two-Factor Authentication",
+  recoveryTitle: "Recovery Code",
+  codeLabel: "Enter the code from your app",
+};
