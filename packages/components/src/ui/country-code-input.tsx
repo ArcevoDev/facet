@@ -83,7 +83,7 @@ export function getCountryName(country: string, list = COMMON_COUNTRY_CODES): st
 
 /**
  * Filter a country list by region. Entries without a `region` field are
- * kept unless `excludeRegions` removes them — so custom lists are
+ * kept unless `excludeRegions` removes them - so custom lists are
  * unaffected unless they carry region metadata.
  */
 export function filterCountryCodes(

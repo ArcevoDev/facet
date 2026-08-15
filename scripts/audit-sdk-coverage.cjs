@@ -53,5 +53,5 @@ console.log("\n=== SDK endpoint strings:", sdkPaths.size, "===");
 for (const p of [...sdkPaths].sort()) console.log("  ", p);
 
 console.log("\n=== arc-id paths NOT covered by the SDK ===");
-if (!uncovered.length) console.log("  (none — full coverage)");
+if (!uncovered.length) console.log("  (none - full coverage)");
 else for (const p of uncovered) console.log("  ", p);

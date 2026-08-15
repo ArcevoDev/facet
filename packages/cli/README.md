@@ -101,11 +101,11 @@ never overwritten.
 
 Pre-go-live sync. Runs read-only checks plus your own gates:
 
-1. `facet pkg` — are your facet deps current?
-2. `facet doctor` — is your setup healthy (tokens wired, no unnecessary
+1. `facet pkg` - are your facet deps current?
+2. `facet doctor` - is your setup healthy (tokens wired, no unnecessary
    bundled deps)?
 3. Your own `typecheck` / `build` / `test` scripts, when they exist.
-4. `pnpm changeset status` — in a monorepo, the pending release set.
+4. `pnpm changeset status` - in a monorepo, the pending release set.
 
 Prints a PASS/FAIL summary per step; exits non-zero when something needs
 fixing before go-live.
@@ -131,7 +131,7 @@ step will generate before committing.
 
 After scaffolding, the CLI **installs the facet packages automatically** at
 their current published versions (the CLI resolves them from the npm
-registry, so you always get the latest safe release — no pinned guesses).
+registry, so you always get the latest safe release - no pinned guesses).
 If the install can't run (offline, no package manager), it prints the exact
 command instead.
 

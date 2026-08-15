@@ -524,11 +524,11 @@ export function buildPrepPlan(cwd: string): { steps: string[] } {
   const pkg = readExistingPackageJson(cwd);
   const scripts = pkg?.scripts ?? {};
   const steps: string[] = [];
-  steps.push("facet pkg — check facet deps are current");
-  steps.push("facet doctor — audit repo health");
-  if (scripts.typecheck) steps.push(`${pm} typecheck — run the consumer's typecheck`);
-  if (scripts.build) steps.push(`${pm} build — run the consumer's build`);
-  if (scripts.test) steps.push(`${pm} test — run the consumer's tests`);
-  if (detectMonorepo(cwd)) steps.push("pnpm changeset status — pending release set");
+  steps.push("facet pkg - check facet deps are current");
+  steps.push("facet doctor - audit repo health");
+  if (scripts.typecheck) steps.push(`${pm} typecheck - run the consumer's typecheck`);
+  if (scripts.build) steps.push(`${pm} build - run the consumer's build`);
+  if (scripts.test) steps.push(`${pm} test - run the consumer's tests`);
+  if (detectMonorepo(cwd)) steps.push("pnpm changeset status - pending release set");
   return { steps };
 }

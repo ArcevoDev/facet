@@ -21,7 +21,7 @@ const named = /\b(?:indigo|violet|purple|fuchsia|cyan|blue|emerald|amber|rose|re
 let hardcoded = 0;
 for (const f of results) {
   let s = fs.readFileSync(f, "utf8");
-  // Remove var(--x, fallback) — the color is token-first with a fallback.
+  // Remove var(--x, fallback) - the color is token-first with a fallback.
   s = s.replace(/var\(--[a-z0-9-]+,\s*[^)]*\)/g, "var(--token)");
   const hexHits = [...s.matchAll(hex)];
   const rgbHits = [...s.matchAll(rgb)];

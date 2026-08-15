@@ -1,5 +1,5 @@
 /**
- * @arcevo/facet-components/light — minimal icon surface
+ * @arcevo/facet-components/light - minimal icon surface
  *
  * A slim Icon for the `/light` entry: resolves the built-in semantic +
  * brand icons WITHOUT importing the full 1763-icon lucide map. Use this

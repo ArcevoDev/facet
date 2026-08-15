@@ -1,4 +1,4 @@
-import { Button } from "@arcevo/facet-components";
+import { Button, SparkleButton } from "@arcevo/facet-components";
 import { getDocsUrl } from "../lib/docs-url.js";
 
 export function CTASection() {
@@ -12,9 +12,11 @@ export function CTASection() {
           The components are free. Your time is not. Start with the essentials.
         </p>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <Button size="lg" className="gap-2" onClick={() => window.open(getDocsUrl())}>
-            Browse components
-          </Button>
+          <SparkleButton
+            label="Browse components"
+            onClick={() => window.open(getDocsUrl())}
+            className="h-11 px-8"
+          />
           <Button
             variant="outline"
             size="lg"

@@ -224,7 +224,7 @@ iconsCommand
     if (scan.names.length) {
       console.log(`  Icons referenced: ${scan.names.length} (${scan.kebabNames.length} unique)`);
     } else {
-      console.log("  No icon call sites found — writing the default semantic set.");
+      console.log("  No icon call sites found - writing the default semantic set.");
     }
     if (resolved.renamed.length) {
       console.log(`  Legacy names mapped to current lucide icons: ${resolved.renamed.join(", ")}`);
@@ -524,14 +524,14 @@ program
     let failed = false;
     for (const step of steps) {
       process.stdout.write(`  ${step} ... `);
-      const label = step.split(" — ")[0]!;
+      const label = step.split(" - ")[0]!;
       try {
         if (label === "facet pkg") {
           const infos = await collectFacetPackageState(cwd);
           const outdated = infos.filter((i) => i.outdated);
           if (outdated.length) {
             console.log("OUTDATED");
-            console.log(`    ${outdated.map((i) => i.name).join(", ")} — run \`facet up\`.`);
+            console.log(`    ${outdated.map((i) => i.name).join(", ")} - run \`facet up\`.`);
             failed = true;
           } else {
             console.log("PASS");

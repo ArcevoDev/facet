@@ -322,7 +322,7 @@ export class AuthSdk {
   }
 
   /**
-   * GET /oauth/authorize — arc-id's authorize endpoint is a JSON API
+   * GET /oauth/authorize - arc-id's authorize endpoint is a JSON API
    * (not a browser redirect): pass the caller's bearer token and it
    * returns `{ code, state, consentRequired }`. Exchange the code with
    * `exchangeCode()`. For PKCE, generate a code_verifier/code_challenge

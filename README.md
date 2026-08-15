@@ -121,7 +121,7 @@ from a terminal authenticated with npm. The GitHub Actions workflow
 (`.github/workflows/ci-cd.yml`) runs a validation gate (build, typecheck,
 docs inventory) AND an auto-VERSION job: `changesets/action@v1` opens the
 "Version Packages" PR on `main` whenever changesets land. It only versions
-(bumps versions + CHANGELOGs, opens a PR) — it never publishes to npm.
+(bumps versions + CHANGELOGs, opens a PR) - it never publishes to npm.
 Merge the version PR, then publish locally from a clean tree.
 
 ```sh
@@ -131,12 +131,12 @@ pnpm changeset publish   # ships unpublished packages at their current version
 **Release checklist** (prevents publishing a stale `dist`): only publish
 from a clean working tree, and only after the build passes.
 
-1. `git status` clean — no uncommitted source changes (the published tarball
+1. `git status` clean - no uncommitted source changes (the published tarball
    must match `packages/*/dist` built from HEAD).
 2. `pnpm -r build` passes (all packages build against the bumped versions).
 3. `pnpm changeset status` shows exactly the intended release set (no
    stragglers, no forgotten changesets).
-4. `pnpm changeset publish` — then push the version-bump commit + tags to
+4. `pnpm changeset publish` - then push the version-bump commit + tags to
    `origin/main`.
 
 Publishing from a dirty tree is how a release has shipped without the latest

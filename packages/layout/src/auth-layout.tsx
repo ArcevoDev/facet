@@ -113,7 +113,7 @@ export function AuthLayout({ config, children, brandPanel, brandPanelClassName }
       {/* Right panel: centered card */}
       <div className="flex flex-1 flex-col items-center justify-center p-4 lg:p-8">
         {/* Mobile logo (hidden on lg+). Suppressed when a custom brandPanel
-            replaces the left panel — the consumer owns the brand story then. */}
+            replaces the left panel - the consumer owns the brand story then. */}
         {!brandPanel && (
           <div className="mb-8 flex flex-col items-center gap-2 lg:hidden">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="text-primary">

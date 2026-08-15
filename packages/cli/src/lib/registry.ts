@@ -72,7 +72,7 @@ export async function resolveFacetVersions(): Promise<Record<FacetPackage, strin
  * Robust against registry flakiness: retries once, then falls back to the
  * full packument's dist-tags.latest (the /latest endpoint can 429 or drop
  * connections under rate limiting). This matters for `facet up`/`facet
- * update` — a missed latest must never be reported as "up to date".
+ * update` - a missed latest must never be reported as "up to date".
  */
 export async function resolveLatestVersion(name: string): Promise<string | undefined> {
   // Try the lightweight /latest endpoint first (2 attempts).

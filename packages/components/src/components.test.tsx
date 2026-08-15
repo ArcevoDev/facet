@@ -299,6 +299,20 @@ describe("Navbar", () => {
     expect(nav).toHaveClass("sticky");
   });
 
+  it("supports a custom mobileBreakpoint", () => {
+    const { container } = render(
+      <Navbar brand="Acme" links={links} mobileBreakpoint="lg" />,
+    );
+    const nav = container.querySelector("nav");
+    const tray = container.querySelector("nav > div:nth-of-type(2)");
+    const hamburger = container.querySelector("nav > div:nth-of-type(3) > button");
+    // Desktop links wait for lg; hamburger hides at lg
+    expect(tray).toHaveClass("lg:flex");
+    expect(hamburger).toHaveClass("lg:hidden");
+    // Default is md for other consumers
+    expect(nav).not.toHaveClass("md:flex");
+  });
+
   it("renders a segmented tray for pill links", () => {
     const { container } = render(<Navbar variant="pill" brand="Acme" links={links} />);
     const tray = container.querySelector("nav > div:nth-of-type(2)");

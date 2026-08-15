@@ -77,7 +77,7 @@ export function getLocalityLabel(country?: string): string {
 }
 
 /**
- * Bundled static dataset — every African country plus the major
+ * Bundled static dataset - every African country plus the major
  * non-African markets.
  */
 export const DEFAULT_COUNTRIES: Country[] = [

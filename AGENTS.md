@@ -49,13 +49,13 @@ authenticated from the terminal). The GitHub Actions workflow
 (`.github/workflows/ci-cd.yml`) runs a validation gate (build, typecheck,
 docs inventory) AND an auto-VERSION job: `changesets/action@v1` opens the
 "Version Packages" PR on main (needs `permissions: contents: write`, which
-the previous job was missing — it died with a 403 push error, not a
+the previous job was missing - it died with a 403 push error, not a
 repo-fetch issue). The CI job does NOT publish to npm; it only versions.
 Merge the version PR, then publish locally from a clean tree. See the
 README Publishing section.
 
 **Release rule:** publish ONLY from a clean working tree, AFTER `pnpm -r
 build` passes, and verify `pnpm changeset status` shows exactly the intended
-set. Publishing from a dirty tree ships a stale `dist` — that is how
+set. Publishing from a dirty tree ships a stale `dist` - that is how
 `@arcevo/facet-cli@0.2.0` went out without the `pkg`/`doctor`/`update`
 commands and `@arcevo/facet-layout@1.1.1` without the overlay sidebar.

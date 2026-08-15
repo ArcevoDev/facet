@@ -1,5 +1,5 @@
 /**
- * `facet docs scan` — read the repo (stack, API surface, existing docs)
+ * `facet docs scan` - read the repo (stack, API surface, existing docs)
  * and draft a documentation layer (pages + sidebar + API reference) for
  * review. Rule-based, zero LLM cost. See .agent/docs-scan-design.md.
  */
@@ -316,7 +316,7 @@ export function scanRepo(cwd: string): RepoScan {
   );
   summaryLines.push(
     api
-      ? `API: ${api.info.title}${api.info.version ? ` v${api.info.version}` : ""} — ${api.routes.length} routes (${api.source})`
+      ? `API: ${api.info.title}${api.info.version ? ` v${api.info.version}` : ""} - ${api.routes.length} routes (${api.source})`
       : "API: none detected",
   );
   summaryLines.push(
@@ -395,7 +395,7 @@ export function draftDocs(scan: RepoScan, outDir: string): GeneratedFile[] {
         ? [
             {
               type: "p",
-              text: `API: ${apiName}${api.info.version ? ` v${api.info.version}` : ""} — ${
+              text: `API: ${apiName}${api.info.version ? ` v${api.info.version}` : ""} - ${
                 api.routes.length
               } routes detected.`,
             },
@@ -449,7 +449,7 @@ export function draftDocs(scan: RepoScan, outDir: string): GeneratedFile[] {
       path: "/api",
       title: "API Reference",
       section: "guides",
-      description: `${apiName} — ${api.routes.length} routes.`,
+      description: `${apiName} - ${api.routes.length} routes.`,
       blocks: [
         { type: "p", text: `Generated from ${api.source}.` },
         ...Array.from(groups.entries()).flatMap(([tag, routes]) => [
@@ -470,11 +470,11 @@ export function draftDocs(scan: RepoScan, outDir: string): GeneratedFile[] {
 
   // Emit the pages registry + config for the facet-docs engine.
   const e = scan.language === "typescript" ? "ts" : "js";
-  const pagesSource = `// Drafted by \`facet docs scan\` — review and refine.
+  const pagesSource = `// Drafted by \`facet docs scan\` - review and refine.
 export const docsPages = ${JSON.stringify(pages, null, 2)};`;
   files.push({ path: path.join(base, `pages.${e}`), content: pagesSource });
 
-  const configSource = `// Drafted by \`facet docs scan\` — review and refine.
+  const configSource = `// Drafted by \`facet docs scan\` - review and refine.
 export const docsConfig = {
   brand: { name: ${JSON.stringify(apiName)}, tagline: "Drafted documentation" },
   navigation: [{ title: "Guides", id: "guides" }],

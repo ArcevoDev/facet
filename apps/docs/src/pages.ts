@@ -25,7 +25,7 @@ export const docsPages: DocsPage[] = [
         items: [
           "`@arcevo/facet-tokens`: Alpha Palette design tokens, typography, spacing, CSS variables.",
           "`@arcevo/facet-sdk`: arc-id API client (pure fetch, typed, 10 domain SDKs).",
-          "`@arcevo/facet-components`: 57 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
+          "`@arcevo/facet-components`: 63 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
           "`@arcevo/facet-auth`: auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms.",
           "`@arcevo/facet-layout`: domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets.",
           "`@arcevo/facet-docs`: this config-driven docs engine, installable by any Arcevo project.",
@@ -64,7 +64,7 @@ function App() {
       { type: "h2", text: "Publishing" },
       {
         type: "p",
-        text: "Packages publish to npm under the `@arcevo/facet-*` scope via Changesets. Publishing is done locally by the maintainer (`pnpm changeset publish`); the GitHub Actions workflow is a validation gate (build, typecheck, docs inventory) and does not publish.",
+        text: "Packages publish to npm under the `@arcevo/facet-*` scope via Changesets. The GitHub Actions workflow runs a validation gate (build, typecheck, docs inventory) and an auto-version job that opens the \"Version Packages\" PR on main. Publishing itself is done locally by the maintainer (`pnpm changeset publish`) from a clean tree, after `pnpm -r build` passes.",
       },
     ],
   },
@@ -888,11 +888,11 @@ registerIcon("shield", ShieldAlert);`,
     path: "/cli",
     title: "CLI",
     section: "ecosystem",
-    description: "Scaffold facet docs sites and copy components with @arcevo/facet-cli.",
+    description: "Scaffold docs sites, draft docs from your repo, copy components, and generate a tree-shaken icon registry with @arcevo/facet-cli.",
     blocks: [
       {
         type: "p",
-        text: "`@arcevo/facet-cli` is the facet ecosystem's scaffolding tool. It sets up a docs site in any repo (React+Vite, Next.js, Remix, plain JS, or Python) and copies components into your source (shadcn-style).",
+        text: "`@arcevo/facet-cli` is the facet ecosystem's tooling: it scaffolds a docs site in any repo (React+Vite, Next.js, Remix, plain JS, or Python), copies components into your source (shadcn-style), drafts docs by scanning your repo, and generates a tree-shaken icon registry.",
       },
       { type: "h2", text: "Install" },
       {
@@ -950,6 +950,31 @@ facet add Button --ui-dir ui`,
         type: "p",
         text: "**Recommended:** import from `@arcevo/facet-components` instead of copying source: you get updates, tree-shaking, and the token system. Copying source means you own every future fix.",
       },
+      { type: "h2", text: "Generate a tree-shaken icon registry" },
+      {
+        type: "code",
+        lang: "bash",
+        text: `facet icons generate
+# force-overwrite an existing generated registry:
+facet icons generate -y
+# write to a specific location:
+facet icons generate --path src/lib`,
+      },
+      {
+        type: "p",
+        text: "`facet icons generate` scans your source for icon call sites and emits a slim `icons.generated.tsx`: direct lucide imports for exactly the icons you use. Legacy names are mapped to current lucide icons (`grid` → `layout-grid`, `logout` → `log-out`), and names that don't resolve (typically form-field props) are reported. Import `GeneratedIcon` from that file anywhere you use icons and re-run after adding or removing icons to keep the set exact.",
+      },
+      { type: "h2", text: "Draft docs from your repo" },
+      {
+        type: "code",
+        lang: "bash",
+        text: `facet docs scan
+facet docs scan --out docs && facet docs scan -y`,
+      },
+      {
+        type: "p",
+        text: "`facet docs scan` reads the repo and drafts a documentation layer (pages + sidebar + API reference) for review. It detects your stack (package manager, monorepo layout, framework, styling) and your API surface (Fastify + @fastify/swagger, or a committed openapi.json/swagger.json), then writes a starter pages registry plus a scanned API reference under `--out` (default `docs`). It refuses to overwrite existing draft files unless you pass `-y`.",
+      },
       { type: "h2", text: "How it stays current" },
       {
         type: "ul",
@@ -973,7 +998,9 @@ facet add Button --ui-dir ui`,
           ["`facet prep`", "Pre-go-live sync: check deps, doctor, and run your typecheck/build/test"],
           ["`facet update`", "List facet packages with newer versions and print the install command"],
           ["`facet docs init`", "Scaffold a docs site (interactive wizard or `-y`)"],
+          ["`facet docs scan`", "Read this repo and draft a documentation layer (pages + sidebar + API reference) for review"],
           ["`facet add <component>`", "Copy a component into your source (shadcn-style)"],
+          ["`facet icons generate`", "Scan your source and emit a tree-shaken lucide icon registry"],
         ],
       },
       { type: "h2", text: "Flags" },
@@ -1004,6 +1031,24 @@ facet add Button --ui-dir ui`,
           ["`--no-tokens`", "Do not wire `@arcevo/facet-tokens` theming"],
           ["`--template <template>`", "`component-library`, `api-reference`, or `product-docs` (default: `component-library`)"],
           ["`--barrel <mode>`", "`auto` (create when it fits, default), `always`, or `never`"],
+        ],
+      },
+      { type: "h2", text: "facet docs scan flags" },
+      {
+        type: "table",
+        headers: ["Flag", "Description"],
+        rows: [
+          ["`--out <dir>`", "Where the draft lands (default: `docs`)"],
+          ["`-y, --yes`", "Write the draft without confirmation (overwrites existing files)"],
+        ],
+      },
+      { type: "h2", text: "facet icons generate flags" },
+      {
+        type: "table",
+        headers: ["Flag", "Description"],
+        rows: [
+          ["`--path <path>`", "Where to write `icons.generated.tsx` (default: detected from repo layout)"],
+          ["`-y, --yes`", "Overwrite an existing generated registry without confirmation"],
         ],
       },
       { type: "h2", text: "facet add flags" },
@@ -1053,7 +1098,7 @@ const { data, error } = await auth.login("user@example.com", "pw");
       },
       {
         type: "p",
-        text: "Session-based flows (`login`/`register`/`logout`/`me`/MFA/magic-link/passkeys) need no client credentials — the direct client is implied.",
+        text: "Session-based flows (`login`/`register`/`logout`/`me`/MFA/magic-link/passkeys) need no client credentials - the direct client is implied.",
       },
       { type: "h2", text: "External integration (OAuth2/OIDC)" },
       {
@@ -1084,7 +1129,7 @@ const tokens = await auth.exchangeCode({
   codeVerifier: "the-verifier",
 });
 
-// 3. Refresh later — client_id is sent automatically.
+// 3. Refresh later - client_id is sent automatically.
 const next = await auth.refresh(tokens.data.refreshToken!);`,
       },
       { type: "h2", text: "Service-to-service" },

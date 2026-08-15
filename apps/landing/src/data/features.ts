@@ -16,48 +16,48 @@ export interface Package {
   icon: IconName;
 }
 
-/** The six published packages (versions verified 2026-08-14 against npm). */
+/** The seven published packages (versions verified 2026-08-15 against npm). */
 export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-components",
     desc: "63 styled, accessible React components built on Radix primitives.",
-    version: "1.5.0",
+    version: "1.6.0",
     icon: "boxes",
   },
   {
     name: "@arcevo/facet-docs",
     desc: "Installable docs engine: mount <DocsApp> with your own brand, nav, and pages.",
-    version: "1.4.0",
+    version: "1.4.2",
     icon: "book-open",
   },
   {
     name: "@arcevo/facet-auth",
     desc: "SignIn, SignUp, Guard, MFA and forms with per-domain presets.",
-    version: "1.1.3",
+    version: "1.1.5",
     icon: "shield-check",
   },
   {
     name: "@arcevo/facet-layout",
     desc: "Console, auth and landing shells with a collapsible icon rail.",
-    version: "1.3.0",
+    version: "1.3.2",
     icon: "building",
   },
   {
     name: "@arcevo/facet-sdk",
     desc: "Typed fetch client for arc-id: 10 domain SDKs, zero React.",
-    version: "1.0.1",
+    version: "1.1.0",
     icon: "zap",
   },
   {
     name: "@arcevo/facet-tokens",
     desc: "Alpha Palette design tokens: color, type, spacing, surfaces.",
-    version: "1.1.0",
+    version: "1.1.1",
     icon: "palette",
   },
   {
     name: "@arcevo/facet-cli",
     desc: "Scaffold docs sites, audit/update your facet setup, and generate a tree-shaken icon registry from the terminal.",
-    version: "0.4.0",
+    version: "0.5.0",
     icon: "terminal",
   },
 ];

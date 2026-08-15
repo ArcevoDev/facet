@@ -117,6 +117,10 @@ export interface NavbarProps
   mobileMenu?: React.ReactNode;
   /** Show mobile hamburger. Default: true when links/mobileMenu provided */
   showMobileMenu?: boolean;
+  /** Breakpoint at which the desktop links show and the hamburger hides
+   *  ("sm" | "md" | "lg" | "xl"). Default: "md". Raise it (e.g. "lg")
+   *  when the navbar carries many links. */
+  mobileBreakpoint?: "sm" | "md" | "lg" | "xl";
   /** Render children instead of links */
   children?: React.ReactNode;
 }
@@ -134,6 +138,7 @@ export function Navbar({
   showThemeToggle = false,
   mobileMenu,
   showMobileMenu,
+  mobileBreakpoint = "md",
   children,
   className,
   ...props
@@ -164,7 +169,7 @@ export function Navbar({
       {children ?? (
         <div
           className={cn(
-            "hidden items-center md:flex",
+            `hidden items-center ${mobileBreakpoint}:flex`,
             isPill ? "gap-0.5 rounded-full bg-muted/40 p-1" : "gap-1",
           )}
         >
@@ -190,7 +195,7 @@ export function Navbar({
             onClick={() => setMobileOpen((v) => !v)}
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 hover:bg-accent hover:text-accent-foreground md:hidden"
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 hover:bg-accent hover:text-accent-foreground ${mobileBreakpoint}:hidden`}
           >
             <svg
               width="20"
@@ -215,7 +220,7 @@ export function Navbar({
         <div
           onClick={() => setMobileOpen(false)}
           className={cn(
-            "absolute inset-x-0 top-full z-50 border-b border-border bg-background p-4 md:hidden",
+            `absolute inset-x-0 top-full z-50 border-b border-border bg-background p-4 ${mobileBreakpoint}:hidden`,
             isPill && "mt-1 rounded-2xl shadow-lg",
           )}
         >

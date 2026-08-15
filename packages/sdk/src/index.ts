@@ -3,14 +3,14 @@
  *
  * Pure fetch. No framework dependencies.
  *
- * First-party app (own arc-id backend — session-based auth):
+ * First-party app (own arc-id backend - session-based auth):
  *   import { ArcIdClient, AuthSdk } from "@arcevo/facet-sdk";
  *
  *   const client = new ArcIdClient({ baseUrl: "https://auth.arcevo.dev/api/v1" });
  *   const auth = new AuthSdk(client);
  *   const { data, error } = await auth.login("email", "password");
  *
- * Third-party / external integration (shared arc-id instance — OAuth2/OIDC):
+ * Third-party / external integration (shared arc-id instance - OAuth2/OIDC):
  *   const client = new ArcIdClient({
  *     baseUrl: "https://auth.arcevo.dev/api/v1",
  *     clientId: "my-app-id",          // registered OAuth client

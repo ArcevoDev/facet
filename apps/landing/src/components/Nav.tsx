@@ -108,12 +108,13 @@ export function Nav() {
       links={LINKS}
       onNavigate={handleNav}
       mobileMenu={<MobileMenu onNavigate={handleNav} />}
+      mobileBreakpoint="lg"
       showThemeToggle
       actions={
         <div className="flex items-center gap-2">
           <a
             href="https://github.com/arcevodev/facet"
-            className="hidden items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground md:flex"
+            className="hidden items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground lg:flex"
           >
             <GithubIcon size={16} />
             GitHub
@@ -123,7 +124,7 @@ export function Nav() {
               <TooltipTrigger asChild>
                 <button
                   type="button"
-                  className="hidden h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:inline-flex"
+                  className="hidden h-9 w-9 items-center justify-center rounded-md text-foreground/70 transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:inline-flex"
                   aria-label="Browse components"
                   title="Browse components"
                   onClick={() => window.open(getDocsUrl())}

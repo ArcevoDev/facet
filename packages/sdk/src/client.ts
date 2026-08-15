@@ -44,7 +44,7 @@ export interface ArcIdClientConfig {
    * OAuth client id for this application. Required for third-party /
    * external integrations that talk to a shared arc-id instance via
    * `/oauth/token` (authorization_code or refresh_token grants). For a
-   * first-party app wired to its own arc-id backend this can be omitted —
+   * first-party app wired to its own arc-id backend this can be omitted -
    * the backend defaults to its direct client.
    */
   clientId?: string;

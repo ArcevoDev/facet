@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Button, Badge, GridPattern, Aurora, Beams, SparkleButton, Spotlight } from "@arcevo/facet-components";
+import { Badge, GridPattern, Aurora, Beams, SparkleButton, Spotlight } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { STATS } from "../data/features.js";
@@ -19,13 +19,13 @@ export function HeroSection() {
     }
   };
   return (
-    <div className="relative flex flex-col items-center overflow-hidden text-center">
+    <Spotlight className="relative flex flex-col items-center overflow-hidden text-center">
       {/* Animated layers: aurora + beams + masked grid (zero-dep facet
           animated surfaces). Brighter opacity so the motion reads. */}
       <Aurora className="absolute inset-0 -z-20" opacity={0.75} colors={["#6366f1", "#a855f7", "#06b6d4", "#6366f1"]} />
+      <Aurora className="absolute -inset-10 -z-20 opacity-40" opacity={0.4} colors={["#0ea5e9", "#d946ef", "#22d3ee"]} />
       <Beams count={4} className="absolute inset-0 -z-10" color="rgba(129,140,248,0.35)" />
       <GridPattern className="absolute inset-0 -z-10" />
-      <Spotlight className="absolute inset-0 -z-10" color="rgba(129,140,248,0.5)" />
       <Badge
         variant="outline"
         icon={<LightIcon name="sparkles" size={12} />}
@@ -46,13 +46,11 @@ export function HeroSection() {
           onClick={() => window.open(getDocsUrl())}
           className="h-10 px-8"
         />
-        <Button
-          variant="glass"
-          size="lg"
+        <SparkleButton
+          label="Get started"
           onClick={scrollToInstall}
-        >
-          Get started
-        </Button>
+          className="h-10 px-8 bg-primary/80 hover:bg-primary/90"
+        />
       </div>
       <p className="mt-4 text-xs text-muted-foreground">
         React 18/19 &middot; TypeScript &middot; Radix UI &middot; Tailwind CSS v4
