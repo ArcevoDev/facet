@@ -13,6 +13,7 @@
 
 import * as React from "react";
 import { createElement, type TemplateNode } from "./render.js";
+import { toNodeValue } from "./react.js";
 
 /* ── Style tokens ─────────────────────────────────────────── */
 
@@ -455,13 +456,26 @@ function wrap<T extends object>(fn: (props: T) => TemplateNode) {
   };
 }
 
-/** Convert a TemplateNode to a React element (for JSX composition). */
+/** Convert a TemplateNode or React element to a React element (for JSX
+ *  composition). React elements (from composed children) are converted
+ *  through toNodeValue first so they survive the round-trip. */
 function toReactNode(node: TemplateNode): React.ReactElement {
   const { tag, props = {}, children = [] } = node;
   return React.createElement(
     tag,
     props as React.HTMLAttributes<HTMLElement>,
-    ...children.map((c) => (typeof c === "string" ? c : toReactNode(c))),
+    ...children.map((c) => {
+      if (typeof c === "string") return c;
+      // A child that is itself a React element (e.g. <EmailText> passed
+      // into <EmailLayout>) has no `tag`; convert it to a template node
+      // so it renders instead of being dropped.
+      if (typeof (c as { tag?: unknown }).tag !== "string") {
+        const converted = toNodeValue(c as never);
+        if (converted == null) return null;
+        return typeof converted === "string" ? converted : toReactNode(converted);
+      }
+      return toReactNode(c);
+    }),
   );
 }
 

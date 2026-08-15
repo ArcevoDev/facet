@@ -75,3 +75,9 @@ export function toTemplateTree(element: ReactChild): TemplateNode {
   }
   return { tag: "div", props: {}, children };
 }
+
+/** Convert a single React child to a template node (exported so the
+ *  React wrappers can round-trip React-element children). */
+export function toNodeValue(child: ReactChild): TemplateNode | string | null {
+  return toNode(child, "0");
+}
