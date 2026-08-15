@@ -88,7 +88,7 @@ function ControlsDemo() {
           <div>
             <p className="text-sm font-medium text-foreground">Notifications</p>
             <p className="text-xs text-muted-foreground">
-              {enabled ? "On — you'll hear about it" : "Off — quiet mode"}
+              {enabled ? "On - you'll hear about it" : "Off - quiet mode"}
             </p>
           </div>
           <Switch checked={enabled} onCheckedChange={setEnabled} />
@@ -253,7 +253,7 @@ export function DemoSection() {
           See it in action
         </h2>
         <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-          Not screenshots — live components running on the real tokens. Flip the theme, drag the
+          Not screenshots - live components running on the real tokens. Flip the theme, drag the
           slider, scan the QR code, burst some sparkles.
         </p>
       </div>
