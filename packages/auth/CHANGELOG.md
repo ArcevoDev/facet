@@ -1,5 +1,33 @@
 # @arcevo/facet-auth
 
+## 1.2.0
+
+### Minor Changes
+
+- 9360e93: feat(auth): animated submit buttons on all auth forms (overridable)
+
+  SignUp, LoginForm, ResetPasswordForm, ForgotPasswordForm, MagicLinkForm, and the MFA recovery-codes form now render their primary submit/confirm buttons through `AnimatedButton` (default "shine"), so forms get a consistent animated CTA. Each form accepts a `submitButton` prop:
+
+  - `submitButton.animation`: "sparkle" | "ripple" | "magnetic" | "shine" | "none" (default "shine").
+  - `submitButton.renderButton`: fully replace the built-in button with your own component.
+
+  Secondary/utility buttons (back, cancel, recovery, OAuth, outline) stay as plain Button by design.
+
+- 2236aa8: feat(auth): full copy flexibility on forms - every label, placeholder, button, and error is editable
+
+  SignUp, LoginForm, and ResetPasswordForm now accept a `copy` prop that overrides any static text: titles, descriptions, field labels, placeholders, submit/submitting labels, footer links, and in-form error messages (e.g. password mismatch). Each copy object falls back to the existing defaults when omitted, so current consumers are unaffected.
+
+  New exported types + defaults: `SignUpCopy` / `LoginCopy` / `ResetPasswordCopy` (+ `MfaCopy` reserved) and `defaultSignUpCopy` / `defaultLoginCopy` / `defaultResetPasswordCopy` / `defaultMfaCopy`. `slots.title` / `slots.description` still take precedence when both are provided.
+
+  Docs: Sign Up page documents the `copy` prop with an example.
+
+### Patch Changes
+
+- Updated dependencies [9360e93]
+- Updated dependencies [8d922f7]
+- Updated dependencies [78b6543]
+  - @arcevo/facet-components@1.8.0
+
 ## 1.1.6
 
 ### Patch Changes

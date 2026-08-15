@@ -1,5 +1,17 @@
 # @arcevo/facet-layout
 
+## 1.3.4
+
+### Patch Changes
+
+- Updated dependencies [9360e93]
+- Updated dependencies [9360e93]
+- Updated dependencies [8d922f7]
+- Updated dependencies [2236aa8]
+- Updated dependencies [78b6543]
+  - @arcevo/facet-auth@1.2.0
+  - @arcevo/facet-components@1.8.0
+
 ## 1.3.3
 
 ### Patch Changes

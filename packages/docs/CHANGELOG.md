@@ -1,5 +1,20 @@
 # @arcevo/facet-docs
 
+## 1.4.4
+
+### Patch Changes
+
+- Updated dependencies [9360e93]
+- Updated dependencies [9360e93]
+- Updated dependencies [a058223]
+- Updated dependencies [8d922f7]
+- Updated dependencies [2236aa8]
+- Updated dependencies [78b6543]
+  - @arcevo/facet-auth@1.2.0
+  - @arcevo/facet-components@1.8.0
+  - @arcevo/facet-tokens@1.1.2
+  - @arcevo/facet-layout@1.3.4
+
 ## 1.4.3
 
 ### Patch Changes
