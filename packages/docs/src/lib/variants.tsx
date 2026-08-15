@@ -178,6 +178,21 @@ import {
   Spotlight,
   SparkleButton,
   TypewriterText,
+  BlurText,
+  WaveText,
+  FlipText,
+  SplitText,
+  FadeUpText,
+  ShimmerText,
+  GradientText,
+  LetterSpacingText,
+  CountUpText,
+  TiltCard,
+  GlowCard,
+  RippleButton,
+  MagneticButton,
+  ShineButton,
+  ScrollReveal,
   Footer,
   FeedbackPage,
   BillingPage,
@@ -2132,6 +2147,145 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                 delay={900}
                 className="font-heading text-xl font-bold text-foreground"
               />
+            </div>
+          ),
+        },
+      ];
+    case "text-animations":
+      return [
+        {
+          label: "Blur",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <BlurText text="Blur in, word by word" className="font-heading text-2xl font-bold text-foreground" />
+            </div>
+          ),
+        },
+        {
+          label: "Wave",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <WaveText text="Wave hello" className="font-heading text-2xl font-bold text-foreground" />
+            </div>
+          ),
+        },
+        {
+          label: "Flip",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <FlipText text="Flip it" className="font-heading text-2xl font-bold text-foreground" />
+            </div>
+          ),
+        },
+        {
+          label: "Split / rise",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <SplitText text="Words rise into place" className="font-heading text-2xl font-bold text-foreground" />
+            </div>
+          ),
+        },
+        {
+          label: "Fade up",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <FadeUpText text="Fade and slide up" className="font-heading text-2xl font-bold text-foreground" />
+            </div>
+          ),
+        },
+        {
+          label: "Shimmer",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <ShimmerText text="Shimmering headline" className="font-heading text-2xl font-extrabold text-foreground" />
+            </div>
+          ),
+        },
+        {
+          label: "Gradient",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <GradientText text="Animated gradient" className="font-heading text-2xl font-extrabold" />
+            </div>
+          ),
+        },
+        {
+          label: "Letter spacing",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <LetterSpacingText text="Hover to expand" className="font-heading text-2xl font-bold text-foreground" />
+            </div>
+          ),
+        },
+        {
+          label: "Count up",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center gap-6 rounded-lg border border-border bg-background">
+              <CountUpText to={64000} separator className="font-heading text-2xl font-bold text-foreground" />
+              <CountUpText to={99.5} decimals={1} className="font-heading text-2xl font-bold text-foreground" />
+            </div>
+          ),
+        },
+      ];
+    case "micro-interactions":
+      return [
+        {
+          label: "Tilt card",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <TiltCard className="w-64 rounded-xl border border-border bg-background p-6 shadow-sm">
+                <p className="text-sm font-semibold text-foreground">Move your cursor over me</p>
+              </TiltCard>
+            </div>
+          ),
+        },
+        {
+          label: "Glow card",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <GlowCard className="w-64 rounded-xl border border-border bg-background p-6 shadow-sm">
+                <p className="text-sm font-semibold text-foreground">A glow follows your cursor</p>
+              </GlowCard>
+            </div>
+          ),
+        },
+        {
+          label: "Ripple button",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <RippleButton className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground">
+                Click me
+              </RippleButton>
+            </div>
+          ),
+        },
+        {
+          label: "Magnetic button",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <MagneticButton className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground">
+                Magnetic
+              </MagneticButton>
+            </div>
+          ),
+        },
+        {
+          label: "Shine button",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <ShineButton className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground">
+                Shine on hover
+              </ShineButton>
+            </div>
+          ),
+        },
+        {
+          label: "Scroll reveal",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <ScrollReveal>
+                <p className="text-sm font-semibold text-foreground">Reveals as you scroll</p>
+              </ScrollReveal>
             </div>
           ),
         },

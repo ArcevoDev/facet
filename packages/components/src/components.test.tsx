@@ -8,6 +8,8 @@ import { Navbar, type NavLink } from "./ui/navbar.js";
 import { NotificationDrawer, type Notification } from "./ui/notification-drawer.js";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./ui/accordion.js";
 import { Dialog, DialogContent } from "./ui/dialog.js";
+import { BlurText, GradientText, SplitText, CountUpText, WaveText } from "./ui/text-animations.js";
+import { RippleButton, MagneticButton, ScrollReveal, TiltCard } from "./ui/micro-interactions.js";
 import {
   Alert,
   AlertTitle,
@@ -718,5 +720,68 @@ describe("Combobox", () => {
   it("shows the selected value as the trigger label", () => {
     render(<Combobox options={options} value="ke" />);
     expect(screen.getByRole("combobox")).toHaveTextContent("Kenya");
+  });
+});
+
+/* ── Text animations ────────────────────────────────────────── */
+
+describe("text animations", () => {
+  it("BlurText renders the text split into characters", () => {
+    const { container } = render(<BlurText text="hello" />);
+    expect(container.querySelectorAll("span > span").length).toBe(5);
+    expect(container.textContent).toContain("hello");
+  });
+
+  it("WaveText renders each character in an inline-block span", () => {
+    const { container } = render(<WaveText text="wave" />);
+    expect(container.querySelectorAll("span > span").length).toBe(4);
+  });
+
+  it("SplitText splits into words", () => {
+    const { container } = render(<SplitText text="two words" />);
+    expect(container.querySelectorAll("span > span").length).toBe(2);
+  });
+
+  it("GradientText renders the text and applies a gradient", () => {
+    const { container } = render(<GradientText text="gradient" />);
+    expect(container.textContent).toContain("gradient");
+    const span = container.querySelector("span");
+    expect(span?.style.backgroundImage).toContain("linear-gradient");
+  });
+
+  it("CountUpText starts at from and counts toward to", () => {
+    render(<CountUpText to={100} from={0} />);
+    // SSR-safe: renders the target server-side, then animates on mount.
+    expect(screen.getByText("100")).toBeInTheDocument();
+  });
+});
+
+/* ── Micro-interactions ─────────────────────────────────────── */
+
+describe("micro-interactions", () => {
+  it("RippleButton renders children and fires onClick", () => {
+    const onClick = vi.fn();
+    render(<RippleButton onClick={onClick}>Click</RippleButton>);
+    fireEvent.click(screen.getByRole("button"));
+    expect(onClick).toHaveBeenCalled();
+  });
+
+  it("MagneticButton renders and accepts a className", () => {
+    const { container } = render(
+      <MagneticButton className="mag-btn">Pull</MagneticButton>,
+    );
+    const btn = container.querySelector("button");
+    expect(btn).toHaveClass("mag-btn");
+    expect(btn).toHaveTextContent("Pull");
+  });
+
+  it("TiltCard renders children inside a wrapper", () => {
+    const { container } = render(<TiltCard>Card body</TiltCard>);
+    expect(container.textContent).toContain("Card body");
+  });
+
+  it("ScrollReveal renders children (visible after observer or fallback)", () => {
+    const { container } = render(<ScrollReveal>Revealed</ScrollReveal>);
+    expect(container.textContent).toContain("Revealed");
   });
 });

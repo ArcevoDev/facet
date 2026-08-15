@@ -24,7 +24,7 @@ Three customization axes: `appearance` (style), `config` (behavior flags), `slot
 ```
 packages/tokens/       ← Design tokens (finished)
 packages/sdk/          ← arc-id SDK (finished)
-packages/components/   ← 65 styled Radix components (shadcn-style, Radix + tailwind-merge)
+packages/components/   ← 67 styled Radix components (shadcn-style, Radix + tailwind-merge)
 packages/auth/         ← Auth components + presets
 packages/layout/       ← Domain-configurable app shell (ConsoleLayout, AuthLayout, LandingLayout)
 packages/docs/         ← Installable docs engine: @arcevo/facet-docs (<DocsApp config pages />)
@@ -94,7 +94,7 @@ COMPLETE → (onSuccess callback) → redirect
 
 1. ✅ `packages/tokens/`: Complete
 2. ✅ `packages/sdk/`: Complete, strict domain types (`sdk/src/types.ts`)
-3. ✅ `packages/components/`: 65 styled Radix components + theme system + IconRegistry (+5 this session: animated surfaces, footer variants, feedback-page, billing-page, typewriter-text; notification-bell removed)
+3. ✅ `packages/components/`: 67 styled Radix components + theme system + IconRegistry (+7 this session: animated surfaces, footer variants, feedback-page, billing-page, typewriter-text, text-animations, micro-interactions; notification-bell removed)
 4. ✅ `packages/auth/`: ArcProvider, SignIn (controlled `step`/`onStepChange` API), SignUp, UserButton, Guard, MfaDialog, 7 standalone forms
 5. ✅ `packages/layout/`: ConsoleLayout (full + rail modes), AuthLayout (renamed from AppLayout, alias kept), LandingLayout, 5 presets
 6. ✅ `packages/docs/`: installable config-driven docs engine (`@arcevo/facet-docs`) + thin demo consumer at `apps/docs/` (`@arcevo/facet-docs-site`)

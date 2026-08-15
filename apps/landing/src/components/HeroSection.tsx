@@ -45,8 +45,8 @@ export function HeroSection() {
             "64 Radix components",
             "Auth presets for every domain",
             "Alpha Palette design tokens",
-            "Console, auth and landing shells",
-            "A typed arc-id SDK",
+            "Console, auth, and landing shells",
+            "A typed ArcID SDK",
             "Framework-agnostic email templates",
             "A CLI that scaffolds it all",
           ]}

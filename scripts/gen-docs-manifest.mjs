@@ -80,8 +80,12 @@ const CATEGORY = {
   marquee: "ready-to-use",
   qrcode: "ready-to-use",
   roadmap: "ready-to-use",
-  // Animated text + full page components (new "Pages" section)
-  "typewriter-text": "general",
+  // Animation family (text + surfaces + micro-interactions)
+  animated: "animation",
+  "typewriter-text": "animation",
+  "text-animations": "animation",
+  "micro-interactions": "animation",
+  // Full page components (new "Pages" section)
   "feedback-page": "pages",
   footer: "pages",
   "billing-page": "pages",

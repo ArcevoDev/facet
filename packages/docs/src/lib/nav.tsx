@@ -58,7 +58,7 @@ export function buildDocsLayoutConfig(
   // The Components, Ready-to-Use and Pages sections are inserted after the
   // Auth section so the gallery follows auth in the sidebar. They render
   // before the remaining page-driven sections (foundations, ecosystem).
-  const ORDER = ["guides", "auth", "components", "ready-to-use", "pages", "foundations", "ecosystem"];
+  const ORDER = ["guides", "auth", "components", "ready-to-use", "pages", "animation", "foundations", "ecosystem"];
   const seen = new Set(ORDER);
   const ordered = [...ORDER];
   for (const page of pages) {
@@ -73,10 +73,11 @@ export function buildDocsLayoutConfig(
   const componentsSection = showComponents ? buildComponentsSection() : undefined;
   const readyToUseSection = showComponents ? buildReadyToUseSection() : undefined;
   const pagesSection = showComponents ? buildPagesSection() : undefined;
+  const animationSection = showComponents ? buildAnimationSection() : undefined;
 
   for (const section of ordered) {
-    // The components / ready-to-use / pages sections are assembled from
-    // the manifest, not pages.
+    // The components / ready-to-use / pages / animation sections are
+    // assembled from the manifest, not pages.
     if (section === "components") {
       if (componentsSection) navigation.push(componentsSection);
       continue;
@@ -87,6 +88,10 @@ export function buildDocsLayoutConfig(
     }
     if (section === "pages") {
       if (pagesSection) navigation.push(pagesSection);
+      continue;
+    }
+    if (section === "animation") {
+      if (animationSection) navigation.push(animationSection);
       continue;
     }
     const sectionPages = bySection(section);
@@ -154,7 +159,8 @@ function buildComponentsSection(): NavSection {
       entry.category === "foundations" ||
       entry.category === "ready-to-use" ||
       entry.category === "pages" ||
-      entry.category === "auth"
+      entry.category === "auth" ||
+      entry.category === "animation"
     ) {
       continue;
     }
@@ -230,6 +236,35 @@ export function buildPagesSection(): NavSection {
       label: entry.name,
     })),
   };
+}
+
+/**
+ * Build the dedicated "Animation" sidebar section: text animations nested
+ * under a "Text" parent, plus surfaces (Aurora/Beams/GridPattern/
+ * Spotlight/SparkleButton) and micro-interactions as top-level items.
+ */
+export function buildAnimationSection(): NavSection {
+  const animations = extendedManifest.filter((entry) => entry.category === "animation");
+  // Text effects live in typewriter-text.tsx + text-animations.tsx; the
+  // surface + micro-interaction entries (animated, micro-interactions)
+  // render as top-level items.
+  const text = animations.filter((a) => a.slug === "typewriter-text" || a.slug === "text-animations");
+  const rest = animations.filter((a) => !text.includes(a));
+  const items: NavItem[] = [];
+  if (text.length) {
+    items.push({
+      href: `/components/${text[0]!.slug}`,
+      label: "Text",
+      children: text.map((entry) => ({
+        href: `/components/${entry.slug}`,
+        label: entry.name,
+      })),
+    });
+  }
+  for (const entry of rest) {
+    items.push({ href: `/components/${entry.slug}`, label: entry.name });
+  }
+  return { title: "Animation", id: "animation", items };
 }
 
 /** Export a nav item type for consumers building their own sections. */

@@ -426,6 +426,42 @@ export {
 } from "./ui/typewriter-text.js";
 
 export {
+  type BlurTextProps,
+  BlurText,
+  type WaveTextProps,
+  WaveText,
+  type FlipTextProps,
+  FlipText,
+  type SplitTextProps,
+  SplitText,
+  type FadeUpTextProps,
+  FadeUpText,
+  type ShimmerTextProps,
+  ShimmerText,
+  type GradientTextProps,
+  GradientText,
+  type LetterSpacingTextProps,
+  LetterSpacingText,
+  type CountUpTextProps,
+  CountUpText,
+} from "./ui/text-animations.js";
+
+export {
+  type TiltCardProps,
+  TiltCard,
+  type GlowCardProps,
+  GlowCard,
+  type RippleButtonProps,
+  RippleButton,
+  type MagneticButtonProps,
+  MagneticButton,
+  type ShineButtonProps,
+  ShineButton,
+  type ScrollRevealProps,
+  ScrollReveal,
+} from "./ui/micro-interactions.js";
+
+export {
   type FooterLink,
   type FooterColumn,
   type FooterSocial,

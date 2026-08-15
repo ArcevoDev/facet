@@ -907,6 +907,65 @@ import { Navbar } from "@arcevo/facet-components";
   className="font-heading text-2xl font-bold text-foreground"
   caretClassName="ml-0.5 inline-block w-0.5 animate-pulse text-primary"
 />`,
+  "text-animations": `import { BlurText, WaveText, FlipText, SplitText, FadeUpText, ShimmerText, GradientText, LetterSpacingText, CountUpText } from "@arcevo/facet-components";
+
+// Each character fades in from a blur, staggered.
+<BlurText text="Blur in" className="font-heading text-2xl font-bold" />
+
+// Characters bob in a continuous wave.
+<WaveText text="Wave hello" className="font-heading text-2xl font-bold" />
+
+// Characters flip in sequentially.
+<FlipText text="Flip it" className="font-heading text-2xl font-bold" />
+
+// Words rise into place.
+<SplitText text="Words rise into place" className="font-heading text-2xl font-bold" />
+
+// The whole block fades + slides up on mount.
+<FadeUpText text="Fade and slide" className="font-heading text-2xl font-bold" />
+
+// A light sheen sweeps across the text.
+<ShimmerText text="Shimmering headline" className="font-heading text-2xl font-extrabold" />
+
+// An animated gradient fills the text.
+<GradientText text="Animated gradient" className="font-heading text-2xl font-extrabold" />
+
+// Letters expand on hover.
+<LetterSpacingText text="Hover to expand" className="font-heading text-2xl font-bold" />
+
+// Counts up to a number on mount.
+<CountUpText to={64000} separator className="font-heading text-2xl font-bold" />`,
+  "micro-interactions": `import { TiltCard, GlowCard, RippleButton, MagneticButton, ShineButton, ScrollReveal } from "@arcevo/facet-components";
+
+// A card that tilts toward the cursor in 3D.
+<TiltCard maxTilt={10} className="w-64 rounded-xl border p-6">
+  Move your cursor over me
+</TiltCard>
+
+// A card with a cursor-following glow.
+<GlowCard color="var(--primary)" className="w-64 rounded-xl border p-6">
+  A glow follows your cursor
+</GlowCard>
+
+// A button that ripples on click.
+<RippleButton className="rounded-md bg-primary px-6 py-2 text-primary-foreground">
+  Click me
+</RippleButton>
+
+// A button that gravitates toward the cursor.
+<MagneticButton strength={16} className="rounded-md bg-primary px-6 py-2 text-primary-foreground">
+  Magnetic
+</MagneticButton>
+
+// A button with a light sweep on hover.
+<ShineButton className="rounded-md bg-primary px-6 py-2 text-primary-foreground">
+  Shine on hover
+</ShineButton>
+
+// Reveals children as they scroll into view.
+<ScrollReveal delay={100}>
+  <Card>Revealed on scroll</Card>
+</ScrollReveal>`,
   footer: `import { Footer } from "@arcevo/facet-components";
 
 <Footer

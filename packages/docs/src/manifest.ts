@@ -31,7 +31,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Animated",
     "slug": "animated",
     "description": "@arcevo/facet-components: Animated backgrounds & micro-interactions",
-    "category": "general"
+    "category": "animation"
   },
   {
     "name": "Avatar",
@@ -238,6 +238,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "layout"
   },
   {
+    "name": "Micro Interactions",
+    "slug": "micro-interactions",
+    "description": "@arcevo/facet-components: card & button micro-interactions",
+    "category": "animation"
+  },
+  {
     "name": "Navbar",
     "slug": "navbar",
     "description": "Active-state matching for plain anchors:",
@@ -370,6 +376,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "layout"
   },
   {
+    "name": "Text Animations",
+    "slug": "text-animations",
+    "description": "@arcevo/facet-components: text animations",
+    "category": "animation"
+  },
+  {
     "name": "Textarea",
     "slug": "textarea",
     "description": "",
@@ -397,7 +409,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Typewriter Text",
     "slug": "typewriter-text",
     "description": "@arcevo/facet-components: TypewriterText",
-    "category": "general"
+    "category": "animation"
   },
   {
     "name": "Icon",
