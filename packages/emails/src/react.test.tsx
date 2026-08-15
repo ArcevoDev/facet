@@ -6,6 +6,10 @@ import {
   EmailButton,
   EmailText,
   EmailCodeBlock,
+  EmailSecurityNotice,
+  EmailSection,
+  EmailRow,
+  EmailColumn,
   toTemplateTree,
 } from "./index.js";
 
@@ -46,5 +50,28 @@ describe("React bridge", () => {
     const html = renderEmailFromReact(element);
     expect(html).toContain("Hi");
     expect(html).toContain(">Go</a>");
+  });
+
+  it("renders Section/Row/Column and security-notice callouts in JSX", () => {
+    const html = renderEmailFromReact(
+      <EmailLayout previewText="P" heading="Codes" brandName="Acme">
+        <EmailSection>
+          <EmailRow>
+            <EmailColumn style={{ width: "50%" }}>
+              <EmailCodeBlock codes={["AAAA", "BBBB"]} label="Recovery codes" />
+            </EmailColumn>
+            <EmailColumn style={{ width: "50%" }}>
+              <EmailCodeBlock code="123456" />
+            </EmailColumn>
+          </EmailRow>
+        </EmailSection>
+        <EmailSecurityNotice variant="warning">Heads up</EmailSecurityNotice>
+      </EmailLayout>,
+    );
+    expect(html).toContain("AAAA");
+    expect(html).toContain("BBBB");
+    expect(html).toContain("123456");
+    expect(html).toContain("Heads up");
+    expect(html).toContain("Recovery codes");
   });
 });

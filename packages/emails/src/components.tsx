@@ -178,29 +178,97 @@ export function emailText(props: EmailTextProps): TemplateNode {
 /* ── EmailCodeBlock ───────────────────────────────────────── */
 
 export interface EmailCodeBlockProps {
-  code: string;
+  /** Single code (MFA code path). */
+  code?: string;
+  /** Multiple codes rendered as a grid (recovery-codes path). */
+  codes?: string[];
+  /** Number of grid columns when `codes` is provided. Default: 2. */
+  columns?: 1 | 2;
   label?: string;
   style?: React.CSSProperties;
 }
 
+function codeCell(code: string): TemplateNode {
+  return createElement(
+    "td",
+    {
+      style: {
+        fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace",
+        fontSize: "14px",
+        fontWeight: 600,
+        letterSpacing: "0.1em",
+        color: TEXT,
+        margin: 0,
+        padding: "8px 12px",
+        backgroundColor: SURFACE,
+        border: "1px solid #00000014",
+        borderRadius: "6px",
+      },
+    },
+    code,
+  );
+}
+
 export function emailCodeBlock(props: EmailCodeBlockProps): TemplateNode {
-  const { code, label, style = {} } = props;
+  const { code, codes, columns = 2, label, style = {} } = props;
+
+  // Single-code path: a dark monospace block.
+  if (code != null && codes == null) {
+    return createElement(
+      "table",
+      { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style: { margin: "16px 0", ...style } },
+      createElement(
+        "tr",
+        {},
+        createElement(
+          "td",
+          { style: { backgroundColor: "#0f172a", borderRadius: "8px", padding: "16px 20px" } },
+          label
+            ? createElement("p", { style: { margin: "0 0 8px", fontSize: "11px", letterSpacing: "1px", textTransform: "uppercase", color: "#94a3b8" } }, label)
+            : null,
+          createElement(
+            "pre",
+            { style: { margin: 0, color: "#e2e8f0", fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: "15px", letterSpacing: "2px" } },
+            code,
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Multiple-codes path: a grid (2 columns by default, recovery-code style).
+  const list = codes ?? [];
+  const pairs: string[][] = [];
+  if (columns === 2) {
+    for (let i = 0; i < list.length; i += 2) {
+      pairs.push([list[i] ?? "", list[i + 1] ?? ""]);
+    }
+  } else {
+    list.forEach((c) => pairs.push([c]));
+  }
+
   return createElement(
     "table",
-    { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style: { margin: "16px 0" } },
+    { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style: { margin: "16px 0", ...style } },
     createElement(
       "tr",
       {},
       createElement(
         "td",
-        { style: { backgroundColor: "#0f172a", borderRadius: "8px", padding: "16px 20px" } },
+        { style: { backgroundColor: "#f9fafb", border: "1px solid #00000014", borderRadius: "8px", padding: "16px 20px" } },
         label
-          ? createElement("p", { style: { margin: "0 0 8px", fontSize: "11px", letterSpacing: "1px", textTransform: "uppercase", color: "#94a3b8" } }, label)
+          ? createElement("p", { style: { margin: "0 0 12px", fontSize: "13px", color: MUTED } }, label)
           : null,
-        createElement(
-          "pre",
-          { style: { margin: 0, color: "#e2e8f0", fontFamily: "ui-monospace,SFMono-Regular,Menlo,monospace", fontSize: "15px", letterSpacing: "2px" } },
-          code,
+        ...pairs.map((pair, i) =>
+          createElement(
+            "table",
+            { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style: { marginBottom: i < pairs.length - 1 ? "8px" : 0 } },
+            createElement(
+              "tr",
+              {},
+              ...pair.map((c) => createElement("td", { style: { width: columns === 2 ? "50%" : "100%", padding: "2px" } }, c ? codeCell(c) : null)),
+            ),
+          ),
         ),
       ),
     ),
@@ -228,17 +296,51 @@ export function emailLink(props: EmailLinkProps): TemplateNode {
 
 /* ── EmailSecurityNotice ──────────────────────────────────── */
 
+export type EmailSecurityNoticeVariant = "warning" | "danger" | "info";
+
 export interface EmailSecurityNoticeProps {
-  ip: string;
+  ip?: string;
   userAgent?: string;
   location?: string;
+  /** Content override (when used as a callout, not an IP/device table). */
+  children?: React.ReactNode;
+  variant?: EmailSecurityNoticeVariant;
   style?: React.CSSProperties;
 }
 
+const NOTICE_STYLES: Record<
+  EmailSecurityNoticeVariant,
+  { bg: string; border: string; text: string }
+> = {
+  warning: { bg: "#fffbeb", border: "#d97706", text: "#b45309" },
+  danger: { bg: "#fef2f2", border: "#dc2626", text: "#b91c1c" },
+  info: { bg: "#f9fafb", border: "#e5e7eb", text: "#4b5563" },
+};
+
 export function emailSecurityNotice(props: EmailSecurityNoticeProps): TemplateNode {
-  const { ip, userAgent, location, style = {} } = props;
+  const { ip, userAgent, location, children, variant = "info", style = {} } = props;
+  const s = NOTICE_STYLES[variant];
+
+  // Callout form: arbitrary children with variant styling.
+  if (children != null) {
+    return createElement(
+      "table",
+      { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style: { margin: "16px 0", ...style } },
+      createElement(
+        "tr",
+        {},
+        createElement(
+          "td",
+          { style: { backgroundColor: s.bg, border: `1px solid ${s.border}`, borderRadius: "8px", padding: "12px 20px" } },
+          createElement("p", { style: { margin: 0, color: s.text, fontSize: "14px", lineHeight: "20px", fontWeight: 500 } }, children),
+        ),
+      ),
+    );
+  }
+
+  // Table form: IP / location / device rows.
   const rows = [
-    { k: "IP address", v: ip },
+    ...(ip ? [{ k: "IP address", v: ip }] : []),
     ...(location ? [{ k: "Location", v: location }] : []),
     ...(userAgent ? [{ k: "Device", v: userAgent }] : []),
   ];
@@ -254,6 +356,45 @@ export function emailSecurityNotice(props: EmailSecurityNoticeProps): TemplateNo
       ),
     ),
   );
+}
+
+/* ── EmailSection / EmailRow / EmailColumn ────────────────── */
+
+export interface EmailSectionProps {
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}
+
+/** A table-based container for grouped email content (react-email Section equivalent). */
+export function emailSection(props: EmailSectionProps): TemplateNode {
+  const { style = {}, children } = props;
+  return createElement(
+    "table",
+    { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style },
+    createElement("tr", {}, createElement("td", { style: { padding: "0" } }, children)),
+  );
+}
+
+export interface EmailRowProps {
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}
+
+/** A table row for grid layouts (react-email Row equivalent). */
+export function emailRow(props: EmailRowProps): TemplateNode {
+  const { style = {}, children } = props;
+  return createElement("tr", { style }, children);
+}
+
+export interface EmailColumnProps {
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}
+
+/** A table cell (react-email Column equivalent). */
+export function emailColumn(props: EmailColumnProps): TemplateNode {
+  const { style = {}, children } = props;
+  return createElement("td", { style }, children);
 }
 
 /* ── EmailList ────────────────────────────────────────────── */
@@ -305,3 +446,6 @@ export const EmailDivider = wrap<{}>(() => emailDivider());
 export const EmailLink = wrap<EmailLinkProps>(emailLink);
 export const EmailSecurityNotice = wrap<EmailSecurityNoticeProps>(emailSecurityNotice);
 export const EmailList = wrap<EmailListProps>(emailList);
+export const EmailSection = wrap<EmailSectionProps>(emailSection);
+export const EmailRow = wrap<EmailRowProps>(emailRow);
+export const EmailColumn = wrap<EmailColumnProps>(emailColumn);

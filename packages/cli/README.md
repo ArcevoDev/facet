@@ -84,6 +84,28 @@ Safe by default:
 - It prints the exact remove command (`pnpm remove ...` / `npm uninstall ...`)
   instead of auto-running it, so you control the lockfile change.
 
+### `facet emails init`
+
+Scaffold or migrate email templates wired to `@arcevo/facet-emails`. It
+detects the consumer's mail setup from the manifests:
+
+- **react-email / mjml / nodemailer** present -> offers to migrate (build the
+  facet-emails `emails/` dir + preview server on top of what exists).
+- **resend / sendgrid / SES / postmark** present -> wires the provider into
+  the generated `send.ts`.
+- **nothing** -> fresh scaffold: `emails/brand.ts` (theme tokens),
+  `emails/layout.tsx`, `emails/template-registry.tsx`, `emails/preview-server.ts`,
+  `emails/send.ts` (resend/nodemailer/no provider), and `.env.example`.
+
+It auto-installs `@arcevo/facet-emails` (and the provider SDK) via the
+detected package manager, fails soft printing the exact command when the
+install can't run, and prints the setup guide (provider keys, preview URL,
+how to send).
+
+Flags: `-y` (no prompts), `--framework`, `--migrate` / `--fresh`,
+`--provider resend|nodemailer|none`, `--location` (default `emails`),
+`--name` (brand name).
+
 ### `facet scripts`
 
 Add useful npm scripts to your `package.json`, preserving anything you

@@ -32,6 +32,9 @@ export {
   emailLink,
   emailSecurityNotice,
   emailList,
+  emailSection,
+  emailRow,
+  emailColumn,
   EmailLayout,
   EmailButton,
   EmailText,
@@ -40,6 +43,9 @@ export {
   EmailLink,
   EmailSecurityNotice,
   EmailList,
+  EmailSection,
+  EmailRow,
+  EmailColumn,
   type EmailLayoutProps,
   type EmailButtonProps,
   type EmailButtonVariant,
@@ -48,7 +54,11 @@ export {
   type EmailCodeBlockProps,
   type EmailLinkProps,
   type EmailSecurityNoticeProps,
+  type EmailSecurityNoticeVariant,
   type EmailListProps,
+  type EmailSectionProps,
+  type EmailRowProps,
+  type EmailColumnProps,
 } from "./components.js";
 
 /**

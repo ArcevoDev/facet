@@ -11,6 +11,9 @@ import {
   emailLink,
   emailSecurityNotice,
   emailList,
+  emailSection,
+  emailRow,
+  emailColumn,
   type TemplateNode,
 } from "./index.js";
 
@@ -132,5 +135,75 @@ describe("primitives (tree form)", () => {
     expect(html).toContain('href="https://acme.dev"');
     expect(html).toContain("Regards");
     expect(html).toContain("<!DOCTYPE html>");
+  });
+});
+
+describe("Section / Row / Column", () => {
+  it("emailSection renders a table container", () => {
+    const tree = emailSection({}, emailText({ children: "Grouped" }));
+    const html = renderEmail(tree, { fullDocument: false });
+    expect(html).toContain("<table");
+    expect(html).toContain("<td");
+    expect(html).toContain("Grouped");
+  });
+
+  it("emailRow and emailColumn compose a grid", () => {
+    const tree = emailRow({}, emailColumn({ style: { width: "50%" } }, "A"), emailColumn({ style: { width: "50%" } }, "B"));
+    const html = renderEmail(tree, { fullDocument: false });
+    expect(html).toContain("<tr");
+    expect(html).toContain('style="width:50%"');
+    expect(html).toContain("A");
+    expect(html).toContain("B");
+  });
+});
+
+describe("security notice variants", () => {
+  it("renders a warning callout with children", () => {
+    const tree = emailSecurityNotice({ variant: "warning", children: "Be careful" });
+    const html = renderEmail(tree, { fullDocument: false });
+    expect(html).toContain("Be careful");
+    expect(html).toContain("#fffbeb");
+  });
+
+  it("renders a danger callout", () => {
+    const tree = emailSecurityNotice({ variant: "danger", children: "Critical" });
+    const html = renderEmail(tree, { fullDocument: false });
+    expect(html).toContain("Critical");
+    expect(html).toContain("#fef2f2");
+  });
+
+  it("renders an IP/device table when no children", () => {
+    const tree = emailSecurityNotice({ ip: "1.2.3.4", userAgent: "Firefox" });
+    const html = renderEmail(tree, { fullDocument: false });
+    expect(html).toContain("1.2.3.4");
+    expect(html).toContain("Firefox");
+  });
+});
+
+describe("emailCodeBlock with codes grid", () => {
+  it("renders a single code as a dark block", () => {
+    const tree = emailCodeBlock({ code: "847 291" });
+    const html = renderEmail(tree, { fullDocument: false });
+    expect(html).toContain("847 291");
+  });
+
+  it("renders multiple codes in a 2-column grid", () => {
+    const tree = emailCodeBlock({
+      codes: ["AAAA-1111", "BBBB-2222", "CCCC-3333", "DDDD-4444"],
+      label: "Recovery codes",
+    });
+    const html = renderEmail(tree, { fullDocument: false });
+    expect(html).toContain("AAAA-1111");
+    expect(html).toContain("BBBB-2222");
+    expect(html).toContain("CCCC-3333");
+    expect(html).toContain("DDDD-4444");
+    expect(html).toContain("Recovery codes");
+  });
+
+  it("renders a 1-column grid when requested", () => {
+    const tree = emailCodeBlock({ codes: ["A", "B"], columns: 1 });
+    const html = renderEmail(tree, { fullDocument: false });
+    expect(html).toContain("A");
+    expect(html).toContain("B");
   });
 });

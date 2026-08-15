@@ -1001,6 +1001,7 @@ facet docs scan --out docs && facet docs scan -y`,
           ["`facet docs scan`", "Read this repo and draft a documentation layer (pages + sidebar + API reference) for review"],
           ["`facet add <component>`", "Copy a component into your source (shadcn-style)"],
           ["`facet icons generate`", "Scan your source and emit a tree-shaken lucide icon registry"],
+          ["`facet emails init`", "Scaffold or migrate email templates wired to facet-emails (detects react-email/mjml/nodemailer/resend)"],
         ],
       },
       { type: "h2", text: "Flags" },
@@ -1049,6 +1050,37 @@ facet docs scan --out docs && facet docs scan -y`,
         rows: [
           ["`--path <path>`", "Where to write `icons.generated.tsx` (default: detected from repo layout)"],
           ["`-y, --yes`", "Overwrite an existing generated registry without confirmation"],
+        ],
+      },
+      { type: "h2", text: "facet emails init" },
+      {
+        type: "code",
+        lang: "bash",
+        text: `facet emails init
+# non-interactive, using detected defaults:
+facet emails init -y
+# force a fresh scaffold or a migration:
+facet emails init --fresh
+facet emails init --migrate
+# pick the provider:
+facet emails init --provider resend`,
+      },
+      {
+        type: "p",
+        text: "`facet emails init` detects the consumer's mail setup (react-email, mjml, nodemailer, resend, sendgrid, SES, postmark) from the manifests and either offers a migration or a fresh scaffold: an `emails/` dir with brand tokens, a layout wrapper, a template registry, a dev preview server, and a provider `send.ts` (resend/nodemailer, or a stub to wire up). It auto-installs `@arcevo/facet-emails` plus the provider SDK via the detected package manager, and prints the setup guide (provider keys, preview URL, how to send).",
+      },
+      { type: "h2", text: "facet emails init flags" },
+      {
+        type: "table",
+        headers: ["Flag", "Description"],
+        rows: [
+          ["`-y, --yes`", "Use detected defaults without prompting"],
+          ["`--framework <fw>`", "Override the detected frontend framework"],
+          ["`--migrate`", "Force migration mode (build on an existing mail package)"],
+          ["`--fresh`", "Force a fresh scaffold (ignore any existing mail package)"],
+          ["`--provider <p>`", "`resend`, `nodemailer`, or `none` (override detection)"],
+          ["`--location <dir>`", "Where the emails dir lands (default: `emails`)"],
+          ["`--name <name>`", "Brand name used in the email layout header"],
         ],
       },
       { type: "h2", text: "facet add flags" },

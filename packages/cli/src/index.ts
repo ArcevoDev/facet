@@ -254,6 +254,117 @@ iconsCommand
     console.log("  - Re-run `facet icons generate` after adding/removing icons to keep the set exact.");
   });
 
+const emailsCommand = program.command("emails").description("Email template commands");
+emailsCommand
+  .command("init")
+  .description(
+    "Scaffold or migrate email templates wired to @arcevo/facet-emails (detects react-email/mjml/nodemailer/resend)",
+  )
+  .option("-y, --yes", "Use detected defaults without prompting")
+  .option("--framework <framework>", "Override the detected frontend framework")
+  .option("--migrate", "Force migration mode (build on an existing mail package)")
+  .option("--fresh", "Force a fresh scaffold (ignore any existing mail package)")
+  .option("--provider <provider>", "resend, nodemailer, or none (override detection)")
+  .option("--location <location>", "Where the emails dir lands (default: emails)")
+  .option("--name <name>", "Brand name used in the email layout header")
+  .action(async (opts: {
+    yes?: boolean;
+    framework?: string;
+    migrate?: boolean;
+    fresh?: boolean;
+    provider?: "resend" | "nodemailer" | "none";
+    location?: string;
+    name?: string;
+  }) => {
+    const cwd = process.cwd();
+    const { detectMailSetup, planEmailsInit, formatDetection } = await import("./lib/emails.js");
+    const { generateEmailsScaffold, emailsPackageJsonAdditions } = await import("./lib/emails-generators.js");
+    const { writeFiles, readExistingPackageJson } = await import("./lib/writer.js");
+    const { detectPackageManager, installCommand } = await import("./lib/types.js");
+
+    const detection = detectMailSetup(cwd);
+    console.log("facet emails init\n");
+    for (const line of formatDetection(detection)) console.log(`  ${line}`);
+
+    // Decide mode + provider (prompt unless -y).
+    let answers = planEmailsInit(detection, {
+      migrate: opts.migrate,
+      fresh: opts.fresh,
+      provider: opts.provider,
+      location: opts.location,
+    });
+
+    if (!opts.yes) {
+      const prompts = (await import("prompts")).default;
+      const modeChoice = await prompts({
+        type: "select",
+        name: "mode",
+        message: detection.hasExisting
+          ? `Found ${detection.mailPackages.join(", ")}. How should we proceed?`
+          : "No existing mail setup detected. How should we proceed?",
+        choices: [
+          { title: "Migrate / build on what exists", value: "migrate" },
+          { title: "Fresh scaffold", value: "fresh" },
+        ],
+        initial: 0,
+      });
+      answers = { ...answers, mode: modeChoice.mode === "fresh" ? "fresh" : "migrate" };
+    }
+
+    const brandName = opts.name ?? path.basename(cwd);
+    const facetEmailsRange = "latest"; // resolved at install time by the package manager
+    const files = generateEmailsScaffold(cwd, { ...answers, brandName, facetEmailsRange });
+    const { deps, scripts } = emailsPackageJsonAdditions({ ...answers, brandName, facetEmailsRange });
+
+    // Merge into package.json (never clobber existing deps/scripts).
+    const existing = readExistingPackageJson(cwd);
+    const mergedPkg = {
+      ...(existing ?? { name: path.basename(cwd), version: "0.1.0", private: true }),
+      scripts: { ...(existing?.scripts ?? {}), ...scripts },
+      dependencies: { ...(existing?.dependencies ?? {}), ...deps },
+    };
+    files.push({
+      path: path.join(cwd, "package.json"),
+      content: JSON.stringify(mergedPkg, null, 2) + "\n",
+    });
+
+    const written = writeFiles(files);
+    console.log(`\n${answers.mode === "migrate" ? "Migrated" : "Scaffolded"} emails at ${answers.location}/`);
+    console.log("Wrote:");
+    for (const f of written) console.log(`  ${f.replace(cwd, ".")}`);
+
+    // Install missing deps.
+    const pm = detectPackageManager(cwd);
+    const missing = Object.entries(deps).filter(([name]) => !detection.facetEmailsInstalled && name === "@arcevo/facet-emails");
+    if (missing.length) {
+      const installArgs = Object.keys(deps).join(" ");
+      const cmd = `${pm} add ${installArgs}`;
+      console.log(`\nInstalling: ${installArgs}`);
+      try {
+        const { execSync } = await import("node:child_process");
+        execSync(cmd, { cwd, stdio: "inherit" });
+        console.log("Dependencies installed.");
+      } catch {
+        console.log("Could not install automatically. Run:");
+        console.log(`  ${cmd}`);
+      }
+    }
+
+    console.log(`\nNext steps:`);
+    console.log(`  1. Preview templates:  ${pm === "npm" ? "npm" : pm} run mail:preview`);
+    console.log(`     -> http://127.0.0.1:3888`);
+    if (answers.provider === "resend") {
+      console.log(`  2. Set RESEND_API_KEY in your .env (see ${answers.location}/.env.example).`);
+      console.log(`  3. Send: import { sendEmail } from "./${answers.location}/send";`);
+    } else if (answers.provider === "nodemailer") {
+      console.log(`  2. Set SMTP_* vars in your .env (see ${answers.location}/.env.example).`);
+      console.log(`  3. Send: import { sendEmail } from "./${answers.location}/send";`);
+    } else {
+      console.log(`  2. Pick a provider, wire ${answers.location}/send.ts, and set its keys.`);
+    }
+    console.log(`  4. Compile HTML/text at send time: renderEmailFromReact / renderEmailText from @arcevo/facet-emails.`);
+  });
+
 program
   .command("add <component>")
   .description("Copy a component into your source (shadcn-style). Recommended: import from the package instead.")
