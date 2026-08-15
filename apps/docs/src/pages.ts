@@ -25,7 +25,7 @@ export const docsPages: DocsPage[] = [
         items: [
           "`@arcevo/facet-tokens`: Alpha Palette design tokens, typography, spacing, CSS variables.",
           "`@arcevo/facet-sdk`: arc-id API client (pure fetch, typed, 10 domain SDKs).",
-          "`@arcevo/facet-components`: 63 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
+          "`@arcevo/facet-components`: 64 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
           "`@arcevo/facet-auth`: auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms.",
           "`@arcevo/facet-layout`: domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets.",
           "`@arcevo/facet-docs`: this config-driven docs engine, installable by any Arcevo project.",
@@ -274,21 +274,9 @@ function MyHeader() {
           "Set `overrideVars` once per brand at the app root.",
         ],
       },
-      { type: "h2", text: "Domain presets" },
       {
         type: "p",
-        text: "facet ships with auth domain presets. Each preset configures MFA requirements, passkey support, session TTL, and more:",
-      },
-      {
-        type: "table",
-        headers: ["Preset", "MFA", "Passkey", "Session TTL", "Use Case"],
-        rows: [
-          ["`fintechPreset`", "Required", "Yes", "15 min", "Trading, banking"],
-          ["`medPreset`", "Required", "No", "30 min", "HIPAA-compliant"],
-          ["`eduPreset`", "Optional", "Yes", "12 hr", "Student portals"],
-          ["`enterprisePreset`", "Required", "Yes", "8 hr", "SSO + MFA"],
-          ["`defaultPreset`", "Optional", "Yes", "8 hr", "General"],
-        ],
+        text: "The auth presets (fintech, med, edu, enterprise) each configure MFA, passkeys, and session TTL per sector - see the [Auth presets](/auth/presets) page for the full comparison table.",
       },
     ],
   },
