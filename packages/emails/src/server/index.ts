@@ -22,7 +22,7 @@
  */
 
 import { createServer, type Server } from "node:http";
-import { renderEmail, renderEmailText, type TemplateNode, type EmailBrand } from "./index.js";
+import { renderEmail, renderEmailText, type TemplateNode, type EmailBrand } from "../index.js";
 
 export interface EmailPreviewTemplate {
   title: string;

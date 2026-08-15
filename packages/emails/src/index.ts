@@ -17,7 +17,8 @@
 
 import type * as React from "react";
 import { toTemplateTree } from "./react.js";
-import { renderEmail, type EmailBrand, type RenderOptions } from "./render.js";
+import { renderEmail } from "./render.js";
+import type { EmailBrand, RenderOptions } from "./render.js";
 
 export { renderEmail, renderEmailText, createElement, type TemplateNode, type RenderOptions, type EmailBrand } from "./render.js";
 
