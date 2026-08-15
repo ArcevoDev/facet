@@ -85,6 +85,7 @@ const CATEGORY = {
   "typewriter-text": "animation",
   "text-animations": "animation",
   "micro-interactions": "animation",
+  "animated-button": "animation",
   // Full page components (new "Pages" section)
   "feedback-page": "pages",
   footer: "pages",

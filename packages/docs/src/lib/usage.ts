@@ -899,6 +899,20 @@ import { Navbar } from "@arcevo/facet-components";
 
 // CTA with a sparkle burst on click.
 <SparkleButton label="Get started" />`,
+  "animated-button": `import { AnimatedButton } from "@arcevo/facet-components";
+
+// Pick an animation variant (shine default, sparkle, ripple, magnetic, none).
+<AnimatedButton animation="sparkle">Get started</AnimatedButton>
+<AnimatedButton animation="shine">Continue</AnimatedButton>
+<AnimatedButton animation="none">Plain button</AnimatedButton>
+
+// Fully replace with your own component:
+<AnimatedButton renderButton={(props) => <MyButton {...props} />}>Custom</AnimatedButton>
+
+// Composed components use it too:
+//   <BillingPage config={{ plans, ctaButton: { animation: "sparkle" } }} />
+//   <FeedbackPage email="hi@x.com" submitButton={{ animation: "shine" }} />
+//   <SignUp submitButton={{ animation: "sparkle" }} />`,
   "typewriter-text": `import { TypewriterText } from "@arcevo/facet-components";
 
 // Cycle through phrases with a type/erase loop and a blinking caret.

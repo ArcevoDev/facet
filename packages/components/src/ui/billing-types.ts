@@ -1,5 +1,6 @@
 import type * as React from "react";
 import type { IconName } from "../icon/index.js";
+import type { AnimatedButtonVariant, AnimatedButtonRenderProps } from "./animated-button.js";
 
 /**
  * Shared plan model for the billing page components.
@@ -70,6 +71,11 @@ export interface BillingPageConfig {
   footer?: React.ReactNode;
   /** Per-plan badge slot (rendered above the price). */
   badge?: (plan: BillingPlan) => React.ReactNode;
+  /** Animated CTA button options. Default animation: "sparkle". */
+  ctaButton?: {
+    animation?: AnimatedButtonVariant;
+    renderButton?: (props: AnimatedButtonRenderProps) => React.ReactNode;
+  };
 }
 
 /** Price label for a plan (respects customPriceLabel; 0 = "Free"). */

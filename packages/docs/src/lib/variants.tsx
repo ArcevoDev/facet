@@ -178,6 +178,7 @@ import {
   Spotlight,
   SparkleButton,
   TypewriterText,
+  AnimatedButton,
   BlurText,
   WaveText,
   FlipText,
@@ -2286,6 +2287,49 @@ export function variantCells(slug: string): VariantCell[] | undefined {
               <ScrollReveal>
                 <p className="text-sm font-semibold text-foreground">Reveals as you scroll</p>
               </ScrollReveal>
+            </div>
+          ),
+        },
+      ];
+    case "animated-button":
+      return [
+        {
+          label: "Shine",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <AnimatedButton animation="shine">Continue</AnimatedButton>
+            </div>
+          ),
+        },
+        {
+          label: "Sparkle",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <AnimatedButton animation="sparkle">Get started</AnimatedButton>
+            </div>
+          ),
+        },
+        {
+          label: "Ripple",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <AnimatedButton animation="ripple">Click me</AnimatedButton>
+            </div>
+          ),
+        },
+        {
+          label: "Magnetic",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <AnimatedButton animation="magnetic">Pull</AnimatedButton>
+            </div>
+          ),
+        },
+        {
+          label: "None",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <AnimatedButton animation="none">Plain</AnimatedButton>
             </div>
           ),
         },

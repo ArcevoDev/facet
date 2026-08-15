@@ -462,6 +462,13 @@ export {
 } from "./ui/micro-interactions.js";
 
 export {
+  type AnimatedButtonVariant,
+  type AnimatedButtonProps,
+  type AnimatedButtonRenderProps,
+  AnimatedButton,
+} from "./ui/animated-button.js";
+
+export {
   type FooterLink,
   type FooterColumn,
   type FooterSocial,

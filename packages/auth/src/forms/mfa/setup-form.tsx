@@ -16,6 +16,7 @@ import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
+  AnimatedButton,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -97,9 +98,9 @@ export function MfaRecoveryCodesForm({ codes, onSaved }: MfaRecoveryCodesFormPro
             </code>
           ))}
         </div>
-        <Button className="w-full" onClick={onSaved}>
+        <AnimatedButton className="w-full" onClick={onSaved}>
           I've saved my codes
-        </Button>
+        </AnimatedButton>
       </div>
     </>
   );

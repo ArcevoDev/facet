@@ -18,6 +18,9 @@ import {
   Input,
   Label,
   PasswordInput,
+  AnimatedButton,
+  type AnimatedButtonRenderProps,
+  type AnimatedButtonVariant,
   Card,
   CardHeader,
   CardTitle,
@@ -32,6 +35,11 @@ export interface ResetPasswordFormProps {
   appearance?: Appearance;
   /** Override any form copy (labels, placeholders, buttons). */
   copy?: ResetPasswordCopy;
+  /** Animated submit button options. Default animation: "shine". */
+  submitButton?: {
+    animation?: AnimatedButtonVariant;
+    renderButton?: (props: AnimatedButtonRenderProps) => React.ReactNode;
+  };
   /** Reset token from the email link (extracted by the consuming app). */
   token: string;
   /** Called with token + new password. Return error string or null/undefined on success. */
@@ -49,6 +57,7 @@ type ResetValues = { password: string; confirm: string };
 export function ResetPasswordForm({
   appearance,
   copy,
+  submitButton,
   token,
   onSubmit,
   onSuccess,
@@ -182,9 +191,15 @@ export function ResetPasswordForm({
             {confirmError && <p className="text-sm text-destructive">{confirmError}</p>}
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" disabled={isSubmitting} className="w-full">
+          <AnimatedButton
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full"
+            animation={submitButton?.animation ?? "shine"}
+            renderButton={submitButton?.renderButton}
+          >
             {isSubmitting ? c.submittingLabel : c.submitLabel}
-          </Button>
+          </AnimatedButton>
         </form>
       </CardContent>
       {onBack && (

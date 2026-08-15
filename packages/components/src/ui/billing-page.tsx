@@ -17,7 +17,7 @@
 
 import * as React from "react";
 import { cn } from "../utils.js";
-import { Button } from "./button.js";
+import { AnimatedButton, type AnimatedButtonRenderProps } from "./animated-button.js";
 import { Badge } from "./badge.js";
 import { Card, CardContent, CardHeader, CardTitle } from "./card.js";
 import { Icon } from "../icon/index.js";
@@ -108,14 +108,31 @@ function PlanHeader({ plan, interval }: { plan: BillingPlan; interval: BillingIn
   );
 }
 
-function PlanCta({ plan }: { plan: BillingPlan }) {
+function PlanCta({
+  plan,
+  ctaButton,
+}: {
+  plan: BillingPlan;
+  ctaButton?: BillingPageConfig["ctaButton"];
+}) {
   const href = plan.cta?.href ?? "#";
   const label = plan.cta?.label ?? (plan.price === 0 ? "Get started" : "Contact us");
-  const variant = plan.cta?.variant ?? "default";
+  const animation = ctaButton?.animation ?? "sparkle";
+  const go = () => {
+    if (href && href !== "#") {
+      // In-app navigation via history; consumers can override with renderButton.
+      window.location.href = href;
+    }
+  };
   return (
-    <Button asChild variant={variant} className="w-full">
-      <a href={href}>{label}</a>
-    </Button>
+    <AnimatedButton
+      animation={animation}
+      renderButton={ctaButton?.renderButton}
+      onClick={go}
+      className="w-full"
+    >
+      {label}
+    </AnimatedButton>
   );
 }
 
@@ -180,7 +197,7 @@ export function BillingPage({ config, className }: BillingPageProps) {
             <CardContent className="flex flex-1 flex-col justify-between gap-6">
               {config.badge?.(plan) ?? (plan.badge ? plan.badge(plan) : null)}
               <FeatureList features={plan.features} />
-              <PlanCta plan={plan} />
+              <PlanCta plan={plan} ctaButton={config.ctaButton} />
             </CardContent>
           </Card>
         ))}
@@ -248,7 +265,7 @@ export function BillingPageTable({ config, rows, className }: BillingPageTablePr
                         </span>
                       )}
                     </span>
-                    <PlanCta plan={plan} />
+                    <PlanCta plan={plan} ctaButton={config.ctaButton} />
                   </div>
                 </th>
               ))}
@@ -323,7 +340,7 @@ export function BillingPageFreemium({ config, heroPlanId, className }: BillingPa
             </CardHeader>
             <CardContent className="flex flex-1 flex-col justify-between gap-6">
               <FeatureList features={plans.find((p) => p.price === 0)!.features} />
-              <PlanCta plan={plans.find((p) => p.price === 0)!} />
+              <PlanCta plan={plans.find((p) => p.price === 0)!} ctaButton={config.ctaButton} />
             </CardContent>
           </Card>
         )}
@@ -341,7 +358,7 @@ export function BillingPageFreemium({ config, heroPlanId, className }: BillingPa
             </CardHeader>
             <CardContent className="flex flex-1 flex-col justify-between gap-6">
               <FeatureList features={hero.features} />
-              <PlanCta plan={hero} />
+              <PlanCta plan={hero} ctaButton={config.ctaButton} />
             </CardContent>
           </Card>
         )}
@@ -357,7 +374,7 @@ export function BillingPageFreemium({ config, heroPlanId, className }: BillingPa
               </CardHeader>
               <CardContent className="flex flex-1 flex-col justify-between gap-6">
                 <FeatureList features={plan.features} />
-                <PlanCta plan={plan} />
+                <PlanCta plan={plan} ctaButton={config.ctaButton} />
               </CardContent>
             </Card>
           ))}

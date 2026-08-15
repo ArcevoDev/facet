@@ -34,6 +34,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "animation"
   },
   {
+    "name": "Animated Button",
+    "slug": "animated-button",
+    "description": "@arcevo/facet-components: AnimatedButton",
+    "category": "animation"
+  },
+  {
     "name": "Avatar",
     "slug": "avatar",
     "description": "Avatar behavior.",

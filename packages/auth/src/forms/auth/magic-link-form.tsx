@@ -14,6 +14,9 @@ import {
   Button,
   Input,
   Label,
+  AnimatedButton,
+  type AnimatedButtonRenderProps,
+  type AnimatedButtonVariant,
   Card,
   CardHeader,
   CardTitle,
@@ -26,6 +29,11 @@ import {
 
 export interface MagicLinkFormProps {
   appearance?: Appearance;
+  /** Animated submit button options. Default animation: "shine". */
+  submitButton?: {
+    animation?: AnimatedButtonVariant;
+    renderButton?: (props: AnimatedButtonRenderProps) => React.ReactNode;
+  };
   /** Called with the email address. Return error string or null/undefined. */
   onSubmit: (email: string) => Promise<string | null | undefined>;
   onBack?: () => void;
@@ -39,6 +47,7 @@ type EmailValues = { email: string };
 
 export function MagicLinkForm({
   appearance,
+  submitButton,
   onSubmit,
   onBack,
   validate = false,
@@ -137,9 +146,15 @@ export function MagicLinkForm({
             {emailError && <p className="text-sm text-destructive">{emailError}</p>}
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" disabled={isSubmitting} className="w-full">
+          <AnimatedButton
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full"
+            animation={submitButton?.animation ?? "shine"}
+            renderButton={submitButton?.renderButton}
+          >
             {isSubmitting ? "Sending…" : "Send Magic Link"}
-          </Button>
+          </AnimatedButton>
         </form>
       </CardContent>
       {onBack && (

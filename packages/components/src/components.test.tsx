@@ -10,6 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./
 import { Dialog, DialogContent } from "./ui/dialog.js";
 import { BlurText, GradientText, SplitText, CountUpText, WaveText } from "./ui/text-animations.js";
 import { RippleButton, MagneticButton, ScrollReveal, TiltCard } from "./ui/micro-interactions.js";
+import { AnimatedButton } from "./ui/animated-button.js";
 import {
   Alert,
   AlertTitle,
@@ -783,5 +784,32 @@ describe("micro-interactions", () => {
   it("ScrollReveal renders children (visible after observer or fallback)", () => {
     const { container } = render(<ScrollReveal>Revealed</ScrollReveal>);
     expect(container.textContent).toContain("Revealed");
+  });
+});
+
+/* ── AnimatedButton ────────────────────────────────────────── */
+
+describe("AnimatedButton", () => {
+  it("renders a button and fires onClick", () => {
+    const onClick = vi.fn();
+    render(<AnimatedButton onClick={onClick}>Go</AnimatedButton>);
+    fireEvent.click(screen.getByRole("button"));
+    expect(onClick).toHaveBeenCalled();
+  });
+
+  it("forwards type=submit", () => {
+    const { container } = render(<AnimatedButton type="submit">Submit</AnimatedButton>);
+    expect(container.querySelector("button")).toHaveAttribute("type", "submit");
+  });
+
+  it("renders a custom button via renderButton", () => {
+    const { container } = render(
+      <AnimatedButton
+        renderButton={(props) => <button data-custom="1" {...props}>Custom</button>}
+      >
+        Custom
+      </AnimatedButton>,
+    );
+    expect(container.querySelector("[data-custom]")).toBeTruthy();
   });
 });

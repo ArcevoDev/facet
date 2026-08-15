@@ -16,6 +16,9 @@ import {
   Input,
   Label,
   PasswordInput,
+  AnimatedButton,
+  type AnimatedButtonRenderProps,
+  type AnimatedButtonVariant,
   Card,
   CardHeader,
   CardTitle,
@@ -30,6 +33,11 @@ export interface LoginFormProps {
   appearance?: Appearance;
   /** Override any form copy (labels, placeholders, buttons, links). */
   copy?: LoginCopy;
+  /** Animated submit button options. Default animation: "shine". */
+  submitButton?: {
+    animation?: AnimatedButtonVariant;
+    renderButton?: (props: AnimatedButtonRenderProps) => React.ReactNode;
+  };
   /** Called with email + password. Return error string or null/undefined. */
   onSubmit: (email: string, password: string) => Promise<string | null | undefined>;
   /** Called when user clicks the back button */
@@ -47,6 +55,7 @@ type LoginValues = { email: string; password: string };
 export function LoginForm({
   appearance,
   copy,
+  submitButton,
   onSubmit,
   onBack,
   onForgotPassword,
@@ -149,9 +158,15 @@ export function LoginForm({
             {passwordError && <p className="text-sm text-destructive">{passwordError}</p>}
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" disabled={isSubmitting} className="w-full">
+          <AnimatedButton
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full"
+            animation={submitButton?.animation ?? "shine"}
+            renderButton={submitButton?.renderButton}
+          >
             {isSubmitting ? c.submittingLabel : c.submitLabel}
-          </Button>
+          </AnimatedButton>
         </form>
       </CardContent>
       {onBack && (

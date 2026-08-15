@@ -16,6 +16,9 @@ import {
   Input,
   Label,
   PasswordInput,
+  AnimatedButton,
+  type AnimatedButtonRenderProps,
+  type AnimatedButtonVariant,
   Card,
   CardHeader,
   CardTitle,
@@ -32,12 +35,17 @@ export interface SignUpProps {
   slots?: ComponentSlots;
   /** Override any form copy (labels, placeholders, buttons, errors). */
   copy?: SignUpCopy;
+  /** Animated submit button options. Default animation: "shine". */
+  submitButton?: {
+    animation?: AnimatedButtonVariant;
+    renderButton?: (props: AnimatedButtonRenderProps) => React.ReactNode;
+  };
   onSuccess?: () => void;
 }
 
 /* ── Component ─────────────────────────────────────────────── */
 
-export function SignUp({ appearance, config: configOverrides, slots, copy, onSuccess }: SignUpProps) {
+export function SignUp({ appearance, config: configOverrides, slots, copy, submitButton, onSuccess }: SignUpProps) {
   const cfg = { ...defaultConfig, ...configOverrides };
   const { register } = useAuth();
   const c = { ...defaultSignUpCopy, ...copy };
@@ -142,9 +150,15 @@ export function SignUp({ appearance, config: configOverrides, slots, copy, onSuc
             </p>
           )}
           {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" disabled={isSubmitting} className="w-full">
+          <AnimatedButton
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full"
+            animation={submitButton?.animation ?? "shine"}
+            renderButton={submitButton?.renderButton}
+          >
             {isSubmitting ? c.submittingLabel : c.submitLabel}
-          </Button>
+          </AnimatedButton>
         </form>
       </CardContent>
       <CardFooter className="justify-center text-sm text-muted-foreground">

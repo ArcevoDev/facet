@@ -21,7 +21,7 @@
 import * as React from "react";
 import { cn } from "../utils.js";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./card.js";
-import { Button } from "./button.js";
+import { AnimatedButton, type AnimatedButtonRenderProps, type AnimatedButtonVariant } from "./animated-button.js";
 import { Label } from "./label.js";
 import { Input } from "./input.js";
 import { Textarea } from "./textarea.js";
@@ -54,6 +54,11 @@ export interface FeedbackPageProps {
   showEmailChannel?: boolean;
   /** Replace the default form entirely (e.g. a real API submit). */
   form?: React.ReactNode;
+  /** Animated submit button options. Default animation: "shine". */
+  submitButton?: {
+    animation?: AnimatedButtonVariant;
+    renderButton?: (props: AnimatedButtonRenderProps) => React.ReactNode;
+  };
   /** Extra content below the channels. */
   children?: React.ReactNode;
   className?: string;
@@ -68,6 +73,7 @@ export function FeedbackPage({
   channels = [],
   showEmailChannel = true,
   form,
+  submitButton,
   children,
   className,
 }: FeedbackPageProps) {
@@ -145,7 +151,13 @@ export function FeedbackPage({
                   onChange={(e) => setMessage(e.target.value)}
                 />
               </div>
-              <Button type="submit">Send feedback</Button>
+              <AnimatedButton
+                type="submit"
+                animation={submitButton?.animation ?? "shine"}
+                renderButton={submitButton?.renderButton}
+              >
+                Send feedback
+              </AnimatedButton>
             </form>
           </CardContent>
         </Card>
