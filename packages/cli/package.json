@@ -1,7 +1,7 @@
 {
   "name": "@arcevo/facet-cli",
   "version": "0.7.0",
-  "description": "Scaffold and generate @arcevo/facet-docs sites. Framework/language-agnostic docs init + component add.",
+  "description": "facet CLI: scaffold docs + email template sites, add components, generate tree-shaken icon registries, and audit/update your facet setup from the terminal.",
   "type": "module",
   "bin": {
     "facet": "./dist/index.js"
