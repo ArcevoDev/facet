@@ -350,19 +350,10 @@ emailsCommand
       }
     }
 
-    console.log(`\nNext steps:`);
-    console.log(`  1. Preview templates:  ${pm === "npm" ? "npm" : pm} run mail:preview`);
-    console.log(`     -> http://127.0.0.1:3888`);
-    if (answers.provider === "resend") {
-      console.log(`  2. Set RESEND_API_KEY in your .env (see ${answers.location}/.env.example).`);
-      console.log(`  3. Send: import { sendEmail } from "./${answers.location}/send";`);
-    } else if (answers.provider === "nodemailer") {
-      console.log(`  2. Set SMTP_* vars in your .env (see ${answers.location}/.env.example).`);
-      console.log(`  3. Send: import { sendEmail } from "./${answers.location}/send";`);
-    } else {
-      console.log(`  2. Pick a provider, wire ${answers.location}/send.ts, and set its keys.`);
-    }
-    console.log(`  4. Compile HTML/text at send time: renderEmailFromReact / renderEmailText from @arcevo/facet-emails.`);
+    const { suggestNextSteps } = await import("./lib/emails.js");
+    console.log(`\nSuggested next steps (based on your repo):`);
+    const steps = suggestNextSteps(detection, answers);
+    steps.forEach((step, i) => console.log(`  ${i + 1}. ${step}`));
   });
 
 program

@@ -1067,7 +1067,7 @@ facet emails init --provider resend`,
       },
       {
         type: "p",
-        text: "`facet emails init` detects the consumer's mail setup (react-email, mjml, nodemailer, resend, sendgrid, SES, postmark) from the manifests and either offers a migration or a fresh scaffold: an `emails/` dir with brand tokens, a layout wrapper, a template registry, a dev preview server, and a provider `send.ts` (resend/nodemailer, or a stub to wire up). It auto-installs `@arcevo/facet-emails` plus the provider SDK via the detected package manager, and prints the setup guide (provider keys, preview URL, how to send).",
+        text: "`facet emails init` detects the consumer's mail setup (react-email, mjml, nodemailer, resend, sendgrid, SES, postmark) from the manifests and either offers a migration or a fresh scaffold: an `emails/` dir with brand tokens, a layout wrapper, a template registry, a dev preview server, and a provider `send.ts` (resend/nodemailer, or a stub to wire up). It auto-installs `@arcevo/facet-emails` plus the provider SDK via the detected package manager, then prints repo-aware next steps: migration guidance when an existing renderer is found, framework-specific integration points (Next API route, Remix action, Vite build, plain Node), monorepo hints, provider key setup, and the preview URL.",
       },
       { type: "h2", text: "facet emails init flags" },
       {

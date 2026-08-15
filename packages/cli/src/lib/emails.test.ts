@@ -7,6 +7,7 @@ import {
   planEmailsInit,
   mailPackageRole,
   formatDetection,
+  suggestNextSteps,
 } from "./emails.js";
 import { generateEmailsScaffold, emailsPackageJsonAdditions } from "./emails-generators.js";
 
@@ -229,6 +230,60 @@ describe("formatDetection", () => {
       const lines = formatDetection(detectMailSetup(dir));
       expect(lines.some((l) => l.includes("Package manager"))).toBe(true);
       expect(lines.some((l) => l.includes("resend"))).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("suggestNextSteps", () => {
+  it("suggests migration guidance when react-email is present", () => {
+    const dir = tmp();
+    try {
+      writeFile(dir, "package.json", JSON.stringify({
+        name: "app",
+        dependencies: { "@react-email/components": "^1.0.0" },
+      }));
+      const d = detectMailSetup(dir);
+      const answers = planEmailsInit(d, {});
+      const steps = suggestNextSteps(d, answers);
+      expect(steps.some((s) => s.includes("react-email"))).toBe(true);
+      expect(steps.some((s) => s.includes("mail:preview"))).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("suggests framework-specific integration for Next.js", () => {
+    const dir = tmp();
+    try {
+      writeFile(dir, "package.json", JSON.stringify({
+        name: "app",
+        dependencies: { next: "^15" },
+      }));
+      const d = detectMailSetup(dir);
+      const answers = planEmailsInit(d, {});
+      const steps = suggestNextSteps(d, answers);
+      expect(steps.some((s) => s.includes("Next.js"))).toBe(true);
+      expect(steps.some((s) => s.includes("app/api"))).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("mentions the monorepo when workspace globs exist", () => {
+    const dir = tmp();
+    try {
+      writeFile(dir, "package.json", JSON.stringify({
+        name: "app",
+        private: true,
+        workspaces: ["packages/*"],
+      }));
+      writeFile(dir, "pnpm-workspace.yaml", "packages:\n  - \"packages/*\"\n");
+      const d = detectMailSetup(dir);
+      const answers = planEmailsInit(d, {});
+      const steps = suggestNextSteps(d, answers);
+      expect(steps.some((s) => s.includes("Monorepo"))).toBe(true);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

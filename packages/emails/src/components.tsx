@@ -11,7 +11,7 @@
  * `brand` option passed to `renderEmail` / the layout.
  */
 
-import type * as React from "react";
+import * as React from "react";
 import { createElement, type TemplateNode } from "./render.js";
 
 /* ── Style tokens ─────────────────────────────────────────── */
@@ -416,8 +416,6 @@ export function emailList(props: EmailListProps): TemplateNode {
 }
 
 /* ── React wrappers ───────────────────────────────────────── */
-
-import * as React from "react";
 
 function wrap<T extends object>(fn: (props: T) => TemplateNode) {
   return function EmailComponent(props: T) {
