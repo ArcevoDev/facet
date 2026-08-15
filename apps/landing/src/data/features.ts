@@ -2,7 +2,7 @@ import type { IconName } from "@arcevo/facet-components";
 
 /** Live library stats, verified against the packages on every release. */
 export const STATS = [
-  { value: "63", label: "components" },
+  { value: "64", label: "components" },
   { value: "10", label: "API SDKs" },
   { value: "3", label: "layout shells" },
   { value: "5", label: "auth presets" },
@@ -16,30 +16,30 @@ export interface Package {
   icon: IconName;
 }
 
-/** The seven published packages (versions verified 2026-08-15 against npm). */
+/** The eight published packages (versions verified 2026-08-15 against npm). */
 export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-components",
-    desc: "63 styled, accessible React components built on Radix primitives.",
-    version: "1.6.0",
+    desc: "64 styled, accessible React components built on Radix primitives.",
+    version: "1.7.0",
     icon: "boxes",
   },
   {
     name: "@arcevo/facet-docs",
     desc: "Installable docs engine: mount <DocsApp> with your own brand, nav, and pages.",
-    version: "1.4.2",
+    version: "1.4.3",
     icon: "book-open",
   },
   {
     name: "@arcevo/facet-auth",
     desc: "SignIn, SignUp, Guard, MFA and forms with per-domain presets.",
-    version: "1.1.5",
+    version: "1.1.6",
     icon: "shield-check",
   },
   {
     name: "@arcevo/facet-layout",
     desc: "Console, auth and landing shells with a collapsible icon rail.",
-    version: "1.3.2",
+    version: "1.3.3",
     icon: "building",
   },
   {
@@ -55,9 +55,15 @@ export const PACKAGES: Package[] = [
     icon: "palette",
   },
   {
+    name: "@arcevo/facet-emails",
+    desc: "Framework-agnostic email templates: render HTML/text from React or plain trees, with a dev preview server.",
+    version: "1.1.0",
+    icon: "mail",
+  },
+  {
     name: "@arcevo/facet-cli",
-    desc: "Scaffold docs sites, audit/update your facet setup, and generate a tree-shaken icon registry from the terminal.",
-    version: "0.5.0",
+    desc: "Scaffold docs + emails, audit/update your facet setup, and generate a tree-shaken icon registry from the terminal.",
+    version: "0.7.0",
     icon: "terminal",
   },
 ];

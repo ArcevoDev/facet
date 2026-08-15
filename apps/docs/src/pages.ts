@@ -29,7 +29,8 @@ export const docsPages: DocsPage[] = [
           "`@arcevo/facet-auth`: auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms.",
           "`@arcevo/facet-layout`: domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets.",
           "`@arcevo/facet-docs`: this config-driven docs engine, installable by any Arcevo project.",
-          "`@arcevo/facet-cli`: scaffold docs sites, audit and update your facet setup from the terminal.",
+          "`@arcevo/facet-emails`: framework-agnostic email templates: render HTML/text from React or plain trees, with a dev preview server.",
+          "`@arcevo/facet-cli`: scaffold docs + emails sites, audit and update your facet setup from the terminal.",
         ],
       },
       { type: "h2", text: "Architecture" },
@@ -1087,6 +1088,122 @@ facet emails init --provider resend`,
       {
         type: "p",
         text: "Every prompt and flag is described inline, so you always know what a choice will do before committing.",
+      },
+    ],
+  },
+  {
+    path: "/emails",
+    title: "Emails",
+    section: "ecosystem",
+    description: "Framework-agnostic email templates with @arcevo/facet-emails: render HTML/text from React or plain trees, brand tokens, and a dev preview server.",
+    blocks: [
+      {
+        type: "p",
+        text: "`@arcevo/facet-emails` is a framework-agnostic email template renderer. The core accepts a plain, serializable template tree (`{ tag, props, children }`) and renders it to email-safe HTML and plain text - zero runtime dependencies, so any host (React, plain JS, a Node backend, even a JSON tree from another language) can use it. An optional React bridge gives JSX ergonomics.",
+      },
+      { type: "h2", text: "Install" },
+      {
+        type: "install",
+        pkg: "@arcevo/facet-emails",
+      },
+      {
+        type: "p",
+        text: "`react` is an optional peer, only needed for the JSX convenience layer. The core renderer has no React dependency.",
+      },
+      { type: "h2", text: "Framework-agnostic usage" },
+      {
+        type: "code",
+        lang: "ts",
+        text: `import { renderEmail, renderEmailText, emailLayout, emailButton, emailText } from "@arcevo/facet-emails";
+
+const tree = emailLayout(
+  { previewText: "Welcome", heading: "Hi!", brandName: "Acme" },
+  emailText({ children: "Your account is ready." }),
+  emailButton({ href: "https://acme.dev/dashboard", children: "Go to Dashboard" }),
+);
+
+const html = renderEmail(tree);       // email-safe HTML string
+const text = renderEmailText(tree);   // plain-text version`,
+      },
+      { type: "h2", text: "React usage" },
+      {
+        type: "code",
+        lang: "tsx",
+        text: `import { renderEmailFromReact, EmailLayout, EmailButton, EmailText } from "@arcevo/facet-emails";
+
+const html = renderEmailFromReact(
+  <EmailLayout previewText="Welcome" heading="Hi!" brandName="Acme">
+    <EmailText>Your account is ready.</EmailText>
+    <EmailButton href="https://acme.dev/dashboard">Go to Dashboard</EmailButton>
+  </EmailLayout>,
+);`,
+      },
+      { type: "h2", text: "Primitives" },
+      {
+        type: "table",
+        headers: ["Primitive", "Purpose"],
+        rows: [
+          ["`EmailLayout`", "Outer shell: preview text, brand header, footer."],
+          ["`EmailButton`", "CTA link-button (primary / danger / outline)."],
+          ["`EmailText`", "Paragraph variants (default / small / muted / code)."],
+          ["`EmailCodeBlock`", "Single code (MFA) or a recovery-codes grid."],
+          ["`EmailSection` / `EmailRow` / `EmailColumn`", "Table-based layout containers for detail/grid sections."],
+          ["`EmailSecurityNotice`", "Warning / danger / info callout, or an IP/device table."],
+          ["`EmailLink`", "Styled inline link."],
+          ["`EmailDivider`", "Horizontal rule."],
+          ["`EmailList`", "Feature bullet list."],
+        ],
+      },
+      { type: "h2", text: "Branding" },
+      {
+        type: "p",
+        text: "Every primitive inherits brand tokens passed to `renderEmail` via the `brand` option: `primary`, `background`, `surface`, `text`, `muted`, `fontFamily`, `radius`, and `brandName`. Change the brand and every template re-themes - no forking.",
+      },
+      {
+        type: "code",
+        lang: "ts",
+        text: `renderEmail(tree, {
+  brand: {
+    primary: "#6366f1",
+    background: "#f6f6f6",
+    surface: "#ffffff",
+    text: "#1f2937",
+    muted: "#6b7280",
+    brandName: "Acme",
+  },
+});`,
+      },
+      { type: "h2", text: "Dev preview server" },
+      {
+        type: "p",
+        text: "A dependency-light preview server (plain node:http) renders registered templates with an HTML/text toggle. Start it with a templates registry:",
+      },
+      {
+        type: "code",
+        lang: "ts",
+        text: `import { startEmailPreviewServer } from "@arcevo/facet-emails/server";
+import { emailLayout, emailButton } from "@arcevo/facet-emails";
+
+startEmailPreviewServer({
+  templates: {
+    welcome: {
+      title: "Welcome",
+      tree: emailLayout(
+        { previewText: "Welcome", heading: "Hi!" },
+        emailButton({ href: "#", children: "Go" }),
+      ),
+    },
+  },
+  port: 3888,
+});`,
+      },
+      {
+        type: "p",
+        text: "Open http://127.0.0.1:3888 for the template index; /preview/:name renders a template with a toolbar toggle. The `facet emails init` CLI command scaffolds this setup (brand tokens, layout wrapper, template registry, preview server, provider `send.ts`) and auto-installs the package.",
+      },
+      {
+        type: "p",
+        text: "Migrating from react-email? `facet emails init` detects `@react-email/components`, `mjml`, `nodemailer`, `resend`, and other mail packages, and prints repo-aware migration guidance.",
       },
     ],
   },

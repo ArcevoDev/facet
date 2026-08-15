@@ -6,7 +6,7 @@ export function PackagesSection() {
     <section id="packages" className="mx-auto max-w-7xl px-8 py-24">
       <div className="mb-16 text-center">
         <h2 className="text-3xl font-bold text-foreground font-heading sm:text-4xl">
-          Seven packages, one system
+          Eight packages, one system
         </h2>
         <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
           Install the pieces you need. Each package is versioned and published to npm.
