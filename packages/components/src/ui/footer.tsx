@@ -47,7 +47,22 @@ export interface FooterSocial {
   icon: IconName;
 }
 
+export interface FooterNewsletter {
+  /** Newsletter title. Default: "Stay in the loop". */
+  title?: string;
+  /** Description under the title. */
+  description?: string;
+  /** Input placeholder. Default: "you@example.com". */
+  inputPlaceholder?: string;
+  /** Submit button label. Default: "Subscribe". */
+  buttonLabel?: string;
+  /** Called with the entered email. When omitted, renders a mailto fallback. */
+  onSubmit?: (email: string) => void;
+}
+
 export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
+  /** Layout variant. Default: "default" (unchanged behavior). */
+  variant?: "default" | "minimal" | "columns" | "newsletter" | "split";
   /** Brand block: name, optional logo element, tagline. */
   brand?: {
     name?: string;
@@ -66,6 +81,8 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
   bottomBar?: React.ReactNode;
   /** Extra content rendered below the columns (newsletter, CTAs, ...). */
   children?: React.ReactNode;
+  /** Newsletter capture slot (used by the "newsletter" variant). */
+  newsletter?: FooterNewsletter;
   /** Max content width class. Default: "max-w-7xl". */
   containerClassName?: string;
 }
@@ -76,7 +93,140 @@ function isExternal(link: FooterLink): boolean {
   return /^https?:\/\//.test(link.href);
 }
 
+/** Brand block: logo + name + tagline. */
+function FooterBrand({ brand }: { brand: FooterProps["brand"] }) {
+  if (!brand?.name && !brand?.logo) return null;
+  return (
+    <div className="max-w-sm">
+      <div className="flex items-center gap-2">
+        {brand?.logo}
+        {brand?.name && (
+          <span className="font-heading text-lg font-bold text-foreground">{brand.name}</span>
+        )}
+      </div>
+      {brand?.tagline && (
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{brand.tagline}</p>
+      )}
+    </div>
+  );
+}
+
+/** Link columns. */
+function FooterColumns({ columns }: { columns: FooterColumn[] }) {
+  if (!columns.length) return null;
+  return columns.map((col) => (
+    <div key={col.title}>
+      <h3 className="text-sm font-semibold text-foreground">{col.title}</h3>
+      <ul className="mt-4 space-y-3">
+        {col.links.map((link) => (
+          <li key={link.label + link.href}>
+            <a
+              href={link.href}
+              target={isExternal(link) ? "_blank" : undefined}
+              rel={isExternal(link) ? "noreferrer" : undefined}
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ));
+}
+
+/** Bottom bar: legal + bottom links + socials. */
+function FooterBottomBar({
+  legal,
+  bottomLinks,
+  socials,
+  bottomBar,
+  className,
+}: Pick<FooterProps, "legal" | "bottomLinks" | "socials" | "bottomBar"> & {
+  className?: string;
+}) {
+  if (bottomBar) return bottomBar;
+  return (
+    <div
+      className={cn(
+        "mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row",
+        className,
+      )}
+    >
+      {legal && <p className="text-sm text-muted-foreground">{legal}</p>}
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        {bottomLinks.map((link) => (
+          <a
+            key={link.label + link.href}
+            href={link.href}
+            target={isExternal(link) ? "_blank" : undefined}
+            rel={isExternal(link) ? "noreferrer" : undefined}
+            className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {link.label}
+          </a>
+        ))}
+        {socials.length > 0 && (
+          <span className="flex items-center gap-3">
+            {socials.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={social.label}
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Icon name={social.icon} className="size-4" />
+              </a>
+            ))}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Newsletter capture slot (newsletter variant). */
+function FooterNewsletter({ newsletter }: { newsletter: FooterNewsletter }) {
+  const [email, setEmail] = React.useState("");
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newsletter.onSubmit) newsletter.onSubmit(email);
+    else window.location.href = `mailto:?subject=${encodeURIComponent(newsletter.title ?? "Newsletter")}&body=${encodeURIComponent(email)}`;
+  };
+  return (
+    <form onSubmit={submit} className="mt-10 flex flex-col gap-3 rounded-xl border border-border bg-muted/30 p-6 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <h3 className="font-heading text-base font-semibold text-foreground">
+          {newsletter.title ?? "Stay in the loop"}
+        </h3>
+        {newsletter.description && (
+          <p className="mt-1 text-sm text-muted-foreground">{newsletter.description}</p>
+        )}
+      </div>
+      <div className="flex w-full max-w-sm gap-2">
+        <input
+          type="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder={newsletter.inputPlaceholder ?? "you@example.com"}
+          className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none transition-colors focus:ring-2 focus:ring-ring"
+        />
+        <button
+          type="submit"
+          className="h-9 shrink-0 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          {newsletter.buttonLabel ?? "Subscribe"}
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export function Footer({
+  variant = "default",
   brand,
   columns = [],
   socials = [],
@@ -84,6 +234,7 @@ export function Footer({
   legal,
   bottomBar,
   children,
+  newsletter,
   className,
   containerClassName = "max-w-7xl",
   ...props
@@ -93,81 +244,60 @@ export function Footer({
       <div className={cn("mx-auto w-full px-6 py-12 md:px-8", containerClassName)}>
         <Separator className="mb-10" />
 
-        {/* Top: brand + columns */}
-        <div className="grid gap-10 md:grid-cols-[minmax(0,1.2fr)_repeat(auto-fit,minmax(140px,1fr))]">
-          {/* Brand */}
-          <div className="max-w-sm">
-            <div className="flex items-center gap-2">
-              {brand?.logo}
-              {brand?.name && (
-                <span className="font-heading text-lg font-bold text-foreground">{brand.name}</span>
-              )}
-            </div>
-            {brand?.tagline && (
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{brand.tagline}</p>
-            )}
-          </div>
-
-          {/* Link columns */}
-          {columns.map((col) => (
-            <div key={col.title}>
-              <h3 className="text-sm font-semibold text-foreground">{col.title}</h3>
-              <ul className="mt-4 space-y-3">
-                {col.links.map((link) => (
-                  <li key={link.label + link.href}>
-                    <a
-                      href={link.href}
-                      target={isExternal(link) ? "_blank" : undefined}
-                      rel={isExternal(link) ? "noreferrer" : undefined}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {link.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        {/* Extra content (newsletter, CTAs) */}
-        {children}
-
-        {/* Bottom bar */}
-        {bottomBar ?? (
-          <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
-            {legal && <p className="text-sm text-muted-foreground">{legal}</p>}
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              {bottomLinks.map((link) => (
+        {variant === "minimal" && (
+          <div className="flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
+            <FooterBrand brand={brand} />
+            <div className="flex items-center gap-4">
+              {socials.map((social) => (
                 <a
-                  key={link.label + link.href}
-                  href={link.href}
-                  target={isExternal(link) ? "_blank" : undefined}
-                  rel={isExternal(link) ? "noreferrer" : undefined}
-                  className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={social.label}
+                  className="text-muted-foreground transition-colors hover:text-foreground"
                 >
-                  {link.label}
+                  <Icon name={social.icon} className="size-4" />
                 </a>
               ))}
-              {socials.length > 0 && (
-                <span className="flex items-center gap-3">
-                  {socials.map((social) => (
-                    <a
-                      key={social.label}
-                      href={social.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={social.label}
-                      className="text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      <Icon name={social.icon} className="size-4" />
-                    </a>
-                  ))}
-                </span>
-              )}
             </div>
           </div>
         )}
+
+        {variant === "split" && (
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+            <FooterBrand brand={brand} />
+            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+              <FooterColumns columns={columns} />
+            </div>
+          </div>
+        )}
+
+        {(variant === "default" || variant === "columns" || variant === "newsletter") && (
+          <div
+            className={
+              variant === "default"
+                ? "grid gap-10 md:grid-cols-[minmax(0,1.2fr)_repeat(auto-fit,minmax(140px,1fr))]"
+                : "grid gap-10 md:grid-cols-[minmax(0,1fr)_repeat(auto-fit,minmax(160px,1fr))]"
+            }
+          >
+            <FooterBrand brand={brand} />
+            <FooterColumns columns={columns} />
+          </div>
+        )}
+
+        {variant === "newsletter" && newsletter && <FooterNewsletter newsletter={newsletter} />}
+
+        {/* Extra content (CTAs, etc.) */}
+        {children}
+
+        {/* Bottom bar */}
+        <FooterBottomBar
+          legal={legal}
+          bottomLinks={bottomLinks}
+          socials={socials}
+          bottomBar={bottomBar}
+        />
       </div>
     </footer>
   );

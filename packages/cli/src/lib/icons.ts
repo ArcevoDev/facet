@@ -141,6 +141,8 @@ export function toKebab(name: string): string {
  *   - `registerIcon("icon-name", ...)` / `registerIcon('...')`
  *   - `overrides={{ iconName: ... }}` (IconProvider) - camelCase keys
  *     normalize to kebab later
+ *   - Object-literal `icon: "name"` values (nav configs, feature grids,
+ *     data arrays), with optional `as const`
  *
  * The regexes are deliberately broad (any `name="x"` literal that looks
  * like an icon) and then filtered: a string that matches a known
@@ -160,13 +162,19 @@ export function scanFileNames(src: string): string[] {
 
   // <Icon name="x" /> / <LightIcon name='x' /> / <SomeComp icon="x" />.
   // Plain form controls (<input name="...">, <select name>, <textarea
-  // name>) are NOT icon call sites - those names are field names. Match
-  // only when the tag is NOT a bare form control.
+  // name>) are NOT icon call sites - those names are field names, and
+  // HTML metadata tags (<meta name="...">, <link name="...">) are not
+  // icons either. Property assignments (`this.name = "..."`,
+  // `obj.name = "..."`) are not icons. Match only when the tag is NOT one
+  // of those and the key is not a property access.
   const propRe = /\b(?:name|icon|leftIcon|rightIcon|startIcon|endIcon)\s*=\s*["']([^"']+)["']/g;
   let m: RegExpExecArray | null;
   while ((m = propRe.exec(src))) {
     const before = src.slice(Math.max(0, m.index - 24), m.index);
-    if (/<(?:input|select|textarea)\s*$/i.test(before)) continue;
+    if (/<(?:input|select|textarea|meta|link)\s*$/i.test(before)) continue;
+    // `this.name = "..."` / `obj.name = "..."` - property assignment, not a
+    // JSX attribute. The char right before the key is `.` in that case.
+    if (/[.)\]]$/.test(before)) continue;
     push(m[1]);
   }
 
@@ -182,6 +190,16 @@ export function scanFileNames(src: string): string[] {
     for (const key of block.matchAll(/(["']?)([A-Za-z][A-Za-z0-9-]*)\1\s*:/g)) {
       push(key[2]!);
     }
+  }
+
+  // Object-literal `icon: "name"` values (nav configs, feature grids, data
+  // arrays): `{ href, label, icon: "chart-column" }`, `icon: "key-round" as
+  // const`. The value is the icon name; the `icon` key here is a property,
+  // NOT a JSX prop (that was handled above), so a string literal value is
+  // always the icon name. Optional `as const` / trailing whitespace.
+  const objectIconRe = /\bicon:\s*["']([^"']+)["'](?:\s*as\s+const)?/g;
+  while ((m = objectIconRe.exec(src))) {
+    push(m[1]!);
   }
 
   return out;
@@ -492,6 +510,11 @@ export const LUCIDE_ALIASES: Record<string, string> = {
   "shield-alert": "shield-alert",
   "shield-check": "shield-check",
   "shield-x": "shield-x",
+  // lucide kebab names that differ from the exported camelCase (the
+  // catalog is built from lucide's type declarations, which use the
+  // camelCase export names).
+  "building-2": "building2",
+  "building-3": "building3",
   "github": "github",
   "twitter": "twitter",
   "slack": "slack",

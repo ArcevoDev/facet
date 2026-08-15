@@ -66,6 +66,6 @@ export function HeroSection() {
           </div>
         ))}
       </div>
-    </div>
+    </Spotlight>
   );
 }

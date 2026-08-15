@@ -52,6 +52,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "data-display"
   },
   {
+    "name": "Billing Page",
+    "slug": "billing-page",
+    "description": "@arcevo/facet-components: Billing / pricing page components",
+    "category": "pages"
+  },
+  {
     "name": "Breadcrumb",
     "slug": "breadcrumb",
     "description": "",

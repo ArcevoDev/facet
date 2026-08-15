@@ -923,6 +923,65 @@ import { Navbar } from "@arcevo/facet-components";
     { label: "LinkedIn", href: "https://linkedin.com/company/arcevo", icon: "linkedin", description: "Company page" },
   ]}
 />`,
+  "billing-page": `import { BillingPage } from "@arcevo/facet-components";
+import type { BillingPlan } from "@arcevo/facet-components";
+
+const plans: BillingPlan[] = [
+  { id: "free", name: "Free", price: 0, features: ["1 project", "Community support"] },
+  { id: "pro", name: "Pro", price: 19, highlight: true, features: ["Unlimited projects", "Priority support", "Advanced analytics"] },
+  { id: "enterprise", name: "Enterprise", price: 0, customPriceLabel: "Custom", features: ["SSO/SAML", "Dedicated support", "SLA"] },
+];
+
+function Example() {
+  return (
+    <BillingPage
+      config={{
+        plans,
+        title: "Pricing",
+        description: "Simple, transparent pricing. Cancel anytime.",
+        annualDiscountNote: "Save 20% with yearly billing",
+      }}
+    />
+  );
+}`,
+  "billing-page-table": `import { BillingPageTable } from "@arcevo/facet-components";
+import type { BillingPlan } from "@arcevo/facet-components";
+
+const plans: BillingPlan[] = [
+  { id: "free", name: "Free", price: 0, features: [] },
+  { id: "pro", name: "Pro", price: 19, highlight: true, features: [] },
+  { id: "enterprise", name: "Enterprise", price: 0, customPriceLabel: "Custom", features: [] },
+];
+
+function Example() {
+  return (
+    <BillingPageTable
+      config={{ plans, title: "Compare plans" }}
+      rows={[
+        { label: "Projects", supports: { free: true, pro: true, enterprise: true } },
+        { label: "SSO", supports: { free: false, pro: true, enterprise: true } },
+        { label: "Audit log", supports: { free: false, pro: "7 days", enterprise: true } },
+      ]}
+    />
+  );
+}`,
+  "billing-page-freemium": `import { BillingPageFreemium } from "@arcevo/facet-components";
+import type { BillingPlan } from "@arcevo/facet-components";
+
+const plans: BillingPlan[] = [
+  { id: "free", name: "Free", price: 0, features: ["1 project", "Community support"] },
+  { id: "pro", name: "Pro", price: 19, highlight: true, features: ["Unlimited projects", "Priority support"] },
+  { id: "team", name: "Team", price: 49, features: ["Everything in Pro", "SSO/SAML"] },
+];
+
+function Example() {
+  return (
+    <BillingPageFreemium
+      config={{ plans, title: "Start free, scale when you're ready" }}
+      heroPlanId="pro"
+    />
+  );
+}`,
 };
 
 /** Minimal import + usage snippet for a component slug. */

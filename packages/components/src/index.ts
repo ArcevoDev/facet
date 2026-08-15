@@ -424,9 +424,28 @@ export {
   type FooterLink,
   type FooterColumn,
   type FooterSocial,
+  type FooterNewsletter,
   type FooterProps,
   Footer,
 } from "./ui/footer.js";
+
+export {
+  type BillingInterval,
+  type BillingPlanCta,
+  type BillingPlan,
+  type BillingPageConfig,
+  planPriceLabel,
+  planInterval,
+} from "./ui/billing-types.js";
+
+export {
+  type BillingPageProps,
+  BillingPage,
+  type BillingPageTableProps,
+  BillingPageTable,
+  type BillingPageFreemiumProps,
+  BillingPageFreemium,
+} from "./ui/billing-page.js";
 
 export {
   type FeedbackChannel,

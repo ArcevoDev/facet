@@ -83,6 +83,9 @@ const CATEGORY = {
   // Full page components (new "Pages" section)
   "feedback-page": "pages",
   footer: "pages",
+  "billing-page": "pages",
+  "billing-page-table": "pages",
+  "billing-page-freemium": "pages",
 };
 
 function firstDocLine(filePath) {

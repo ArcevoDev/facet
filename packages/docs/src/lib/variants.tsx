@@ -179,11 +179,15 @@ import {
   SparkleButton,
   Footer,
   FeedbackPage,
+  BillingPage,
+  BillingPageTable,
+  BillingPageFreemium,
   CountryInput,
   StateInput,
   LGAInput,
   type RoadmapItem,
   type DataTableColumn,
+  type BillingPlan,
 } from "@arcevo/facet-components";
 import { ArcProvider, SignIn } from "@arcevo/facet-auth";
 import { ArcIdClient } from "@arcevo/facet-sdk";
@@ -228,6 +232,48 @@ const DEMO_COLUMNS: DataTableColumn<Record<string, unknown>>[] = [
   { key: "name", header: "Name" },
   { key: "email", header: "Email" },
   { key: "role", header: "Role" },
+];
+
+const BILLING_PLANS: BillingPlan[] = [
+  {
+    id: "free",
+    name: "Free",
+    price: 0,
+    description: "For side projects and evaluation",
+    icon: "sparkles",
+    features: ["1 project", "Community support", "Core components"],
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    price: 19,
+    highlight: true,
+    description: "For growing teams",
+    icon: "zap",
+    features: [
+      "Unlimited projects",
+      "Priority support",
+      "Advanced analytics",
+      "SSO/SAML",
+    ],
+  },
+  {
+    id: "team",
+    name: "Team",
+    price: 49,
+    description: "For organizations",
+    icon: "users",
+    features: ["Everything in Pro", "Audit log", "Custom roles"],
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    price: 0,
+    customPriceLabel: "Custom",
+    description: "For large-scale deployments",
+    icon: "building",
+    features: ["Everything in Team", "Dedicated support", "SLA", "On-prem"],
+  },
 ];
 
 const ROADMAP_ITEMS: RoadmapItem[] = [
@@ -2092,6 +2138,79 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             </div>
           ),
         },
+        {
+          label: "Minimal",
+          node: (
+            <div className="w-full rounded-lg border border-border">
+              <Footer
+                variant="minimal"
+                brand={{ name: "facet", tagline: "The Arcevo UI system" }}
+                socials={[{ label: "GitHub", href: "#", icon: "github" }]}
+                legal="© 2026 facet. MIT License."
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Columns",
+          node: (
+            <div className="w-full rounded-lg border border-border">
+              <Footer
+                variant="columns"
+                brand={{ name: "facet", tagline: "The Arcevo UI system" }}
+                columns={[
+                  { title: "Product", links: [{ label: "Components", href: "#" }, { label: "Tokens", href: "#" }] },
+                  { title: "Resources", links: [{ label: "Docs", href: "#" }, { label: "CLI", href: "#" }] },
+                  { title: "Company", links: [{ label: "About", href: "#" }, { label: "Blog", href: "#" }] },
+                ]}
+                socials={[{ label: "GitHub", href: "#", icon: "github" }]}
+                bottomLinks={[{ label: "Privacy", href: "#" }]}
+                legal="© 2026 facet. MIT License."
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Newsletter",
+          node: (
+            <div className="w-full rounded-lg border border-border">
+              <Footer
+                variant="newsletter"
+                brand={{ name: "facet", tagline: "The Arcevo UI system" }}
+                columns={[
+                  { title: "Product", links: [{ label: "Components", href: "#" }] },
+                  { title: "Resources", links: [{ label: "Docs", href: "#" }] },
+                ]}
+                newsletter={{
+                  title: "Stay in the loop",
+                  description: "Product updates, straight to your inbox.",
+                  buttonLabel: "Subscribe",
+                }}
+                socials={[{ label: "GitHub", href: "#", icon: "github" }]}
+                legal="© 2026 facet. MIT License."
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Split",
+          node: (
+            <div className="w-full rounded-lg border border-border">
+              <Footer
+                variant="split"
+                brand={{ name: "facet", tagline: "The Arcevo UI system" }}
+                columns={[
+                  { title: "Product", links: [{ label: "Components", href: "#" }, { label: "Tokens", href: "#" }] },
+                  { title: "Resources", links: [{ label: "Docs", href: "#" }, { label: "CLI", href: "#" }] },
+                  { title: "Company", links: [{ label: "About", href: "#" }, { label: "Blog", href: "#" }] },
+                  { title: "Legal", links: [{ label: "Privacy", href: "#" }, { label: "Terms", href: "#" }] },
+                ]}
+                socials={[{ label: "GitHub", href: "#", icon: "github" }]}
+                legal="© 2026 facet. MIT License."
+              />
+            </div>
+          ),
+        },
       ];
     case "feedback-page":
       return [
@@ -2552,6 +2671,51 @@ export function variantCells(slug: string): VariantCell[] | undefined {
               <LayoutProvider>
                 <Topbar />
               </LayoutProvider>
+            </div>
+          ),
+        },
+      ];
+
+    case "billing-page":
+      return [
+        {
+          label: "Card grid",
+          node: (
+            <div className="w-full rounded-lg border border-border p-4">
+              <BillingPage config={{ plans: BILLING_PLANS, title: "Pricing" }} />
+            </div>
+          ),
+        },
+      ];
+    case "billing-page-table":
+      return [
+        {
+          label: "Comparison",
+          node: (
+            <div className="w-full rounded-lg border border-border p-4">
+              <BillingPageTable
+                config={{ plans: BILLING_PLANS, title: "Compare plans" }}
+                rows={[
+                  { label: "Projects", supports: { free: true, pro: true, team: true, enterprise: true } },
+                  { label: "SSO", supports: { free: false, pro: true, team: true, enterprise: true } },
+                  { label: "Audit log", supports: { free: false, pro: "7 days", team: true, enterprise: true } },
+                  { label: "On-prem", supports: { free: false, pro: false, team: false, enterprise: true } },
+                ]}
+              />
+            </div>
+          ),
+        },
+      ];
+    case "billing-page-freemium":
+      return [
+        {
+          label: "Freemium",
+          node: (
+            <div className="w-full rounded-lg border border-border p-4">
+              <BillingPageFreemium
+                config={{ plans: BILLING_PLANS, title: "Start free, scale when you're ready" }}
+                heroPlanId="pro"
+              />
             </div>
           ),
         },

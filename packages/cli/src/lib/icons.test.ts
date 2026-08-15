@@ -57,6 +57,33 @@ describe("scanFileNames", () => {
     expect(names).toContain("chevron-down");
   });
 
+  it("finds object-literal icon values (nav configs, feature grids)", () => {
+    const src = `
+      const NAV = [
+        { href: "/dashboard", label: "Dashboard", icon: "chart-column" },
+        { href: "/admin", label: "Admin", icon: "shield" },
+      ];
+      const FEATURES = [
+        { title: "Passkeys", icon: "key-round" as const },
+        { title: "OAuth", icon: "shield-check" as const },
+      ];
+    `;
+    const names = scanFileNames(src);
+    expect(names).toContain("chart-column");
+    expect(names).toContain("shield");
+    expect(names).toContain("key-round");
+    expect(names).toContain("shield-check");
+  });
+
+  it("does not treat icon prop assignments as object values", () => {
+    const src = `
+      <Icon name={item.icon} />
+      const obj = { icon: someVariable };
+    `;
+    // No string literal under `icon:` here, so nothing is captured.
+    expect(scanFileNames(src)).toHaveLength(0);
+  });
+
   it("ignores non-icon name props", () => {
     const src = `
       <input name="firstName" />
@@ -64,6 +91,18 @@ describe("scanFileNames", () => {
       const x = { name: "not-an-icon" };
     `;
     expect(scanFileNames(src)).toHaveLength(0);
+  });
+
+  it("ignores meta/link tags and property assignments", () => {
+    const src = `
+      <meta name="color-scheme" content="light" />
+      <link name="theme-color" />
+      this.name = "ApiError";
+      const obj = { name: "x" };
+      <Icon name="settings" />
+    `;
+    const names = scanFileNames(src);
+    expect(names).toEqual(["settings"]);
   });
 });
 
@@ -271,16 +310,20 @@ describe("resolveUsedIcons + generateIconRegistry", () => {
         ["settings", "Settings"],
         ["x", "X"],
         ["file-text", "FileText"],
+        ["building2", "Building2"],
       ]),
       version: "1.30.0",
     };
-    const resolved = resolveUsedIcons(["close", "document"], catalog);
-    // close -> x, document -> file-text via the alias map.
+    const resolved = resolveUsedIcons(["close", "document", "building-2"], catalog);
+    // close -> x, document -> file-text, building-2 -> building2 via the alias map.
     expect(resolved.used.get("close")).toBe("X");
     expect(resolved.used.get("document")).toBe("FileText");
+    expect(resolved.used.get("building-2")).toBe("Building2");
     expect(resolved.renamed).toContain("close -> x");
+    expect(resolved.renamed).toContain("document -> file-text");
     expect(resolved.unresolved).not.toContain("close");
     expect(resolved.unresolved).not.toContain("document");
+    expect(resolved.unresolved).not.toContain("building-2");
   });
 
   it("buildLucideCatalog resolves from a real lucide package", () => {
