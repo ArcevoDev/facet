@@ -98,7 +98,7 @@ function PlanHeader({ plan, interval }: { plan: BillingPlan; interval: BillingIn
       )}
       <div className="mt-4 flex items-baseline gap-1">
         <span className="font-heading text-3xl font-bold text-foreground">
-          {planPriceLabel(plan, activeInterval, "$")}
+          {planPriceLabel(plan, "$")}
         </span>
         {plan.price > 0 && (
           <span className="text-sm text-muted-foreground">/{activeInterval}</span>
@@ -108,8 +108,7 @@ function PlanHeader({ plan, interval }: { plan: BillingPlan; interval: BillingIn
   );
 }
 
-function PlanCta({ plan, interval }: { plan: BillingPlan; interval: BillingInterval }) {
-  const activeInterval = planInterval(plan, interval);
+function PlanCta({ plan }: { plan: BillingPlan }) {
   const href = plan.cta?.href ?? "#";
   const label = plan.cta?.label ?? (plan.price === 0 ? "Get started" : "Contact us");
   const variant = plan.cta?.variant ?? "default";
@@ -181,7 +180,7 @@ export function BillingPage({ config, className }: BillingPageProps) {
             <CardContent className="flex flex-1 flex-col justify-between gap-6">
               {config.badge?.(plan) ?? (plan.badge ? plan.badge(plan) : null)}
               <FeatureList features={plan.features} />
-              <PlanCta plan={plan} interval={interval} />
+              <PlanCta plan={plan} />
             </CardContent>
           </Card>
         ))}
@@ -242,14 +241,14 @@ export function BillingPageTable({ config, rows, className }: BillingPageTablePr
                       {plan.name}
                     </span>
                     <span className="font-heading text-2xl font-bold text-foreground">
-                      {planPriceLabel(plan, planInterval(plan, interval), "$")}
+                      {planPriceLabel(plan, "$")}
                       {plan.price > 0 && (
                         <span className="text-xs font-normal text-muted-foreground">
                           /{planInterval(plan, interval)}
                         </span>
                       )}
                     </span>
-                    <PlanCta plan={plan} interval={interval} />
+                    <PlanCta plan={plan} />
                   </div>
                 </th>
               ))}
@@ -324,7 +323,7 @@ export function BillingPageFreemium({ config, heroPlanId, className }: BillingPa
             </CardHeader>
             <CardContent className="flex flex-1 flex-col justify-between gap-6">
               <FeatureList features={plans.find((p) => p.price === 0)!.features} />
-              <PlanCta plan={plans.find((p) => p.price === 0)!} interval={interval} />
+              <PlanCta plan={plans.find((p) => p.price === 0)!} />
             </CardContent>
           </Card>
         )}
@@ -342,7 +341,7 @@ export function BillingPageFreemium({ config, heroPlanId, className }: BillingPa
             </CardHeader>
             <CardContent className="flex flex-1 flex-col justify-between gap-6">
               <FeatureList features={hero.features} />
-              <PlanCta plan={hero} interval={interval} />
+              <PlanCta plan={hero} />
             </CardContent>
           </Card>
         )}
@@ -358,7 +357,7 @@ export function BillingPageFreemium({ config, heroPlanId, className }: BillingPa
               </CardHeader>
               <CardContent className="flex flex-1 flex-col justify-between gap-6">
                 <FeatureList features={plan.features} />
-                <PlanCta plan={plan} interval={interval} />
+                <PlanCta plan={plan} />
               </CardContent>
             </Card>
           ))}

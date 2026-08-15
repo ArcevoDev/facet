@@ -72,12 +72,8 @@ export interface BillingPageConfig {
   badge?: (plan: BillingPlan) => React.ReactNode;
 }
 
-/** Price for a plan at a given interval (respects customPriceLabel). */
-export function planPriceLabel(
-  plan: BillingPlan,
-  interval: BillingInterval,
-  currency: string,
-): string {
+/** Price label for a plan (respects customPriceLabel; 0 = "Free"). */
+export function planPriceLabel(plan: BillingPlan, currency: string): string {
   if (plan.customPriceLabel) return plan.customPriceLabel;
   if (plan.price === 0) return "Free";
   return `${currency}${plan.price}`;

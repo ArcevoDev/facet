@@ -138,8 +138,8 @@ function FooterColumns({ columns }: { columns: FooterColumn[] }) {
 /** Bottom bar: legal + bottom links + socials. */
 function FooterBottomBar({
   legal,
-  bottomLinks,
-  socials,
+  bottomLinks = [],
+  socials = [],
   bottomBar,
   className,
 }: Pick<FooterProps, "legal" | "bottomLinks" | "socials" | "bottomBar"> & {
