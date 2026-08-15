@@ -280,7 +280,7 @@ emailsCommand
     const { detectMailSetup, planEmailsInit, formatDetection } = await import("./lib/emails.js");
     const { generateEmailsScaffold, emailsPackageJsonAdditions } = await import("./lib/emails-generators.js");
     const { writeFiles, readExistingPackageJson } = await import("./lib/writer.js");
-    const { detectPackageManager, installCommand } = await import("./lib/types.js");
+    const { detectPackageManager } = await import("./lib/types.js");
 
     const detection = detectMailSetup(cwd);
     console.log("facet emails init\n");
