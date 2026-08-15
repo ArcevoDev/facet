@@ -56,16 +56,19 @@ facet packages are used, and best-practice suggestions (e.g. wire
 
 ### `facet update`
 
-List the facet packages that have newer published versions and print the
-exact install command for your package manager. In a monorepo it detects the
-workspace layout and includes the root/workspace flag.
+Apply updates for the facet packages that have newer published versions:
+installs the outdated `@arcevo/facet-*` packages at their latest published
+versions using the detected package manager, with a confirmation prompt
+(skip it with `-y`). Pass `--dry-run` to only print the exact install
+command. In a monorepo it detects the workspace layout and includes the
+root/workspace flag.
 
 ### `facet up`
 
-Apply the facet package updates (the non-dry-run sibling of `facet update`):
-installs the outdated `@arcevo/facet-*` packages at their latest published
-versions using the detected package manager. Pass `--dry-run` to only print
-the command.
+Apply the facet package updates (the always-apply variant of `facet
+update`): installs the outdated `@arcevo/facet-*` packages at their latest
+published versions using the detected package manager without prompting.
+Pass `--dry-run` to only print the command.
 
 ### `facet clean`
 
