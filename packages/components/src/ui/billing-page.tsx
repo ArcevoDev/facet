@@ -17,7 +17,7 @@
 
 import * as React from "react";
 import { cn } from "../utils.js";
-import { AnimatedButton, type AnimatedButtonRenderProps } from "./animated-button.js";
+import { AnimatedButton } from "./animated-button.js";
 import { Badge } from "./badge.js";
 import { Card, CardContent, CardHeader, CardTitle } from "./card.js";
 import { Icon } from "../icon/index.js";
