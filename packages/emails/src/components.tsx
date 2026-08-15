@@ -24,19 +24,28 @@ const MUTED = "var(--muted, #6b7280)";
 /** Merge props.children with variadic children (framework-agnostic API
  *  lets callers pass children either way: emailText({children}, "x") or
  *  emailText({}, "x", "y")). */
-type AnyChild = TemplateNode | string | number | null | undefined | false;
+type AnyChild = TemplateNode | string | number | bigint | null | undefined | false;
 function mergeChildren(
   propsChildren: React.ReactNode | undefined,
   variadic: AnyChild[],
-): AnyChild[] {
-  const out: AnyChild[] = [];
+): TemplateNode[] {
+  const out: TemplateNode[] = [];
+  const pushNode = (c: unknown) => {
+    if (c == null || typeof c === "boolean" || typeof c === "bigint") return;
+    // React nodes (elements, strings, numbers) are renderable through the
+    // tree walker; this is the framework-agnostic boundary where React
+    // elements are treated as opaque renderables (the React bridge
+    // converts them to real TemplateNodes before rendering).
+    out.push(c as TemplateNode);
+  };
   if (propsChildren != null) {
-    if (Array.isArray(propsChildren)) out.push(...(propsChildren as AnyChild[]));
-    else out.push(propsChildren as AnyChild);
+    if (Array.isArray(propsChildren)) {
+      for (const c of propsChildren) pushNode(c);
+    } else {
+      pushNode(propsChildren);
+    }
   }
-  for (const c of variadic) {
-    if (c != null && c !== false) out.push(c);
-  }
+  for (const c of variadic) pushNode(c);
   return out;
 }
 
@@ -95,7 +104,7 @@ export function emailLayout(props: EmailLayoutProps, ...extra: AnyChild[]): Temp
               "td",
               { style: { padding: "24px 32px" } },
               heading ? createElement("h2", { style: { margin: "0 0 16px", fontSize: "18px", fontWeight: 700, color: TEXT } }, heading) : null,
-              ...(mergedChildren as TemplateNode[]),
+              ...mergedChildren,
             ),
           ),
           // Footer
@@ -153,7 +162,7 @@ export function emailButton(props: EmailButtonProps): TemplateNode {
     base.color = PRIMARY;
     base.backgroundColor = "transparent";
   }
-  return createElement("a", { href, className: "facet-btn", style: base }, children);
+  return createElement("a", { href, className: "facet-btn", style: base }, ...mergeChildren(children, []));
 }
 
 /* ── EmailText ────────────────────────────────────────────── */
@@ -189,7 +198,7 @@ export function emailText(props: EmailTextProps, ...extra: AnyChild[]): Template
     base.borderRadius = "6px";
     base.padding = "10px 14px";
   }
-  return createElement("p", { style: base }, ...(mergedChildren as TemplateNode[]));
+  return createElement("p", { style: base }, ...mergedChildren);
 }
 
 /* ── EmailCodeBlock ───────────────────────────────────────── */
@@ -306,9 +315,11 @@ export interface EmailLinkProps {
   style?: React.CSSProperties;
 }
 
-export function emailLink(props: EmailLinkProps): TemplateNode {
+export function emailLink(props: EmailLinkProps, ...extra: AnyChild[]): TemplateNode {
   const { href, children, style = {} } = props;
-  return createElement("a", { href, style: { color: PRIMARY, textDecoration: "underline", ...style } }, children ?? href);
+  const merged = mergeChildren(children, extra);
+  const kids: (TemplateNode | string)[] = merged.length ? merged : [href];
+  return createElement("a", { href, style: { color: PRIMARY, textDecoration: "underline", ...style } }, ...kids);
 }
 
 /* ── EmailSecurityNotice ──────────────────────────────────── */
@@ -340,6 +351,7 @@ export function emailSecurityNotice(props: EmailSecurityNoticeProps): TemplateNo
 
   // Callout form: arbitrary children with variant styling.
   if (children != null) {
+    const merged = mergeChildren(children, []);
     return createElement(
       "table",
       { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style: { margin: "16px 0", ...style } },
@@ -349,7 +361,7 @@ export function emailSecurityNotice(props: EmailSecurityNoticeProps): TemplateNo
         createElement(
           "td",
           { style: { backgroundColor: s.bg, border: `1px solid ${s.border}`, borderRadius: "8px", padding: "12px 20px" } },
-          createElement("p", { style: { margin: 0, color: s.text, fontSize: "14px", lineHeight: "20px", fontWeight: 500 } }, children),
+          createElement("p", { style: { margin: 0, color: s.text, fontSize: "14px", lineHeight: "20px", fontWeight: 500 } }, ...merged),
         ),
       ),
     );
@@ -389,7 +401,7 @@ export function emailSection(props: EmailSectionProps, ...extra: AnyChild[]): Te
   return createElement(
     "table",
     { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style },
-    createElement("tr", {}, createElement("td", { style: { padding: "0" } }, ...(merged as TemplateNode[]))),
+    createElement("tr", {}, createElement("td", { style: { padding: "0" } }, ...merged)),
   );
 }
 
@@ -402,7 +414,7 @@ export interface EmailRowProps {
 export function emailRow(props: EmailRowProps, ...extra: AnyChild[]): TemplateNode {
   const { style = {}, children } = props;
   const merged = mergeChildren(children, extra);
-  return createElement("tr", { style }, ...(merged as TemplateNode[]));
+  return createElement("tr", { style }, ...merged);
 }
 
 export interface EmailColumnProps {
@@ -414,7 +426,7 @@ export interface EmailColumnProps {
 export function emailColumn(props: EmailColumnProps, ...extra: AnyChild[]): TemplateNode {
   const { style = {}, children } = props;
   const merged = mergeChildren(children, extra);
-  return createElement("td", { style }, ...(merged as TemplateNode[]));
+  return createElement("td", { style }, ...merged);
 }
 
 /* ── EmailList ────────────────────────────────────────────── */

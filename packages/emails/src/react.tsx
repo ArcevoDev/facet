@@ -70,7 +70,7 @@ function flatten(children: ReactChild | undefined): (TemplateNode | string)[] {
 export function toTemplateTree(element: ReactChild): TemplateNode {
   const children = flatten(element);
   // If it's a single node, unwrap the synthetic fragment.
-  if (children.length === 1 && typeof children[0] !== "string") {
+  if (children.length === 1 && typeof children[0] !== "string" && children[0]) {
     return children[0];
   }
   return { tag: "div", props: {}, children };

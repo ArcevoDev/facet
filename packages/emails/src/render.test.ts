@@ -8,7 +8,6 @@ import {
   emailText,
   emailCodeBlock,
   emailDivider,
-  emailLink,
   emailSecurityNotice,
   emailList,
   emailSection,

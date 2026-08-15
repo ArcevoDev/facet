@@ -78,7 +78,7 @@ function styleToCss(style: Record<string, unknown>): string {
 
 /* ── Hyperscript helper ───────────────────────────────────── */
 
-export type TemplateChild = TemplateNode | string | number | null | undefined | false;
+export type TemplateChild = TemplateNode | string | number | bigint | null | undefined | false;
 
 export function createElement(
   tag: string,
@@ -92,7 +92,7 @@ export function createElement(
       for (const item of c) push(item as TemplateChild);
       return;
     }
-    flat.push(typeof c === "number" ? String(c) : c);
+    flat.push(typeof c === "number" || typeof c === "bigint" ? String(c) : c);
   };
   for (const c of children) push(c);
   return { tag, props: props ?? {}, children: flat };
@@ -211,7 +211,7 @@ export function renderEmailText(node: TemplateNode | TemplateNode[]): string {
   const parts: string[] = [];
 
   const walk = (n: TemplateNode, depth: number) => {
-    const { tag, props = {}, children = [] } = n;
+    const { tag, children = [] } = n;
     const blockish =
       tag === "p" || tag === "div" || tag === "section" || tag === "tr" || tag === "li" ||
       tag === "h1" || tag === "h2" || tag === "h3" || tag === "h4" ||

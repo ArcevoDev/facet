@@ -8,7 +8,7 @@
  * plans; the command writes files after confirmation.
  */
 
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import {
   detectPackageManager,
@@ -17,7 +17,6 @@ import {
   type PackageManager,
   type Framework,
 } from "./types.js";
-import { readExistingPackageJson } from "./writer.js";
 import { buildRepoContext, type RepoContext } from "./suggest.js";
 
 /** Mail/messaging packages we recognize in a consumer's manifests. */
