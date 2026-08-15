@@ -14,6 +14,7 @@ import {
   Button,
   Input,
   Label,
+  PasswordInput,
   Card,
   CardHeader,
   CardTitle,
@@ -107,9 +108,8 @@ export function SignUp({ appearance, config: configOverrides, slots, onSuccess }
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="signup-password">Password</Label>
-            <Input
+            <PasswordInput
               id="signup-password"
-              type="password"
               placeholder="At least 8 characters"
               autoComplete="new-password"
               required
@@ -120,9 +120,8 @@ export function SignUp({ appearance, config: configOverrides, slots, onSuccess }
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="signup-confirm">Confirm Password</Label>
-            <Input
+            <PasswordInput
               id="signup-confirm"
-              type="password"
               placeholder="Re-enter your password"
               autoComplete="new-password"
               required

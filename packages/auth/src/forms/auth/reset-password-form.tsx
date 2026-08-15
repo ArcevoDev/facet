@@ -16,6 +16,7 @@ import {
   Button,
   Input,
   Label,
+  PasswordInput,
   Card,
   CardHeader,
   CardTitle,
@@ -151,9 +152,8 @@ export function ResetPasswordForm({
         <form onSubmit={handleFormSubmit} className="flex flex-col gap-4" noValidate={validate}>
           <div className="flex flex-col gap-2">
             <Label htmlFor="reset-password">New Password</Label>
-            <Input
+            <PasswordInput
               id="reset-password"
-              type="password"
               placeholder="At least 8 characters"
               autoComplete="new-password"
               required
@@ -165,9 +165,8 @@ export function ResetPasswordForm({
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="reset-confirm">Confirm Password</Label>
-            <Input
+            <PasswordInput
               id="reset-confirm"
-              type="password"
               placeholder="Re-enter your password"
               autoComplete="new-password"
               required

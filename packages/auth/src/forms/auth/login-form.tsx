@@ -14,6 +14,7 @@ import {
   Button,
   Input,
   Label,
+  PasswordInput,
   Card,
   CardHeader,
   CardTitle,
@@ -132,9 +133,8 @@ export function LoginForm({
                 </Button>
               )}
             </div>
-            <Input
+            <PasswordInput
               id="signin-password"
-              type="password"
               placeholder="········"
               autoComplete="current-password"
               required
