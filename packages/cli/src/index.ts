@@ -427,9 +427,10 @@ program
 
 program
   .command("update")
-  .description("Show (and prepare) updates for installed facet packages")
-  .option("--dry-run", "Only print the update commands without running anything", true)
-  .action(async (opts: { dryRun?: boolean }) => {
+  .description("Apply updates for installed facet packages (use --dry-run to only print)")
+  .option("--dry-run", "Only print the update commands without running anything")
+  .option("-y, --yes", "Apply updates without prompting")
+  .action(async (opts: { dryRun?: boolean; yes?: boolean }) => {
     const cwd = process.cwd();
     const infos = await collectFacetPackageState(cwd);
     const outdated = planUpdates(infos);
@@ -448,10 +449,37 @@ program
       console.log(`  ${t.name}: ${info?.installed ?? "not installed"} -> ^${t.latest}`);
     }
     console.log("");
-    console.log(updateCommand(pm, targets, workspace));
+    const cmd = updateCommand(pm, targets, workspace);
     if (opts.dryRun) {
-      console.log("");
-      console.log("(dry run) Run the command above to apply the updates.");
+      console.log("(dry run) Run the command above to apply the updates:");
+      console.log(`  ${cmd}`);
+      return;
+    }
+    // Confirm unless -y, then apply.
+    if (!opts.yes) {
+      const prompts = (await import("prompts")).default;
+      const { ok } = await prompts({
+        type: "toggle",
+        name: "ok",
+        message: `Apply ${targets.length} facet update(s)?`,
+        initial: true,
+        active: "yes",
+        inactive: "no",
+      });
+      if (!ok) {
+        console.log("Cancelled. Run again with -y to skip this prompt.");
+        return;
+      }
+    }
+    console.log(`Running: ${cmd}`);
+    const { execSync } = await import("node:child_process");
+    try {
+      execSync(cmd, { cwd, stdio: "inherit" });
+      console.log("facet packages updated.");
+    } catch (error) {
+      console.error("facet update failed. Run the command manually to see the error:");
+      console.error(`  ${cmd}`);
+      process.exitCode = 1;
     }
   });
 

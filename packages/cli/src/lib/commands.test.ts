@@ -10,6 +10,7 @@ import {
   updateCommand,
   type FacetPackageInfo,
 } from "./commands.js";
+import { discoverFacetPackages, ALL_FACET_PACKAGES } from "./registry.js";
 import {
   compareVersions,
   collectFacetDeps,
@@ -224,6 +225,22 @@ describe("compareVersions", () => {
     expect(compareVersions("1.2.0", "1.1.0")).toBeGreaterThan(0);
     expect(compareVersions("1.1.0", "1.2.0")).toBeLessThan(0);
     expect(compareVersions("1.2.0", "1.2.0")).toBe(0);
+  });
+});
+
+describe("discoverFacetPackages", () => {
+  it("always includes the baseline facet packages", async () => {
+    const names = await discoverFacetPackages();
+    for (const pkg of ALL_FACET_PACKAGES) {
+      expect(names).toContain(pkg);
+    }
+  });
+
+  it("only returns @arcevo/facet-* scoped packages", async () => {
+    const names = await discoverFacetPackages();
+    for (const n of names) {
+      expect(n.startsWith("@arcevo/facet-")).toBe(true);
+    }
   });
 });
 

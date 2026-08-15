@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join as pathJoin } from "node:path";
-import { ALL_FACET_PACKAGES, resolveLatestVersion } from "./registry.js";
+import { discoverFacetPackages, resolveLatestVersion } from "./registry.js";
 import { scanUnnecessaryDeps } from "./deps.js";
 import {
   compareVersions,
@@ -36,10 +36,11 @@ export interface FacetPackageInfo {
 export async function collectFacetPackageState(cwd: string): Promise<FacetPackageInfo[]> {
   const declared = collectFacetDeps(cwd);
   const searchDirs = [cwd, ...workspaceMemberDirs(cwd)];
-  // The known facet scope plus any @arcevo/facet-* the consumer declares
-  // that isn't in the hardcoded list (so a newly published package shows
-  // up even before the CLI ships it in ALL_FACET_PACKAGES).
-  const names = Array.from(new Set([...ALL_FACET_PACKAGES, ...Object.keys(declared)]));
+  // Discover the facet scope dynamically (npm registry @arcevo search)
+  // merged with the static baseline AND whatever the consumer declares,
+  // so any facet package shows up even before the CLI ships it.
+  const discovered = await discoverFacetPackages();
+  const names = Array.from(new Set([...discovered, ...Object.keys(declared)]));
   const infos: FacetPackageInfo[] = await Promise.all(
     names.map(async (name) => {
       const [latest, installed] = await Promise.all([

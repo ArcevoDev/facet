@@ -1,9 +1,10 @@
 import type { PackageManager } from "./types.js";
 
 /**
- * Every published @arcevo/facet-* package, used by `facet pkg`, `facet
- * doctor`, and `facet update` to check the registry and the consumer's
- * installed deps.
+ * The @arcevo/facet-* packages we know about. Used as a fallback baseline;
+ * the CLI ALSO discovers facet packages dynamically from the npm registry
+ * scope + the consumer's declared deps, so a newly published package shows
+ * up even before this list is updated.
  */
 export const ALL_FACET_PACKAGES = [
   "@arcevo/facet-auth",
@@ -17,6 +18,36 @@ export const ALL_FACET_PACKAGES = [
 ] as const;
 
 export type AllFacetPackage = (typeof ALL_FACET_PACKAGES)[number];
+
+/** Discover facet packages dynamically: the npm @arcevo scope (via the
+ *  registry search API) merged with the static baseline. Returns a set of
+ *  package names; falls back to the baseline alone if the registry is
+ *  unreachable or slow (5s timeout so the CLI never hangs on the network). */
+export async function discoverFacetPackages(): Promise<string[]> {
+  const baseline = [...ALL_FACET_PACKAGES];
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000);
+    try {
+      const res = await fetch("https://registry.npmjs.org/-/v1/search?text=scope:arcevo&size=100", {
+        headers: { "User-Agent": "facet-cli" },
+        signal: controller.signal,
+      });
+      if (!res.ok) return baseline;
+      const data = (await res.json()) as {
+        objects?: { package?: { name?: string } }[];
+      };
+      const scoped = (data.objects ?? [])
+        .map((o) => o.package?.name)
+        .filter((n): n is string => Boolean(n) && n.startsWith("@arcevo/facet-"));
+      return Array.from(new Set([...baseline, ...scoped]));
+    } finally {
+      clearTimeout(timer);
+    }
+  } catch {
+    return baseline;
+  }
+}
 
 /**
  * Facet packages a docs site depends on, with the npm registry name.
