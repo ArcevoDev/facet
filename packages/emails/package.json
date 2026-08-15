@@ -1,6 +1,6 @@
 {
   "name": "@arcevo/facet-emails",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Framework-agnostic email template renderer for the ArcevoCirqle ecosystem: render React or plain template trees to email-safe HTML and text, with template primitives and a dev preview server. Zero runtime dependencies.",
   "type": "module",
   "exports": {
