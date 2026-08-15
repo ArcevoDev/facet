@@ -70,7 +70,7 @@ function indexHtml(names: string[]): string {
 </html>`;
 }
 
-function previewHtml(name: string, title: string, html: string, text: string): string {
+function previewHtml(title: string, html: string, text: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -140,7 +140,7 @@ export function startEmailPreviewServer(
       const tree = typeof template.tree === "function" ? template.tree() : template.tree;
       const html = renderEmail(tree, { brand, fullDocument: false });
       const text = renderEmailText(tree);
-      res.end(previewHtml(name, template.title, html, text));
+      res.end(previewHtml(template.title, html, text));
       return;
     }
 
