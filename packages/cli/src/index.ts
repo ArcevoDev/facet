@@ -350,9 +350,11 @@ emailsCommand
       }
     }
 
-    const { suggestNextSteps } = await import("./lib/emails.js");
+    const { emailSuggestionProvider } = await import("./lib/emails.js");
+    const { buildRepoContext, generalRepoProvider, suggestRepoSteps } = await import("./lib/suggest.js");
+    const ctx = buildRepoContext(cwd);
     console.log(`\nSuggested next steps (based on your repo):`);
-    const steps = suggestNextSteps(detection, answers);
+    const steps = suggestRepoSteps(ctx, [emailSuggestionProvider(detection, answers), generalRepoProvider]);
     steps.forEach((step, i) => console.log(`  ${i + 1}. ${step}`));
   });
 

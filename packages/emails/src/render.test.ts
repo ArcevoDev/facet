@@ -62,7 +62,8 @@ describe("renderEmail (framework-agnostic core)", () => {
   it("injects brand tokens into a style block", () => {
     const tree = createElement("p", {}, "Hi");
     const html = renderEmail(tree, { brand: { primary: "#ff0000", brandName: "Test Brand" } });
-    expect(html).toContain("background-color:#ff0000");
+    // brand.primary themes links; the title carries the brand name.
+    expect(html).toContain("color:#ff0000");
     expect(html).toContain("<title>Test Brand</title>");
   });
 });

@@ -21,6 +21,25 @@ const SURFACE = "var(--surface, #ffffff)";
 const TEXT = "var(--text, #1f2937)";
 const MUTED = "var(--muted, #6b7280)";
 
+/** Merge props.children with variadic children (framework-agnostic API
+ *  lets callers pass children either way: emailText({children}, "x") or
+ *  emailText({}, "x", "y")). */
+type AnyChild = TemplateNode | string | number | null | undefined | false;
+function mergeChildren(
+  propsChildren: React.ReactNode | undefined,
+  variadic: AnyChild[],
+): AnyChild[] {
+  const out: AnyChild[] = [];
+  if (propsChildren != null) {
+    if (Array.isArray(propsChildren)) out.push(...(propsChildren as AnyChild[]));
+    else out.push(propsChildren as AnyChild);
+  }
+  for (const c of variadic) {
+    if (c != null && c !== false) out.push(c);
+  }
+  return out;
+}
+
 /* ── EmailLayout ──────────────────────────────────────────── */
 
 export interface EmailLayoutProps {
@@ -32,7 +51,7 @@ export interface EmailLayoutProps {
   children?: React.ReactNode;
 }
 
-export function emailLayout(props: EmailLayoutProps): TemplateNode {
+export function emailLayout(props: EmailLayoutProps, ...extra: AnyChild[]): TemplateNode {
   const {
     previewText,
     heading,
@@ -41,6 +60,7 @@ export function emailLayout(props: EmailLayoutProps): TemplateNode {
     footerMeta,
     children,
   } = props;
+  const mergedChildren = mergeChildren(children, extra);
   const body = createElement(
     "table",
     { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style: { backgroundColor: "var(--background, #f6f6f6)", margin: 0, padding: 0 } },
@@ -75,11 +95,7 @@ export function emailLayout(props: EmailLayoutProps): TemplateNode {
               "td",
               { style: { padding: "24px 32px" } },
               heading ? createElement("h2", { style: { margin: "0 0 16px", fontSize: "18px", fontWeight: 700, color: TEXT } }, heading) : null,
-              ...(Array.isArray(children)
-                ? (children as unknown as TemplateNode[])
-                : children
-                  ? [children as unknown as TemplateNode]
-                  : []),
+              ...(mergedChildren as TemplateNode[]),
             ),
           ),
           // Footer
@@ -150,8 +166,9 @@ export interface EmailTextProps {
   style?: React.CSSProperties;
 }
 
-export function emailText(props: EmailTextProps): TemplateNode {
+export function emailText(props: EmailTextProps, ...extra: AnyChild[]): TemplateNode {
   const { children, variant = "default", style = {} } = props;
+  const mergedChildren = mergeChildren(children, extra);
   const base: React.CSSProperties = {
     margin: "0 0 12px",
     fontSize: "15px",
@@ -172,7 +189,7 @@ export function emailText(props: EmailTextProps): TemplateNode {
     base.borderRadius = "6px";
     base.padding = "10px 14px";
   }
-  return createElement("p", { style: base }, children);
+  return createElement("p", { style: base }, ...(mergedChildren as TemplateNode[]));
 }
 
 /* ── EmailCodeBlock ───────────────────────────────────────── */
@@ -366,12 +383,13 @@ export interface EmailSectionProps {
 }
 
 /** A table-based container for grouped email content (react-email Section equivalent). */
-export function emailSection(props: EmailSectionProps): TemplateNode {
+export function emailSection(props: EmailSectionProps, ...extra: AnyChild[]): TemplateNode {
   const { style = {}, children } = props;
+  const merged = mergeChildren(children, extra);
   return createElement(
     "table",
     { width: "100%", cellPadding: 0, cellSpacing: 0, role: "presentation", style },
-    createElement("tr", {}, createElement("td", { style: { padding: "0" } }, children)),
+    createElement("tr", {}, createElement("td", { style: { padding: "0" } }, ...(merged as TemplateNode[]))),
   );
 }
 
@@ -381,9 +399,10 @@ export interface EmailRowProps {
 }
 
 /** A table row for grid layouts (react-email Row equivalent). */
-export function emailRow(props: EmailRowProps): TemplateNode {
+export function emailRow(props: EmailRowProps, ...extra: AnyChild[]): TemplateNode {
   const { style = {}, children } = props;
-  return createElement("tr", { style }, children);
+  const merged = mergeChildren(children, extra);
+  return createElement("tr", { style }, ...(merged as TemplateNode[]));
 }
 
 export interface EmailColumnProps {
@@ -392,9 +411,10 @@ export interface EmailColumnProps {
 }
 
 /** A table cell (react-email Column equivalent). */
-export function emailColumn(props: EmailColumnProps): TemplateNode {
+export function emailColumn(props: EmailColumnProps, ...extra: AnyChild[]): TemplateNode {
   const { style = {}, children } = props;
-  return createElement("td", { style }, children);
+  const merged = mergeChildren(children, extra);
+  return createElement("td", { style }, ...(merged as TemplateNode[]));
 }
 
 /* ── EmailList ────────────────────────────────────────────── */

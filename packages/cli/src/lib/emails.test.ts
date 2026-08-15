@@ -7,8 +7,9 @@ import {
   planEmailsInit,
   mailPackageRole,
   formatDetection,
-  suggestNextSteps,
+  emailSuggestionProvider,
 } from "./emails.js";
+import { buildRepoContext, generalRepoProvider, suggestRepoSteps } from "./suggest.js";
 import { generateEmailsScaffold, emailsPackageJsonAdditions } from "./emails-generators.js";
 
 function tmp(): string {
@@ -236,8 +237,8 @@ describe("formatDetection", () => {
   });
 });
 
-describe("suggestNextSteps", () => {
-  it("suggests migration guidance when react-email is present", () => {
+describe("suggestion providers", () => {
+  it("email provider suggests migration guidance when react-email is present", () => {
     const dir = tmp();
     try {
       writeFile(dir, "package.json", JSON.stringify({
@@ -246,7 +247,8 @@ describe("suggestNextSteps", () => {
       }));
       const d = detectMailSetup(dir);
       const answers = planEmailsInit(d, {});
-      const steps = suggestNextSteps(d, answers);
+      const ctx = buildRepoContext(dir);
+      const steps = suggestRepoSteps(ctx, [emailSuggestionProvider(d, answers)]);
       expect(steps.some((s) => s.includes("react-email"))).toBe(true);
       expect(steps.some((s) => s.includes("mail:preview"))).toBe(true);
     } finally {
@@ -254,7 +256,7 @@ describe("suggestNextSteps", () => {
     }
   });
 
-  it("suggests framework-specific integration for Next.js", () => {
+  it("email provider suggests framework integration for Next.js", () => {
     const dir = tmp();
     try {
       writeFile(dir, "package.json", JSON.stringify({
@@ -263,7 +265,8 @@ describe("suggestNextSteps", () => {
       }));
       const d = detectMailSetup(dir);
       const answers = planEmailsInit(d, {});
-      const steps = suggestNextSteps(d, answers);
+      const ctx = buildRepoContext(dir);
+      const steps = suggestRepoSteps(ctx, [emailSuggestionProvider(d, answers)]);
       expect(steps.some((s) => s.includes("Next.js"))).toBe(true);
       expect(steps.some((s) => s.includes("app/api"))).toBe(true);
     } finally {
@@ -271,7 +274,7 @@ describe("suggestNextSteps", () => {
     }
   });
 
-  it("mentions the monorepo when workspace globs exist", () => {
+  it("general provider mentions the monorepo when workspace globs exist", () => {
     const dir = tmp();
     try {
       writeFile(dir, "package.json", JSON.stringify({
@@ -280,10 +283,22 @@ describe("suggestNextSteps", () => {
         workspaces: ["packages/*"],
       }));
       writeFile(dir, "pnpm-workspace.yaml", "packages:\n  - \"packages/*\"\n");
-      const d = detectMailSetup(dir);
-      const answers = planEmailsInit(d, {});
-      const steps = suggestNextSteps(d, answers);
+      const ctx = buildRepoContext(dir);
+      const steps = suggestRepoSteps(ctx, [generalRepoProvider]);
       expect(steps.some((s) => s.includes("Monorepo"))).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("dedupes overlapping suggestions across providers", () => {
+    const dir = tmp();
+    try {
+      writeFile(dir, "package.json", JSON.stringify({ name: "app" }));
+      const ctx = buildRepoContext(dir);
+      const dup = (c: { framework: string }) => [`Same step ${c.framework}`];
+      const steps = suggestRepoSteps(ctx, [dup as never, dup as never]);
+      expect(steps.filter((s) => s === "Same step plain-js").length).toBe(1);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

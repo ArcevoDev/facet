@@ -18,6 +18,7 @@ import {
   type Framework,
 } from "./types.js";
 import { readExistingPackageJson } from "./writer.js";
+import { buildRepoContext, type RepoContext } from "./suggest.js";
 
 /** Mail/messaging packages we recognize in a consumer's manifests. */
 export const MAIL_PACKAGES = [
@@ -224,82 +225,87 @@ export function formatDetection(d: MailDetection): string[] {
 }
 
 /**
- * Repo-aware next-step suggestions, tied to what was detected in the
- * consumer's repo (framework, mail packages, provider, monorepo layout).
- * Not generic boilerplate: each suggestion names the actual file or script
- * to touch in this consumer.
+ * Email-specific suggestion provider for the repo-aware suggestion engine
+ * (suggest.ts). Returns migration + provider wiring guidance; framework
+ * and monorepo guidance comes from the general provider.
+ */
+export function emailSuggestionProvider(
+  detection: MailDetection,
+  answers: EmailsInitAnswers,
+) {
+  return (_ctx: RepoContext): string[] => {
+    const s: string[] = [];
+
+    // Existing renderer migration guidance.
+    if (detection.renderer === "react-email") {
+      s.push(
+        `Migrate: replace @react-email/components imports in your templates with the facet-emails primitives (EmailLayout, EmailButton, EmailText, ...). The generated ${answers.location}/layout.tsx is your AppEmailLayout shell.`,
+      );
+      s.push(
+        `Remove @react-email/components from your dependencies once the imports are swapped, then re-run \`facet emails init\` to confirm the detection is clean.`,
+      );
+    } else if (detection.renderer === "mjml") {
+      s.push(
+        `Migrate: your MJML templates are markup, not React. Port each .mjml into a React template under ${answers.location}/ using the facet-emails primitives, then render with renderEmailFromReact.`,
+      );
+    } else if (detection.renderer === "nodemailer") {
+      s.push(
+        `Migrate: keep nodemailer as the transport, but build templates with facet-emails primitives and pass the rendered html/text into nodemailer.sendMail instead of string templates.`,
+      );
+    }
+
+    // Provider wiring.
+    if (answers.provider === "resend") {
+      s.push(
+        `Set RESEND_API_KEY in your environment (see ${answers.location}/.env.example), then import { sendEmail } from "./${answers.location}/send".`,
+      );
+    } else if (answers.provider === "nodemailer") {
+      s.push(
+        `Set the SMTP_* variables from ${answers.location}/.env.example, then import { sendEmail } from "./${answers.location}/send".`,
+      );
+    } else {
+      s.push(
+        `Pick a provider (resend/nodemailer/sendgrid/...), wire it into ${answers.location}/send.ts, and add its keys to your environment.`,
+      );
+    }
+
+    // Framework-specific integration for the mail renderer.
+    if (detection.framework === "next") {
+      s.push(
+        `Next.js: call compileMailTemplate in an API route (app/api/send/route.ts) or a server action; the renderer is server-safe (no client hooks).`,
+      );
+    } else if (detection.framework === "remix") {
+      s.push(
+        `Remix: call the renderer in a loader/action (app/routes/*.ts) and pass the html to your provider.`,
+      );
+    } else if (detection.framework === "react-vite") {
+      s.push(
+        `Vite: the renderer is isomorphic. For client-only apps, generate the HTML at build time or in a serverless function, then send via the provider.`,
+      );
+    } else {
+      s.push(
+        `Plain Node/backend: the core renderer has zero React dependency; call renderEmail/renderEmailText directly on template trees from your service layer.`,
+      );
+    }
+
+    // Preview.
+    s.push(
+      `Preview your templates: run \`${detection.pm} run mail:preview\` and open http://127.0.0.1:3888 (HTML/text toggle per template).`,
+    );
+
+    return s;
+  };
+}
+
+/**
+ * Legacy name kept for callers of the earlier single-function API.
+ * Prefer the suggestion-engine providers (suggest.ts).
  */
 export function suggestNextSteps(
   detection: MailDetection,
   answers: EmailsInitAnswers,
 ): string[] {
-  const s: string[] = [];
-
-  // Existing renderer migration guidance.
-  if (detection.renderer === "react-email") {
-    s.push(
-      `Migrate: replace @react-email/components imports in your templates with the facet-emails primitives (EmailLayout, EmailButton, EmailText, ...). The generated ${answers.location}/layout.tsx is your AppEmailLayout shell.`,
-    );
-    s.push(
-      `Remove @react-email/components from your dependencies once the imports are swapped, then re-run \`facet emails init\` to confirm the detection is clean.`,
-    );
-  } else if (detection.renderer === "mjml") {
-    s.push(
-      `Migrate: your MJML templates are markup, not React. Port each .mjml into a React template under ${answers.location}/ using the facet-emails primitives, then render with renderEmailFromReact.`,
-    );
-  } else if (detection.renderer === "nodemailer") {
-    s.push(
-      `Migrate: keep nodemailer as the transport, but build templates with facet-emails primitives and pass the rendered html/text into nodemailer.sendMail instead of string templates.`,
-    );
-  }
-
-  // Provider wiring.
-  if (answers.provider === "resend") {
-    s.push(
-      `Set RESEND_API_KEY in your environment (see ${answers.location}/.env.example), then import { sendEmail } from "./${answers.location}/send".`,
-    );
-  } else if (answers.provider === "nodemailer") {
-    s.push(
-      `Set the SMTP_* variables from ${answers.location}/.env.example, then import { sendEmail } from "./${answers.location}/send".`,
-    );
-  } else {
-    s.push(
-      `Pick a provider (resend/nodemailer/sendgrid/...), wire it into ${answers.location}/send.ts, and add its keys to your environment.`,
-    );
-  }
-
-  // Framework-specific integration.
-  if (detection.framework === "next") {
-    s.push(
-      `Next.js: call compileMailTemplate in an API route (app/api/send/route.ts) or a server action; the renderer is server-safe (no client hooks).`,
-    );
-  } else if (detection.framework === "remix") {
-    s.push(
-      `Remix: call the renderer in a loader/action (app/routes/*.ts) and pass the html to your provider.`,
-    );
-  } else if (detection.framework === "react-vite") {
-    s.push(
-      `Vite: the renderer is isomorphic. For client-only apps, generate the HTML at build time or in a serverless function, then send via the provider.`,
-    );
-  } else {
-    s.push(
-      `Plain Node/backend: the core renderer has zero React dependency; call renderEmail/renderEmailText directly on template trees from your service layer.`,
-    );
-  }
-
-  // Monorepo hint.
-  if (detection.monorepo && detection.monorepo.length) {
-    s.push(
-      `Monorepo detected (${detection.monorepo.join(", ")}): add @arcevo/facet-emails to the workspace member(s) that send mail, not just the root.`,
-    );
-  }
-
-  // Preview.
-  s.push(
-    `Preview your templates: run \`${detection.pm} run mail:preview\` and open http://127.0.0.1:3888 (HTML/text toggle per template).`,
-  );
-
-  return s;
+  return emailSuggestionProvider(detection, answers)(buildRepoContext(process.cwd()));
 }
 
 function readdirSafe(p: string): string[] {
