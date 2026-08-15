@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Badge, GridPattern, Aurora, Beams, SparkleButton, Spotlight } from "@arcevo/facet-components";
+import { Badge, Aurora, Beams, SparkleButton, Spotlight } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { STATS } from "../data/features.js";
@@ -20,12 +20,11 @@ export function HeroSection() {
   };
   return (
     <Spotlight className="relative flex flex-col items-center overflow-hidden text-center">
-      {/* Animated layers: aurora + beams + masked grid (zero-dep facet
-          animated surfaces). Brighter opacity so the motion reads. */}
+      {/* Animated layers: aurora + beams (zero-dep facet animated
+          surfaces). Brighter opacity so the motion reads. */}
       <Aurora className="absolute inset-0 -z-20" opacity={0.75} colors={["#6366f1", "#a855f7", "#06b6d4", "#6366f1"]} />
       <Aurora className="absolute -inset-10 -z-20 opacity-40" opacity={0.4} colors={["#0ea5e9", "#d946ef", "#22d3ee"]} />
       <Beams count={4} className="absolute inset-0 -z-10" color="rgba(129,140,248,0.35)" />
-      <GridPattern className="absolute inset-0 -z-10" />
       <Badge
         variant="outline"
         icon={<LightIcon name="sparkles" size={12} />}
