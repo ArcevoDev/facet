@@ -15,7 +15,7 @@
  *   const html = renderEmail(emailLayout({ previewText: "Hi", heading: "Welcome" }, emailButton({ href: "#", children: "Go" })));
  */
 
-import type * as React from "react";
+import type { ReactNode } from "react";
 import { toTemplateTree } from "./react.js";
 import { renderEmail } from "./render.js";
 import type { RenderOptions } from "./render.js";
@@ -67,7 +67,7 @@ export {
  * Requires the optional `react` peer.
  */
 export function renderEmailFromReact(
-  element: React.ReactNode,
+  element: ReactNode,
   options: RenderOptions = {},
 ): string {
   const tree = toTemplateTree(element);

@@ -25,7 +25,7 @@ export const docsPages: DocsPage[] = [
         items: [
           "`@arcevo/facet-tokens`: Alpha Palette design tokens, typography, spacing, CSS variables.",
           "`@arcevo/facet-sdk`: arc-id API client (pure fetch, typed, 10 domain SDKs).",
-          "`@arcevo/facet-components`: 64 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
+          "`@arcevo/facet-components`: 68 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
           "`@arcevo/facet-auth`: auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms.",
           "`@arcevo/facet-layout`: domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets.",
           "`@arcevo/facet-docs`: this config-driven docs engine, installable by any Arcevo project.",

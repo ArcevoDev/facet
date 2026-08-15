@@ -10,15 +10,16 @@ design manual (Alpha Palette), and your auth requirements differ per sector
 
 | Package              | Description                                                                                         | Status  |
 | -------------------- | --------------------------------------------------------------------------------------------------- | ------- |
-| `@arcevo/facet-tokens`     | Design tokens: Alpha Palette, typography, spacing, CSS vars                                         | ✅ 1.1.0 |
-| `@arcevo/facet-sdk`        | arc-id API client (pure fetch, typed, 10 domain SDKs)                                               | ✅ 1.0.1 |
-| `@arcevo/facet-components` | 63 styled UI components (Radix + tailwind-merge + variants)                               | ✅ 1.5.0 |
-| `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.1.3 |
-| `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.3.0 |
-| `@arcevo/facet-docs`       | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages                          | ✅ 1.4.0 |
-| `@arcevo/facet-cli`        | Scaffold docs (`facet docs init` + `facet docs scan`), audit/update (`facet pkg/up/doctor`), copy components (`facet add`), generate a tree-shaken icon registry (`facet icons generate`) | ✅ 0.4.0 |
+| `@arcevo/facet-tokens`     | Design tokens: Alpha Palette, typography, spacing, CSS vars                                         | ✅ 1.1.2 |
+| `@arcevo/facet-sdk`        | arc-id API client (pure fetch, typed, 10 domain SDKs)                                               | ✅ 1.1.0 |
+| `@arcevo/facet-components` | 68 styled UI components (Radix + tailwind-merge + variants)                               | ✅ 1.8.0 |
+| `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.2.0 |
+| `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.3.4 |
+| `@arcevo/facet-docs`       | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages                          | ✅ 1.4.4 |
+| `@arcevo/facet-cli`        | Scaffold docs (`facet docs init` + `facet docs scan`), audit/update (`facet pkg/up/doctor`), copy components (`facet add`), generate a tree-shaken icon registry (`facet icons generate`) | ✅ 0.7.0 |
+| `@arcevo/facet-emails`     | Framework-agnostic email builder + React bridge (`renderEmail`, `emailLayout`, `EmailLayout`)       | ✅ 1.1.0 |
 
-Published to npm: components 1.5.0, layout 1.3.0, docs 1.4.0, auth 1.1.3, cli 0.4.0, tokens 1.1.0, sdk 1.0.1.
+Published to npm: components 1.8.0, layout 1.3.4, docs 1.4.4, auth 1.2.0, cli 0.7.0, tokens 1.1.2, sdk 1.1.0, emails 1.1.0.
 
 ## Sites
 
@@ -31,7 +32,7 @@ The docs site (`apps/docs`) is a thin consumer of the installable
 `@arcevo/facet-docs` engine, the same package any project can mount with its
 own brand, nav, and pages. Guides cover getting started, auth, layout,
 theming, tokens, and the docs package itself; the component gallery shows all
-57 components with live demos and usage tabs.
+68 components with live demos and usage tabs.
 
 ```sh
 pnpm dev:docs-site  # run the docs site locally (Vite, port 5173)
@@ -104,10 +105,10 @@ Framework-agnostic slot-based shells: no routing dependency:
 ### Auth System
 
 ```tsx
-import { fintechAuthPreset, SignIn, MfaVerifyForm } from "@arcevo/facet-auth";
+import { SignIn, fintechPreset } from "@arcevo/facet-auth";
 
 // Domain presets customise every copy, step, and behaviour
-<SignIn authPreset={fintechAuthPreset} layoutPreset={fintechLayoutPreset} />;
+<SignIn config={fintechPreset} onSuccess={(result) => router.push("/dashboard")} />;
 ```
 
 Forms are independently importable: `LoginForm`, `MagicLinkForm`, `ForgotPasswordForm`,
