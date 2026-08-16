@@ -73,6 +73,7 @@ export function FlipCard({
       onMouseLeave={hover ? () => setFlipped(false) : undefined}
       role={hover ? undefined : "button"}
       tabIndex={hover ? undefined : 0}
+      aria-label={hover ? undefined : (frontLabel ?? "Flip card")}
       onKeyDown={
         hover
           ? undefined
@@ -87,27 +88,29 @@ export function FlipCard({
     >
       <div className={cn("relative h-full w-full", aspect)}>
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 transition-transform"
           style={{ transformStyle: "preserve-3d", transform: flipped ? rotate : "none", transitionDuration: `${duration}ms` }}
         >
-          {/* Front */}
+          {/* Front face: renders the `front` content prop (or fallback label). */}
           <div
             className="absolute inset-0 [backface-visibility:hidden]"
             style={{ WebkitBackfaceVisibility: "hidden" }}
           >
             <Card className="flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden border-border bg-background p-6 text-center">
-              {icon && <Icon name={icon} className="size-10 text-primary" aria-label={iconLabel} />}
-              <div className="flex-1" />
-              {frontLabel && <p className="text-sm font-medium text-muted-foreground">{frontLabel}</p>}
+              {front ??
+                (icon && <Icon name={icon} className="size-10 text-primary" aria-label={iconLabel} />)}
+              {front == null && frontLabel && (
+                <p className="text-sm font-medium text-muted-foreground">{frontLabel}</p>
+              )}
             </Card>
           </div>
-          {/* Back */}
+          {/* Back face: renders the `back` content prop (or fallback label). */}
           <div
             className="absolute inset-0 [backface-visibility:hidden]"
             style={{ WebkitBackfaceVisibility: "hidden", transform: rotate }}
           >
             <Card className="flex h-full w-full items-center justify-center overflow-hidden border-border bg-muted/30 p-6 text-center">
-              <div className="max-w-full">{back}</div>
+              {back ?? (backLabel && <p className="text-sm font-medium text-muted-foreground">{backLabel}</p>)}
             </Card>
           </div>
         </div>
@@ -197,7 +200,7 @@ export interface BorderBeamCardProps extends React.HTMLAttributes<HTMLDivElement
  * solid Card surface so it reads clearly on every background.
  */
 export function BorderBeamCard({
-  colors = ["var(--primary, #6366f1)", "#d946ef", "transparent"],
+  colors = ["transparent 0deg", "var(--primary, #6366f1) 80deg", "#d946ef 120deg", "transparent 160deg"],
   thickness = 2,
   duration = 4000,
   className,
@@ -206,18 +209,25 @@ export function BorderBeamCard({
   ...props
 }: BorderBeamCardProps) {
   return (
-    <div
-      className={cn("relative w-full rounded-xl p-px", className)}
-      style={
-        {
-          ...style,
-          background: `conic-gradient(from 0deg, ${colors.join(", ")})`,
-          animation: `facet-spin ${duration}ms linear infinite`,
-        } as React.CSSProperties
-      }
-      {...props}
-    >
-      <Card className="relative w-full rounded-[calc(0.75rem-1px)] border-0 bg-background">
+    <div className={cn("relative w-full overflow-hidden rounded-xl", className)} style={style} {...props}>
+      {/* Rotating conic gradient, clipped to the border ring. The bright
+          beam arc (primary -> fuchsia) sweeps around the edge while the
+          content card stays static on top. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={
+          {
+            background: `conic-gradient(from 0deg, ${colors.join(", ")})`,
+            animation: `facet-spin ${duration}ms linear infinite`,
+            transformOrigin: "center center",
+          } as React.CSSProperties
+        }
+      />
+      <Card
+        className="relative w-full border-0 bg-background"
+        style={{ borderRadius: `calc(0.75rem - ${thickness}px)`, margin: thickness }}
+      >
         {children}
       </Card>
     </div>
@@ -229,50 +239,55 @@ BorderBeamCard.displayName = "BorderBeamCard";
 /* ── ShineCard ────────────────────────────────────────────── */
 
 export interface ShineCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Highlight color. Default: white at 30%. */
+  /** Highlight color. Default: white at 40% (matches ShineButton). */
   shineColor?: string;
-  /** Sweep duration, in ms. Default: 1500. */
+  /** Sweep duration, in ms. Default: 700. */
   duration?: number;
-  /** Trigger on hover only (default) or loop. */
+  /** Trigger on hover only (default) or loop continuously. */
   loop?: boolean;
 }
 
 /**
  * A card with a light sheen that sweeps across the surface on hover
- * (or continuously when `loop` is set).
+ * (or continuously when `loop` is set). Mirrors ShineButton: a
+ * `group`-driven gradient sweep that translates across the card.
  */
 export function ShineCard({
-  shineColor = "rgba(255,255,255,0.3)",
-  duration = 1500,
+  shineColor = "rgba(255,255,255,0.4)",
+  duration = 700,
   loop = false,
   className,
   children,
   style,
   ...props
 }: ShineCardProps) {
-  const [hovered, setHovered] = React.useState(false);
   return (
     <Card
-      className={cn("relative w-full overflow-hidden", className)}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className={cn("group relative w-full overflow-hidden", className)}
       style={style}
       {...props}
     >
-      {children}
-      <div
+      <span
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
+        className={cn(
+          "pointer-events-none absolute inset-y-0 w-1/2 -translate-x-[150%] bg-gradient-to-r from-transparent via-white/40 to-transparent",
+          !loop && "group-hover:translate-x-[350%]",
+        )}
         style={
           {
-            background: `linear-gradient(105deg, transparent 40%, ${shineColor} 50%, transparent 60%)`,
-            backgroundSize: "200% 100%",
-            backgroundPosition: loop || hovered ? "-200% 0" : "200% 0",
-            transition: loop ? "none" : `background-position ${duration}ms ease-out`,
-            animation: loop ? `facet-shimmer ${duration}ms linear infinite` : undefined,
+            backgroundImage: `linear-gradient(90deg, transparent, ${shineColor}, transparent)`,
+            ...(loop
+              ? {
+                  animation: `facet-shimmer 1500ms linear infinite`,
+                  animationDuration: `${duration}ms`,
+                  backgroundSize: "200% 100%",
+                  transform: "none",
+                }
+              : { transition: `transform ${duration}ms ease-out` }),
           } as React.CSSProperties
         }
       />
+      <span className="relative block">{children}</span>
     </Card>
   );
 }

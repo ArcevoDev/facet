@@ -21,13 +21,17 @@ function splitChars(
   baseDelay: number,
   step: number,
   className: string,
+  duration?: number,
 ): React.ReactNode[] {
   return text.split("").map((ch, i) => (
     <span
       key={i}
       aria-hidden={ch === " " ? undefined : true}
       className={cn("inline-block will-change-transform", className)}
-      style={{ animationDelay: `${baseDelay + i * step}ms` }}
+      style={{
+        animationDelay: `${baseDelay + i * step}ms`,
+        ...(duration != null ? { animationDuration: `${duration}ms` } : {}),
+      }}
     >
       {ch === " " ? "\u00A0" : ch}
     </span>
@@ -40,12 +44,16 @@ function splitWords(
   baseDelay: number,
   step: number,
   className: string,
+  duration?: number,
 ): React.ReactNode[] {
   return text.split(" ").map((word, i) => (
     <span
       key={i}
       className={cn("inline-block will-change-transform", className)}
-      style={{ animationDelay: `${baseDelay + i * step}ms` }}
+      style={{
+        animationDelay: `${baseDelay + i * step}ms`,
+        ...(duration != null ? { animationDuration: `${duration}ms` } : {}),
+      }}
     >
       {word}
       {i < text.split(" ").length - 1 ? "\u00A0" : ""}
@@ -84,13 +92,15 @@ export function BlurText({
   ...props
 }: BlurTextProps) {
   const resolved = resolveText(text, children);
-  const chars = splitChars(resolved, delay, stagger, "animate-[facet-text-blur_500ms_ease-out_both]");
+  const chars = splitChars(
+    resolved,
+    delay,
+    stagger,
+    "animate-[facet-text-blur_500ms_ease-out_both]",
+    duration,
+  );
   return (
-    <span
-      className={cn("inline-block", className)}
-      style={{ "--tw-anim-dur": `${duration}ms` } as React.CSSProperties}
-      {...props}
-    >
+    <span className={cn("inline-block", className)} {...props}>
       {chars}
     </span>
   );
@@ -119,11 +129,15 @@ export function WaveText({
   ...props
 }: WaveTextProps) {
   const resolved = resolveText(text, children);
+  // The animate-[...] class is a static literal so Tailwind's scanner
+  // always emits it; the actual duration is applied per-character via
+  // animationDuration (which can be any runtime value).
   const chars = splitChars(
     resolved,
     delay,
     stagger,
-    `animate-[facet-text-wave_${duration}ms_ease-in-out_infinite]`,
+    "animate-[facet-text-wave_1200ms_ease-in-out_infinite]",
+    duration,
   );
   return (
     <span className={cn("inline-block", className)} {...props}>
@@ -152,11 +166,13 @@ export function FlipText({
   ...props
 }: FlipTextProps) {
   const resolved = resolveText(text, children);
+  // Static class so Tailwind emits it; runtime duration applied per-char.
   const chars = splitChars(
     resolved,
     delay,
     stagger,
-    `animate-[facet-flip_${duration}ms_ease-out_both]`,
+    "animate-[facet-flip_500ms_ease-out_both]",
+    duration,
   );
   return (
     <span className={cn("inline-block [perspective:400px]", className)} {...props}>
@@ -190,8 +206,8 @@ export function SplitText({
   const resolved = resolveText(text, children);
   const items =
     by === "chars"
-      ? splitChars(resolved, delay, stagger, `animate-[facet-fade-up_${duration}ms_ease-out_both]`)
-      : splitWords(resolved, delay, stagger, `animate-[facet-fade-up_${duration}ms_ease-out_both]`);
+      ? splitChars(resolved, delay, stagger, "animate-[facet-fade-up_600ms_ease-out_both]", duration)
+      : splitWords(resolved, delay, stagger, "animate-[facet-fade-up_600ms_ease-out_both]", duration);
   return (
     <span className={cn("inline-block", className)} {...props}>
       {items}
@@ -244,7 +260,7 @@ export interface ShimmerTextProps extends React.HTMLAttributes<HTMLSpanElement> 
 /** A light sheen sweeps across the text. Best on bold/heading text. */
 export function ShimmerText({
   text,
-  shimmerColor = "rgba(255,255,255,0.6)",
+  shimmerColor,
   duration = 2200,
   className,
   children,
@@ -252,21 +268,27 @@ export function ShimmerText({
   ...props
 }: ShimmerTextProps) {
   const resolved = resolveText(text, children);
+  // Theme-aware shimmer via scoped CSS vars: the text base and the sweep
+  // highlight each have distinct light/dark values so the sweep is always
+  // visible (light: darker base + brighter sweep; dark: muted base +
+  // pure-white sweep). `shimmerColor` overrides the sweep highlight.
   return (
     <span
       className={cn(
-        "inline-block bg-clip-text text-transparent",
-        "bg-[linear-gradient(110deg,transparent_20%,var(--tw-shimmer,white)_50%,transparent_80%)]",
+        "inline-block bg-clip-text",
         "animate-[facet-shimmer_2200ms_linear_infinite]",
+        "[--tw-shimmer-base:color-mix(in_oklab,var(--foreground)_78%,transparent)] dark:[--tw-shimmer-base:color-mix(in_oklab,var(--foreground)_60%,transparent)]",
+        "[--tw-shimmer-hl:color-mix(in_oklab,var(--foreground)_30%,white)] dark:[--tw-shimmer-hl:white]",
         className,
       )}
       style={
         {
           ...style,
+          backgroundImage: `linear-gradient(110deg, var(--tw-shimmer-base) 0%, var(--tw-shimmer-base) 35%, ${shimmerColor ?? "var(--tw-shimmer-hl)"} 50%, var(--tw-shimmer-base) 65%, var(--tw-shimmer-base) 100%)`,
           backgroundSize: "200% 100%",
-          "--tw-shimmer": shimmerColor,
           animationDuration: `${duration}ms`,
           WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
         } as React.CSSProperties
       }
       {...props}

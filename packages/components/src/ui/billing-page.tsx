@@ -236,19 +236,23 @@ export function BillingPageTable({ config, rows, className }: BillingPageTablePr
       )}
 
       <div className="overflow-x-auto rounded-xl border border-border">
-        <table className="w-full min-w-[640px] border-collapse text-left">
+        {/* On small screens the comparison scrolls horizontally; keep the
+            first column sticky so the feature name stays visible. */}
+        <table className="w-full min-w-[540px] border-collapse text-left sm:min-w-[640px]">
           <thead>
             <tr className="border-b border-border bg-muted/30">
-              <th className="p-4 text-sm font-medium text-muted-foreground">Features</th>
+              <th className="sticky left-0 bg-muted/30 p-3 text-sm font-medium text-muted-foreground sm:p-4">
+                Features
+              </th>
               {plans.map((plan) => (
                 <th
                   key={plan.id}
                   className={cn(
-                    "p-4 text-center",
+                    "p-3 text-center sm:p-4",
                     plan.highlight && "bg-primary/5",
                   )}
                 >
-                  <div className="flex flex-col items-center gap-1">
+                  <div className="flex min-w-[120px] flex-col items-center gap-1">
                     {plan.highlight && (
                       <Badge className="bg-primary text-primary-foreground">
                         {plan.badgeLabel ?? "Most popular"}
@@ -274,11 +278,13 @@ export function BillingPageTable({ config, rows, className }: BillingPageTablePr
           <tbody>
             {rows.map((row) => (
               <tr key={row.label} className="border-b border-border last:border-0">
-                <td className="p-4 text-sm font-medium text-foreground">{row.label}</td>
+                <td className="sticky left-0 bg-background p-3 text-sm font-medium text-foreground sm:p-4">
+                  {row.label}
+                </td>
                 {plans.map((plan) => {
                   const v = row.supports[plan.id];
                   return (
-                    <td key={plan.id} className="p-4 text-center">
+                    <td key={plan.id} className="p-3 text-center sm:p-4">
                       {v === true && <Icon name="check" className="mx-auto size-4 text-primary" />}
                       {v === false && <Icon name="close" className="mx-auto size-4 text-muted-foreground/40" />}
                       {typeof v === "string" && (

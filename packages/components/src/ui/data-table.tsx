@@ -455,7 +455,7 @@ export function DataTable<T extends object>({
               </DropdownMenu>
             )}
             {columns.some((c) => c.hidden) && (
-              <div className="flex items-center gap-1 rounded-md border border-border p-0.5">
+              <div className="flex max-w-full items-center gap-1 overflow-x-auto rounded-md border border-border p-0.5">
                 {columns
                   .filter((c) => c.hidden && !requiredColumns.includes(c.key))
                   .map((c) => (
@@ -465,7 +465,7 @@ export function DataTable<T extends object>({
                       onClick={() => toggleColumn(c.key)}
                       aria-pressed={visibleColumns.includes(c.key)}
                       className={cn(
-                        "rounded px-2 py-1 text-xs font-medium transition-colors",
+                        "whitespace-nowrap rounded px-2 py-1 text-xs font-medium transition-colors",
                         visibleColumns.includes(c.key)
                           ? "bg-primary text-primary-foreground"
                           : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -480,8 +480,8 @@ export function DataTable<T extends object>({
         </div>
       )}
 
-      {/* Table */}
-      <div className="overflow-hidden rounded-lg border border-border">
+      {/* Table: horizontal scroll on small screens instead of clipping */}
+      <div className="overflow-x-auto rounded-lg border border-border">
         <Table>
           <TableHeader>
             <TableRow>

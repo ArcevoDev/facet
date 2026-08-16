@@ -67,6 +67,11 @@ function InteractiveDemoBody({
 
   const activeTab = visibleTabs.find((tab) => tab.label === active) ?? visibleTabs[0];
 
+  // Re-mount the preview when replay is clicked so one-shot animations
+  // (Blur/Flip/Split/FadeUp/CountUp) run again from the start.
+  const [replayKey, setReplayKey] = React.useState(0);
+  const replay = () => setReplayKey((k) => k + 1);
+
   const heading = title === undefined ? (entry?.name ?? slug) : title;
   const sub = title === null ? undefined : (description ?? entry?.description);
 
@@ -110,9 +115,29 @@ function InteractiveDemoBody({
             <span className="text-xs font-medium text-muted-foreground">
               Preview · {activeTab?.label ?? "Default"}
             </span>
-            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-              live
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                live
+              </span>
+              <button
+                type="button"
+                onClick={replay}
+                title="Replay animation"
+                aria-label="Replay animation"
+                className="inline-flex items-center gap-1 rounded-md border border-border px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path
+                    d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 1.5V5h-3.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                Replay
+              </button>
+            </div>
           </div>
           <ThemePreviewFrame>
             <React.Suspense
@@ -120,7 +145,7 @@ function InteractiveDemoBody({
                 <span className="text-sm text-muted-foreground">Loading preview...</span>
               }
             >
-              <VariantPreview slug={slug} label={activeTab?.label} />
+              <VariantPreview key={`${slug}-${activeTab?.label}-${replayKey}`} slug={slug} label={activeTab?.label} />
             </React.Suspense>
           </ThemePreviewFrame>
         </div>
