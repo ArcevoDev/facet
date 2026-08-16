@@ -109,6 +109,50 @@ Flags: `-y` (no prompts), `--framework`, `--migrate` / `--fresh`,
 `--provider resend|nodemailer|none`, `--location` (default `emails`),
 `--name` (brand name).
 
+### `facet templates`
+
+Work with **consumer template directories** — your own starter files that
+`docs init` and `emails init` can merge into the generated scaffold.
+
+Templates live under `./templates/<name>/` (or `./docs/templates/`,
+`./emails/templates/`), optionally with a `template.json` manifest:
+
+```json
+{
+  "name": "saas-product",
+  "kind": "docs",
+  "description": "SaaS product docs",
+  "include": ["**/*"],
+  "exclude": ["**/node_modules/**"]
+}
+```
+
+- **`facet templates list`** — discover template dirs in the repo.
+- **`facet templates describe <name>`** — show a template's manifest + files.
+
+### `facet docs init --use-template <name>`
+
+After scaffolding the docs site, merge the named template directory over it.
+The merge is **never destructive by default**:
+
+- New paths → copied in.
+- Existing identical files → skipped.
+- `package.json` → merged (your fields always win).
+- Code files containing a `// @facet-merge` marker → the marker's contents
+  are appended before the file's final `}` (an opt-in way to merge the
+  implementation in).
+- Any other existing file → **skipped** (reported as a conflict; use
+  `--force` to overwrite).
+
+This lets you keep your own starter pages, layouts, or components in
+`./templates` and have the scaffold build on top of them instead of
+replacing them.
+
+### `facet emails init --use-template <name>`
+
+Same merge, applied to the email scaffold: after `emails init` generates
+the `emails/` dir, the named template's files are merged in.
+
 ### `facet scripts`
 
 Add useful npm scripts to your `package.json`, preserving anything you

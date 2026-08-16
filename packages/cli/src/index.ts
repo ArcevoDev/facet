@@ -63,6 +63,7 @@ docsCommand
   .option("--styling <styling>", "facet-tokens, tailwind, plain-css, or none (default: detected)")
   .option("--no-tokens", "Do not wire @arcevo/facet-tokens theming")
   .option("--template <template>", "component-library, api-reference, or product-docs (default: component-library)")
+  .option("--use-template <name>", "Merge an existing template dir from ./templates into the scaffold")
   .option("--barrel <mode>", "Create a barrel export for the generated site: auto (create when it fits, default), always, or never")
   .action(async (opts: {
     yes?: boolean;
@@ -73,6 +74,7 @@ docsCommand
     styling?: string;
     tokens?: boolean;
     template?: string;
+    useTemplate?: string;
     barrel?: string;
   }) => {
     const cwd = process.cwd();
@@ -85,6 +87,7 @@ docsCommand
       styling: opts.styling as Styling | undefined,
       useFacetTokens: opts.tokens,
       template: opts.template as TemplateKind | undefined,
+      useTemplate: opts.useTemplate,
       barrel:
         opts.barrel === "never" ? false : opts.barrel === "always" ? true : "auto",
     });
@@ -112,6 +115,37 @@ docsCommand
               : generatePlainJs(answers, cwd);
 
     const written = writeFiles(files);
+
+    // Merge a consumer template over the scaffold (never clobbering).
+    if (opts.useTemplate) {
+      const { resolveTemplate } = await import("./lib/templates.js");
+      const { mergeTemplateFiles } = await import("./lib/template-merge.js");
+      const template = resolveTemplate(cwd, opts.useTemplate);
+      if (!template) {
+        console.error(`\nTemplate "${opts.useTemplate}" not found in ./templates. Run \`facet templates list\` to see what's available.`);
+        process.exitCode = 2;
+      } else {
+        const target =
+          answers.location === "." ? cwd : path.join(cwd, answers.location);
+        const merge = mergeTemplateFiles(cwd, template.dir, target);
+        if (merge.written.length)
+          console.log(`\nMerged template "${template.name}" (${merge.written.length} new file(s), ${merge.merged.length} total):`);
+        else if (merge.merged.length)
+          console.log(`\nMerged template "${template.name}" (${merge.merged.length} file(s)):`);
+        if (merge.written.length) {
+          for (const f of merge.written) console.log(`  ${path.join(target, f).replace(cwd, ".")}`);
+        }
+        if (merge.merged.length) {
+          for (const f of merge.merged) {
+            if (!merge.written.includes(f)) console.log(`  ${path.join(target, f).replace(cwd, ".")} (merged)`);
+          }
+        }
+        if (merge.conflicts.length) {
+          console.log(`\nSkipped ${merge.conflicts.length} conflicting file(s) (existing content wins). Use --force to overwrite:`);
+          for (const f of merge.conflicts) console.log(`  ${path.join(target, f).replace(cwd, ".")}`);
+        }
+      }
+    }
 
     const where =
       answers.framework === "next"
@@ -267,6 +301,7 @@ emailsCommand
   .option("--provider <provider>", "resend, nodemailer, or none (override detection)")
   .option("--location <location>", "Where the emails dir lands (default: emails)")
   .option("--name <name>", "Brand name used in the email layout header")
+  .option("--use-template <name>", "Merge an existing email template dir from ./templates into the scaffold")
   .action(async (opts: {
     yes?: boolean;
     framework?: string;
@@ -275,6 +310,7 @@ emailsCommand
     provider?: "resend" | "nodemailer" | "none";
     location?: string;
     name?: string;
+    useTemplate?: string;
   }) => {
     const cwd = process.cwd();
     const { detectMailSetup, planEmailsInit, formatDetection } = await import("./lib/emails.js");
@@ -333,6 +369,32 @@ emailsCommand
     console.log("Wrote:");
     for (const f of written) console.log(`  ${f.replace(cwd, ".")}`);
 
+    // Merge a consumer email template over the scaffold (never clobbering).
+    if (opts.useTemplate) {
+      const { resolveTemplate } = await import("./lib/templates.js");
+      const { mergeTemplateFiles } = await import("./lib/template-merge.js");
+      const template = resolveTemplate(cwd, opts.useTemplate);
+      if (!template) {
+        console.error(`\nTemplate "${opts.useTemplate}" not found in ./templates. Run \`facet templates list\` to see what's available.`);
+        process.exitCode = 2;
+      } else {
+        const target = path.join(cwd, answers.location ?? "emails");
+        const merge = mergeTemplateFiles(cwd, template.dir, target);
+        if (merge.written.length)
+          console.log(`\nMerged template "${template.name}" (${merge.written.length} new file(s)):`);
+        for (const f of merge.written) console.log(`  ${path.join(target, f).replace(cwd, ".")}`);
+        if (merge.merged.length) {
+          for (const f of merge.merged) {
+            if (!merge.written.includes(f)) console.log(`  ${path.join(target, f).replace(cwd, ".")} (merged)`);
+          }
+        }
+        if (merge.conflicts.length) {
+          console.log(`\nSkipped ${merge.conflicts.length} conflicting file(s) (existing content wins). Use --force to overwrite:`);
+          for (const f of merge.conflicts) console.log(`  ${path.join(target, f).replace(cwd, ".")}`);
+        }
+      }
+    }
+
     // Install missing deps.
     const pm = detectPackageManager(cwd);
     const missing = Object.entries(deps).filter(([name]) => !detection.facetEmailsInstalled && name === "@arcevo/facet-emails");
@@ -356,6 +418,67 @@ emailsCommand
     console.log(`\nSuggested next steps (based on your repo):`);
     const steps = suggestRepoSteps(ctx, [emailSuggestionProvider(detection, answers), generalRepoProvider]);
     steps.forEach((step, i) => console.log(`  ${i + 1}. ${step}`));
+  });
+
+const templatesCommand = program.command("templates").description("Template directory commands (consumer templates merged by docs init / emails init)");
+templatesCommand
+  .command("list")
+  .description("List template directories found in this repo (./templates, ./docs/templates, ./emails/templates)")
+  .action(async () => {
+    const cwd = process.cwd();
+    const { discoverTemplates } = await import("./lib/templates.js");
+    const templates = discoverTemplates(cwd);
+    console.log("facet templates");
+    console.log("");
+    if (!templates.length) {
+      console.log("No templates found. Create one under ./templates/<name>/ with an optional template.json manifest.");
+      return;
+    }
+    for (const t of templates) {
+      const kind = t.manifest?.kind ?? t.kinds.join("/");
+      const desc = t.manifest?.description ? ` - ${t.manifest.description}` : "";
+      console.log(`  ${t.name} (${kind})${desc}`);
+      console.log(`    ${t.dir.replace(cwd, ".")}`);
+    }
+  });
+templatesCommand
+  .command("describe <name>")
+  .description("Show a template's manifest and files")
+  .action(async (name: string) => {
+    const cwd = process.cwd();
+    const { resolveTemplate } = await import("./lib/templates.js");
+    const template = resolveTemplate(cwd, name);
+    if (!template) {
+      console.error(`Template "${name}" not found. Run \`facet templates list\` to see what's available.`);
+      process.exitCode = 2;
+      return;
+    }
+    console.log(`Template: ${template.name}`);
+    console.log(`  dir: ${template.dir.replace(cwd, ".")}`);
+    console.log(`  kind: ${template.manifest?.kind ?? "any"}`);
+    if (template.manifest?.description) console.log(`  description: ${template.manifest.description}`);
+    if (template.manifest?.include?.length) console.log(`  include: ${template.manifest.include.join(", ")}`);
+    if (template.manifest?.exclude?.length) console.log(`  exclude: ${template.manifest.exclude.join(", ")}`);
+    const { readdirSync, statSync } = await import("node:fs");
+    const path = await import("node:path");
+    const walk = (dir: string, base: string): string[] => {
+      const out: string[] = [];
+      for (const entry of readdirSync(dir)) {
+        if (entry.startsWith(".")) continue;
+        const abs = path.join(dir, entry);
+        const rel = base ? `${base}/${entry}` : entry;
+        if (statSync(abs).isDirectory()) out.push(...walk(abs, rel));
+        else out.push(rel);
+      }
+      return out;
+    };
+    let files: string[] = [];
+    try {
+      files = walk(template.dir, "");
+    } catch {
+      // empty dir
+    }
+    console.log(files.length ? `  files:\n${files.map((f) => `    ${f}`).join("\n")}` : "  files: (empty)");
   });
 
 program

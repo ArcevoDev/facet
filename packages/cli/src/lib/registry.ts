@@ -38,7 +38,7 @@ export async function discoverFacetPackages(): Promise<string[]> {
         objects?: { package?: { name?: string } }[];
       };
       const scoped = (data.objects ?? [])
-        .map((o) => o.package?.name)
+        .map((o) => o.package?.name ?? "")
         .filter((n): n is string => Boolean(n) && n.startsWith("@arcevo/facet-"));
       return Array.from(new Set([...baseline, ...scoped]));
     } finally {

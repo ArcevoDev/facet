@@ -975,6 +975,21 @@ facet icons generate --path src/lib`,
         type: "p",
         text: "`facet icons generate` scans your source for icon call sites and emits a slim `icons.generated.tsx`: direct lucide imports for exactly the icons you use. Legacy names are mapped to current lucide icons (`grid` → `layout-grid`, `logout` → `log-out`), and names that don't resolve (typically form-field props) are reported. Import `GeneratedIcon` from that file anywhere you use icons and re-run after adding or removing icons to keep the set exact.",
       },
+      { type: "h2", text: "Merge your own templates" },
+      {
+        type: "code",
+        lang: "bash",
+        text: `# list template dirs found in the repo:
+facet templates list
+# inspect one template:
+facet templates describe saas-product
+# scaffold docs and merge a template over the result:
+facet docs init --use-template saas-product -y`,
+      },
+      {
+        type: "p",
+        text: "`facet templates list` discovers template directories under `./templates/` (or `./docs/templates/`, `./emails/templates/`), optionally described by a `template.json` manifest. `facet docs init --use-template <name>` and `facet emails init --use-template <name>` then merge the named template over the generated scaffold. The merge is never destructive by default: new files are copied in, identical files are skipped, `package.json` is merged with your fields winning, code files containing a `// @facet-merge` marker get the marker's contents appended before the final `}`, and any other existing file is left untouched (reported as a conflict; `--force` overwrites).",
+      },
       { type: "h2", text: "Draft docs from your repo" },
       {
         type: "code",
@@ -1013,6 +1028,8 @@ facet docs scan --out docs && facet docs scan -y`,
           ["`facet add <component>`", "Copy a component into your source (shadcn-style)"],
           ["`facet icons generate`", "Scan your source and emit a tree-shaken lucide icon registry"],
           ["`facet emails init`", "Scaffold or migrate email templates wired to facet-emails (detects react-email/mjml/nodemailer/resend)"],
+          ["`facet templates list`", "Discover template dirs in the repo (under `./templates/`)"],
+          ["`facet templates describe <name>`", "Show a template's manifest and files"],
         ],
       },
       { type: "h2", text: "Flags" },
@@ -1042,6 +1059,7 @@ facet docs scan --out docs && facet docs scan -y`,
           ["`--styling <styling>`", "`facet-tokens`, `tailwind`, `plain-css`, or `none` (default: detected)"],
           ["`--no-tokens`", "Do not wire `@arcevo/facet-tokens` theming"],
           ["`--template <template>`", "`component-library`, `api-reference`, or `product-docs` (default: `component-library`)"],
+          ["`--use-template <name>`", "Merge an existing template dir from `./templates` into the scaffold (never clobbers existing files)"],
           ["`--barrel <mode>`", "`auto` (create when it fits, default), `always`, or `never`"],
         ],
       },

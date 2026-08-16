@@ -60,6 +60,8 @@ export interface DocsAnswers {
   useFacetTokens: boolean;
   /** Docs template kind. */
   template: TemplateKind;
+  /** Optional: merge a consumer template directory into the scaffold. */
+  useTemplate?: string;
   /** Whether to create a barrel export for the generated site. `"auto"`
    * (default) creates one when it fits the layout, `true` always creates,
    * `false` never touches a barrel. */

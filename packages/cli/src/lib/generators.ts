@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import type { DocsAnswers, GeneratedFile } from "./types.js";
 import { mergePackageJson, readExistingPackageJson } from "./writer.js";
+import { starterPages } from "./starter-pages.js";
 
 /** Extension for the consumer's language (.ts vs .js). */
 function ext(language: "typescript" | "javascript"): string {
@@ -58,19 +59,7 @@ export const docsConfig: DocsSiteConfig = {
  * content blocks. The sidebar and search derive from this array, so adding
  * a page here gives you a route, nav entry, and search hit automatically.
  */
-export const docsPages: DocsPage[] = [
-  {
-    path: "/",
-    title: "Overview",
-    section: "guides",
-    description: "Welcome to ${answers.name}.",
-    blocks: [
-      { type: "p", text: "Welcome to ${answers.name} docs." },
-      { type: "h2", text: "Quick start" },
-      { type: "code", text: "npm install ${answers.name}" },
-    ],
-  },
-];
+export const docsPages: DocsPage[] = ${JSON.stringify(starterPages(answers.template, answers.name), null, 2).replace(/"([a-z]+)":/g, "$1:")};
 `;
 
   const packageJson = mergePackageJson(

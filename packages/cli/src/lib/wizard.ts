@@ -34,6 +34,8 @@ export interface InitOptions {
   styling?: Styling;
   useFacetTokens?: boolean;
   template?: TemplateKind;
+  /** Optional: merge a consumer template directory into the scaffold. */
+  useTemplate?: string;
   /** Whether to create a barrel export for the generated site. `"auto"`
    * (default) creates one when it fits the layout, `true` always creates,
    * `false` never touches a barrel. */
@@ -72,6 +74,7 @@ export async function runInitWizard(
     styling: options.styling ?? detectedStyling,
     useFacetTokens: options.useFacetTokens ?? true,
     template: options.template ?? "component-library",
+    useTemplate: options.useTemplate,
     barrel: options.barrel ?? "auto",
     facetVersions,
   };
@@ -118,6 +121,7 @@ export async function runInitWizard(
         styling: options.styling ?? initial.styling,
         useFacetTokens: options.useFacetTokens ?? initial.useFacetTokens,
         template: options.template ?? initial.template,
+        useTemplate: options.useTemplate,
         barrel: options.barrel ?? initial.barrel ?? "auto",
       },
       decided: true,
@@ -211,6 +215,7 @@ export async function runInitWizard(
       styling,
       useFacetTokens: res.useFacetTokens ?? initial.useFacetTokens,
       template: res.template ?? initial.template,
+      useTemplate: options.useTemplate,
       barrel: (options.barrel ??
         (res.barrel === "never" ? false : res.barrel === "always" ? true : "auto")) as boolean | "auto",
       facetVersions,
