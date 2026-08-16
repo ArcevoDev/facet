@@ -2,11 +2,13 @@
  * @arcevo/facet-components: PasswordStrengthMeter
  *
  * A password strength meter with a segmented bar and a rules checklist.
- * Pairs naturally with PasswordInput. Fully customizable via props.
+ * Pairs naturally with PasswordInput. Fully customizable via props and
+ * screen-reader friendly (aria-live on the score).
  */
 
 import * as React from "react";
 import { cn } from "../utils.js";
+import { Icon } from "../icon/index.js";
 
 export type PasswordStrengthLevel = "empty" | "weak" | "fair" | "good" | "strong";
 
@@ -86,19 +88,19 @@ export function PasswordStrengthMeter({
   return (
     <div className={cn("space-y-2", className)} {...props}>
       <div className="flex items-center gap-2">
-        <div className="flex flex-1 gap-1">
+        <div className="flex flex-1 gap-1" aria-hidden="true">
           {Array.from({ length: 5 }).map((_, i) => (
             <div
               key={i}
               className={cn(
-                "h-1.5 flex-1 rounded-full",
+                "h-1.5 flex-1 rounded-full transition-colors",
                 i < filled ? (colors[level] ?? DEFAULT_COLORS[level]) : "bg-muted",
               )}
             />
           ))}
         </div>
         {level !== "empty" && (
-          <span className="text-xs font-medium text-muted-foreground">
+          <span className="text-xs font-medium text-muted-foreground" aria-live="polite">
             {labels[level] ?? DEFAULT_LABELS[level]}
           </span>
         )}
@@ -108,17 +110,23 @@ export function PasswordStrengthMeter({
           {PASSWORD_RULES.map((rule) => {
             const ok = rule.test(value);
             return (
-              <li key={rule.label} className="flex items-center gap-2 text-xs">
+              <li
+                key={rule.label}
+                className={cn(
+                  "flex items-center gap-2 text-xs transition-colors",
+                  ok ? "text-foreground" : "text-muted-foreground",
+                )}
+              >
                 <span
                   className={cn(
-                    "flex h-3.5 w-3.5 items-center justify-center rounded-full text-[10px] font-bold",
-                    ok ? "bg-emerald-500/15 text-emerald-600" : "bg-muted/60 text-muted-foreground",
+                    "flex h-4 w-4 shrink-0 items-center justify-center rounded-full",
+                    ok ? "bg-emerald-500/15 text-emerald-600" : "bg-muted/60",
                   )}
                   aria-hidden="true"
                 >
-                  {ok ? "✓" : ""}
+                  {ok ? <Icon name="check" className="size-3" /> : null}
                 </span>
-                <span className={ok ? "text-foreground" : "text-muted-foreground"}>{rule.label}</span>
+                {rule.label}
               </li>
             );
           })}

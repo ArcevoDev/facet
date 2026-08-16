@@ -43,6 +43,12 @@ import { EmptyState } from "./ui/empty-state.js";
 import { ButtonGroup } from "./ui/button-group.js";
 import { AvatarGroup } from "./ui/avatar-group.js";
 import { Combobox } from "./ui/combobox.js";
+import { scorePassword, levelFromScore, type PasswordStrengthLevel } from "./ui/password-strength-meter.js";
+import { PasswordStrengthMeter } from "./ui/password-strength-meter.js";
+import { relativeTime, dayLabel } from "./ui/activity-feed.js";
+import { FlipCard } from "./ui/card-animations.js";
+import { AnnouncementBar } from "./ui/announcement-bar.js";
+import { StatCard } from "./ui/stat-card.js";
 
 describe("Button", () => {
   it("renders children", () => {
@@ -811,5 +817,112 @@ describe("AnimatedButton", () => {
       </AnimatedButton>,
     );
     expect(container.querySelector("[data-custom]")).toBeTruthy();
+  });
+});
+
+/* ── PasswordStrengthMeter ─────────────────────────────────── */
+
+describe("scorePassword", () => {
+  it("returns 0 for empty input", () => {
+    expect(scorePassword("")).toBe(0);
+  });
+
+  it("scores length, case, digit, and symbol", () => {
+    expect(scorePassword("P@ssw0rd!123")).toBeGreaterThanOrEqual(4);
+  });
+
+  it("rewards length tiers", () => {
+    expect(scorePassword("abcdefgh")).toBeGreaterThanOrEqual(1);
+    expect(scorePassword("abcdefghijklmnop")).toBeGreaterThanOrEqual(2);
+  });
+
+  it("maps scores to levels", () => {
+    expect(levelFromScore(0)).toBe("empty" satisfies PasswordStrengthLevel);
+    expect(levelFromScore(1)).toBe("weak");
+    expect(levelFromScore(2)).toBe("weak");
+    expect(levelFromScore(3)).toBe("fair");
+    expect(levelFromScore(4)).toBe("good");
+    expect(levelFromScore(5)).toBe("strong");
+    expect(levelFromScore(6)).toBe("strong");
+  });
+});
+
+describe("PasswordStrengthMeter", () => {
+  it("renders no checklist for an empty value", () => {
+    const { container } = render(<PasswordStrengthMeter value="" />);
+    expect(container.querySelectorAll("li").length).toBe(0);
+  });
+
+  it("renders a checklist once there is input", () => {
+    const { container } = render(<PasswordStrengthMeter value="abc" />);
+    expect(container.querySelectorAll("li").length).toBeGreaterThan(0);
+  });
+});
+
+/* ── ActivityFeed helpers ──────────────────────────────────── */
+
+describe("relativeTime", () => {
+  const now = new Date("2026-08-16T12:00:00Z");
+  it("formats just now / minutes / hours / days", () => {
+    expect(relativeTime("2026-08-16T11:59:00Z", now)).toBe("just now");
+    expect(relativeTime("2026-08-16T11:00:00Z", now)).toBe("60m ago");
+    expect(relativeTime("2026-08-16T10:00:00Z", now)).toBe("2h ago");
+    expect(relativeTime("2026-08-14T10:00:00Z", now)).toBe("2d ago");
+  });
+});
+
+describe("dayLabel", () => {
+  const now = new Date("2026-08-16T12:00:00Z");
+  it("labels today, yesterday, and older dates", () => {
+    expect(dayLabel("2026-08-16T10:00:00Z", now)).toBe("Today");
+    expect(dayLabel("2026-08-15T10:00:00Z", now)).toBe("Yesterday");
+    expect(dayLabel("2026-08-01T10:00:00Z", now)).toContain("Aug");
+  });
+});
+
+/* ── FlipCard ──────────────────────────────────────────────── */
+
+describe("FlipCard", () => {
+  it("renders front and back content", () => {
+    const { container } = render(<FlipCard front={<p>Front</p>} back={<p>Back</p>} />);
+    expect(container.textContent).toContain("Front");
+    expect(container.textContent).toContain("Back");
+  });
+});
+
+/* ── AnnouncementBar ───────────────────────────────────────── */
+
+describe("AnnouncementBar", () => {
+  it("renders children and a dismiss button", () => {
+    const { container } = render(
+      <AnnouncementBar storageKey="facet-test-announcement-1">Hello</AnnouncementBar>,
+    );
+    expect(container.textContent).toContain("Hello");
+    expect(screen.getByLabelText("Dismiss announcement")).toBeInTheDocument();
+  });
+
+  it("dismisses on close click", () => {
+    const { container } = render(
+      <AnnouncementBar storageKey="facet-test-announcement-2">Hello</AnnouncementBar>,
+    );
+    fireEvent.click(screen.getByLabelText("Dismiss announcement"));
+    expect(container.textContent).not.toContain("Hello");
+  });
+});
+
+/* ── StatCard ──────────────────────────────────────────────── */
+
+describe("StatCard", () => {
+  it("renders label and value", () => {
+    const { container } = render(<StatCard label="Revenue" value="$100" />);
+    expect(container.textContent).toContain("Revenue");
+    expect(container.textContent).toContain("$100");
+  });
+
+  it("formats positive and negative deltas", () => {
+    const { container } = render(<StatCard label="R" value="1" delta={12.4} />);
+    expect(container.textContent).toContain("+12.4%");
+    const { container: c2 } = render(<StatCard label="C" value="1" delta={-0.4} />);
+    expect(c2.textContent).toContain("-0.4%");
   });
 });

@@ -19,6 +19,8 @@ import { Button } from "./button.js";
 import { Input } from "./input.js";
 import { Label } from "./label.js";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "./select.js";
+import { Icon } from "../icon/index.js";
+import { Spinner } from "./spinner.js";
 
 export interface Invitee {
   email: string;
@@ -109,7 +111,10 @@ export function InviteTeamForm({
   return (
     <Card className={cn("w-full max-w-lg", className)} {...props}>
       <CardHeader>
-        <CardTitle>{copy.title ?? "Invite your team"}</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Icon name="user-plus" className="size-4 text-primary" />
+          {copy.title ?? "Invite your team"}
+        </CardTitle>
         <CardDescription>
           {copy.description ?? "Send email invites. Each person picks their own password on first sign-in."}
         </CardDescription>
@@ -153,15 +158,29 @@ export function InviteTeamForm({
             </div>
           </div>
           <Button type="button" variant="outline" size="sm" onClick={addEmail}>
+            <Icon name="plus" className="mr-1.5 size-3.5" />
             {copy.add ?? "Add email"}
           </Button>
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && (
+            <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
+              <Icon name="circle-alert" className="size-3.5" />
+              {error}
+            </p>
+          )}
         </div>
 
-        {invitees.length > 0 && (
+        {invitees.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-border py-8 text-center">
+            <Icon name="mail-plus" className="size-6 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">No invites added yet.</p>
+          </div>
+        ) : (
           <ul className="space-y-2">
             {invitees.map((inv) => (
-              <li key={inv.email} className="flex items-center justify-between gap-3 rounded-md border border-border p-3">
+              <li
+                key={inv.email}
+                className="flex flex-col gap-2 rounded-md border border-border p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3"
+              >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{inv.email}</p>
                   <p className="text-xs text-muted-foreground">Role: {inv.role}</p>
@@ -169,8 +188,10 @@ export function InviteTeamForm({
                 <Button
                   size="sm"
                   variant="ghost"
+                  className="shrink-0 text-muted-foreground hover:text-destructive"
                   onClick={() => setInvitees((prev) => prev.filter((i) => i.email !== inv.email))}
                 >
+                  <Icon name="trash-2" className="mr-1.5 size-3.5" />
                   {copy.remove ?? "Remove"}
                 </Button>
               </li>
@@ -178,12 +199,25 @@ export function InviteTeamForm({
           </ul>
         )}
 
-        {sent && <p className="text-sm text-emerald-600">{copy.added ?? "Invites sent."}</p>}
+        {sent && (
+          <p className="flex items-center gap-1.5 text-sm text-emerald-600">
+            <Icon name="circle-check" className="size-3.5" />
+            {copy.added ?? "Invites sent."}
+          </p>
+        )}
 
         <Button className="w-full" onClick={handleSubmit} disabled={sending || invitees.length === 0}>
-          {sending
-            ? (copy.sending ?? "Sending...")
-            : `${copy.send ?? "Send"} ${invitees.length > 0 ? `(${invitees.length})` : ""}`.trim()}
+          {sending ? (
+            <span className="inline-flex items-center gap-2">
+              <Spinner className="size-4" />
+              {copy.sending ?? "Sending..."}
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5">
+              <Icon name="send" className="size-4" />
+              {`${copy.send ?? "Send"} ${invitees.length > 0 ? `(${invitees.length})` : ""}`.trim()}
+            </span>
+          )}
         </Button>
       </CardContent>
     </Card>

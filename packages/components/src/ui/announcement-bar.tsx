@@ -7,6 +7,7 @@
 
 import * as React from "react";
 import { cn } from "../utils.js";
+import { Icon } from "../icon/index.js";
 
 export interface AnnouncementBarProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -59,29 +60,22 @@ export function AnnouncementBar({
   return (
     <div
       className={cn(
-        "relative flex w-full items-center justify-center gap-3 px-4 py-2 text-center text-sm font-medium",
+        "relative flex w-full items-center justify-center gap-3 px-4 py-2 text-center text-sm font-medium sm:px-6",
         className ?? "bg-primary text-primary-foreground",
       )}
       role="region"
       aria-label="Announcement"
       {...props}
     >
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 text-balance">{children}</div>
       {dismissible && (
         <button
           type="button"
           onClick={handleDismiss}
           aria-label="Dismiss announcement"
-          className="shrink-0 rounded-full p-1 opacity-70 transition-opacity hover:opacity-100"
+          className="shrink-0 rounded-full p-1 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path
-              d="M4 4l8 8M12 4l-8 8"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            />
-          </svg>
+          <Icon name="x" className="size-4" />
         </button>
       )}
     </div>

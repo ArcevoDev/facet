@@ -18,6 +18,8 @@ import {
 } from "./card.js";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "./input-otp.js";
 import { Button } from "./button.js";
+import { Icon, type IconName } from "../icon/index.js";
+import { Spinner } from "./spinner.js";
 
 export interface OtpVerificationCardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Called with the entered code when the user submits. */
@@ -28,6 +30,8 @@ export interface OtpVerificationCardProps extends React.HTMLAttributes<HTMLDivEl
   length?: number;
   /** Seconds to wait before resend re-enables. Default: 30. */
   resendCooldown?: number;
+  /** Semantic icon in the header. Default: "mail". */
+  icon?: IconName;
   /** Copy overrides (defaults are provided). */
   copy?: Partial<{
     title: string;
@@ -35,11 +39,11 @@ export interface OtpVerificationCardProps extends React.HTMLAttributes<HTMLDivEl
     label: string;
     placeholder: string;
     submit: string;
+    submitting: string;
     resend: string;
     resendActive: string;
     error: string;
     success: string;
-    "code resend": string;
   }>;
   /** Render the submit button as anything (e.g. AnimatedButton). */
   submitButton?: (props: {
@@ -60,6 +64,7 @@ export function OtpVerificationCard({
   onResend,
   length = 6,
   resendCooldown = 30,
+  icon = "mail",
   copy = {},
   submitButton,
   className,
@@ -119,14 +124,24 @@ export function OtpVerificationCard({
       className="w-full"
       disabled={submitting || code.length !== length}
     >
-      {submitting ? "Verifying..." : (copy.submit ?? "Verify code")}
+      {submitting ? (
+        <span className="inline-flex items-center gap-2">
+          <Spinner className="size-4" />
+          {copy.submitting ?? "Verifying..."}
+        </span>
+      ) : (
+        (copy.submit ?? "Verify code")
+      )}
     </Button>
   );
 
   return (
     <Card className={cn("w-full max-w-sm", className)} {...props}>
       <CardHeader>
-        <CardTitle>{copy.title ?? "Check your email"}</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Icon name={icon} className="size-4 text-primary" />
+          {copy.title ?? "Check your email"}
+        </CardTitle>
         <CardDescription>
           {copy.description ?? "We sent a 6-digit code. Enter it below to continue."}
         </CardDescription>
@@ -144,6 +159,7 @@ export function OtpVerificationCard({
                 maxLength={length}
                 inputMode="numeric"
                 pattern="[0-9]*"
+                className="gap-2"
               >
                 <InputOTPGroup>
                   {Array.from({ length }).map((_, i) => (
@@ -152,9 +168,17 @@ export function OtpVerificationCard({
                 </InputOTPGroup>
               </InputOTP>
             </div>
-            {error && <p className="text-center text-sm text-destructive">{error}</p>}
+            {error && (
+              <p role="alert" className="flex items-center justify-center gap-1.5 text-center text-sm text-destructive">
+                <Icon name="circle-alert" className="size-3.5" />
+                {error}
+              </p>
+            )}
             {success && (
-              <p className="text-center text-sm text-emerald-600">{copy.success ?? "Code verified."}</p>
+              <p className="flex items-center justify-center gap-1.5 text-center text-sm text-emerald-600">
+                <Icon name="circle-check" className="size-3.5" />
+                {copy.success ?? "Code verified."}
+              </p>
             )}
           </div>
           {submit}
@@ -163,11 +187,13 @@ export function OtpVerificationCard({
       {onResend && (
         <CardFooter className="flex items-center justify-center">
           {cooldown > 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Icon name="timer" className="size-3.5" />
               {copy.resendActive ?? `Resend code in ${cooldown}s`}
             </p>
           ) : (
             <Button type="button" variant="ghost" size="sm" onClick={handleResend}>
+              <Icon name="rotate-ccw" className="mr-1.5 size-3.5" />
               {copy.resend ?? "Resend code"}
             </Button>
           )}

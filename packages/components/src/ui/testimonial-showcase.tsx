@@ -2,12 +2,15 @@
  * @arcevo/facet-components: TestimonialShowcase
  *
  * A ready-to-use social-proof grid (or carousel) of testimonials with
- * quote, author, role, and optional avatar. Data-driven and responsive.
+ * quote, author, role, and avatar. Composes the Avatar + Card primitives
+ * and the semantic Icon registry. Data-driven and responsive.
  */
 
 import * as React from "react";
 import { cn } from "../utils.js";
 import { Card, CardContent } from "./card.js";
+import { Avatar, AvatarImage, AvatarFallback } from "./avatar.js";
+import { Icon } from "../icon/index.js";
 
 export interface Testimonial {
   quote: string;
@@ -17,7 +20,7 @@ export interface Testimonial {
   avatar?: string;
   /** Avatar initials fallback (used when no avatar). */
   initials?: string;
-  /** Optional highlight color for the quote mark. */
+  /** Optional highlight color for the quote mark. Default: var(--primary). */
   accent?: string;
 }
 
@@ -36,28 +39,21 @@ export interface TestimonialShowcaseProps extends React.HTMLAttributes<HTMLDivEl
 function TestimonialCard({ t }: { t: Testimonial }) {
   return (
     <Card className="h-full">
-      <CardContent className="space-y-3 p-5">
-        <div
-          className="font-serif text-3xl leading-none"
+      <CardContent className="flex h-full flex-col gap-3 p-5">
+        <Icon
+          name="quote"
+          className="size-5"
           style={{ color: t.accent ?? "var(--primary, #6366f1)" }}
           aria-hidden="true"
-        >
-          "
-        </div>
-        <p className="text-sm leading-relaxed text-foreground">{t.quote}</p>
+        />
+        <p className="flex-1 text-sm leading-relaxed text-foreground">{t.quote}</p>
         <div className="flex items-center gap-2.5 pt-1">
-          {t.avatar ? (
-            <img
-              src={t.avatar}
-              alt={t.author}
-              className="h-8 w-8 rounded-full object-cover"
-              loading="lazy"
-            />
-          ) : (
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+          <Avatar className="size-8">
+            {t.avatar && <AvatarImage src={t.avatar} alt={t.author} />}
+            <AvatarFallback className="text-xs">
               {t.initials ?? t.author.slice(0, 2).toUpperCase()}
-            </span>
-          )}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <p className="text-sm font-semibold text-foreground">{t.author}</p>
             {t.role && <p className="text-xs text-muted-foreground">{t.role}</p>}
@@ -116,12 +112,10 @@ export function TestimonialShowcase({
               <button
                 type="button"
                 onClick={() => setIndex((i) => (i - 1 + count) % count)}
-                className="rounded-md border border-border p-1.5 text-muted-foreground transition-colors hover:bg-muted"
+                className="rounded-md border border-border p-1.5 text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Previous testimonial"
               >
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M10 4L6 8l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <Icon name="chevron-left" className="size-4" />
               </button>
               <span className="text-xs text-muted-foreground">
                 {index + 1} / {count}
@@ -129,12 +123,10 @@ export function TestimonialShowcase({
               <button
                 type="button"
                 onClick={() => setIndex((i) => (i + 1) % count)}
-                className="rounded-md border border-border p-1.5 text-muted-foreground transition-colors hover:bg-muted"
+                className="rounded-md border border-border p-1.5 text-muted-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Next testimonial"
               >
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                  <path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <Icon name="chevron-right" className="size-4" />
               </button>
             </div>
           )}

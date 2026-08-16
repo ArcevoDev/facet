@@ -3,7 +3,8 @@
  *
  * A ready-to-use 2FA enrollment flow: scan the QR (or enter a manual
  * secret), confirm with a one-time code, then reveal recovery codes.
- * Fully customizable via props and `copy`.
+ * Fully customizable via props and `copy`. A stepper header keeps the
+ * three steps legible on every breakpoint.
  */
 
 import * as React from "react";
@@ -20,6 +21,8 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "./input-otp.js";
 import { Button } from "./button.js";
 import { QRCode } from "./qrcode.js";
 import { Input } from "./input.js";
+import { Icon, type IconName } from "../icon/index.js";
+import { Spinner } from "./spinner.js";
 
 export interface TwoFactorSetupPanelProps extends React.HTMLAttributes<HTMLDivElement> {
   /** otpauth:// URI for the QR code (or any string to encode). */
@@ -41,12 +44,21 @@ export interface TwoFactorSetupPanelProps extends React.HTMLAttributes<HTMLDivEl
     confirmTitle: string;
     confirmHint: string;
     verify: string;
+    verifying: string;
+    back: string;
     codesTitle: string;
     codesHint: string;
+    save: string;
     codesSaved: string;
     error: string;
   }>;
 }
+
+const STEP_META: { id: "scan" | "confirm" | "codes"; icon: IconName; label: string }[] = [
+  { id: "scan", icon: "qrcode", label: "Scan" },
+  { id: "confirm", icon: "shield-check", label: "Verify" },
+  { id: "codes", icon: "key-round", label: "Recovery" },
+];
 
 /**
  * A three-step 2FA enrollment panel: scan QR -> verify a code -> save
@@ -69,6 +81,7 @@ export function TwoFactorSetupPanel({
   const [error, setError] = React.useState<string | null>(null);
   const [verifying, setVerifying] = React.useState(false);
   const [saved, setSaved] = React.useState(false);
+  const activeIndex = STEP_META.findIndex((s) => s.id === step);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,8 +106,33 @@ export function TwoFactorSetupPanel({
   return (
     <Card className={cn("w-full max-w-md", className)} {...props}>
       <CardHeader>
+        {/* Stepper */}
+        <div className="mb-2 flex items-center gap-2" aria-label="Setup progress">
+          {STEP_META.map((s, i) => {
+            const isActive = s.id === step;
+            const isDone = i < activeIndex;
+            return (
+              <React.Fragment key={s.id}>
+                {i > 0 && <div className={cn("h-px flex-1", isDone ? "bg-primary" : "bg-border")} />}
+                <div
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium",
+                    isActive && "bg-primary/10 text-primary",
+                    isDone && "text-primary",
+                    !isActive && !isDone && "text-muted-foreground",
+                  )}
+                >
+                  <Icon name={isDone ? "check" : s.icon} className="size-3.5" />
+                  <span className="hidden sm:inline">{s.label}</span>
+                </div>
+              </React.Fragment>
+            );
+          })}
+        </div>
         <CardTitle>
-          {step === "codes" ? (copy.codesTitle ?? "Recovery codes") : (copy.title ?? "Set up two-factor authentication")}
+          {step === "codes"
+            ? (copy.codesTitle ?? "Recovery codes")
+            : (copy.title ?? "Set up two-factor authentication")}
         </CardTitle>
         <CardDescription>
           {step === "scan" &&
@@ -107,16 +145,18 @@ export function TwoFactorSetupPanel({
         {step === "scan" && (
           <>
             <div className="flex justify-center">
-              <QRCode value={otpauthUri} size={168} className="rounded-md border border-border p-2" />
+              <QRCode value={otpauthUri} size={168} className="rounded-md border border-border bg-background p-2" />
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground">
+              <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                <Icon name="key-round" className="size-3.5" />
                 {copy.manualTitle ?? "Can't scan? Enter this code manually."}
               </p>
-              <Input readOnly value={secret} aria-label={copy.manualTitle ?? "Manual secret"} />
+              <Input readOnly value={secret} aria-label={copy.manualTitle ?? "Manual secret"} className="font-mono" />
               <p className="text-xs text-muted-foreground">{copy.manualHint ?? "Keep it secret. Anyone with it can set up 2FA."}</p>
             </div>
             <Button className="w-full" onClick={() => setStep("confirm")}>
+              <Icon name="shield-check" className="mr-1.5 size-4" />
               {copy.verify ?? "I've scanned it, continue"}
             </Button>
           </>
@@ -133,6 +173,7 @@ export function TwoFactorSetupPanel({
                 maxLength={6}
                 inputMode="numeric"
                 pattern="[0-9]*"
+                className="gap-2"
               >
                 <InputOTPGroup>
                   {Array.from({ length: 6 }).map((_, i) => (
@@ -141,29 +182,51 @@ export function TwoFactorSetupPanel({
                 </InputOTPGroup>
               </InputOTP>
             </div>
-            {error && <p className="text-center text-sm text-destructive">{error}</p>}
+            {error && (
+              <p role="alert" className="flex items-center justify-center gap-1.5 text-center text-sm text-destructive">
+                <Icon name="circle-alert" className="size-3.5" />
+                {error}
+              </p>
+            )}
             <Button type="submit" className="w-full" disabled={verifying || code.length !== 6}>
-              {verifying ? "Verifying..." : (copy.verify ?? "Verify and continue")}
+              {verifying ? (
+                <span className="inline-flex items-center gap-2">
+                  <Spinner className="size-4" />
+                  {copy.verifying ?? "Verifying..."}
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5">
+                  <Icon name="shield-check" className="size-4" />
+                  {copy.verify ?? "Verify and continue"}
+                </span>
+              )}
             </Button>
             <Button type="button" variant="ghost" className="w-full" onClick={() => setStep("scan")}>
-              Back
+              {copy.back ?? "Back"}
             </Button>
           </form>
         )}
         {step === "codes" && (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               {recoveryCodes.map((c) => (
                 <code
                   key={c}
-                  className="rounded-md border border-border bg-muted/40 px-2 py-1.5 text-center text-sm font-mono"
+                  className="truncate rounded-md border border-border bg-muted/40 px-2 py-1.5 text-center font-mono text-sm"
                 >
                   {c}
                 </code>
               ))}
             </div>
             <Button className="w-full" onClick={handleSaved} disabled={saved}>
-              {saved ? (copy.codesSaved ?? "Saved") : "I saved my codes"}
+              {saved ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <Icon name="check" className="size-4" />
+                  {copy.codesSaved ?? "Saved"}
+                </span>
+              ) : (
+                (copy.save ?? "I saved my codes")
+              )}
             </Button>
           </div>
         )}

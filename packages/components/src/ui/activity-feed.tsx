@@ -8,6 +8,7 @@
 
 import * as React from "react";
 import { cn } from "../utils.js";
+import { Icon, type IconName } from "../icon/index.js";
 
 export interface ActivityItem {
   id: string;
@@ -16,16 +17,14 @@ export interface ActivityItem {
   description?: string;
   /** ISO timestamp. */
   timestamp: string;
-  /** Icon name; render via `iconRenderer` if provided. */
-  icon?: string;
+  /** Semantic icon shown in the item's bubble. */
+  icon?: IconName;
   /** Accent color for the icon bubble. Default: "var(--primary)". */
   accent?: string;
 }
 
 export interface ActivityFeedProps extends React.HTMLAttributes<HTMLUListElement> {
   items: ActivityItem[];
-  /** Render an icon inside each item's bubble. */
-  iconRenderer?: (icon: string) => React.ReactNode;
   /** Group items by calendar day. Default: true. */
   groupByDay?: boolean;
   /** Optional empty state. Default: "No activity yet." */
@@ -62,18 +61,22 @@ export function dayLabel(iso: string, now = new Date()): string {
 /**
  * A chronological activity feed. Items render in order with an icon
  * bubble, title, description, and relative time, optionally grouped by
- * calendar day with sticky-ish day headers.
+ * calendar day with day headers.
  */
 export function ActivityFeed({
   items,
-  iconRenderer,
   groupByDay = true,
   emptyText = "No activity yet.",
   className,
   ...props
 }: ActivityFeedProps) {
   if (items.length === 0) {
-    return <p className={cn("text-sm text-muted-foreground", className)}>{emptyText}</p>;
+    return (
+      <div className={cn("flex flex-col items-center gap-2 rounded-md border border-dashed border-border py-8 text-center", className)}>
+        <Icon name="inbox" className="size-6 text-muted-foreground" />
+        <p className="text-sm text-muted-foreground">{emptyText}</p>
+      </div>
+    );
   }
 
   const sorted = [...items].sort(
@@ -88,7 +91,10 @@ export function ActivityFeed({
     if (groupByDay && day !== lastDay) {
       lastDay = day;
       rows.push(
-        <p key={`day-${day}`} className="px-1 pt-4 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <p
+          key={`day-${day}`}
+          className="px-1 pt-4 pb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+        >
           {day}
         </p>,
       );
@@ -97,9 +103,13 @@ export function ActivityFeed({
       <li key={item.id} className="flex gap-3 px-1 py-2">
         <span
           className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
-          style={{ background: `${item.accent ?? "var(--primary, #6366f1)"}1a`, color: item.accent ?? "var(--primary, #6366f1)" }}
+          style={{
+            background: `${item.accent ?? "var(--primary, #6366f1)"}1a`,
+            color: item.accent ?? "var(--primary, #6366f1)",
+          }}
+          aria-hidden="true"
         >
-          {item.icon && iconRenderer ? iconRenderer(item.icon) : null}
+          {item.icon ? <Icon name={item.icon} className="size-4" /> : null}
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2">
@@ -112,7 +122,11 @@ export function ActivityFeed({
     );
   }
 
-  return <ul className={cn("divide-y divide-border", className)} {...props}>{rows}</ul>;
+  return (
+    <ul className={cn("divide-y divide-border", className)} {...props}>
+      {rows}
+    </ul>
+  );
 }
 
 ActivityFeed.displayName = "ActivityFeed";

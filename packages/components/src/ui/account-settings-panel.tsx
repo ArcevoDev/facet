@@ -5,11 +5,15 @@
  * sections (Profile, Security, Sessions...) and a content area. The
  * section nav is data-driven, so consumers bring their own section list
  * and render content per active section. Fully customizable via props.
+ *
+ * The nav collapses to a horizontal scrollable tab row on mobile and
+ * becomes a sticky sidebar on md+.
  */
 
 import * as React from "react";
 import { cn } from "../utils.js";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./card.js";
+import { Icon, type IconName } from "../icon/index.js";
 
 export interface SettingsSection {
   /** Unique id (used as the active key). */
@@ -18,8 +22,8 @@ export interface SettingsSection {
   label: string;
   /** Optional short description. */
   description?: string;
-  /** Optional icon name; render via `iconRenderer` if provided. */
-  icon?: string;
+  /** Optional semantic icon shown in the nav. */
+  icon?: IconName;
 }
 
 export interface AccountSettingsPanelProps
@@ -32,8 +36,6 @@ export interface AccountSettingsPanelProps
   activeId?: string;
   /** Called when the active section changes. */
   onActiveChange?: (id: string) => void;
-  /** Render an icon for a section nav item. */
-  iconRenderer?: (icon: string) => React.ReactNode;
   /** Copy overrides. */
   copy?: Partial<{ title: string; description: string }>;
 }
@@ -48,7 +50,6 @@ export function AccountSettingsPanel({
   content,
   activeId,
   onActiveChange,
-  iconRenderer,
   copy = {},
   className,
   ...props
@@ -71,8 +72,11 @@ export function AccountSettingsPanel({
       <CardContent>
         <div className="flex flex-col gap-6 md:flex-row">
           {/* Section nav */}
-          <nav className="md:w-52 shrink-0" aria-label="Account sections">
-            <div className="flex gap-1 overflow-x-auto md:flex-col">
+          <nav
+            className="md:w-52 shrink-0 md:-ml-2"
+            aria-label="Account sections"
+          >
+            <div className="flex gap-1 overflow-x-auto pb-1 md:flex-col md:overflow-visible md:pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {sections.map((s) => {
                 const isActive = s.id === active;
                 return (
@@ -80,17 +84,17 @@ export function AccountSettingsPanel({
                     key={s.id}
                     type="button"
                     onClick={() => setActive(s.id)}
+                    aria-current={isActive ? "page" : undefined}
                     className={cn(
                       "flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-left text-sm font-medium transition-colors",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       isActive
                         ? "bg-sidebar-accent text-sidebar-accent-foreground"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground",
                     )}
                   >
-                    {iconRenderer && s.icon && (
-                      <span className="text-muted-foreground">{iconRenderer(s.icon)}</span>
-                    )}
-                    {s.label}
+                    {s.icon && <Icon name={s.icon} className="size-4 shrink-0" />}
+                    <span className="whitespace-nowrap">{s.label}</span>
                   </button>
                 );
               })}

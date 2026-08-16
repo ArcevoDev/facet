@@ -8,6 +8,7 @@
 import * as React from "react";
 import { cn } from "../utils.js";
 import { Card, CardContent } from "./card.js";
+import { Icon, type IconName } from "../icon/index.js";
 
 export type StatDeltaDirection = "up" | "down" | "neutral";
 
@@ -20,8 +21,8 @@ export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
   deltaDirection?: StatDeltaDirection;
   /** Format delta with a sign. Default: true. */
   deltaSigned?: boolean;
-  /** Optional icon node. */
-  icon?: React.ReactNode;
+  /** Optional semantic icon. */
+  icon?: IconName;
   /** Optional footnote (e.g. "vs last week"). */
   hint?: string;
 }
@@ -47,14 +48,13 @@ export function StatCard({
     delta == null
       ? null
       : `${deltaSigned && dir !== "neutral" ? (dir === "up" ? "+" : "-") : ""}${Math.abs(delta)}%`;
-  const arrow = dir === "up" ? "↑" : dir === "down" ? "↓" : "•";
 
   return (
     <Card className={cn("h-full", className)} {...props}>
       <CardContent className="space-y-2 p-5">
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm font-medium text-muted-foreground">{label}</p>
-          {icon && <span className="text-muted-foreground">{icon}</span>}
+          {icon && <Icon name={icon} className="size-4 text-muted-foreground" />}
         </div>
         <p className="font-heading text-2xl font-bold text-foreground sm:text-3xl">{value}</p>
         <div className="flex items-center gap-2">
@@ -67,7 +67,9 @@ export function StatCard({
                 dir === "neutral" && "bg-muted text-muted-foreground",
               )}
             >
-              <span aria-hidden="true">{arrow}</span>
+              {dir === "up" && <Icon name="trending-up" className="size-3.5" />}
+              {dir === "down" && <Icon name="trending-down" className="size-3.5" />}
+              {dir === "neutral" && <Icon name="minus" className="size-3.5" />}
               {deltaText}
             </span>
           )}

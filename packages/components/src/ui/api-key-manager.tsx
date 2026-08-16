@@ -19,6 +19,7 @@ import { Button } from "./button.js";
 import { Input } from "./input.js";
 import { Label } from "./label.js";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "./select.js";
+import { Icon } from "../icon/index.js";
 
 export interface ApiKey {
   id: string;
@@ -55,6 +56,7 @@ export interface ApiKeyManagerProps extends React.HTMLAttributes<HTMLDivElement>
     creating: string;
     secretHint: string;
     secretCopied: string;
+    copy: string;
     revoke: string;
     revokeConfirm: string;
     noKeys: string;
@@ -120,7 +122,10 @@ export function ApiKeyManager({
   return (
     <Card className={cn("w-full max-w-lg", className)} {...props}>
       <CardHeader>
-        <CardTitle>{copy.title ?? "API keys"}</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <Icon name="key-round" className="size-4 text-primary" />
+          {copy.title ?? "API keys"}
+        </CardTitle>
         <CardDescription>
           {copy.description ?? "Create keys to access the API programmatically. You'll only see the secret once."}
         </CardDescription>
@@ -170,18 +175,41 @@ export function ApiKeyManager({
             </Select>
           </div>
           <Button type="submit" className="w-full" disabled={creating || !name.trim()}>
-            {creating ? (copy.creating ?? "Creating...") : (copy.create ?? "Create key")}
+            {creating ? (
+              <span className="inline-flex items-center gap-2">
+                <Icon name="loader-circle" className="size-4 animate-spin" />
+                {copy.creating ?? "Creating..."}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5">
+                <Icon name="plus" className="size-4" />
+                {copy.create ?? "Create key"}
+              </span>
+            )}
           </Button>
         </form>
 
         {/* Just-created secret (shown once) */}
         {justCreated && (
           <div className="space-y-2 rounded-md border border-emerald-500/30 bg-emerald-500/5 p-3">
-            <p className="text-sm font-medium text-emerald-700">{copy.secretHint ?? "Copy your secret now, you won't see it again."}</p>
+            <p className="flex items-center gap-1.5 text-sm font-medium text-emerald-700">
+              <Icon name="circle-check" className="size-4" />
+              {copy.secretHint ?? "Copy your secret now. You won't see it again."}
+            </p>
             <div className="flex items-center gap-2">
               <code className="flex-1 truncate rounded border border-border bg-background px-2 py-1 text-xs">{justCreated}</code>
               <Button type="button" size="sm" variant="outline" onClick={copySecret}>
-                {copied ? (copy.secretCopied ?? "Copied") : "Copy"}
+                {copied ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Icon name="check" className="size-3.5" />
+                    {copy.secretCopied ?? "Copied"}
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Icon name="copy" className="size-3.5" />
+                    {copy.copy ?? "Copy"}
+                  </span>
+                )}
               </Button>
             </div>
           </div>
@@ -189,14 +217,17 @@ export function ApiKeyManager({
 
         {/* Key list */}
         {keys.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{copy.noKeys ?? "No keys yet. Create one above."}</p>
+          <div className="flex flex-col items-center gap-2 rounded-md border border-dashed border-border py-8 text-center">
+            <Icon name="key-round" className="size-6 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">{copy.noKeys ?? "No keys yet. Create one above."}</p>
+          </div>
         ) : (
           <ul className="space-y-2">
             {keys.map((k) => (
               <li
                 key={k.id}
                 className={cn(
-                  "flex items-center justify-between gap-3 rounded-md border border-border p-3",
+                  "flex flex-col gap-2 rounded-md border border-border p-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3",
                   k.revoked && "opacity-60",
                 )}
               >
@@ -219,7 +250,13 @@ export function ApiKeyManager({
                     </Button>
                   </div>
                 ) : (
-                  <Button size="sm" variant="ghost" className="text-destructive" onClick={() => setConfirmRevoke(k.id)} disabled={k.revoked}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="shrink-0 text-destructive"
+                    onClick={() => setConfirmRevoke(k.id)}
+                    disabled={k.revoked}
+                  >
                     {copy.revoke ?? "Revoke"}
                   </Button>
                 )}

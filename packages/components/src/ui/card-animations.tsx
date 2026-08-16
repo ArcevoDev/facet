@@ -5,10 +5,16 @@
  * animated border beams, shine sweeps, gradient borders, scroll reveal,
  * hover lift, and magnetic pull. All SSR-safe (initial render is static;
  * effects run after mount / on interaction).
+ *
+ * Each component renders a full-width, responsive surface that composes
+ * the Card primitive and the semantic Icon registry, so card content
+ * stays consistent with the rest of the library.
  */
 
 import * as React from "react";
 import { cn } from "../utils.js";
+import { Card } from "./card.js";
+import { Icon, type IconName } from "../icon/index.js";
 
 /* ── FlipCard ─────────────────────────────────────────────── */
 
@@ -23,13 +29,22 @@ export interface FlipCardProps extends React.HTMLAttributes<HTMLDivElement> {
   duration?: number;
   /** Flip on hover instead of click. Default: false. */
   hover?: boolean;
-  /** Fixed height so the flip doesn't collapse. Default: "16rem". */
-  height?: string | number;
+  /** Aspect ratio of the card. Default: "aspect-[4/3]". */
+  aspect?: string;
+  /** Semantic icon on the front face (overlaid center). */
+  icon?: IconName;
+  /** Icon label for a11y. */
+  iconLabel?: string;
+  /** Front face label (e.g. "Read more"). */
+  frontLabel?: string;
+  /** Back face label (e.g. "Tap to flip back"). */
+  backLabel?: string;
 }
 
 /**
- * A card that flips to reveal a back face on click (or hover).
- * The front/back faces are absolutely stacked; the parent sizes them.
+ * A card that flips to reveal a back face on click (or hover). The front
+ * and back faces are absolutely stacked; the parent sizes them with
+ * `aspect` so the flip keeps a fixed footprint on every breakpoint.
  */
 export function FlipCard({
   front,
@@ -37,17 +52,22 @@ export function FlipCard({
   direction = "horizontal",
   duration = 600,
   hover = false,
-  height = "16rem",
+  aspect = "aspect-[4/3]",
+  icon,
+  iconLabel,
+  frontLabel,
+  backLabel,
   className,
   style,
   ...props
 }: FlipCardProps) {
   const [flipped, setFlipped] = React.useState(false);
   const rotate = direction === "vertical" ? "rotateX(180deg)" : "rotateY(180deg)";
+
   return (
     <div
       className={cn("[perspective:1200px]", className)}
-      style={{ ...style, height }}
+      style={{ ...style, aspectRatio: undefined }}
       onClick={hover ? undefined : () => setFlipped((f) => !f)}
       onMouseEnter={hover ? () => setFlipped(true) : undefined}
       onMouseLeave={hover ? () => setFlipped(false) : undefined}
@@ -65,22 +85,31 @@ export function FlipCard({
       }
       {...props}
     >
-      <div
-        className="relative h-full w-full transition-transform"
-        style={{
-          transformStyle: "preserve-3d",
-          transform: flipped ? rotate : "none",
-          transitionDuration: `${duration}ms`,
-        }}
-      >
-        <div className="absolute inset-0 [backface-visibility:hidden]" style={{ WebkitBackfaceVisibility: "hidden" }}>
-          {front}
-        </div>
+      <div className={cn("relative h-full w-full", aspect)}>
         <div
-          className="absolute inset-0 [backface-visibility:hidden]"
-          style={{ WebkitBackfaceVisibility: "hidden", transform: rotate }}
+          className="absolute inset-0"
+          style={{ transformStyle: "preserve-3d", transform: flipped ? rotate : "none", transitionDuration: `${duration}ms` }}
         >
-          {back}
+          {/* Front */}
+          <div
+            className="absolute inset-0 [backface-visibility:hidden]"
+            style={{ WebkitBackfaceVisibility: "hidden" }}
+          >
+            <Card className="flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden border-border bg-background p-6 text-center">
+              {icon && <Icon name={icon} className="size-10 text-primary" aria-label={iconLabel} />}
+              <div className="flex-1" />
+              {frontLabel && <p className="text-sm font-medium text-muted-foreground">{frontLabel}</p>}
+            </Card>
+          </div>
+          {/* Back */}
+          <div
+            className="absolute inset-0 [backface-visibility:hidden]"
+            style={{ WebkitBackfaceVisibility: "hidden", transform: rotate }}
+          >
+            <Card className="flex h-full w-full items-center justify-center overflow-hidden border-border bg-muted/30 p-6 text-center">
+              <div className="max-w-full">{back}</div>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
@@ -100,7 +129,8 @@ export interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement>
 
 /**
  * A card with a radial spotlight that follows the cursor across the
- * surface. The highlight renders as an absolutely-positioned gradient.
+ * surface. The highlight renders as an absolutely-positioned gradient
+ * under the card's content (which stays interactive).
  */
 export function SpotlightCard({
   color = "var(--primary, #6366f1)",
@@ -127,11 +157,11 @@ export function SpotlightCard({
     });
   };
   return (
-    <div
+    <Card
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={() => setPos((p) => ({ ...p, opacity: 0 }))}
-      className={cn("relative overflow-hidden", className)}
+      className={cn("relative w-full overflow-hidden", className)}
       style={style}
       {...props}
     >
@@ -144,7 +174,7 @@ export function SpotlightCard({
         }}
       />
       <div className="relative">{children}</div>
-    </div>
+    </Card>
   );
 }
 
@@ -163,7 +193,8 @@ export interface BorderBeamCardProps extends React.HTMLAttributes<HTMLDivElement
 
 /**
  * A card with an animated conic-gradient border that slowly rotates
- * around the edge (a "beam" sweeping the border).
+ * around the edge (a "beam" sweeping the border). Content sits on a
+ * solid Card surface so it reads clearly on every background.
  */
 export function BorderBeamCard({
   colors = ["var(--primary, #6366f1)", "#d946ef", "transparent"],
@@ -176,7 +207,7 @@ export function BorderBeamCard({
 }: BorderBeamCardProps) {
   return (
     <div
-      className={cn("relative rounded-xl p-px", className)}
+      className={cn("relative w-full rounded-xl p-px", className)}
       style={
         {
           ...style,
@@ -186,7 +217,9 @@ export function BorderBeamCard({
       }
       {...props}
     >
-      <div className="relative rounded-[calc(0.75rem-1px)] bg-background">{children}</div>
+      <Card className="relative w-full rounded-[calc(0.75rem-1px)] border-0 bg-background">
+        {children}
+      </Card>
     </div>
   );
 }
@@ -219,8 +252,8 @@ export function ShineCard({
 }: ShineCardProps) {
   const [hovered, setHovered] = React.useState(false);
   return (
-    <div
-      className={cn("relative overflow-hidden", className)}
+    <Card
+      className={cn("relative w-full overflow-hidden", className)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={style}
@@ -240,7 +273,7 @@ export function ShineCard({
           } as React.CSSProperties
         }
       />
-    </div>
+    </Card>
   );
 }
 
@@ -255,7 +288,7 @@ export interface GradientBorderCardProps extends React.HTMLAttributes<HTMLDivEle
   thickness?: number;
 }
 
-/** A card with a static (or slowly shifting) gradient border. */
+/** A card with a static gradient border and a solid content surface. */
 export function GradientBorderCard({
   colors = ["var(--primary, #6366f1)", "#d946ef", "#06b6d4"],
   thickness = 1.5,
@@ -266,7 +299,7 @@ export function GradientBorderCard({
 }: GradientBorderCardProps) {
   return (
     <div
-      className={cn("relative rounded-xl", className)}
+      className={cn("relative w-full rounded-xl", className)}
       style={
         {
           ...style,
@@ -276,7 +309,9 @@ export function GradientBorderCard({
       }
       {...props}
     >
-      <div className="relative rounded-[calc(0.75rem-1px)] bg-background">{children}</div>
+      <Card className="relative w-full rounded-[calc(0.75rem-1px)] border-0 bg-background">
+        {children}
+      </Card>
     </div>
   );
 }
@@ -327,7 +362,7 @@ export function RevealCard({
   return (
     <div
       ref={ref}
-      className={cn("will-change-transform", className)}
+      className={cn("w-full will-change-transform", className)}
       style={
         {
           ...style,
@@ -369,7 +404,7 @@ export function HoverScaleCard({
   const [hovered, setHovered] = React.useState(false);
   return (
     <div
-      className={cn("transition-all will-change-transform", className)}
+      className={cn("w-full transition-all will-change-transform", className)}
       style={{
         ...style,
         transform: hovered ? `scale(${scale})` : "none",
@@ -423,7 +458,7 @@ export function MagneticCard({
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      className={cn("transition-transform duration-200 will-change-transform", className)}
+      className={cn("w-full transition-transform duration-200 will-change-transform", className)}
       style={{ ...style, transform: `translate(${offset.x}px, ${offset.y}px)` }}
       {...props}
     >
