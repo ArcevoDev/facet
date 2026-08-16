@@ -440,3 +440,42 @@ export function CountUpText({
     </span>
   );
 }
+
+/* ── 10. DissolveText ───────────────────────────────────────── */
+
+export interface DissolveTextProps extends React.HTMLAttributes<HTMLSpanElement> {
+  text?: string;
+  /** Entrance delay before the first char, in ms. Default: 0. */
+  delay?: number;
+  /** Stagger between chars, in ms. Default: 40. */
+  stagger?: number;
+  /** Animation duration, in ms. Default: 500. */
+  duration?: number;
+}
+
+/** Each character fades in with a subtle dissolve effect, staggered.
+ *  SSR-safe: text renders in its final state on the server, then the
+ *  entrance animation runs after mount (no layout flash). */
+export function DissolveText({
+  text,
+  delay = 0,
+  stagger = 40,
+  duration = 500,
+  className,
+  children,
+  ...props
+}: DissolveTextProps) {
+  const resolved = resolveText(text, children);
+  const chars = splitChars(
+    resolved,
+    delay,
+    stagger,
+    "animate-[facet-dissolve_500ms_ease-out_both]",
+    duration,
+  );
+  return (
+    <span className={cn("inline-block", className)} {...props}>
+      {chars}
+    </span>
+  );
+}

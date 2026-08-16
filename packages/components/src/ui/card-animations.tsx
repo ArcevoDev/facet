@@ -483,3 +483,39 @@ export function MagneticCard({
 }
 
 MagneticCard.displayName = "MagneticCard";
+
+/* ── DissolveCard ──────────────────────────────────────────── */
+
+export interface DissolveCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Entrance delay in ms for staggered layouts. Default: 0. */
+  delay?: number;
+}
+
+/** A card that dissolves into view on mount, then reveals a subtle
+ *  overlay on hover. SSR-safe: content renders statically; the
+ *  entrance animation is applied client-side via CSS fill-mode. */
+export function DissolveCard({
+  className,
+  delay = 0,
+  children,
+  ...props
+}: DissolveCardProps) {
+  return (
+    <div
+      className={cn(
+        "relative rounded-xl border border-border bg-background p-6 shadow-sm",
+        "animate-[facet-dissolve_500ms_ease-out_both]",
+        "before:absolute before:inset-0 before:-z-10 before:rounded-xl",
+        "before:bg-gradient-to-r before:from-white/0 before:via-white/5 before:to-white/0",
+        "before:opacity-0 before:blur before:duration-300 before:ease-out",
+        "hover:before:opacity-100",
+        className,
+      )}
+      style={{ animationDelay: `${delay}ms` }}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
+DissolveCard.displayName = "DissolveCard";

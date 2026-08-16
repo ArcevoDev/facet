@@ -29,6 +29,10 @@ export interface FaqSectionProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultOpen?: number[];
   /** Render the heading and list side-by-side on lg. Default: false. */
   split?: boolean;
+  /** Accordion behavior. "multiple" (default) allows several open; "single" opens one at a time. */
+  type?: "multiple" | "single";
+  /** Content rendered after the accordion (e.g. an explore / feedback strip). */
+  children?: React.ReactNode;
 }
 
 /**
@@ -41,9 +45,19 @@ export function FaqSection({
   description,
   defaultOpen = [],
   split = false,
+  type = "multiple",
   className,
+  children,
   ...props
 }: FaqSectionProps) {
+  const accordionItems = items.map((item, i) => (
+    <AccordionItem key={i} value={String(i)}>
+      <AccordionTrigger className="text-left font-medium">{item.question}</AccordionTrigger>
+      <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+        {item.answer}
+      </AccordionContent>
+    </AccordionItem>
+  ));
   return (
     <section className={cn("w-full", className)} {...props}>
       <div className={cn(split && "lg:grid lg:grid-cols-[minmax(0,1fr)_2fr] lg:gap-12")}>
@@ -53,17 +67,17 @@ export function FaqSection({
             {description && <p className="text-sm text-muted-foreground">{description}</p>}
           </div>
         )}
-        <Accordion type="multiple" defaultValue={defaultOpen.map(String)}>
-          {items.map((item, i) => (
-            <AccordionItem key={i} value={String(i)}>
-              <AccordionTrigger className="text-left font-medium">{item.question}</AccordionTrigger>
-              <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-                {item.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        {type === "single" ? (
+          <Accordion type="single" collapsible defaultValue={defaultOpen[0]?.toString()}>
+            {accordionItems}
+          </Accordion>
+        ) : (
+          <Accordion type="multiple" defaultValue={defaultOpen.map(String)}>
+            {accordionItems}
+          </Accordion>
+        )}
       </div>
+      {children && <div className="mt-8">{children}</div>}
     </section>
   );
 }

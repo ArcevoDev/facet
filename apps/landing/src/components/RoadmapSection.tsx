@@ -15,6 +15,7 @@ export function RoadmapSection() {
       </div>
       <Roadmap
         variant="timeline"
+        maxHeight="max-h-[520px]"
         items={ROADMAP.map((item) => ({
           title: item.title,
           description: item.desc,

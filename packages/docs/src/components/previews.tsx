@@ -37,6 +37,7 @@ import {
   Kbd,
   getModSymbol,
   Label,
+  MailInput,
   Progress,
   RadioGroup,
   RadioGroupItem,
@@ -143,7 +144,6 @@ import {
   NavigationMenuLink,
   ScrollBar,
   Toaster,
-  TypewriterText,
   BlurText,
   TiltCard,
   Aurora,
@@ -731,6 +731,15 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
       return <DateInputDemo />;
     case "password-input":
       return <PasswordInputDemo />;
+    case "mail-input":
+      return (
+        <div className="max-w-xs">
+          <MailInput placeholder="you@example.com" required />
+          <p className="mt-2 text-xs text-muted-foreground">
+            Type @ to see domain suggestions.
+          </p>
+        </div>
+      );
     case "infinite-scroll":
       return <InfiniteScrollDemo />;
     case "sign-in":
@@ -872,15 +881,6 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
           <LayoutProvider>
             <Topbar />
           </LayoutProvider>
-        </div>
-      );
-    case "typewriter-text":
-      return (
-        <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
-          <TypewriterText
-            phrases={["one identity", "every door", "your key"]}
-            className="font-heading text-xl font-bold text-foreground"
-          />
         </div>
       );
     case "text-animations":

@@ -91,14 +91,54 @@ export function LayoutProvider({
     },
   );
 
+  const persistSections = React.useCallback((next: Record<string, boolean>) => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(next));
+    } catch {
+      // Storage can be unavailable (private mode): non-fatal.
+    }
+  }, []);
+
   const toggleSection = React.useCallback((sectionId: string) => {
     setCollapsedSections((prev) => {
       const next = { ...prev, [sectionId]: !prev[sectionId] };
+      persistSections(next);
+      return next;
+    });
+  }, []);
+
+  // Accordion mode: open exactly one section, closing the rest.
+  const openSection = React.useCallback((sectionId: string) => {
+    setCollapsedSections((prev) => {
+      const next: Record<string, boolean> = {};
+      for (const key of Object.keys(prev)) {
+        next[key] = key !== sectionId;
+      }
       try {
         window.localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(next));
       } catch {
         // Storage can be unavailable (private mode): non-fatal.
       }
+      return next;
+    });
+  }, []);
+
+  // Collapse / expand every section at once. The caller passes the section
+  // ids it knows about (the Sidebar owns config.navigation, so it has them).
+  const collapseAll = React.useCallback((sectionIds: string[] = []) => {
+    setCollapsedSections(() => {
+      const next: Record<string, boolean> = {};
+      for (const id of sectionIds) next[id] = true;
+      persistSections(next);
+      return next;
+    });
+  }, []);
+
+  const expandAll = React.useCallback((sectionIds: string[] = []) => {
+    setCollapsedSections(() => {
+      const next: Record<string, boolean> = {};
+      for (const id of sectionIds) next[id] = false;
+      persistSections(next);
       return next;
     });
   }, []);
@@ -120,6 +160,9 @@ export function LayoutProvider({
       setSidebarWidth,
       collapsedSections,
       toggleSection,
+      openSection,
+      collapseAll,
+      expandAll,
       router: activeRouter,
     }),
     [
@@ -133,6 +176,9 @@ export function LayoutProvider({
       setSidebarWidth,
       collapsedSections,
       toggleSection,
+      openSection,
+      collapseAll,
+      expandAll,
       activeRouter,
     ],
   );

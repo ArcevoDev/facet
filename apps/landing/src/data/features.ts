@@ -2,7 +2,7 @@ import type { IconName } from "@arcevo/facet-components";
 
 /** Live library stats, verified against the packages on every release. */
 export const STATS = [
-  { value: "83", label: "components" },
+  { value: "84", label: "components" },
   { value: "10", label: "API SDKs" },
   { value: "3", label: "layout shells" },
   { value: "5", label: "auth presets" },
@@ -20,7 +20,7 @@ export interface Package {
 export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-components",
-    desc: "83 styled, accessible React components built on Radix primitives.",
+    desc: "84 styled, accessible React components built on Radix primitives.",
     version: "1.8.0",
     icon: "boxes",
   },
@@ -198,6 +198,12 @@ export const ROADMAP: RoadmapItem[] = [
     phase: "Phase 6",
     title: "Ecosystem tools",
     desc: "arc-id CLI basis, tree-shakeable icon imports, stack-agnosticism assessment for non-React consumers.",
+    status: "done",
+  },
+  {
+    phase: "Phase 7",
+    title: "Audit & composability",
+    desc: "Repo-wide composability audit, flat Animation docs, accordion sidebar, responsive surfaces, and live-preview reliability across all packages.",
     status: "in-progress",
   },
 ];
@@ -207,34 +213,37 @@ export interface FaqItem {
   a: string;
 }
 
+/** Public FAQ for the landing page. Answers are kept in sync with the
+ * published package surface (components 1.8.0, auth 1.2.0, layout 1.3.4,
+ * docs 1.4.4, tokens 1.1.2, sdk 1.1.0, emails 1.1.0, cli 0.7.0). */
 export const FAQ: FaqItem[] = [
   {
     q: "Is facet free and open source?",
-    a: "Yes. Every package is MIT-licensed and published to npm under the @arcevo scope.",
+    a: "Yes. Every package is MIT-licensed and published to npm under @arcevo: components, auth, layout, docs, tokens, sdk, emails, and cli.",
   },
   {
     q: "Which React version does facet require?",
-    a: "React 18 or 19. All packages list react and react-dom as peer dependencies.",
+    a: "React 18 or 19. All packages list `react` and `react-dom` as peer dependencies.",
   },
   {
     q: "Does facet work with Tailwind v4?",
-    a: "Yes. The tokens package ships a CSS-native Tailwind v4 theme extension plus tw-animate-css, so enter/exit utilities work out of the box.",
+    a: "Yes. @arcevo/facet-tokens ships a CSS-native Tailwind v4 theme extension plus tw-animate-css, so the animation keyframes (facet-shimmer, facet-flip, etc.) build out of the box.",
   },
   {
     q: "Can I use the packages with a non-React stack?",
-    a: "Components, layout and auth are React-only. The SDK is framework-agnostic pure fetch (usable from any TypeScript or JS host), and the tokens are plain CSS variables any stack can consume.",
+    a: "Components, auth, layout and docs are React-only. The arc-id SDK is framework-agnostic pure fetch (usable from any TS/JS host), and the tokens are plain CSS variables any stack can consume.",
   },
   {
     q: "Can I use facet without the arc-id backend?",
-    a: "Yes. Components, layout and tokens are backend-agnostic. The auth flow and SDK are optional and plug into any API.",
+    a: "Yes. Components, layout and tokens are backend-agnostic. The auth flow and SDK are optional and plug into any API via an injectable client adapter.",
   },
   {
     q: "Do the packages support server-side rendering (Next.js, Remix)?",
-    a: "Yes. The docs engine and layout shells work in client-rendered and SSR apps. The docs site itself runs on Next.js-compatible React Router.",
+    a: "Yes. The docs engine and layout shells are SSR-safe, and the animation family renders its initial state on the server (one-shot animations like CountUp start from their `from` value).",
   },
   {
     q: "How do I theme facet for my brand?",
-    a: "All colors and spacing are CSS variables from @arcevo/facet-tokens. Override them at runtime via ThemeProvider overrideVars or swap tokens.css with your own values.",
+    a: "All colors and spacing are CSS variables from @arcevo/facet-tokens. Override them at runtime via ThemeProvider `overrideVars`, or swap `tokens.css` with your own values. Dark mode is built in.",
   },
   {
     q: "Does facet work in a monorepo?",
@@ -242,22 +251,30 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "How do I update my facet packages?",
-    a: "Run `facet pkg` to see versions, then `facet update` applies the exact update for your package manager (`-y` skips the confirmation, `--dry-run` only prints it).",
+    a: "Run `facet pkg` to see installed vs latest versions, then `facet update` applies the exact command for your package manager (`-y` skips the confirmation, `--dry-run` only prints it).",
   },
   {
     q: "Can I copy components into my source instead of installing the package?",
-    a: "Yes, with `facet add <component>`. Installing from the package is recommended so you get updates and tree-shaking.",
+    a: "Yes — `facet add <component>` copies the component source plus its imports into your tree. Installing from the package is recommended so you keep getting updates and tree-shaking.",
   },
   {
-    q: "How do I use the icon registry, and can I override it with another icon library?",
-    a: "The Icon component resolves any lucide-style kebab name out of the box. To use your own icons (react-icons, heroicons, or your own SVG components), pass them as overrides: <IconProvider overrides={{ settings: MySettingsIcon }}> for a whole app or domain, or registerIcon(\"settings\", MySettingsIcon) globally. Any component accepting className and size works.",
+    q: "How do I use the icon registry, and can I override it?",
+    a: "The <Icon> component resolves any lucide-style kebab name out of the box. To use your own icons (react-icons, heroicons, or your own SVG components), pass overrides via <IconProvider overrides={{ settings: MyIcon }}> per app/domain, or `registerIcon(\"name\", MyIcon)` globally.",
   },
   {
-    q: "Where can I see a full example of each component?",
-    a: "The docs site has a live preview and variant tabs for every component under the Components section, with copyable code that matches the selected variant.",
+    q: "Where can I see a live example of each component?",
+    a: "The docs site has a live preview and variant tabs for every component, with copyable code that matches the selected variant. One-shot animations (CountUp, Flip, etc.) have a Replay button so you can watch them run.",
   },
   {
-    q: "How do I reach the facet team with feedback or questions?",
-    a: "Use the Feedback page (linked in the nav) to drop feedback or reach the maintainers directly.",
+    q: "What animations does facet ship?",
+    a: "Ten text animations (Blur, Wave, Flip, Split, FadeUp, Shimmer, Gradient, LetterSpacing, CountUp, Dissolve), TypewriterText, seven micro-interactions, AnimatedButton (shine/sparkle/ripple/magnetic/dissolve), and the card animation family (DissolveCard, FlipCard, SpotlightCard, etc.). The keyframe tokens live in @arcevo/facet-tokens so the CSS classes always emit.",
+  },
+  {
+    q: "How do I scaffold docs and emails?",
+    a: "Run `facet docs init` or `facet emails init` to drop a starter into any project. Use `--use-template <name>` to merge a specific starter without overwriting your customizations, or `facet templates list` / `facet templates describe` to browse available starters.",
+  },
+  {
+    q: "How do I reach the facet team?",
+    a: "Use the Feedback page (linked in the nav) to drop a line, or join the Discord linked from the docs — the maintainers read everything.",
   },
 ];

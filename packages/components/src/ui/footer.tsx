@@ -47,6 +47,13 @@ export interface FooterSocial {
   icon: IconName;
 }
 
+/** A numbered step for the "how it works" / steps grid. */
+export interface FooterStep {
+  number: string;
+  label: string;
+  description?: string;
+}
+
 export interface FooterNewsletter {
   /** Newsletter title. Default: "Stay in the loop". */
   title?: string;
@@ -62,7 +69,7 @@ export interface FooterNewsletter {
 
 export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
   /** Layout variant. Default: "default" (unchanged behavior). */
-  variant?: "default" | "minimal" | "columns" | "newsletter" | "split";
+  variant?: "default" | "minimal" | "columns" | "newsletter" | "split" | "streamline";
   /** Brand block: name, optional logo element, tagline. */
   brand?: {
     name?: string;
@@ -83,6 +90,10 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode;
   /** Newsletter capture slot (used by the "newsletter" variant). */
   newsletter?: FooterNewsletter;
+  /** Research notices, cookie-consent callouts, or other alert blocks. */
+  notices?: React.ReactNode[];
+  /** Optional "how it works" steps shown below columns (streamline variant). */
+  steps?: FooterStep[];
   /** Max content width class. Default: "max-w-7xl". */
   containerClassName?: string;
 }
@@ -225,6 +236,41 @@ function FooterNewsletter({ newsletter }: { newsletter: FooterNewsletter }) {
   );
 }
 
+/** How-it-works steps grid (streamline variant). */
+function FooterSteps({ steps }: { steps: FooterStep[] }) {
+  return (
+    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {steps.map((step) => (
+        <div key={step.label}>
+          <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-sm font-bold">
+            {step.number}
+          </div>
+          <h4 className="mt-3 text-sm font-semibold text-foreground">{step.label}</h4>
+          {step.description && (
+            <p className="mt-1 text-sm text-muted-foreground">{step.description}</p>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Notice / alert blocks (research notices, cookie consent, etc.). */
+function FooterNotices({ notices }: { notices: React.ReactNode[] }) {
+  return (
+    <div className="flex flex-col gap-3">
+      {notices.map((notice, i) => (
+        <div
+          key={i}
+          className="text-xs text-muted-foreground"
+        >
+          {notice}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function Footer({
   variant = "default",
   brand,
@@ -235,6 +281,8 @@ export function Footer({
   bottomBar,
   children,
   newsletter,
+  notices,
+  steps,
   className,
   containerClassName = "max-w-7xl",
   ...props
@@ -287,6 +335,17 @@ export function Footer({
         )}
 
         {variant === "newsletter" && newsletter && <FooterNewsletter newsletter={newsletter} />}
+
+        {variant === "streamline" && (
+          <div className="mt-10 grid gap-10 sm:grid-cols-2 md:grid-cols-4">
+            <FooterColumns columns={columns} />
+          </div>
+        )}
+
+        {variant === "streamline" && steps && <FooterSteps steps={steps} />}
+
+        {/* Notices (research notices, cookie consent, etc.) */}
+        {notices && <FooterNotices notices={notices} />}
 
         {/* Extra content (CTAs, etc.) */}
         {children}

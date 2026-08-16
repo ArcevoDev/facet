@@ -53,6 +53,7 @@ const CATEGORY = {
   input: "inputs",
   "input-otp": "inputs",
   label: "inputs",
+  "mail-input": "inputs",
   "number-input": "inputs",
   "radio-group": "inputs",
   select: "inputs",
@@ -82,7 +83,8 @@ const CATEGORY = {
   roadmap: "ready-to-use",
   // Animation family (text + surfaces + micro-interactions + card effects)
   animated: "animation",
-  "typewriter-text": "animation",
+  // "typewriter-text" is excluded from the docs manifest; documented as
+  // tabs on the text-animations page instead.
   "text-animations": "animation",
   "micro-interactions": "animation",
   "animated-button": "animation",
@@ -112,6 +114,9 @@ const CATEGORY = {
   "activity-feed": "ready-to-use",
 };
 
+/** Slugs excluded from the docs manifest entirely (documented elsewhere). */
+const EXCLUDED = new Set(["typewriter-text"]);
+
 function firstDocLine(filePath) {
   const src = fs.readFileSync(filePath, "utf-8");
   const m = src.match(/\/\*\*\s*\n\s*\*\s*([^*].*)/);
@@ -130,6 +135,7 @@ function humanize(slug) {
 const components = fs
   .readdirSync(uiDir)
   .filter((f) => f.endsWith(".tsx") && !f.endsWith(".test.tsx"))
+  .filter((f) => !EXCLUDED.has(f.replace(/\.tsx$/, "")))
   .map((f) => f.replace(/\.tsx$/, ""))
   .sort()
   .map((name) => {

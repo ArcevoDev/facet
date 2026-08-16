@@ -17,9 +17,9 @@
 import * as React from "react";
 import { Button } from "./button.js";
 import { SparkleButton } from "./animated.js";
-import { RippleButton, MagneticButton, ShineButton } from "./micro-interactions.js";
+import { RippleButton, MagneticButton, ShineButton, DissolveButton } from "./micro-interactions.js";
 
-export type AnimatedButtonVariant = "sparkle" | "ripple" | "magnetic" | "shine" | "none";
+export type AnimatedButtonVariant = "sparkle" | "ripple" | "magnetic" | "shine" | "dissolve" | "none";
 
 export interface AnimatedButtonRenderProps {
   children?: React.ReactNode;
@@ -60,6 +60,8 @@ export function AnimatedButton({
       return <RippleButton {...shared} {...props} />;
     case "magnetic":
       return <MagneticButton {...shared} {...props} />;
+    case "dissolve":
+      return <DissolveButton {...shared} {...props} />;
     case "none":
       return <Button {...shared} {...props} />;
     default:

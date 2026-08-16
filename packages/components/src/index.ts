@@ -375,6 +375,8 @@ export { type DateInputProps, DateInput, validateIsoDate } from "./ui/date-input
 
 export { type PasswordInputProps, PasswordInput } from "./ui/password-input.js";
 
+export { type MailInputProps, MailInput } from "./ui/mail-input.js";
+
 export {
   type CountryCode,
   type CountryRegion,
@@ -444,6 +446,8 @@ export {
   LetterSpacingText,
   type CountUpTextProps,
   CountUpText,
+  type DissolveTextProps,
+  DissolveText,
 } from "./ui/text-animations.js";
 
 export {
@@ -459,6 +463,8 @@ export {
   ShineButton,
   type ScrollRevealProps,
   ScrollReveal,
+  type DissolveButtonProps,
+  DissolveButton,
 } from "./ui/micro-interactions.js";
 
 export {
@@ -473,6 +479,7 @@ export {
   type FooterColumn,
   type FooterSocial,
   type FooterNewsletter,
+  type FooterStep,
   type FooterProps,
   Footer,
 } from "./ui/footer.js";
@@ -519,6 +526,8 @@ export {
   HoverScaleCard,
   type MagneticCardProps,
   MagneticCard,
+  type DissolveCardProps,
+  DissolveCard,
 } from "./ui/card-animations.js";
 
 /* ── Ready-to-use: auth & security ────────────────────────── */

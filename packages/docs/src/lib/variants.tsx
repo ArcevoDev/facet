@@ -167,6 +167,7 @@ import {
   DatePicker,
   DateInput,
   PasswordInput,
+  MailInput,
   InfiniteScroll,
   NumberInput,
   CountryCodeInput,
@@ -188,12 +189,14 @@ import {
   GradientText,
   LetterSpacingText,
   CountUpText,
+  DissolveText,
   TiltCard,
   GlowCard,
   RippleButton,
   MagneticButton,
   ShineButton,
   ScrollReveal,
+  DissolveButton,
   FlipCard,
   SpotlightCard,
   BorderBeamCard,
@@ -201,7 +204,8 @@ import {
   GradientBorderCard,
   RevealCard,
   HoverScaleCard,
-  MagneticCard,
+   MagneticCard,
+   DissolveCard,
   OtpVerificationCard,
   TwoFactorSetupPanel,
   PasswordStrengthMeter,
@@ -2146,34 +2150,6 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           node: <SparkleButton label="Click me" />,
         },
       ];
-    case "typewriter-text":
-      return [
-        {
-          label: "Default",
-          node: (
-            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
-              <TypewriterText
-                phrases={["one identity", "every door", "your key"]}
-                className="font-heading text-xl font-bold text-foreground"
-              />
-            </div>
-          ),
-        },
-        {
-          label: "Fast cycle",
-          node: (
-            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
-              <TypewriterText
-                phrases={["build", "ship", "scale"]}
-                typeSpeed={45}
-                eraseSpeed={25}
-                delay={900}
-                className="font-heading text-xl font-bold text-foreground"
-              />
-            </div>
-          ),
-        },
-      ];
     case "text-animations":
       return [
         {
@@ -2249,6 +2225,39 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             </div>
           ),
         },
+        {
+          label: "Typewriter",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <TypewriterText
+                phrases={["one identity", "every door", "your key"]}
+                className="font-heading text-xl font-bold text-foreground"
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Fast cycle",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <TypewriterText
+                phrases={["build", "ship", "scale"]}
+                typeSpeed={45}
+                eraseSpeed={25}
+                delay={900}
+                className="font-heading text-xl font-bold text-foreground"
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Dissolve",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <DissolveText text="Dissolve in, char by char" className="font-heading text-2xl font-bold text-foreground" />
+            </div>
+          ),
+        },
       ];
     case "micro-interactions":
       return [
@@ -2312,6 +2321,16 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             </div>
           ),
         },
+        {
+          label: "Dissolve button",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <DissolveButton className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground">
+                Dissolve
+              </DissolveButton>
+            </div>
+          ),
+        },
       ];
     case "animated-button":
       return [
@@ -2352,6 +2371,14 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           node: (
             <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
               <AnimatedButton animation="none">Plain</AnimatedButton>
+            </div>
+          ),
+        },
+        {
+          label: "Dissolve",
+          node: (
+            <div className="flex min-h-24 w-full items-center justify-center rounded-lg border border-border bg-background">
+              <AnimatedButton animation="dissolve">Dissolve</AnimatedButton>
             </div>
           ),
         },
@@ -2455,6 +2482,29 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                   { title: "Legal", links: [{ label: "Privacy", href: "#" }, { label: "Terms", href: "#" }] },
                 ]}
                 socials={[{ label: "GitHub", href: "#", icon: "github" }]}
+                legal="© 2026 facet. MIT License."
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Streamline",
+          node: (
+            <div className="w-full rounded-lg border border-border">
+              <Footer
+                variant="streamline"
+                brand={{ name: "facet", tagline: "The Arcevo UI system" }}
+                columns={[
+                  { title: "Product", links: [{ label: "Components", href: "#" }, { label: "Tokens", href: "#" }] },
+                  { title: "Resources", links: [{ label: "Docs", href: "#" }, { label: "CLI", href: "#" }] },
+                ]}
+                socials={[{ label: "GitHub", href: "#", icon: "github" }]}
+                notices={[<span key="research">Research notice: We log anonymous usage to improve docs.</span>]}
+                steps={[
+                  { number: "1", label: "Sign up", description: "Create a free account" },
+                  { number: "2", label: "Build", description: "Start composing" },
+                  { number: "3", label: "Ship", description: "Go live" },
+                ]}
                 legal="© 2026 facet. MIT License."
               />
             </div>
@@ -2601,6 +2651,29 @@ export function variantCells(slug: string): VariantCell[] | undefined {
           node: (
             <div className="max-w-xs">
               <PasswordInput label="Password" showToggle={false} />
+            </div>
+          ),
+        },
+       ];
+    case "mail-input":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="max-w-xs">
+              <MailInput placeholder="you@example.com" required />
+            </div>
+          ),
+        },
+        {
+          label: "Custom domains",
+          node: (
+            <div className="max-w-xs">
+              <MailInput
+                placeholder="you@example.com"
+                domains={["arcevocirqle.com.ng", "gmail.com", "yahoo.com"]}
+                required
+              />
             </div>
           ),
         },
@@ -3063,6 +3136,16 @@ export function variantCells(slug: string): VariantCell[] | undefined {
               <MagneticCard className="w-64 rounded-xl border border-border bg-background p-6">
                 <p className="text-sm font-semibold text-foreground">It pulls toward your cursor</p>
               </MagneticCard>
+            </div>
+          ),
+        },
+        {
+          label: "Dissolve card",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <DissolveCard className="w-64 rounded-xl border border-border bg-background p-6">
+                <p className="text-sm font-semibold text-foreground">Dissolves in on mount</p>
+              </DissolveCard>
             </div>
           ),
         },

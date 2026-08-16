@@ -239,38 +239,27 @@ export function buildPagesSection(): NavSection {
 }
 
 /**
- * Build the dedicated "Animation" sidebar section: text animations nested
- * under a "Text" parent, plus surfaces (Aurora/Beams/GridPattern/
- * Spotlight/SparkleButton) and micro-interactions as top-level items.
+ * Build the dedicated "Animation" sidebar section — a FLAT list (no nested
+ * "Text"/"Cards" parents). TypewriterText is documented as tabs on the
+ * text-animations page, so it has no standalone entry here.
  */
 export function buildAnimationSection(): NavSection {
   const animations = extendedManifest.filter((entry) => entry.category === "animation");
-  const text = animations.filter((a) => a.slug === "typewriter-text" || a.slug === "text-animations");
-  const cards = animations.filter((a) => a.slug === "card-animations");
-  const rest = animations.filter((a) => !text.includes(a) && !cards.includes(a));
+  // Stable, readable order rather than alphabetical.
+  const ORDER = ["text-animations", "card-animations", "animated-button", "micro-interactions", "animated"];
+  const bySlug = new Map(animations.map((a) => [a.slug, a]));
   const items: NavItem[] = [];
-  if (text.length) {
-    items.push({
-      href: `/components/${text[0]!.slug}`,
-      label: "Text",
-      children: text.map((entry) => ({
-        href: `/components/${entry.slug}`,
-        label: entry.name,
-      })),
-    });
+  for (const slug of ORDER) {
+    const entry = bySlug.get(slug);
+    if (entry) {
+      items.push({ href: `/components/${entry.slug}`, label: entry.name });
+    }
   }
-  if (cards.length) {
-    items.push({
-      href: `/components/${cards[0]!.slug}`,
-      label: "Cards",
-      children: cards.map((entry) => ({
-        href: `/components/${entry.slug}`,
-        label: entry.name,
-      })),
-    });
-  }
-  for (const entry of rest) {
-    items.push({ href: `/components/${entry.slug}`, label: entry.name });
+  // Any animation entries not in ORDER still surface at the end.
+  for (const entry of animations) {
+    if (!ORDER.includes(entry.slug)) {
+      items.push({ href: `/components/${entry.slug}`, label: entry.name });
+    }
   }
   return { title: "Animation", id: "animation", items };
 }

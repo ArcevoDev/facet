@@ -42,6 +42,12 @@ export interface ConsoleLayoutProps {
   topbar?: React.ReactNode;
   /** Render the built-in theme toggle in the topbar (needs a ThemeProvider ancestor). */
   themeToggle?: boolean;
+  /**
+   * Accordion mode: opening a sidebar section closes the others. Default: false
+   * (sections stay independently open). Recommended for doc-style sidebars
+   * and narrow rail layouts.
+   */
+  singleOpen?: boolean;
   children: React.ReactNode;
 }
 
@@ -53,6 +59,7 @@ function ConsoleLayoutInner({
   mode = "full",
   topbar,
   themeToggle = false,
+  singleOpen = false,
   children,
 }: ConsoleLayoutProps) {
   const { sidebarOpen, setSidebarOpen, sidebarCollapsed, sidebarWidth, toggleSidebarCollapsed } =
@@ -131,6 +138,7 @@ function ConsoleLayoutInner({
             config={config}
             collapsed={mode === "rail" && sidebarCollapsed}
             width={sidebarWidth}
+            singleOpen={singleOpen}
           />
         </div>
       )}
@@ -139,7 +147,7 @@ function ConsoleLayoutInner({
       {!isDesktop && (
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetContent side="left" className="w-[260px] p-0" data-sidebar>
-            <Sidebar config={config} />
+            <Sidebar config={config} singleOpen={singleOpen} />
           </SheetContent>
         </Sheet>
       )}

@@ -113,6 +113,7 @@
   --animate-facet-aurora: facet-aurora 18s ease-in-out infinite alternate;
   --animate-facet-beam: facet-beam 7s ease-in-out infinite;
   --animate-facet-sparkle: facet-sparkle 0.7s ease-out;
+  --animate-facet-dissolve: facet-dissolve 500ms ease-out both;
 }
 
 @keyframes accordion-down {
@@ -213,6 +214,19 @@
   to {
     transform: translate(var(--dx), var(--dy)) scale(0);
     opacity: 0;
+  }
+}
+
+@keyframes facet-dissolve {
+  0% {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(8px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
   }
 }
 

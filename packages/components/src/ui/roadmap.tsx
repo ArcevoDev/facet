@@ -26,6 +26,10 @@ export interface RoadmapProps extends React.HTMLAttributes<HTMLDivElement> {
   showLine?: boolean;
   /** Visual style. "card" (default) or "timeline" (lighter, dot + label). */
   variant?: "card" | "timeline";
+  /** Constrain the timeline to a fixed height and scroll vertically when it
+   * overflows (useful when the roadmap grows past the viewport). Pass a Tailwind
+   * height class, e.g. `"max-h-96"`. Default: unset (natural height). */
+  maxHeight?: string;
 }
 
 const STATUS_STYLES: Record<RoadmapStatus, string> = {
@@ -52,8 +56,12 @@ const STATUS_LABEL: Record<RoadmapStatus, string> = {
  * dot + mono-label look in landing sections.
  */
 const Roadmap = React.forwardRef<HTMLDivElement, RoadmapProps>(
-  ({ items, showLine = true, variant = "card", className, ...props }, ref) => (
-    <div ref={ref} className={cn("space-y-0", className)} {...props}>
+  ({ items, showLine = true, variant = "card", maxHeight, className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn("space-y-0", maxHeight, maxHeight ? "overflow-y-auto" : "", className)}
+      {...props}
+    >
       {items.map((item, i) => {
         const isLast = i === items.length - 1;
         if (variant === "timeline") {

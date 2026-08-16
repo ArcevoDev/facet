@@ -813,6 +813,11 @@ function Example() {
 function Example() {
   return <PasswordInput label="Password" placeholder="••••••••" />;
 }`,
+  "mail-input": `import { MailInput } from "@arcevo/facet-components";
+
+function Example() {
+  return <MailInput placeholder="you@example.com" required />;
+}`,
   "infinite-scroll": `import { InfiniteScroll } from "@arcevo/facet-components";
 
 function Example() {
@@ -904,7 +909,8 @@ import { Navbar } from "@arcevo/facet-components";
 // Pick an animation variant (shine default, sparkle, ripple, magnetic, none).
 <AnimatedButton animation="sparkle">Get started</AnimatedButton>
 <AnimatedButton animation="shine">Continue</AnimatedButton>
-<AnimatedButton animation="none">Plain button</AnimatedButton>
+  <AnimatedButton animation="none">Plain button</AnimatedButton>
+  <AnimatedButton animation="dissolve">Dissolve</AnimatedButton>
 
 // Fully replace with your own component:
 <AnimatedButton renderButton={(props) => <MyButton {...props} />}>Custom</AnimatedButton>
@@ -913,15 +919,10 @@ import { Navbar } from "@arcevo/facet-components";
 //   <BillingPage config={{ plans, ctaButton: { animation: "sparkle" } }} />
 //   <FeedbackPage email="hi@x.com" submitButton={{ animation: "shine" }} />
 //   <SignUp submitButton={{ animation: "sparkle" }} />`,
-  "typewriter-text": `import { TypewriterText } from "@arcevo/facet-components";
+   "text-animations": `import { TypewriterText, BlurText, WaveText, FlipText, SplitText, FadeUpText, ShimmerText, GradientText, LetterSpacingText, CountUpText, DissolveText } from "@arcevo/facet-components";
 
 // Cycle through phrases with a type/erase loop and a blinking caret.
-<TypewriterText
-  phrases={["one identity", "every door", "your key"]}
-  className="font-heading text-2xl font-bold text-foreground"
-  caretClassName="ml-0.5 inline-block w-0.5 animate-pulse text-primary"
-/>`,
-  "text-animations": `import { BlurText, WaveText, FlipText, SplitText, FadeUpText, ShimmerText, GradientText, LetterSpacingText, CountUpText } from "@arcevo/facet-components";
+<TypewriterText phrases={["one identity", "every door", "your key"]} />
 
 // Each character fades in from a blur, staggered.
 <BlurText text="Blur in" className="font-heading text-2xl font-bold" />
@@ -948,8 +949,11 @@ import { Navbar } from "@arcevo/facet-components";
 <LetterSpacingText text="Hover to expand" className="font-heading text-2xl font-bold" />
 
 // Counts up to a number on mount.
-<CountUpText to={64000} separator className="font-heading text-2xl font-bold" />`,
-  "micro-interactions": `import { TiltCard, GlowCard, RippleButton, MagneticButton, ShineButton, ScrollReveal } from "@arcevo/facet-components";
+<CountUpText to={64000} separator className="font-heading text-2xl font-bold" />
+
+// Each character dissolves in, staggered.
+<DissolveText text="Dissolve in" className="font-heading text-2xl font-bold" />`,
+  "micro-interactions": `import { TiltCard, GlowCard, RippleButton, MagneticButton, ShineButton, ScrollReveal, DissolveButton } from "@arcevo/facet-components";
 
 // A card that tilts toward the cursor in 3D.
 <TiltCard maxTilt={10} className="w-64 rounded-xl border p-6">
@@ -979,7 +983,12 @@ import { Navbar } from "@arcevo/facet-components";
 // Reveals children as they scroll into view.
 <ScrollReveal delay={100}>
   <Card>Revealed on scroll</Card>
-</ScrollReveal>`,
+</ScrollReveal>
+
+// A button that emits particles on click.
+<DissolveButton className="rounded-md bg-primary px-6 py-2 text-primary-foreground">
+  Dissolve
+</DissolveButton>`,
   footer: `import { Footer } from "@arcevo/facet-components";
 
 <Footer
@@ -991,7 +1000,11 @@ import { Navbar } from "@arcevo/facet-components";
   socials={[{ label: "GitHub", href: "https://github.com/arcevodev", icon: "github" }]}
   bottomLinks={[{ label: "Feedback", href: "/feedback" }]}
   legal={\`© \${new Date().getFullYear()} facet. MIT License.\`}
-/>`,
+/>
+
+// Use variant="streamline" for a clean grid, how-it-works steps, and
+// research notices (modeled after the stream-wise footer pattern).
+// <Footer variant="streamline" brand={{ name: "facet" }} columns={[]} steps={[]} notices={[]} />`,
   "feedback-page": `import { FeedbackPage } from "@arcevo/facet-components";
 
 <FeedbackPage
@@ -1063,7 +1076,7 @@ function Example() {
     />
   );
 }`,
-  "card-animations": `import { FlipCard } from "@arcevo/facet-components";
+  "card-animations": `import { FlipCard, DissolveCard } from "@arcevo/facet-components";
 
 function Example() {
   return (
@@ -1073,7 +1086,12 @@ function Example() {
       back={<div>Back</div>}
     />
   );
-}`,
+}
+
+// A card that dissolves in on mount.
+<DissolveCard className="w-64 rounded-xl border p-6">
+  Dissolve in
+</DissolveCard>`,
   "otp-verification-card": `import { OtpVerificationCard } from "@arcevo/facet-components";
 
 function Example() {
@@ -2447,6 +2465,10 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     Default: `<PasswordInput label="Password" />`,
     "No toggle": `<PasswordInput label="Password" showToggle={false} />`,
   },
+  "mail-input": {
+    Default: `<MailInput placeholder="you@example.com" required />`,
+    "Custom domains": `<MailInput domains={["arcevocirqle.com.ng", "gmail.com", "yahoo.com"]} />`,
+  },
   "infinite-scroll": {
     Vertical: `<InfiniteScroll
   hasMore={hasMore}
@@ -2563,6 +2585,14 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     Gradient: `<GradientText text="Animated gradient" className="font-heading text-2xl font-extrabold" />`,
     "Letter spacing": `<LetterSpacingText text="Hover to expand" className="font-heading text-2xl font-bold text-foreground" />`,
     "Count up": `<CountUpText to={64000} separator className="font-heading text-2xl font-bold text-foreground" />`,
+    Typewriter: `<TypewriterText phrases={["one identity", "every door", "your key"]} className="font-heading text-xl font-bold text-foreground" />`,
+    "Fast cycle": `<TypewriterText
+  phrases={["build", "ship", "scale"]}
+  typeSpeed={45}
+  eraseSpeed={25}
+  delay={900}
+  className="font-heading text-xl font-bold text-foreground"
+/>`,
   },
   "micro-interactions": {
     "Tilt card": `<TiltCard className="w-64 rounded-xl border border-border bg-background p-6 shadow-sm">
@@ -2602,19 +2632,6 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     Ripple: `<AnimatedButton animation="ripple">Click me</AnimatedButton>`,
     Magnetic: `<AnimatedButton animation="magnetic">Pull</AnimatedButton>`,
     None: `<AnimatedButton animation="none">Plain</AnimatedButton>`,
-  },
-  "typewriter-text": {
-    Default: `<TypewriterText
-  phrases={["one identity", "every door", "your key"]}
-  className="font-heading text-xl font-bold text-foreground"
-/>`,
-    "Fast cycle": `<TypewriterText
-  phrases={["build", "ship", "scale"]}
-  typeSpeed={45}
-  eraseSpeed={25}
-  delay={900}
-  className="font-heading text-xl font-bold text-foreground"
-/>`,
   },
   "card-animations": {
     "Flip card": `<FlipCard

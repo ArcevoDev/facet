@@ -17,6 +17,7 @@
 
 import * as React from "react";
 import { cn } from "../utils.js";
+import { Button } from "./button.js";
 import { AnimatedButton } from "./animated-button.js";
 import { Badge } from "./badge.js";
 import { Card, CardContent, CardHeader, CardTitle } from "./card.js";
@@ -117,22 +118,29 @@ function PlanCta({
 }) {
   const href = plan.cta?.href ?? "#";
   const label = plan.cta?.label ?? (plan.price === 0 ? "Get started" : "Contact us");
-  const animation = ctaButton?.animation ?? "sparkle";
-  const go = () => {
-    if (href && href !== "#") {
-      // In-app navigation via history; consumers can override with renderButton.
-      window.location.href = href;
-    }
-  };
+
+  // Consumers can fully replace the CTA via renderButton (e.g. for
+  // animated anchors or tracking wrappers). When provided, defer to
+  // AnimatedButton with their renderer.
+  if (ctaButton?.renderButton) {
+    return (
+      <AnimatedButton
+        animation={ctaButton.animation ?? "sparkle"}
+        renderButton={ctaButton.renderButton}
+        className="w-full"
+      >
+        {label}
+      </AnimatedButton>
+    );
+  }
+
+  // Default: render a proper <a> element via Button asChild so links
+  // are accessible, SEO-discoverable, and support right/middle-click.
+  const variant = plan.cta?.variant ?? "default";
   return (
-    <AnimatedButton
-      animation={animation}
-      renderButton={ctaButton?.renderButton}
-      onClick={go}
-      className="w-full"
-    >
-      {label}
-    </AnimatedButton>
+    <Button asChild variant={variant} className="w-full">
+      <a href={href}>{label}</a>
+    </Button>
   );
 }
 

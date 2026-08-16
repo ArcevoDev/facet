@@ -280,6 +280,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "inputs"
   },
   {
+    "name": "Mail Input",
+    "slug": "mail-input",
+    "description": "MailInput: an email input with a domain suggestion dropdown.",
+    "category": "inputs"
+  },
+  {
     "name": "Marquee",
     "slug": "marquee",
     "description": "Marquee: auto-scrolling horizontal ticker with pause-on-hover support.",
@@ -500,12 +506,6 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "two-factor-setup-panel",
     "description": "@arcevo/facet-components: TwoFactorSetupPanel",
     "category": "ready-to-use"
-  },
-  {
-    "name": "Typewriter Text",
-    "slug": "typewriter-text",
-    "description": "@arcevo/facet-components: TypewriterText",
-    "category": "animation"
   },
   {
     "name": "Icon",

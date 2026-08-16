@@ -32,12 +32,14 @@ export interface SidebarProps {
   collapsed?: boolean;
   /** Current expanded sidebar width in px. Default: 260 */
   width?: number;
+  /** Accordion mode: opening a section closes the others. Default: false */
+  singleOpen?: boolean;
 }
 
 /* ── Component ────────────────────────────────────────────── */
 
-export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_SIDEBAR_WIDTH }: SidebarProps) {
-  const { setSidebarOpen, router, setSidebarWidth, setSidebarCollapsed } = useLayout();
+export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_SIDEBAR_WIDTH, singleOpen = false }: SidebarProps) {
+  const { setSidebarOpen, router, setSidebarWidth, setSidebarCollapsed, collapseAll, expandAll } = useLayout();
 
   const handleNav = React.useCallback(() => {
     setSidebarOpen(false);
@@ -124,9 +126,25 @@ export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_
         {isLoading ? (
           <SidebarSkeleton collapsed={collapsed} />
         ) : config.navigation.length === 0 ? (
-          <p className="px-2 text-sm text-sidebar-foreground/40">No navigation items</p>
+          <div className="flex flex-col items-center gap-4 py-8">
+            <p className="px-2 text-center text-sm text-sidebar-foreground/40">No navigation items</p>
+            {!collapsed && (
+              <SidebarToolbar
+                sectionIds={config.navigation.map((s) => s.id ?? s.title)}
+                onCollapseAll={collapseAll}
+                onExpandAll={expandAll}
+              />
+            )}
+          </div>
         ) : (
           <nav className={collapsed ? "flex flex-col items-center gap-1" : "space-y-6"}>
+            {!collapsed && (
+              <SidebarToolbar
+                sectionIds={config.navigation.map((s) => s.id ?? s.title)}
+                onCollapseAll={collapseAll}
+                onExpandAll={expandAll}
+              />
+            )}
             {config.navigation.map((section) => (
               <NavSectionRenderer
                 key={section.title}
@@ -135,6 +153,7 @@ export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_
                 onNav={handleNav}
                 onExpand={() => setSidebarCollapsed(false)}
                 collapsed={collapsed}
+                singleOpen={singleOpen}
               />
             ))}
           </nav>
@@ -181,22 +200,43 @@ function NavSectionRenderer({
   onNav,
   collapsed,
   onExpand,
+  singleOpen = false,
 }: {
   section: NavSection;
   router: RouterAdapter | undefined;
   onNav: () => void;
   collapsed: boolean;
   onExpand: () => void;
+  singleOpen?: boolean;
 }) {
   // Storybook-style section: the header toggles the whole group.
   // Open by default; collapse state is persisted via layout context.
-  const { collapsedSections, toggleSection } = useLayout();
+  const { collapsedSections, toggleSection, openSection } = useLayout();
   const sectionKey = section.id ?? section.title;
   const isActive = router ? router.isActive : (href: string) => href === window.location.pathname;
   const hasActive = sectionHasActiveItem(section, isActive);
   // A section containing the active page stays open regardless of the
   // persisted collapse state (unless the user explicitly collapsed it).
   const open = hasActive ? true : !collapsedSections[sectionKey];
+
+  // In single-open (accordion) mode the active section is always visible:
+  // scroll it into view on mount/update so it isn't cut off at the bottom
+  // of the scrollable rail.
+  const sectionRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (open && hasActive && sectionRef.current) {
+      sectionRef.current.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
+    }
+  }, [open, hasActive]);
+
+  // Header toggle: accordion (openSection) when singleOpen, else multi-open.
+  const handleToggle = () => {
+    if (singleOpen) {
+      openSection(sectionKey);
+    } else {
+      toggleSection(sectionKey);
+    }
+  };
 
   // Collapsed rail (YouTube-style): one icon slot per section, not a list.
   // All section icons stack together with no scroll; the full item list
@@ -232,10 +272,10 @@ function NavSectionRenderer({
   }
 
   return (
-    <div>
+    <div ref={sectionRef}>
       <button
         type="button"
-        onClick={() => toggleSection(sectionKey)}
+        onClick={handleToggle}
         aria-expanded={open}
         className="mb-2 flex w-full items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold uppercase tracking-widest text-sidebar-foreground/50 transition-colors hover:text-sidebar-foreground/80"
       >
@@ -407,6 +447,53 @@ function NavItemRenderer({
         </Tooltip>
       </TooltipProvider>
     </li>
+  );
+}
+
+/* ── Sidebar toolbar: collapse / expand all (with tooltips) ── */
+
+interface SidebarToolbarProps {
+  sectionIds: string[];
+  onCollapseAll: (ids: string[]) => void;
+  onExpandAll: (ids: string[]) => void;
+}
+
+function SidebarToolbar({ sectionIds, onCollapseAll, onExpandAll }: SidebarToolbarProps) {
+  return (
+    <div className="mb-4 flex items-center gap-1">
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => onCollapseAll(sectionIds)}
+              aria-label="Collapse all sections"
+              className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M5 6h14M5 18h14" /></svg>
+              <span>Collapse all</span>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Collapse all sections</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={() => onExpandAll(sectionIds)}
+              aria-label="Expand all sections"
+              className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 6h14M5 12h14M5 18h14" /></svg>
+              <span>Expand all</span>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">Expand all sections</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
   );
 }
 

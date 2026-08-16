@@ -311,3 +311,62 @@ export function ScrollReveal({
     </div>
   );
 }
+
+/* ── DissolveButton ────────────────────────────────────────── */
+
+export interface DissolveButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  /** Button label. Default: "Get started". */
+  label?: string;
+}
+
+/** A button that emits a particle-dissolve burst on click.
+ *  Rectangular particles radiate from the click point and fade out.
+ *  SSR-safe: button renders statically; bursts happen on interaction. */
+export const DissolveButton = React.forwardRef<HTMLButtonElement, DissolveButtonProps>(
+  ({ className, label = "Get started", children, onClick, ...props }, ref) => {
+    const hostRef = React.useRef<HTMLButtonElement | null>(null);
+
+    const burst = (e: React.MouseEvent<HTMLButtonElement>) => {
+      const el = hostRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const x = e.clientX - r.left;
+      const y = e.clientY - r.top;
+      for (let i = 0; i < 16; i++) {
+        const span = document.createElement("span");
+        span.className =
+          "pointer-events-none absolute h-1 w-2 rounded bg-white/50 opacity-70 blur-[1px] animate-[facet-dissolve_0.7s_ease-out_reverse]";
+        const angle = (Math.PI * 2 * i) / 16;
+        const dist = 25 + Math.random() * 25;
+        span.style.left = `${x}px`;
+        span.style.top = `${y}px`;
+        span.style.setProperty("--dx", `${Math.cos(angle) * dist}px`);
+        span.style.setProperty("--dy", `${Math.sin(angle) * dist}px`);
+        span.style.transform = `translate(var(--dx), var(--dy))`;
+        el.appendChild(span);
+        setTimeout(() => span.remove(), 750);
+      }
+      onClick?.(e);
+    };
+
+    return (
+      <button
+        ref={(node) => {
+          hostRef.current = node;
+          if (typeof ref === "function") ref(node);
+          else if (ref) ref.current = node;
+        }}
+        onClick={burst}
+        className={cn(
+          "relative inline-flex h-10 items-center justify-center gap-2 overflow-hidden rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90",
+          className,
+        )}
+        {...props}
+      >
+        {children ?? label}
+      </button>
+    );
+  },
+);
+DissolveButton.displayName = "DissolveButton";
