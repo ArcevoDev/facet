@@ -242,7 +242,7 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "How do I update my facet packages?",
-    a: "Run `facet pkg` to see versions, then `facet update` prints the exact install command for your package manager.",
+    a: "Run `facet pkg` to see versions, then `facet update` applies the exact update for your package manager (`-y` skips the confirmation, `--dry-run` only prints it).",
   },
   {
     q: "Can I copy components into my source instead of installing the package?",
