@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import { FaqSection } from "@arcevo/facet-components";
+import { FaqSection as FacetFaqSection } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { FAQ } from "../data/features.js";
 import { getDocsUrl } from "../lib/docs-url.js";
 
 export function FaqSection() {
   return (
-    <FaqSection
+    <FacetFaqSection
       items={FAQ}
       title="Frequently asked questions"
       description="Quick answers for the questions consumers ask most."
@@ -33,6 +33,6 @@ export function FaqSection() {
           Drop feedback or contact the maintainers
         </Link>
       </div>
-    </FaqSection>
+    </FacetFaqSection>
   );
 }
