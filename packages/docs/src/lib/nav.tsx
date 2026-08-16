@@ -245,17 +245,25 @@ export function buildPagesSection(): NavSection {
  */
 export function buildAnimationSection(): NavSection {
   const animations = extendedManifest.filter((entry) => entry.category === "animation");
-  // Text effects live in typewriter-text.tsx + text-animations.tsx; the
-  // surface + micro-interaction entries (animated, micro-interactions)
-  // render as top-level items.
   const text = animations.filter((a) => a.slug === "typewriter-text" || a.slug === "text-animations");
-  const rest = animations.filter((a) => !text.includes(a));
+  const cards = animations.filter((a) => a.slug === "card-animations");
+  const rest = animations.filter((a) => !text.includes(a) && !cards.includes(a));
   const items: NavItem[] = [];
   if (text.length) {
     items.push({
       href: `/components/${text[0]!.slug}`,
       label: "Text",
       children: text.map((entry) => ({
+        href: `/components/${entry.slug}`,
+        label: entry.name,
+      })),
+    });
+  }
+  if (cards.length) {
+    items.push({
+      href: `/components/${cards[0]!.slug}`,
+      label: "Cards",
+      children: cards.map((entry) => ({
         href: `/components/${entry.slug}`,
         label: entry.name,
       })),

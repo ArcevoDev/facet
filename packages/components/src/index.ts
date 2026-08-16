@@ -500,3 +500,103 @@ export {
   type FeedbackPageProps,
   FeedbackPage,
 } from "./ui/feedback-page.js";
+
+/* ── Animations: card effects ─────────────────────────────── */
+export {
+  type FlipCardProps,
+  FlipCard,
+  type SpotlightCardProps,
+  SpotlightCard,
+  type BorderBeamCardProps,
+  BorderBeamCard,
+  type ShineCardProps,
+  ShineCard,
+  type GradientBorderCardProps,
+  GradientBorderCard,
+  type RevealCardProps,
+  RevealCard,
+  type HoverScaleCardProps,
+  HoverScaleCard,
+  type MagneticCardProps,
+  MagneticCard,
+} from "./ui/card-animations.js";
+
+/* ── Ready-to-use: auth & security ────────────────────────── */
+export {
+  type OtpVerificationCardProps,
+  OtpVerificationCard,
+} from "./ui/otp-verification-card.js";
+export {
+  type TwoFactorSetupPanelProps,
+  TwoFactorSetupPanel,
+} from "./ui/two-factor-setup-panel.js";
+export {
+  type PasswordStrengthLevel,
+  type PasswordStrengthMeterProps,
+  PasswordStrengthMeter,
+  scorePassword,
+  levelFromScore,
+  PASSWORD_RULES,
+} from "./ui/password-strength-meter.js";
+export {
+  type ApiKey,
+  type ApiKeyManagerProps,
+  ApiKeyManager,
+} from "./ui/api-key-manager.js";
+export {
+  type Invitee,
+  type InviteTeamFormProps,
+  InviteTeamForm,
+} from "./ui/invite-team-form.js";
+
+/* ── Ready-to-use: settings & security surface ────────────── */
+export {
+  type SettingsSection,
+  type AccountSettingsPanelProps,
+  AccountSettingsPanel,
+} from "./ui/account-settings-panel.js";
+export {
+  type SecurityFeature,
+  type SecuritySectionCardProps,
+  SecuritySectionCard,
+} from "./ui/security-section-card.js";
+
+/* ── Ready-to-use: marketing ──────────────────────────────── */
+export {
+  type AnnouncementBarProps,
+  AnnouncementBar,
+} from "./ui/announcement-bar.js";
+export {
+  type CookieChoice,
+  type CookieConsentProps,
+  CookieConsent,
+} from "./ui/cookie-consent.js";
+export {
+  type Testimonial,
+  type TestimonialShowcaseProps,
+  TestimonialShowcase,
+} from "./ui/testimonial-showcase.js";
+export {
+  type FaqItem,
+  type FaqSectionProps,
+  FaqSection,
+} from "./ui/faq-section.js";
+
+/* ── Ready-to-use: dashboard ──────────────────────────────── */
+export {
+  type PageHeaderCrumb,
+  type PageHeaderProps,
+  PageHeader,
+} from "./ui/page-header.js";
+export {
+  type StatDeltaDirection,
+  type StatCardProps,
+  StatCard,
+} from "./ui/stat-card.js";
+export {
+  type ActivityItem,
+  type ActivityFeedProps,
+  ActivityFeed,
+  relativeTime,
+  dayLabel,
+} from "./ui/activity-feed.js";

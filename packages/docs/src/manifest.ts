@@ -16,6 +16,18 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "layout"
   },
   {
+    "name": "Account Settings Panel",
+    "slug": "account-settings-panel",
+    "description": "@arcevo/facet-components: AccountSettingsPanel",
+    "category": "ready-to-use"
+  },
+  {
+    "name": "Activity Feed",
+    "slug": "activity-feed",
+    "description": "@arcevo/facet-components: ActivityFeed",
+    "category": "ready-to-use"
+  },
+  {
     "name": "Alert",
     "slug": "alert",
     "description": "",
@@ -38,6 +50,18 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "animated-button",
     "description": "@arcevo/facet-components: AnimatedButton",
     "category": "animation"
+  },
+  {
+    "name": "Announcement Bar",
+    "slug": "announcement-bar",
+    "description": "@arcevo/facet-components: AnnouncementBar",
+    "category": "ready-to-use"
+  },
+  {
+    "name": "Api Key Manager",
+    "slug": "api-key-manager",
+    "description": "@arcevo/facet-components: ApiKeyManager",
+    "category": "ready-to-use"
   },
   {
     "name": "Avatar",
@@ -88,6 +112,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "data-display"
   },
   {
+    "name": "Card Animations",
+    "slug": "card-animations",
+    "description": "@arcevo/facet-components: card animations",
+    "category": "animation"
+  },
+  {
     "name": "Checkbox",
     "slug": "checkbox",
     "description": "",
@@ -122,6 +152,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "context-menu",
     "description": "",
     "category": "feedback"
+  },
+  {
+    "name": "Cookie Consent",
+    "slug": "cookie-consent",
+    "description": "@arcevo/facet-components: CookieConsent",
+    "category": "ready-to-use"
   },
   {
     "name": "Country Code Input",
@@ -172,6 +208,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "feedback"
   },
   {
+    "name": "Faq Section",
+    "slug": "faq-section",
+    "description": "@arcevo/facet-components: FaqSection",
+    "category": "ready-to-use"
+  },
+  {
     "name": "Feedback Page",
     "slug": "feedback-page",
     "description": "@arcevo/facet-components: FeedbackPage",
@@ -212,6 +254,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "input-otp",
     "description": "",
     "category": "inputs"
+  },
+  {
+    "name": "Invite Team Form",
+    "slug": "invite-team-form",
+    "description": "@arcevo/facet-components: InviteTeamForm",
+    "category": "ready-to-use"
   },
   {
     "name": "Kbd",
@@ -274,6 +322,18 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "inputs"
   },
   {
+    "name": "Otp Verification Card",
+    "slug": "otp-verification-card",
+    "description": "@arcevo/facet-components: OtpVerificationCard",
+    "category": "ready-to-use"
+  },
+  {
+    "name": "Page Header",
+    "slug": "page-header",
+    "description": "@arcevo/facet-components: PageHeader",
+    "category": "ready-to-use"
+  },
+  {
     "name": "Pagination",
     "slug": "pagination",
     "description": "",
@@ -284,6 +344,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "password-input",
     "description": "PasswordInput: a password field with a built-in show/hide toggle.",
     "category": "general"
+  },
+  {
+    "name": "Password Strength Meter",
+    "slug": "password-strength-meter",
+    "description": "@arcevo/facet-components: PasswordStrengthMeter",
+    "category": "ready-to-use"
   },
   {
     "name": "Popover",
@@ -320,6 +386,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "scroll-area",
     "description": "",
     "category": "layout"
+  },
+  {
+    "name": "Security Section Card",
+    "slug": "security-section-card",
+    "description": "@arcevo/facet-components: SecuritySectionCard",
+    "category": "ready-to-use"
   },
   {
     "name": "Select",
@@ -364,6 +436,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "feedback"
   },
   {
+    "name": "Stat Card",
+    "slug": "stat-card",
+    "description": "@arcevo/facet-components: StatCard",
+    "category": "ready-to-use"
+  },
+  {
     "name": "Switch",
     "slug": "switch",
     "description": "",
@@ -380,6 +458,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "tabs",
     "description": "",
     "category": "layout"
+  },
+  {
+    "name": "Testimonial Showcase",
+    "slug": "testimonial-showcase",
+    "description": "@arcevo/facet-components: TestimonialShowcase",
+    "category": "ready-to-use"
   },
   {
     "name": "Text Animations",
@@ -410,6 +494,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "tooltip",
     "description": "",
     "category": "feedback"
+  },
+  {
+    "name": "Two Factor Setup Panel",
+    "slug": "two-factor-setup-panel",
+    "description": "@arcevo/facet-components: TwoFactorSetupPanel",
+    "category": "ready-to-use"
   },
   {
     "name": "Typewriter Text",

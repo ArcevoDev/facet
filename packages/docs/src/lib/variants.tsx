@@ -194,6 +194,28 @@ import {
   MagneticButton,
   ShineButton,
   ScrollReveal,
+  FlipCard,
+  SpotlightCard,
+  BorderBeamCard,
+  ShineCard,
+  GradientBorderCard,
+  RevealCard,
+  HoverScaleCard,
+  MagneticCard,
+  OtpVerificationCard,
+  TwoFactorSetupPanel,
+  PasswordStrengthMeter,
+  ApiKeyManager,
+  InviteTeamForm,
+  AccountSettingsPanel,
+  SecuritySectionCard,
+  AnnouncementBar,
+  CookieConsent,
+  TestimonialShowcase,
+  FaqSection,
+  PageHeader,
+  StatCard,
+  ActivityFeed,
   Footer,
   FeedbackPage,
   BillingPage,
@@ -2942,6 +2964,387 @@ export function variantCells(slug: string): VariantCell[] | undefined {
               <BillingPageFreemium
                 config={{ plans: BILLING_PLANS, title: "Start free, scale when you're ready" }}
                 heroPlanId="pro"
+              />
+            </div>
+          ),
+        },
+      ];
+
+    case "card-animations":
+      return [
+        {
+          label: "Flip card",
+          node: (
+            <div className="flex min-h-64 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <FlipCard
+                className="w-64"
+                front={
+                  <div className="flex h-full w-full items-center justify-center rounded-xl border border-border bg-background">
+                    <p className="font-medium text-foreground">Front</p>
+                  </div>
+                }
+                back={
+                  <div className="flex h-full w-full items-center justify-center rounded-xl bg-primary text-primary-foreground">
+                    <p className="font-medium">Back</p>
+                  </div>
+                }
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Spotlight card",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <SpotlightCard className="w-64 rounded-xl border border-border bg-background p-6">
+                <p className="text-sm font-semibold text-foreground">Move your cursor over me</p>
+              </SpotlightCard>
+            </div>
+          ),
+        },
+        {
+          label: "Border beam",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <BorderBeamCard className="w-64">
+                <div className="rounded-xl p-6">
+                  <p className="text-sm font-semibold text-foreground">Animated border</p>
+                </div>
+              </BorderBeamCard>
+            </div>
+          ),
+        },
+        {
+          label: "Shine card",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <ShineCard className="w-64 rounded-xl border border-border bg-background p-6">
+                <p className="text-sm font-semibold text-foreground">Hover for a sheen</p>
+              </ShineCard>
+            </div>
+          ),
+        },
+        {
+          label: "Gradient border",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <GradientBorderCard className="w-64">
+                <div className="rounded-xl p-6">
+                  <p className="text-sm font-semibold text-foreground">Gradient border</p>
+                </div>
+              </GradientBorderCard>
+            </div>
+          ),
+        },
+        {
+          label: "Reveal card",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <RevealCard className="w-64 rounded-xl border border-border bg-background p-6">
+                <p className="text-sm font-semibold text-foreground">Scroll to reveal</p>
+              </RevealCard>
+            </div>
+          ),
+        },
+        {
+          label: "Hover scale",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <HoverScaleCard className="w-64 rounded-xl border border-border bg-background p-6">
+                <p className="text-sm font-semibold text-foreground">Hover to scale</p>
+              </HoverScaleCard>
+            </div>
+          ),
+        },
+        {
+          label: "Magnetic card",
+          node: (
+            <div className="flex min-h-48 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <MagneticCard className="w-64 rounded-xl border border-border bg-background p-6">
+                <p className="text-sm font-semibold text-foreground">It pulls toward your cursor</p>
+              </MagneticCard>
+            </div>
+          ),
+        },
+      ];
+
+    case "otp-verification-card":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="flex min-h-64 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <OtpVerificationCard onVerify={() => {}} />
+            </div>
+          ),
+        },
+        {
+          label: "With resend",
+          node: (
+            <div className="flex min-h-64 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <OtpVerificationCard onVerify={() => {}} onResend={() => {}} length={4} />
+            </div>
+          ),
+        },
+      ];
+
+    case "two-factor-setup-panel":
+      return [
+        {
+          label: "Setup flow",
+          node: (
+            <div className="flex min-h-96 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <TwoFactorSetupPanel
+                otpauthUri="otpauth://totp/Example:ada@example.com?secret=JBSWY3DPEHPK3PXP&issuer=Example"
+                secret="JBSWY3DPEHPK3PXP"
+                onConfirm={async () => {}}
+                recoveryCodes={["1111 2222", "3333 4444", "5555 6666", "7777 8888"]}
+              />
+            </div>
+          ),
+        },
+      ];
+
+    case "password-strength-meter":
+      return [
+        {
+          label: "Empty",
+          node: (
+            <div className="flex min-h-32 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <PasswordStrengthMeter value="" className="w-64" />
+            </div>
+          ),
+        },
+        {
+          label: "Weak",
+          node: (
+            <div className="flex min-h-32 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <PasswordStrengthMeter value="abc" className="w-64" />
+            </div>
+          ),
+        },
+        {
+          label: "Strong",
+          node: (
+            <div className="flex min-h-32 w-full items-center justify-center rounded-lg border border-border bg-background p-6">
+              <PasswordStrengthMeter value="P@ssw0rd!123" className="w-64" />
+            </div>
+          ),
+        },
+      ];
+
+    case "api-key-manager":
+      return [
+        {
+          label: "With keys",
+          node: (
+            <div className="flex w-full items-start justify-center rounded-lg border border-border bg-background p-6">
+              <ApiKeyManager
+                keys={[
+                  { id: "1", name: "Staging server", last4: "3f2a", prefix: "facet_live", scopes: ["read"], createdAt: "2026-08-01T00:00:00Z" },
+                  { id: "2", name: "CI", last4: "8b1c", prefix: "facet_live", scopes: ["read", "write"], createdAt: "2026-07-20T00:00:00Z", expiresAt: "2026-10-20T00:00:00Z" },
+                ]}
+                onCreate={async () => ({ secret: "facet_live_abc123" })}
+                onRevoke={() => {}}
+              />
+            </div>
+          ),
+        },
+      ];
+
+    case "invite-team-form":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="flex w-full items-start justify-center rounded-lg border border-border bg-background p-6">
+              <InviteTeamForm onInvite={async () => {}} />
+            </div>
+          ),
+        },
+      ];
+
+    case "account-settings-panel":
+      return [
+        {
+          label: "Profile + security",
+          node: (
+            <div className="flex w-full items-start justify-center rounded-lg border border-border bg-background p-6">
+              <AccountSettingsPanel
+                sections={[
+                  { id: "profile", label: "Profile", icon: "user" },
+                  { id: "security", label: "Security", icon: "shield" },
+                ]}
+                content={{
+                  profile: (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold text-foreground">Display name</p>
+                      <p className="text-sm text-muted-foreground">Ada Lovelace</p>
+                      <Button size="sm">Edit profile</Button>
+                    </div>
+                  ),
+                  security: (
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold text-foreground">Two-factor authentication</p>
+                      <p className="text-sm text-muted-foreground">Enabled</p>
+                    </div>
+                  ),
+                }}
+              />
+            </div>
+          ),
+        },
+      ];
+
+    case "security-section-card":
+      return [
+        {
+          label: "Security grid",
+          node: (
+            <div className="flex w-full items-start justify-center rounded-lg border border-border bg-background p-6">
+              <SecuritySectionCard
+                features={[
+                  { id: "mfa", title: "Two-factor authentication", description: "Protect your account with an authenticator app", icon: "lock" },
+                  { id: "passkeys", title: "Passkeys", description: "Passwordless sign-in with WebAuthn", icon: "key" },
+                  { id: "sessions", title: "Sessions", description: "View and revoke active sessions", icon: "monitor" },
+                ]}
+              />
+            </div>
+          ),
+        },
+      ];
+
+    case "announcement-bar":
+      return [
+        {
+          label: "Primary",
+          node: (
+            <div className="w-full rounded-lg border border-border bg-background">
+              <AnnouncementBar storageKey="facet-docs-announcement">New: facet 1.7 is here</AnnouncementBar>
+            </div>
+          ),
+        },
+      ];
+
+    case "cookie-consent":
+      return [
+        {
+          label: "Banner",
+          node: (
+            <div className="relative flex min-h-48 w-full items-end justify-center rounded-lg border border-border bg-background p-6">
+              <CookieConsent
+                storageKey="facet-docs-cookie-consent"
+                position="bottom"
+                className="static inset-auto p-0"
+              />
+            </div>
+          ),
+        },
+      ];
+
+    case "testimonial-showcase":
+      return [
+        {
+          label: "Grid",
+          node: (
+            <div className="flex w-full items-start justify-center rounded-lg border border-border bg-background p-6">
+              <TestimonialShowcase
+                testimonials={[
+                  { quote: "The auth forms alone saved us weeks.", author: "Ada", role: "CTO, Finly", initials: "A" },
+                  { quote: "Every surface is composable and themeable.", author: "Grace", role: "Engineer, Nimbus", initials: "G" },
+                  { quote: "The docs are a joy to explore.", author: "Alan", role: "Founder, Turing Labs", initials: "T" },
+                ]}
+              />
+            </div>
+          ),
+        },
+        {
+          label: "Carousel",
+          node: (
+            <div className="flex w-full items-start justify-center rounded-lg border border-border bg-background p-6">
+              <TestimonialShowcase
+                mode="carousel"
+                testimonials={[
+                  { quote: "The auth forms alone saved us weeks.", author: "Ada", role: "CTO, Finly", initials: "A" },
+                  { quote: "Every surface is composable and themeable.", author: "Grace", role: "Engineer, Nimbus", initials: "G" },
+                  { quote: "The docs are a joy to explore.", author: "Alan", role: "Founder, Turing Labs", initials: "T" },
+                ]}
+              />
+            </div>
+          ),
+        },
+      ];
+
+    case "faq-section":
+      return [
+        {
+          label: "Default",
+          node: (
+            <div className="flex w-full items-start justify-center rounded-lg border border-border bg-background p-6">
+              <FaqSection
+                className="w-full max-w-lg"
+                title="Frequently asked"
+                items={[
+                  { question: "Is it framework agnostic?", answer: "Yes. The core is dependency-free React." },
+                  { question: "Can I theme it?", answer: "Everything reads from your Tailwind theme tokens." },
+                  { question: "Is it accessible?", answer: "Yes. All primitives ship with ARIA wiring." },
+                ]}
+              />
+            </div>
+          ),
+        },
+      ];
+
+    case "page-header":
+      return [
+        {
+          label: "With crumbs + actions",
+          node: (
+            <div className="w-full rounded-lg border border-border bg-background p-6">
+              <PageHeader
+                title="Profile settings"
+                description="Manage your account details and preferences."
+                crumbs={[{ label: "Dashboard", href: "#" }, { label: "Settings" }]}
+                actions={<Button size="sm">Save changes</Button>}
+              />
+            </div>
+          ),
+        },
+      ];
+
+    case "stat-card":
+      return [
+        {
+          label: "Positive delta",
+          node: (
+            <div className="flex min-h-32 w-full items-center justify-center gap-4 rounded-lg border border-border bg-background p-6">
+              <StatCard label="Monthly revenue" value="$48,290" delta={12.4} hint="vs last month" className="w-56" />
+            </div>
+          ),
+        },
+        {
+          label: "Negative delta",
+          node: (
+            <div className="flex min-h-32 w-full items-center justify-center gap-4 rounded-lg border border-border bg-background p-6">
+              <StatCard label="Churn rate" value="2.1%" delta={-0.4} hint="vs last month" className="w-56" />
+            </div>
+          ),
+        },
+      ];
+
+    case "activity-feed":
+      return [
+        {
+          label: "Grouped by day",
+          node: (
+            <div className="flex w-full items-start justify-center rounded-lg border border-border bg-background p-6">
+              <ActivityFeed
+                className="w-full max-w-md"
+                items={[
+                  { id: "1", title: "Ada signed in", description: "From a new device", timestamp: new Date().toISOString(), icon: "log-in" },
+                  { id: "2", title: "API key created", description: "Staging server", timestamp: new Date(Date.now() - 2 * 3600000).toISOString(), icon: "key" },
+                  { id: "3", title: "Password changed", timestamp: new Date(Date.now() - 30 * 86400000).toISOString(), icon: "shield" },
+                ]}
               />
             </div>
           ),

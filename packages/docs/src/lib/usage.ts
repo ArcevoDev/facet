@@ -1063,6 +1063,147 @@ function Example() {
     />
   );
 }`,
+  "card-animations": `import { FlipCard } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <FlipCard
+      className="w-64"
+      front={<div>Front</div>}
+      back={<div>Back</div>}
+    />
+  );
+}`,
+  "otp-verification-card": `import { OtpVerificationCard } from "@arcevo/facet-components";
+
+function Example() {
+  return <OtpVerificationCard onVerify={async (code) => validate(code)} />;
+}`,
+  "two-factor-setup-panel": `import { TwoFactorSetupPanel } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <TwoFactorSetupPanel
+      otpauthUri="otpauth://totp/Example:ada@example.com?secret=JBSWY3DPEHPK3PXP&issuer=Example"
+      secret="JBSWY3DPEHPK3PXP"
+      onConfirm={async (code) => confirm(code)}
+      recoveryCodes={["1111 2222", "3333 4444", "5555 6666", "7777 8888"]}
+    />
+  );
+}`,
+  "password-strength-meter": `import { PasswordStrengthMeter } from "@arcevo/facet-components";
+
+function Example() {
+  return <PasswordStrengthMeter value={password} />;
+}`,
+  "api-key-manager": `import { ApiKeyManager } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <ApiKeyManager
+      keys={keys}
+      onCreate={async ({ name, scope }) => createKey(name, scope)}
+      onRevoke={async (id) => revokeKey(id)}
+    />
+  );
+}`,
+  "invite-team-form": `import { InviteTeamForm } from "@arcevo/facet-components";
+
+function Example() {
+  return <InviteTeamForm onInvite={async (invitees) => sendInvites(invitees)} />;
+}`,
+  "account-settings-panel": `import { AccountSettingsPanel } from "@arcevo/facet-components";
+
+const sections = [
+  { id: "profile", label: "Profile", icon: "user" },
+  { id: "security", label: "Security", icon: "shield" },
+];
+
+function Example() {
+  return (
+    <AccountSettingsPanel
+      sections={sections}
+      content={{
+        profile: <ProfileForm />,
+        security: <SecuritySettings />,
+      }}
+    />
+  );
+}`,
+  "security-section-card": `import { SecuritySectionCard } from "@arcevo/facet-components";
+
+const features = [
+  { id: "mfa", title: "Two-factor authentication", description: "Protect your account", icon: "lock" },
+  { id: "passkeys", title: "Passkeys", description: "Passwordless sign-in", icon: "key" },
+];
+
+function Example() {
+  return <SecuritySectionCard features={features} onSelect={(f) => open(f.id)} />;
+}`,
+  "announcement-bar": `import { AnnouncementBar } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <AnnouncementBar storageKey="my-announcement">
+      New: read the changelog
+    </AnnouncementBar>
+  );
+}`,
+  "cookie-consent": `import { CookieConsent } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <CookieConsent
+      onDecision={(choice) => track(choice)}
+      details={<a href="/privacy">Read our privacy policy</a>}
+    />
+  );
+}`,
+  "testimonial-showcase": `import { TestimonialShowcase } from "@arcevo/facet-components";
+
+const testimonials = [
+  { quote: "The auth forms saved us weeks.", author: "Ada", role: "CTO", initials: "A" },
+  { quote: "Composable and themeable.", author: "Grace", role: "Engineer", initials: "G" },
+];
+
+function Example() {
+  return <TestimonialShowcase testimonials={testimonials} mode="grid" />;
+}`,
+  "faq-section": `import { FaqSection } from "@arcevo/facet-components";
+
+const items = [
+  { question: "Is it framework agnostic?", answer: "Yes. The core is dependency-free React." },
+];
+
+function Example() {
+  return <FaqSection items={items} title="FAQ" />;
+}`,
+  "page-header": `import { PageHeader } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <PageHeader
+      title="Profile settings"
+      description="Manage your account."
+      crumbs={[{ label: "Dashboard", href: "/" }, { label: "Settings" }]}
+      actions={<Button>Save</Button>}
+    />
+  );
+}`,
+  "stat-card": `import { StatCard } from "@arcevo/facet-components";
+
+function Example() {
+  return <StatCard label="Monthly revenue" value="$48,290" delta={12.4} hint="vs last month" />;
+}`,
+  "activity-feed": `import { ActivityFeed } from "@arcevo/facet-components";
+
+const items = [
+  { id: "1", title: "Ada signed in", timestamp: new Date().toISOString(), icon: "log-in" },
+];
+
+function Example() {
+  return <ActivityFeed items={items} />;
+}`,
 };
 
 /** Minimal import + usage snippet for a component slug. */
@@ -2411,6 +2552,114 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
     Default: `<LayoutProvider>
   <Topbar />
 </LayoutProvider>`,
+  },
+  "text-animations": {
+    Blur: `<BlurText text="Blur in, word by word" className="font-heading text-2xl font-bold text-foreground" />`,
+    Wave: `<WaveText text="Wave hello" className="font-heading text-2xl font-bold text-foreground" />`,
+    Flip: `<FlipText text="Flip it" className="font-heading text-2xl font-bold text-foreground" />`,
+    "Split / rise": `<SplitText text="Words rise into place" className="font-heading text-2xl font-bold text-foreground" />`,
+    "Fade up": `<FadeUpText text="Fade and slide up" className="font-heading text-2xl font-bold text-foreground" />`,
+    Shimmer: `<ShimmerText text="Shimmering headline" className="font-heading text-2xl font-extrabold text-foreground" />`,
+    Gradient: `<GradientText text="Animated gradient" className="font-heading text-2xl font-extrabold" />`,
+    "Letter spacing": `<LetterSpacingText text="Hover to expand" className="font-heading text-2xl font-bold text-foreground" />`,
+    "Count up": `<CountUpText to={64000} separator className="font-heading text-2xl font-bold text-foreground" />`,
+  },
+  "micro-interactions": {
+    "Tilt card": `<TiltCard className="w-64 rounded-xl border border-border bg-background p-6 shadow-sm">
+  <p className="text-sm font-semibold text-foreground">Move your cursor over me</p>
+</TiltCard>`,
+    "Glow card": `<GlowCard className="w-64 rounded-xl border border-border bg-background p-6 shadow-sm">
+  <p className="text-sm font-semibold text-foreground">A glow follows your cursor</p>
+</GlowCard>`,
+    "Ripple button": `<RippleButton className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground">
+  Click me
+</RippleButton>`,
+    "Magnetic button": `<MagneticButton className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground">
+  Magnetic
+</MagneticButton>`,
+    "Shine button": `<ShineButton className="rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground">
+  Shine on hover
+</ShineButton>`,
+    "Scroll reveal": `<ScrollReveal>
+  <p className="text-sm font-semibold text-foreground">Reveals as you scroll</p>
+</ScrollReveal>`,
+  },
+  animated: {
+    Layers: `<div className="relative flex h-64 w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
+  <Aurora className="absolute inset-0" opacity={0.75} />
+  <Beams count={4} className="absolute inset-0" color="rgba(129,140,248,0.35)" />
+  <GridPattern className="absolute inset-0" />
+  <p className="relative z-10 text-lg font-bold">Aurora + Beams + Grid</p>
+</div>`,
+    Spotlight: `<Spotlight className="relative flex h-full w-full items-center justify-center">
+  <p className="text-lg font-bold">Move your cursor here</p>
+</Spotlight>`,
+    "Sparkle button": `<SparkleButton label="Click me" />`,
+  },
+  "animated-button": {
+    Shine: `<AnimatedButton animation="shine">Continue</AnimatedButton>`,
+    Sparkle: `<AnimatedButton animation="sparkle">Get started</AnimatedButton>`,
+    Ripple: `<AnimatedButton animation="ripple">Click me</AnimatedButton>`,
+    Magnetic: `<AnimatedButton animation="magnetic">Pull</AnimatedButton>`,
+    None: `<AnimatedButton animation="none">Plain</AnimatedButton>`,
+  },
+  "typewriter-text": {
+    Default: `<TypewriterText
+  phrases={["one identity", "every door", "your key"]}
+  className="font-heading text-xl font-bold text-foreground"
+/>`,
+    "Fast cycle": `<TypewriterText
+  phrases={["build", "ship", "scale"]}
+  typeSpeed={45}
+  eraseSpeed={25}
+  delay={900}
+  className="font-heading text-xl font-bold text-foreground"
+/>`,
+  },
+  "card-animations": {
+    "Flip card": `<FlipCard
+  className="w-64"
+  front={<div className="flex h-full items-center justify-center rounded-xl border border-border bg-background">Front</div>}
+  back={<div className="flex h-full items-center justify-center rounded-xl bg-primary text-primary-foreground">Back</div>}
+/>`,
+    "Spotlight card": `<SpotlightCard className="w-64 rounded-xl border border-border bg-background p-6">
+  <p className="text-sm font-semibold">Move your cursor over me</p>
+</SpotlightCard>`,
+    "Border beam": `<BorderBeamCard className="w-64">
+  <div className="rounded-xl p-6">Animated border</div>
+</BorderBeamCard>`,
+    "Shine card": `<ShineCard className="w-64 rounded-xl border border-border bg-background p-6">
+  <p className="text-sm font-semibold">Hover for a sheen</p>
+</ShineCard>`,
+    "Gradient border": `<GradientBorderCard className="w-64">
+  <div className="rounded-xl p-6">Gradient border</div>
+</GradientBorderCard>`,
+    "Reveal card": `<RevealCard className="w-64 rounded-xl border border-border bg-background p-6">
+  <p className="text-sm font-semibold">Scroll to reveal</p>
+</RevealCard>`,
+    "Hover scale": `<HoverScaleCard className="w-64 rounded-xl border border-border bg-background p-6">
+  <p className="text-sm font-semibold">Hover to scale</p>
+</HoverScaleCard>`,
+    "Magnetic card": `<MagneticCard className="w-64 rounded-xl border border-border bg-background p-6">
+  <p className="text-sm font-semibold">It pulls toward your cursor</p>
+</MagneticCard>`,
+  },
+  "otp-verification-card": {
+    Default: `<OtpVerificationCard onVerify={async (code) => validate(code)} />`,
+    "With resend": `<OtpVerificationCard onVerify={async (code) => validate(code)} onResend={async () => resend()} length={4} />`,
+  },
+  "password-strength-meter": {
+    Empty: `<PasswordStrengthMeter value="" />`,
+    Weak: `<PasswordStrengthMeter value="abc" />`,
+    Strong: `<PasswordStrengthMeter value="P@ssw0rd!123" />`,
+  },
+  "testimonial-showcase": {
+    Grid: `<TestimonialShowcase testimonials={testimonials} mode="grid" />`,
+    Carousel: `<TestimonialShowcase testimonials={testimonials} mode="carousel" />`,
+  },
+  "stat-card": {
+    "Positive delta": `<StatCard label="Monthly revenue" value="$48,290" delta={12.4} hint="vs last month" />`,
+    "Negative delta": `<StatCard label="Churn rate" value="2.1%" delta={-0.4} hint="vs last month" />`,
   },
 };
 

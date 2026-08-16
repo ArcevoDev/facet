@@ -111,7 +111,7 @@ Flags: `-y` (no prompts), `--framework`, `--migrate` / `--fresh`,
 
 ### `facet templates`
 
-Work with **consumer template directories** — your own starter files that
+Work with **consumer template directories**: your own starter files that
 `docs init` and `emails init` can merge into the generated scaffold.
 
 Templates live under `./templates/<name>/` (or `./docs/templates/`,
@@ -127,8 +127,8 @@ Templates live under `./templates/<name>/` (or `./docs/templates/`,
 }
 ```
 
-- **`facet templates list`** — discover template dirs in the repo.
-- **`facet templates describe <name>`** — show a template's manifest + files.
+- **`facet templates list`**: discover template dirs in the repo.
+- **`facet templates describe <name>`**: show a template's manifest + files.
 
 ### `facet docs init --use-template <name>`
 

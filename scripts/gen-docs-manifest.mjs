@@ -80,18 +80,36 @@ const CATEGORY = {
   marquee: "ready-to-use",
   qrcode: "ready-to-use",
   roadmap: "ready-to-use",
-  // Animation family (text + surfaces + micro-interactions)
+  // Animation family (text + surfaces + micro-interactions + card effects)
   animated: "animation",
   "typewriter-text": "animation",
   "text-animations": "animation",
   "micro-interactions": "animation",
   "animated-button": "animation",
+  "card-animations": "animation",
   // Full page components (new "Pages" section)
   "feedback-page": "pages",
   footer: "pages",
   "billing-page": "pages",
   "billing-page-table": "pages",
   "billing-page-freemium": "pages",
+  // Ready-to-use: auth & security
+  "otp-verification-card": "ready-to-use",
+  "two-factor-setup-panel": "ready-to-use",
+  "password-strength-meter": "ready-to-use",
+  "api-key-manager": "ready-to-use",
+  "invite-team-form": "ready-to-use",
+  "account-settings-panel": "ready-to-use",
+  "security-section-card": "ready-to-use",
+  // Ready-to-use: marketing
+  "announcement-bar": "ready-to-use",
+  "cookie-consent": "ready-to-use",
+  "testimonial-showcase": "ready-to-use",
+  "faq-section": "ready-to-use",
+  // Ready-to-use: dashboard
+  "page-header": "ready-to-use",
+  "stat-card": "ready-to-use",
+  "activity-feed": "ready-to-use",
 };
 
 function firstDocLine(filePath) {
