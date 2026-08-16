@@ -1,5 +1,5 @@
-import * as React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@arcevo/facet-components/light";
+import { usePackageManager } from "../context.js";
 
 export interface InstallCommand {
   /** Package spec as it appears in the command, e.g. "@arcevo/facet-components". */
@@ -25,7 +25,7 @@ const MANAGERS = [
  * a wide content column.
  */
 export function InstallTabs({ commands }: { commands: InstallCommand[] }) {
-  const [active, setActive] = React.useState<string>("pnpm");
+  const { activeManager: active, setActiveManager: setActive } = usePackageManager();
 
   const joined = (cmd: string) =>
     commands

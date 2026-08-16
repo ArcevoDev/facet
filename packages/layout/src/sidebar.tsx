@@ -154,6 +154,7 @@ export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_
                 onExpand={() => setSidebarCollapsed(false)}
                 collapsed={collapsed}
                 singleOpen={singleOpen}
+                sectionIds={config.navigation.map((s) => s.id ?? s.title)}
               />
             ))}
           </nav>
@@ -201,6 +202,7 @@ function NavSectionRenderer({
   collapsed,
   onExpand,
   singleOpen = false,
+  sectionIds,
 }: {
   section: NavSection;
   router: RouterAdapter | undefined;
@@ -208,6 +210,7 @@ function NavSectionRenderer({
   collapsed: boolean;
   onExpand: () => void;
   singleOpen?: boolean;
+  sectionIds: string[];
 }) {
   // Storybook-style section: the header toggles the whole group.
   // Open by default; collapse state is persisted via layout context.
@@ -232,7 +235,7 @@ function NavSectionRenderer({
   // Header toggle: accordion (openSection) when singleOpen, else multi-open.
   const handleToggle = () => {
     if (singleOpen) {
-      openSection(sectionKey);
+      openSection(sectionKey, sectionIds);
     } else {
       toggleSection(sectionKey);
     }
@@ -470,7 +473,7 @@ function SidebarToolbar({ sectionIds, onCollapseAll, onExpandAll }: SidebarToolb
               aria-label="Collapse all sections"
               className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M5 6h14M5 18h14" /></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
               <span>Collapse all</span>
             </button>
           </TooltipTrigger>
@@ -486,7 +489,7 @@ function SidebarToolbar({ sectionIds, onCollapseAll, onExpandAll }: SidebarToolb
               aria-label="Expand all sections"
               className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 6h14M5 12h14M5 18h14" /></svg>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
               <span>Expand all</span>
             </button>
           </TooltipTrigger>

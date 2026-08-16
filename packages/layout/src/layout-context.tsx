@@ -108,17 +108,20 @@ export function LayoutProvider({
   }, []);
 
   // Accordion mode: open exactly one section, closing the rest.
-  const openSection = React.useCallback((sectionId: string) => {
+  // The caller passes all known section ids so sections that haven't been
+  // toggled yet (absent from prev) are still collapsed.
+  const openSection = React.useCallback((sectionId: string, sectionIds: string[] = []) => {
     setCollapsedSections((prev) => {
       const next: Record<string, boolean> = {};
+      // Preserve any sections not in the known list.
       for (const key of Object.keys(prev)) {
-        next[key] = key !== sectionId;
+        next[key] = prev[key];
       }
-      try {
-        window.localStorage.setItem(STORAGE_KEY_SECTIONS, JSON.stringify(next));
-      } catch {
-        // Storage can be unavailable (private mode): non-fatal.
+      // Collapse all known sections except the target.
+      for (const id of sectionIds) {
+        next[id] = id !== sectionId;
       }
+      persistSections(next);
       return next;
     });
   }, []);

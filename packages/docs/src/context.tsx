@@ -28,3 +28,44 @@ export function useDocsApp(): DocsAppValue {
   if (!ctx) throw new Error("useDocsApp must be used within <DocsApp>");
   return ctx;
 }
+
+/* ── Global package manager preference ───────────────────── */
+
+const PackageManagerContext = React.createContext<{
+  activeManager: string;
+  setActiveManager: (manager: string) => void;
+} | null>(null);
+
+const PACKAGE_MANAGER_KEY = "facet:docs:package-manager";
+
+/**
+ * Shares the selected package manager (pnpm/npm/yarn/bun) across every
+ * InstallTabs block on the entire docs site. The choice is persisted to
+ * localStorage so the user's preference survives reloads and page
+ * navigation — they only pick once.
+ */
+export function PackageManagerProvider({ children }: { children: React.ReactNode }) {
+  const [active, setActive] = React.useState<string>(() => {
+    if (typeof window === "undefined") return "pnpm";
+    return window.localStorage.getItem(PACKAGE_MANAGER_KEY) ?? "pnpm";
+  });
+
+  const setActiveManager = React.useCallback((manager: string) => {
+    setActive(manager);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(PACKAGE_MANAGER_KEY, manager);
+    }
+  }, []);
+
+  return (
+    <PackageManagerContext.Provider value={{ activeManager: active, setActiveManager }}>
+      {children}
+    </PackageManagerContext.Provider>
+  );
+}
+
+export function usePackageManager() {
+  const ctx = React.useContext(PackageManagerContext);
+  if (!ctx) throw new Error("usePackageManager must be used within <PackageManagerProvider>");
+  return ctx;
+}

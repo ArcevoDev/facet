@@ -9,8 +9,8 @@ feat(components): MailInput with domain suggestions + Dissolve animation family
 
 ### @arcevo/facet-components (minor)
 
-- **MailInput** — email input with a domain-suggestion dropdown. Typing `@` (or
-  continuing after it) surfaces common provider domains (gmail.com,
+- **MailInput** — email input with a domain-suggestion dropdown. Typing `@`
+  (or continuing after it) surfaces common provider domains (gmail.com,
   icloud.com, etc.); click or press Enter to auto-complete. Works controlled
   (RHF/Shadcn forms) and uncontrolled.
 - **DissolveText** — 10th text animation (char-by-char dissolve-in). SSR-safe.
@@ -34,6 +34,11 @@ feat(components): MailInput with domain suggestions + Dissolve animation family
 
 - **Sidebar** — new `singleOpen` (accordion) prop; `Collapse all` / `Expand
   all` toolbar buttons; active section scrolls into view.
+- Accordion mode fixed: `openSection` now receives the full list of section
+  ids and collapses every section (including ones never toggled before)
+  instead of only collapsing sections already in the persisted state.
+- Toolbar collapse/expand icons are now chevrons (greater-than / less-than)
+  instead of menu-bar glyphs, matching the section-header chevron style.
 - **ConsoleLayout** — passes `singleOpen` through to the sidebar (both docked
   and mobile Sheet).
 - **LayoutContext** — new `openSection`, `collapseAll`, `expandAll` methods
@@ -53,5 +58,8 @@ feat(components): MailInput with domain suggestions + Dissolve animation family
 - Variant previews + usage snippets for DissolveText, DissolveButton,
   DissolveCard, AnimatedButton dissolve, and the Footer streamline variant;
   TypewriterText preview moved to the text-animations tab set.
+- **PackageManagerProvider** — global package-manager preference (pnpm/npm/yarn/
+  bun) shared across every `InstallTabs` block on the entire docs site,
+  persisted to localStorage so the user picks once and it sticks.
 - `check-docs-inventory` drift gate accounts for `typewriter-text`
   (documented elsewhere), `gen-docs-manifest` excludes it from generation.

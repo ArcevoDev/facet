@@ -2,7 +2,7 @@ import * as React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import type { IconName } from "@arcevo/facet-components";
 import { ThemeProvider } from "@arcevo/facet-components/light";
-import { DocsAppProvider, type DocsAppValue } from "./context.js";
+import { DocsAppProvider, PackageManagerProvider, type DocsAppValue } from "./context.js";
 import { DocsContentPage } from "./pages/DocsContentPage.js";
 
 // The layout shell (ConsoleLayout + CommandPalette) pulls the heavy
@@ -77,24 +77,26 @@ export function DocsApp({
     <ThemeProvider defaultTheme={defaultTheme}>
       <BrowserRouter>
         <DocsAppProvider value={value}>
-          <React.Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route element={<DocsLayout />}>
-                {pages.map((page) => (
-                  <Route key={page.path} path={page.path} element={<DocsContentPage />} />
-                ))}
-                {showComponents && (
-                  <>
-                    <Route path="/components" element={<ComponentsPage />} />
-                    <Route path="/components/:slug" element={<ComponentPage />} />
-                    <Route path="/ready-to-use" element={<ReadyToUsePage />} />
-                    <Route path="/pages" element={<PagesPage />} />
-                  </>
-                )}
-                <Route path="*" element={<DocsContentPage />} />
-              </Route>
-            </Routes>
-          </React.Suspense>
+          <PackageManagerProvider>
+            <React.Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route element={<DocsLayout />}>
+                  {pages.map((page) => (
+                    <Route key={page.path} path={page.path} element={<DocsContentPage />} />
+                  ))}
+                  {showComponents && (
+                    <>
+                      <Route path="/components" element={<ComponentsPage />} />
+                      <Route path="/components/:slug" element={<ComponentPage />} />
+                      <Route path="/ready-to-use" element={<ReadyToUsePage />} />
+                      <Route path="/pages" element={<PagesPage />} />
+                    </>
+                  )}
+                  <Route path="*" element={<DocsContentPage />} />
+                </Route>
+              </Routes>
+            </React.Suspense>
+          </PackageManagerProvider>
         </DocsAppProvider>
       </BrowserRouter>
     </ThemeProvider>

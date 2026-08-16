@@ -107,7 +107,7 @@ export interface LayoutContextValue {
   /** Toggle a section's collapsed state (persisted to localStorage). */
   toggleSection: (sectionId: string) => void;
   /** Accordion mode: open one section, collapse the rest (persisted). */
-  openSection: (sectionId: string) => void;
+  openSection: (sectionId: string, sectionIds?: string[]) => void;
   /** Collapse every known section. Pass the ids the Sidebar renders. */
   collapseAll: (sectionIds: string[]) => void;
   /** Expand every known section. Pass the ids the Sidebar renders. */

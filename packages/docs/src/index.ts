@@ -15,7 +15,7 @@ export { DocsApp } from "./docs-app.js";
 export type { DocsAppProps } from "./docs-app.js";
 
 // Config + context
-export { DocsAppProvider, useDocsApp } from "./context.js";
+export { DocsAppProvider, useDocsApp, PackageManagerProvider, usePackageManager } from "./context.js";
 export type { DocsAppValue } from "./context.js";
 
 // Page registry
