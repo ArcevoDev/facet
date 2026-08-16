@@ -7,8 +7,10 @@ dist
 .env.local
 .DS_Store
 *.log
+# Command Code local config (taste, settings) — local only, not in git
 # scratch / generated agent output
 .agent
+.commandcode
 test-out.txt
 typecheck-out.txt
 ui_codebase_snapshot.txt
