@@ -9,7 +9,7 @@ export function FeaturesSection() {
           Everything you need, nothing you don't
         </h2>
         <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-          Eight capabilities across eight packages that work together or standalone.
+          Eight capabilities across nine packages that work together or standalone.
         </p>
       </div>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

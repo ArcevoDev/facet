@@ -2,7 +2,7 @@ import type { IconName } from "@arcevo/facet-components";
 
 /** Live library stats, verified against the packages on every release. */
 export const STATS = [
-  { value: "84", label: "components" },
+  { value: "85", label: "components" },
   { value: "10", label: "API SDKs" },
   { value: "3", label: "layout shells" },
   { value: "5", label: "auth presets" },
@@ -16,30 +16,30 @@ export interface Package {
   icon: IconName;
 }
 
-/** The eight published packages (versions verified 2026-08-15 against npm). */
+/** The nine published packages (versions verified 2026-08-17 against npm). */
 export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-components",
-    desc: "84 styled, accessible React components built on Radix primitives.",
-    version: "1.8.0",
+    desc: "85 styled, accessible React components built on Radix primitives.",
+    version: "1.10.0",
     icon: "boxes",
   },
   {
     name: "@arcevo/facet-docs",
     desc: "Installable docs engine: mount <DocsApp> with your own brand, nav, and pages.",
-    version: "1.4.4",
+    version: "1.4.6",
     icon: "book-open",
   },
   {
     name: "@arcevo/facet-auth",
     desc: "SignIn, SignUp, Guard, MFA and forms with per-domain presets.",
-    version: "1.2.0",
+    version: "1.2.2",
     icon: "shield-check",
   },
   {
     name: "@arcevo/facet-layout",
     desc: "Console, auth and landing shells with a collapsible icon rail.",
-    version: "1.3.4",
+    version: "1.4.1",
     icon: "building",
   },
   {
@@ -51,20 +51,26 @@ export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-tokens",
     desc: "Alpha Palette design tokens: color, type, spacing, surfaces.",
-    version: "1.1.2",
+    version: "1.1.4",
     icon: "palette",
   },
   {
     name: "@arcevo/facet-emails",
     desc: "Framework-agnostic email templates: render HTML/text from React or plain trees, with a dev preview server.",
-    version: "1.1.0",
+    version: "1.1.1",
     icon: "mail",
   },
   {
     name: "@arcevo/facet-cli",
     desc: "Scaffold docs + emails, audit/update your facet setup, and generate a tree-shaken icon registry from the terminal.",
-    version: "0.7.0",
+    version: "0.8.0",
     icon: "terminal",
+  },
+  {
+    name: "@arcevo/facet-store",
+    desc: "Framework-agnostic Zustand state stores for arc-id (session, tenant, token-refresh wiring) with pluggable client + storage.",
+    version: "0.1.0",
+    icon: "store",
   },
 ];
 
@@ -209,8 +215,8 @@ export const ROADMAP: RoadmapItem[] = [
   {
     phase: "Phase 8",
     title: "Polish & consistency",
-    desc: "SpotlightCard spotlight visibility, BorderBeamCard beam refinement, default button animation switched to sparkle, global scrollbar hiding across all apps, em-dash purge, and FAQ/version sync.",
-    status: "in-progress",
+    desc: "SpotlightCard spotlight visibility, BorderBeamCard beam refinement, default button animation switched to sparkle, global scrollbar hiding across all apps, em-dash purge, FAQ/version sync, facet-store package, and 85th component (NotFound).",
+    status: "done",
   },
 ];
 
@@ -219,7 +225,7 @@ export interface FaqItem {
   a: string;
 }
 
-/** Public FAQ for the landing page. Versions are kept in sync with the published package surface (components 1.9.0, auth 1.2.1, layout 1.4.0, docs 1.4.5, tokens 1.1.3, sdk 1.1.0, emails 1.1.1, cli 0.8.0, store 0.0.0). */
+/** Public FAQ for the landing page. Versions are kept in sync with the published package surface (components 1.10.0, auth 1.2.2, layout 1.4.1, docs 1.4.6, tokens 1.1.4, sdk 1.1.0, emails 1.1.1, cli 0.8.0, store 0.1.0). */
 export const FAQ: FaqItem[] = [
   {
     q: "Is facet free and open source?",
