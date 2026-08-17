@@ -204,6 +204,12 @@ export const ROADMAP: RoadmapItem[] = [
     phase: "Phase 7",
     title: "Audit & composability",
     desc: "Repo-wide composability audit, flat Animation docs, accordion sidebar, responsive surfaces, and live-preview reliability across all packages.",
+    status: "done",
+  },
+  {
+    phase: "Phase 8",
+    title: "Polish & consistency",
+    desc: "SpotlightCard spotlight visibility, BorderBeamCard beam refinement, default button animation switched to sparkle, global scrollbar hiding across all apps, em-dash purge, and FAQ/version sync.",
     status: "in-progress",
   },
 ];
@@ -213,13 +219,11 @@ export interface FaqItem {
   a: string;
 }
 
-/** Public FAQ for the landing page. Answers are kept in sync with the
- * published package surface (components 1.8.0, auth 1.2.0, layout 1.3.4,
- * docs 1.4.4, tokens 1.1.2, sdk 1.1.0, emails 1.1.0, cli 0.7.0). */
+/** Public FAQ for the landing page. Versions are kept in sync with the published package surface (components 1.9.0, auth 1.2.1, layout 1.4.0, docs 1.4.5, tokens 1.1.3, sdk 1.1.0, emails 1.1.1, cli 0.8.0, store 0.0.0). */
 export const FAQ: FaqItem[] = [
   {
     q: "Is facet free and open source?",
-    a: "Yes. Every package is MIT-licensed and published to npm under @arcevo: components, auth, layout, docs, tokens, sdk, emails, and cli.",
+    a: "Yes. Every package is MIT-licensed and published to npm under @arcevo: components, auth, layout, docs, tokens, sdk, emails, cli, and store.",
   },
   {
     q: "Which React version does facet require?",
@@ -255,7 +259,7 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "Can I copy components into my source instead of installing the package?",
-    a: "Yes — `facet add <component>` copies the component source plus its imports into your tree. Installing from the package is recommended so you keep getting updates and tree-shaking.",
+    a: "Yes - `facet add <component>` copies the component source plus its imports into your tree. Installing from the package is recommended so you keep getting updates and tree-shaking.",
   },
   {
     q: "How do I use the icon registry, and can I override it?",
@@ -267,7 +271,7 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "What animations does facet ship?",
-    a: "Ten text animations (Blur, Wave, Flip, Split, FadeUp, Shimmer, Gradient, LetterSpacing, CountUp, Dissolve), TypewriterText, seven micro-interactions, AnimatedButton (shine/sparkle/ripple/magnetic/dissolve), and the card animation family (DissolveCard, FlipCard, SpotlightCard, etc.). The keyframe tokens live in @arcevo/facet-tokens so the CSS classes always emit.",
+    a: "Ten text animations (Blur, Wave, Flip, Split, FadeUp, Shimmer, Gradient, LetterSpacing, CountUp, Dissolve), TypewriterText, seven micro-interactions, AnimatedButton (sparkle/shine/ripple/magnetic/dissolve), and the card animation family (DissolveCard, FlipCard, SpotlightCard, etc.). The keyframe tokens live in @arcevo/facet-tokens so the CSS classes always emit.",
   },
   {
     q: "How do I scaffold docs and emails?",
@@ -275,6 +279,6 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "How do I reach the facet team?",
-    a: "Use the Feedback page (linked in the nav) to drop a line, or join the Discord linked from the docs — the maintainers read everything.",
+    a: "Use the Feedback page (linked in the nav) to drop a line, or join the Discord linked from the docs - the maintainers read everything.",
   },
 ];

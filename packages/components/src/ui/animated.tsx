@@ -194,7 +194,7 @@ export const SparkleButton = React.forwardRef<HTMLButtonElement, SparkleButtonPr
         }}
         onClick={burst}
         className={cn(
-          "relative inline-flex h-10 items-center justify-center gap-2 overflow-hidden rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90",
+          "relative inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90",
           className,
         )}
         {...props}

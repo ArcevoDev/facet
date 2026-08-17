@@ -8,9 +8,10 @@ export function FaqSection() {
   return (
     <FacetFaqSection
       items={FAQ}
-      title="Frequently asked questions"
-      description="Quick answers for the questions consumers ask most."
+      title="Frequently asked qs"
+      description="Quick as for the qs consumers ask most."
       type="single"
+      id="faq"
       className="mx-auto max-w-3xl px-8 py-24"
     >
       {/* Explore / feedback strip composed as children */}

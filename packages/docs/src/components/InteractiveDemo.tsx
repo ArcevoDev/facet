@@ -110,7 +110,7 @@ function InteractiveDemoBody({
         }
       >
         {/* Live preview */}
-        <div className="min-w-0 flex-1 overflow-hidden rounded-lg border border-border">
+        <div className="min-w-0 flex-1 overflow-visible rounded-lg border border-border">
           <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-4 py-2">
             <span className="text-xs font-medium text-muted-foreground">
               Preview · {activeTab?.label ?? "Default"}

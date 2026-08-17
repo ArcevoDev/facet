@@ -31,14 +31,14 @@ export interface AnimatedButtonRenderProps {
 
 export interface AnimatedButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Animation variant. Default: "shine". */
+  /** Animation variant. Default: "sparkle". */
   animation?: AnimatedButtonVariant;
   /** Fully replace the built-in button with your own component. */
   renderButton?: (props: AnimatedButtonRenderProps) => React.ReactNode;
 }
 
 export function AnimatedButton({
-  animation = "shine",
+  animation = "sparkle",
   renderButton,
   children,
   className,

@@ -25,6 +25,10 @@ export interface CookieConsentProps extends React.HTMLAttributes<HTMLDivElement>
   details?: React.ReactNode;
   /** Position. Default: "bottom". */
   position?: "bottom" | "top";
+  /** Force the banner to render even when a choice is already persisted
+   *  (useful for docs/gallery previews that must always be visible).
+   *  Default: false. */
+  alwaysShow?: boolean;
 }
 
 /**
@@ -39,6 +43,7 @@ export function CookieConsent({
   declineLabel = "Decline",
   details,
   position = "bottom",
+  alwaysShow = false,
   className,
   ...props
 }: CookieConsentProps) {
@@ -66,7 +71,7 @@ export function CookieConsent({
     onDecision?.(value);
   };
 
-  if (!loaded || choice !== null) return null;
+  if (!loaded || (!alwaysShow && choice !== null)) return null;
 
   return (
     <div

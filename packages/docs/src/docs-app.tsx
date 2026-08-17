@@ -28,14 +28,25 @@ const PagesPage = React.lazy(() =>
   import("./pages/PagesPage.js").then((m) => ({ default: m.PagesPage })),
 );
 
+// The 404 fallback uses the shared Facet NotFound, gradient text animation + fully customizable props. Lazy-loaded so the eager entry stays slim (theme + router + minimal fallback only).
+const NotFound = React.lazy(() =>
+  import("@arcevo/facet-components").then((m) => ({ default: m.NotFound })),
+);
+
 import type { DocsSiteConfig } from "./lib/nav.js";
 import type { DocsPage } from "./lib/pages.js";
 
-/** Suspense fallback shown while a lazy route chunk loads. */
+/** Suspense fallback shown while a lazy route chunk loads. Mimics the shape
+ *  of a docs content page so the shell doesn't blank out while it loads. */
 function PageLoader() {
   return (
-    <div className="flex min-h-[40vh] items-center justify-center text-sm text-muted-foreground">
-      Loading...
+    <div className="animate-pulse space-y-4 p-6">
+      <div className="h-8 w-3/4 rounded-md bg-muted"></div>
+      <div className="h-4 w-1/2 rounded-md bg-muted"></div>
+      <div className="h-4 w-full rounded-md bg-muted"></div>
+      <div className="h-4 w-5/6 rounded-md bg-muted"></div>
+      <div className="h-4 w-4/6 rounded-md bg-muted"></div>
+      <div className="h-4 w-3/5 rounded-md bg-muted"></div>
     </div>
   );
 }
@@ -92,7 +103,7 @@ export function DocsApp({
                       <Route path="/pages" element={<PagesPage />} />
                     </>
                   )}
-                  <Route path="*" element={<DocsContentPage />} />
+                  <Route path="*" element={<NotFound />} />
                 </Route>
               </Routes>
             </React.Suspense>

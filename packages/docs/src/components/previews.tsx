@@ -869,7 +869,7 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
       );
     case "sidebar":
       return (
-        <div className="h-96 w-full overflow-hidden rounded-md border border-border">
+        <div className="h-96 w-full overflow-visible rounded-md border border-border">
           <LayoutProvider>
             <Sidebar config={fintechLayoutPreset} />
           </LayoutProvider>
@@ -877,7 +877,7 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
       );
     case "topbar":
       return (
-        <div className="w-full overflow-hidden rounded-md border border-border">
+        <div className="w-full overflow-visible rounded-md border border-border">
           <LayoutProvider>
             <Topbar />
           </LayoutProvider>
@@ -1007,7 +1007,7 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
     case "cookie-consent":
       return (
         <div className="relative flex min-h-48 w-full items-end justify-center rounded-lg border border-border bg-background p-6">
-          <CookieConsent storageKey="facet-docs-cookie-consent" position="bottom" className="static inset-auto p-0" />
+          <CookieConsent storageKey="facet-docs-cookie-consent" position="bottom" alwaysShow className="static inset-auto p-0" />
         </div>
       );
     case "testimonial-showcase":
@@ -1029,9 +1029,9 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
             className="w-full max-w-lg"
             title="Frequently asked"
             items={[
-              { question: "Is it framework agnostic?", answer: "Yes. The core is dependency-free React." },
-              { question: "Can I theme it?", answer: "Everything reads from your Tailwind theme tokens." },
-              { question: "Is it accessible?", answer: "Yes. All primitives ship with ARIA wiring." },
+              { q: "Is it framework agnostic?", a: "Yes. The core is dependency-free React." },
+              { q: "Can I theme it?", a: "Everything reads from your Tailwind theme tokens." },
+              { q: "Is it accessible?", a: "Yes. All primitives ship with ARIA wiring." },
             ]}
           />
         </div>

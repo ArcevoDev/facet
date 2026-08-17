@@ -1017,12 +1017,24 @@ import { Navbar } from "@arcevo/facet-components";
     { label: "LinkedIn", href: "https://linkedin.com/company/arcevo", icon: "linkedin", description: "Company page" },
   ]}
 />`,
+  "not-found": `import { NotFound } from "@arcevo/facet-components";
+
+<NotFound
+  title="Page not found"
+  description="The page you're looking for doesn't exist or has been moved."
+  actionLabel="Go back home"
+  actionHref="/"
+  animation="gradient"
+/>
+
+// animation: "shimmer" | "aurora" | "none"
+// Pass \`children\` to fully override the 404 / title / description / CTA block.`,
   "billing-page": `import { BillingPage } from "@arcevo/facet-components";
 import type { BillingPlan } from "@arcevo/facet-components";
 
 const plans: BillingPlan[] = [
   { id: "free", name: "Free", price: 0, features: ["1 project", "Community support"] },
-  { id: "pro", name: "Pro", price: 19, highlight: true, features: ["Unlimited projects", "Priority support", "Advanced analytics"] },
+  { id: "pro", name: "Pro", price: 19, highlight: true, discounts: { quarterly: 30, yearly: 16.67 }, features: ["Unlimited projects", "Priority support", "Advanced analytics"] },
   { id: "enterprise", name: "Enterprise", price: 0, customPriceLabel: "Custom", features: ["SSO/SAML", "Dedicated support", "SLA"] },
 ];
 
@@ -1033,7 +1045,7 @@ function Example() {
         plans,
         title: "Pricing",
         description: "Simple, transparent pricing. Cancel anytime.",
-        annualDiscountNote: "Save 20% with yearly billing",
+        annualDiscountNote: "Save up to 30% with quarterly · ~16% with yearly",
       }}
     />
   );
@@ -1190,7 +1202,7 @@ function Example() {
   "faq-section": `import { FaqSection } from "@arcevo/facet-components";
 
 const items = [
-  { question: "Is it framework agnostic?", answer: "Yes. The core is dependency-free React." },
+  { q: "Is it framework agnostic?", a: "Yes. The core is dependency-free React." },
 ];
 
 function Example() {

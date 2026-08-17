@@ -460,7 +460,7 @@ export function draftDocs(scan: RepoScan, outDir: string): GeneratedFile[] {
             rows: routes.map((r) => [
               r.method,
               `\`${r.path}\``,
-              r.hasSchema ? "yes" : "—",
+               r.hasSchema ? "yes" : "n/a",
             ]),
           },
         ]),

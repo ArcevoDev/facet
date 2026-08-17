@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
+  Icon,
 } from "@arcevo/facet-components";
 import type { LayoutConfig, NavItem, NavSection } from "./types.js";
 import type { RouterAdapter } from "./router.js";
@@ -218,9 +219,11 @@ function NavSectionRenderer({
   const sectionKey = section.id ?? section.title;
   const isActive = router ? router.isActive : (href: string) => href === window.location.pathname;
   const hasActive = sectionHasActiveItem(section, isActive);
-  // A section containing the active page stays open regardless of the
-  // persisted collapse state (unless the user explicitly collapsed it).
-  const open = hasActive ? true : !collapsedSections[sectionKey];
+  // A section containing the active page auto-expands so the current
+  // location stays visible, but an explicit collapse (chevron click or
+  // "collapse all") always wins: the user can collapse the active section.
+  const explicitlyCollapsed = collapsedSections[sectionKey] === true;
+  const open = explicitlyCollapsed ? false : (hasActive ? true : !collapsedSections[sectionKey]);
 
   // In single-open (accordion) mode the active section is always visible:
   // scroll it into view on mount/update so it isn't cut off at the bottom
@@ -232,10 +235,16 @@ function NavSectionRenderer({
     }
   }, [open, hasActive]);
 
-  // Header toggle: accordion (openSection) when singleOpen, else multi-open.
+  // Header toggle: in accordion (single-open) mode, opening a section closes
+  // the rest (openSection); clicking the already-open section collapses it
+  // (toggleSection). In multi-open mode each header just toggles itself.
   const handleToggle = () => {
     if (singleOpen) {
-      openSection(sectionKey, sectionIds);
+      if (open) {
+        toggleSection(sectionKey);
+      } else {
+        openSection(sectionKey, sectionIds);
+      }
     } else {
       toggleSection(sectionKey);
     }
@@ -463,7 +472,7 @@ interface SidebarToolbarProps {
 
 function SidebarToolbar({ sectionIds, onCollapseAll, onExpandAll }: SidebarToolbarProps) {
   return (
-    <div className="mb-4 flex items-center gap-1">
+    <div className="sticky top-0 z-20 mb-4 flex items-center gap-2 border-b border-border bg-sidebar">
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -473,7 +482,7 @@ function SidebarToolbar({ sectionIds, onCollapseAll, onExpandAll }: SidebarToolb
               aria-label="Collapse all sections"
               className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+              <Icon name="chevrons-up" className="size-3.5 shrink-0" />
               <span>Collapse all</span>
             </button>
           </TooltipTrigger>
@@ -489,7 +498,7 @@ function SidebarToolbar({ sectionIds, onCollapseAll, onExpandAll }: SidebarToolb
               aria-label="Expand all sections"
               className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground"
             >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+              <Icon name="chevrons-down" className="size-3.5 shrink-0" />
               <span>Expand all</span>
             </button>
           </TooltipTrigger>

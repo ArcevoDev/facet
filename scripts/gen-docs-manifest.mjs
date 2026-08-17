@@ -94,7 +94,8 @@ const CATEGORY = {
   footer: "pages",
   "billing-page": "pages",
   "billing-page-table": "pages",
-  "billing-page-freemium": "pages",
+   "billing-page-freemium": "pages",
+   "not-found": "pages",
   // Ready-to-use: auth & security
   "otp-verification-card": "ready-to-use",
   "two-factor-setup-panel": "ready-to-use",

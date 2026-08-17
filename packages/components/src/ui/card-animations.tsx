@@ -136,7 +136,7 @@ export interface SpotlightCardProps extends React.HTMLAttributes<HTMLDivElement>
  * under the card's content (which stays interactive).
  */
 export function SpotlightCard({
-  color = "var(--primary, #6366f1)",
+  color = "color-mix(in srgb, var(--primary, #6366f1) 45%, transparent)",
   radius = 300,
   className,
   children,
@@ -173,7 +173,7 @@ export function SpotlightCard({
         className="pointer-events-none absolute inset-0 transition-opacity duration-300"
         style={{
           opacity: pos.opacity,
-          background: `radial-gradient(${radius}px circle at ${pos.x}% ${pos.y}%, ${color}, transparent 70%)`,
+          background: `radial-gradient(circle ${radius}px at ${pos.x}% ${pos.y}%, ${color}, transparent 70%)`,
         }}
       />
       <div className="relative">{children}</div>
@@ -200,7 +200,7 @@ export interface BorderBeamCardProps extends React.HTMLAttributes<HTMLDivElement
  * solid Card surface so it reads clearly on every background.
  */
 export function BorderBeamCard({
-  colors = ["transparent 0deg", "var(--primary, #6366f1) 80deg", "#d946ef 120deg", "transparent 160deg"],
+  colors = ["transparent 0deg", "transparent 20deg", "var(--primary, #6366f1) 30deg", "#d946ef 50deg", "transparent 62deg", "transparent 360deg"],
   thickness = 2,
   duration = 4000,
   className,
@@ -239,7 +239,7 @@ BorderBeamCard.displayName = "BorderBeamCard";
 /* ── ShineCard ────────────────────────────────────────────── */
 
 export interface ShineCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Highlight color. Default: white at 40% (matches ShineButton). */
+  /** Highlight color. Default: white at 60% (visible on both light and dark surfaces). */
   shineColor?: string;
   /** Sweep duration, in ms. Default: 700. */
   duration?: number;
@@ -253,7 +253,7 @@ export interface ShineCardProps extends React.HTMLAttributes<HTMLDivElement> {
  * `group`-driven gradient sweep that translates across the card.
  */
 export function ShineCard({
-  shineColor = "rgba(255,255,255,0.4)",
+  shineColor = "rgba(255,255,255,0.6)",
   duration = 700,
   loop = false,
   className,
@@ -261,32 +261,38 @@ export function ShineCard({
   style,
   ...props
 }: ShineCardProps) {
+  // Mirrors the ShineButton sheen: a full-width highlight that sweeps across
+  // the surface on hover (or loops continuously). The gradient is applied
+  // inline so the `shineColor` prop is always respected over any Tailwind
+  // gradient class, and the sweep is wide enough to read as a shine on both
+  // light and dark surfaces.
+  const gradient = `linear-gradient(90deg, transparent, ${shineColor}, transparent)`;
   return (
     <Card
       className={cn("group relative w-full overflow-hidden", className)}
       style={style}
       {...props}
     >
-      <span
-        aria-hidden="true"
-        className={cn(
-          "pointer-events-none absolute inset-y-0 w-1/2 -translate-x-[150%] bg-gradient-to-r from-transparent via-white/40 to-transparent",
-          !loop && "group-hover:translate-x-[350%]",
-        )}
-        style={
-          {
-            backgroundImage: `linear-gradient(90deg, transparent, ${shineColor}, transparent)`,
-            ...(loop
-              ? {
-                  animation: `facet-shimmer 1500ms linear infinite`,
-                  animationDuration: `${duration}ms`,
-                  backgroundSize: "200% 100%",
-                  transform: "none",
-                }
-              : { transition: `transform ${duration}ms ease-out` }),
-          } as React.CSSProperties
-        }
-      />
+      {loop ? (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{
+            backgroundImage: gradient,
+            backgroundSize: "200% 100%",
+            animation: `facet-shimmer ${duration}ms linear infinite`,
+          }}
+        />
+      ) : (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 -translate-x-full transition-transform group-hover:translate-x-full"
+          style={{
+            backgroundImage: gradient,
+            transitionDuration: `${duration}ms`,
+          }}
+        />
+      )}
       <span className="relative block">{children}</span>
     </Card>
   );

@@ -1,5 +1,12 @@
 # @arcevo/facet-auth
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [18547dc]
+  - @arcevo/facet-components@1.9.0
+
 ## 1.2.0
 
 ### Minor Changes

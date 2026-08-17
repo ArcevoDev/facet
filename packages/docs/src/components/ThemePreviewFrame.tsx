@@ -23,7 +23,7 @@ export function ThemePreviewFrame({ children, className, label }: ThemePreviewFr
     <div
       data-theme={theme}
       className={cn(
-        "relative flex min-h-32 w-full items-center justify-center gap-4 overflow-hidden bg-background p-6 text-foreground transition-colors",
+        "relative flex w-full items-start justify-start gap-4 overflow-visible bg-background p-6 text-foreground transition-colors",
         className,
       )}
       style={{ colorScheme: theme }}

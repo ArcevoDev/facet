@@ -117,7 +117,7 @@ export function GlowCard({
         className="pointer-events-none absolute inset-0 transition-opacity duration-300"
         style={{
           opacity: glow.o,
-          background: `radial-gradient(${blur}px circle at ${glow.x}px ${glow.y}px, ${color}, transparent 70%)`,
+          background: `radial-gradient(circle ${blur}px at ${glow.x}px ${glow.y}px, ${color}, transparent 70%)`,
         }}
       />
       <div className="relative">{children}</div>
@@ -359,7 +359,7 @@ export const DissolveButton = React.forwardRef<HTMLButtonElement, DissolveButton
         }}
         onClick={burst}
         className={cn(
-          "relative inline-flex h-10 items-center justify-center gap-2 overflow-hidden rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90",
+          "relative inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90",
           className,
         )}
         {...props}

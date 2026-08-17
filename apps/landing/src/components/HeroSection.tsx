@@ -42,7 +42,7 @@ export function HeroSection() {
       <p className="mt-4 font-heading text-xl font-semibold text-primary sm:text-2xl">
         <TypewriterText
           phrases={[
-            "83 Radix components",
+            "84 Radix components",
             "Auth presets for every domain",
             "Alpha Palette design tokens",
             "Console, auth, and landing shells",

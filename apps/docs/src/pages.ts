@@ -28,6 +28,7 @@ export const docsPages: DocsPage[] = [
           "`@arcevo/facet-components`: 68 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
           "`@arcevo/facet-auth`: auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms.",
           "`@arcevo/facet-layout`: domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets.",
+           "`@arcevo/facet-store`: framework-agnostic Zustand state stores - auth session + tenant state, plus `createZustandTokenStorage` bridge for 401 auto-refresh, web + React Native.",
           "`@arcevo/facet-docs`: this config-driven docs engine, installable by any Arcevo project.",
           "`@arcevo/facet-emails`: framework-agnostic email templates: render HTML/text from React or plain trees, with a dev preview server.",
           "`@arcevo/facet-cli`: scaffold docs + emails sites, audit and update your facet setup from the terminal.",
@@ -860,6 +861,7 @@ registerIcon("shield", ShieldAlert);`,
         rows: [
           ["`@arcevo/facet-tokens`", "CSS variables + Tailwind v4 theme", "Yes, plain CSS, any framework, no JS"],
           ["`@arcevo/facet-sdk`", "TypeScript, pure fetch", "Yes, any runtime (browser, Node, edge)"],
+          ["`@arcevo/facet-store`", "Zustand stores + token-refresh bridge", "Yes - stores are pure Zustand (usable without React via getState/setState); `createZustandTokenStorage` is fully framework-agnostic; React is a peer only for hook consumption"],
           ["`@arcevo/facet-emails`", "Template-tree renderer (zero runtime deps)", "Yes, any host (plain JS, Node, JSON trees)"],
           ["`@arcevo/facet-cli`", "Node CLI", "Yes, scaffolds docs + emails for React, Next, Remix, plain JS, Python"],
           ["`@arcevo/facet-components`", "React + Radix + tailwind-merge", "No, React 18/19 only"],
@@ -1327,6 +1329,25 @@ const next = await auth.refresh(tokens.data.refreshToken!);`,
   onAuthCleared: () => redirectToLogin(),
 });`,
       },
+      {
+        type: "p",
+        text: "If you use `@arcevo/facet-store` for state, use `createZustandTokenStorage` to bridge the store and the client - it handles the refresh re-entrancy guard, token read/write via the store, and auth clearing on failure:",
+      },
+      {
+        type: "code",
+        text: `import { createZustandTokenStorage } from "@arcevo/facet-store";
+
+const storage = createZustandTokenStorage({ authStore: useAuthStore, sdk: auth });
+
+const client = new ArcIdClient({
+  baseUrl,
+  onTokenRefresh: storage.onTokenRefresh,
+  onAuthCleared: () => {
+    useAuthStore.getState().clearAuth();
+    useTenantStore.getState().reset();
+  },
+});`,
+      },
       { type: "h2", text: "Modules" },
       {
         type: "table",
@@ -1348,6 +1369,81 @@ const next = await auth.refresh(tokens.data.refreshToken!);`,
       {
         type: "p",
         text: "Every endpoint string in the SDK is audited against arc-id's `ROUTES` index (`scripts/audit-sdk-coverage.cjs` reports 62/62 covered).",
+      },
+    ],
+  },
+  {
+    path: "/store",
+    title: "Store",
+    section: "ecosystem",
+    description: "Framework-agnostic Zustand state stores for arc-id sessions + tenant state, with a token-refresh bridge for 401 auto-recovery.",
+    blocks: [
+      {
+        type: "p",
+        text: "`@arcevo/facet-store` provides framework-agnostic state stores built on Zustand. It ships two stores (`useAuthStore` for session/auth state, `useTenantStore` for tenant selection) and a `createZustandTokenStorage` bridge that connects them to the SDK's `ArcIdClient` 401 auto-refresh hooks. The stores are pure Zustand - no React in the store logic itself - and the bridge is fully framework-agnostic, so it works identically in React, React Native, or any environment that can call `getState()`.",
+      },
+      { type: "h2", text: "Install" },
+      {
+        type: "install",
+        pkg: "@arcevo/facet-store",
+        extras: ["@arcevo/facet-sdk"],
+      },
+      {
+        type: "p",
+        text: "`react` and `react-dom` are peer dependencies (Zustand generates React hooks), but you can use the stores imperatively via `getState()` in any framework.",
+      },
+      { type: "h2", text: "Stores" },
+      {
+        type: "table",
+        headers: ["Store", "State", "Purpose"],
+        rows: [
+          ["`useAuthStore`", "user, accessToken, refreshToken, isAuthenticated, isLoading", "Session + token state; methods: setAuth, setUser, setTokens, clearAuth, setLoading"],
+          ["`useTenantStore`", "activeTenant, tenants, isLoading", "Tenant selection + membership cache; methods: setActiveTenant, setTenants, setLoading, reset"],
+        ],
+      },
+      {
+        type: "p",
+        text: "State is framework-agnostic; methods are plain setters called via `store.getState()`. React consumers call the hook (`useAuthStore()`) for reactive reads; non-React code calls `getState()` imperatively.",
+      },
+      {
+        type: "code",
+        text: `import { useAuthStore, useTenantStore } from "@arcevo/facet-store";
+
+// React: reactive reads
+function SessionBadge() {
+  const { user, isAuthenticated } = useAuthStore();
+  return isAuthenticated ? <span>{user?.email}</span> : <span>Guest</span>;
+}`,
+      },
+      { type: "h2", text: "Token-refresh bridge" },
+      {
+        type: "p",
+        text: "`createZustandTokenStorage` wires the auth store and an `AuthSdk` into the `ArcIdClient` callbacks. It reads the current refresh token from the store, calls `sdk.refresh()` on 401, updates the store with the new token bundle, and clears auth on permanent failure - including a re-entrancy guard so a refresh request that itself 401s doesn't recurse infinitely:",
+      },
+      {
+        type: "code",
+        text: `import { createZustandTokenStorage } from "@arcevo/facet-store";
+import { ArcIdClient, AuthSdk } from "@arcevo/facet-sdk";
+
+const client = new ArcIdClient({
+  baseUrl,
+  onTokenRefresh: createZustandTokenStorage({
+    authStore: useAuthStore,
+    sdk: authSdk,
+  }).onTokenRefresh,
+  onAuthCleared: () => {
+    useAuthStore.getState().clearAuth();
+    useTenantStore.getState().reset();
+  },
+});`,
+      },
+      {
+        type: "h2",
+        text: "Agnosticism",
+      },
+      {
+        type: "p",
+        text: "See [Stack Agnosticism](/stack-agnosticism) for the full layer matrix. The store has zero arc-id-specific logic - it depends only on `@arcevo/facet-sdk` types and `zustand`. A `TokenStoreLike` and a `TokenRefresher` are the only contracts `createZustandTokenStorage` needs, so you can wire it to any store or refresh implementation.",
       },
     ],
   },

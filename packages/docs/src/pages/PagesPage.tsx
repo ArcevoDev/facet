@@ -59,7 +59,7 @@ export function PagesPage() {
           <section
             key={entry.slug}
             id={entry.slug}
-            className="overflow-hidden rounded-lg border border-border"
+            className="overflow-visible rounded-lg border border-border"
           >
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-muted/30 px-4 py-3">
               <div>

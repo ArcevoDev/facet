@@ -316,6 +316,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "layout"
   },
   {
+    "name": "Not Found",
+    "slug": "not-found",
+    "description": "@arcevo/facet-components: Not Found (404)",
+    "category": "pages"
+  },
+  {
     "name": "Notification Drawer",
     "slug": "notification-drawer",
     "description": "",

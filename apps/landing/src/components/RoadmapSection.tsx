@@ -16,6 +16,7 @@ export function RoadmapSection() {
       <Roadmap
         variant="timeline"
         maxHeight="max-h-[520px]"
+        className="[scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         items={ROADMAP.map((item) => ({
           title: item.title,
           description: item.desc,

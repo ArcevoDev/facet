@@ -12,6 +12,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "./dropdown-menu.js";
+import { UserAvatar, type UserAvatarUser } from "./avatar.js";
 
 /** Minimal router abstraction so Navbar can render framework-native links. */
 export interface NavbarRouterLinkProps {
@@ -110,6 +111,11 @@ export interface NavbarProps
   router?: NavbarRouter;
   /** Right-side actions (buttons, avatar, notification bell, etc.) */
   actions?: React.ReactNode;
+  /** Authenticated user avatar (auth dropdown with sign-out/settings/items)
+   *  rendered above the mobile breakpoint, where the hamburger is hidden.
+   *  Omit on small/medium screens in favor of the hamburger. Wire this to your
+   *  auth (arc-id SDK `useAuth()` / `me()` exposes the `UserAvatarUser` shape). */
+  user?: UserAvatarUser;
   /** Render the built-in theme toggle in the actions area.
    *  Requires a <ThemeProvider> ancestor (from @arcevo/facet-components). */
   showThemeToggle?: boolean;
@@ -135,6 +141,7 @@ export function Navbar({
   onNavigate,
   router,
   actions,
+  user,
   showThemeToggle = false,
   mobileMenu,
   showMobileMenu,
@@ -189,6 +196,11 @@ export function Navbar({
       <div className="flex shrink-0 items-center gap-2">
         {showThemeToggle && <ThemeToggle />}
         {actions}
+        {user && (
+          <div className={`shrink-0 ${mobileBreakpoint}:block hidden`}>
+            <UserAvatar user={user} />
+          </div>
+        )}
         {showHamburger && (
           <button
             type="button"

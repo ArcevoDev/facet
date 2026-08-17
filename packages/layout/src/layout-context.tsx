@@ -115,7 +115,7 @@ export function LayoutProvider({
       const next: Record<string, boolean> = {};
       // Preserve any sections not in the known list.
       for (const key of Object.keys(prev)) {
-        next[key] = prev[key];
+        next[key] = prev[key] ?? false;
       }
       // Collapse all known sections except the target.
       for (const id of sectionIds) {

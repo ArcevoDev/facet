@@ -15,8 +15,8 @@ import {
 } from "./accordion.js";
 
 export interface FaqItem {
-  question: string;
-  answer: string;
+  q: string;
+  a: string;
 }
 
 export interface FaqSectionProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -51,10 +51,19 @@ export function FaqSection({
   ...props
 }: FaqSectionProps) {
   const accordionItems = items.map((item, i) => (
-    <AccordionItem key={i} value={String(i)}>
-      <AccordionTrigger className="text-left font-medium">{item.question}</AccordionTrigger>
+    <AccordionItem
+      key={i}
+      value={String(i)}
+      className={cn(
+        "border rounded-lg bg-card shadow-sm [&:not(:first-child)]:mt-2",
+        "sm:border-b sm:border-l-0 sm:border-r-0 sm:border-t-0 sm:rounded-none sm:bg-transparent sm:shadow-none sm:[&:not(:first-child)]:mt-0",
+      )}
+    >
+      <AccordionTrigger className="text-left font-medium flex-row-reverse justify-end md:flex-row md:justify-between gap-2">
+        <span className="min-w-0">{item.q}</span>
+      </AccordionTrigger>
       <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
-        {item.answer}
+        {item.a}
       </AccordionContent>
     </AccordionItem>
   ));

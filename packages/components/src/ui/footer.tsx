@@ -86,6 +86,8 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
   legal?: string;
   /** Replace the entire bottom bar (overrides legal + bottomLinks + socials). */
   bottomBar?: React.ReactNode;
+  /** Override the bottom bar's social + links section (keeps the bar's border/layout). */
+  socialArea?: React.ReactNode;
   /** Extra content rendered below the columns (newsletter, CTAs, ...). */
   children?: React.ReactNode;
   /** Newsletter capture slot (used by the "newsletter" variant). */
@@ -152,8 +154,9 @@ function FooterBottomBar({
   bottomLinks = [],
   socials = [],
   bottomBar,
+  socialArea,
   className,
-}: Pick<FooterProps, "legal" | "bottomLinks" | "socials" | "bottomBar"> & {
+}: Pick<FooterProps, "legal" | "bottomLinks" | "socials" | "bottomBar" | "socialArea"> & {
   className?: string;
 }) {
   if (bottomBar) return bottomBar;
@@ -165,6 +168,7 @@ function FooterBottomBar({
       )}
     >
       {legal && <p className="text-sm text-muted-foreground">{legal}</p>}
+      {socialArea ?? (
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         {bottomLinks.map((link) => (
           <a
@@ -194,6 +198,7 @@ function FooterBottomBar({
           </span>
         )}
       </div>
+      )}
     </div>
   );
 }
@@ -279,6 +284,7 @@ export function Footer({
   bottomLinks = [],
   legal,
   bottomBar,
+  socialArea,
   children,
   newsletter,
   notices,
@@ -356,6 +362,7 @@ export function Footer({
           bottomLinks={bottomLinks}
           socials={socials}
           bottomBar={bottomBar}
+          socialArea={socialArea}
         />
       </div>
     </footer>

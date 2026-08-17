@@ -25,6 +25,7 @@ import { Icon } from "../icon/index.js";
 import {
   planPriceLabel,
   planInterval,
+  intervalLabel,
   type BillingInterval,
   type BillingPageConfig,
   type BillingPlan,
@@ -34,40 +35,43 @@ import {
 
 function IntervalToggle({
   config,
+  interval,
   onChange,
 }: {
   config: BillingPageConfig;
+  interval: BillingInterval;
   onChange: (i: BillingInterval) => void;
 }) {
-  const { interval = "monthly", onIntervalChange, annualDiscountNote } = config;
+  const { onIntervalChange, annualDiscountNote } = config;
   const set = (i: BillingInterval) => {
     onChange(i);
     onIntervalChange?.(i);
   };
+  const base =
+    "rounded-full px-4 py-1.5 text-sm font-medium transition-colors";
+  const active = "bg-background text-foreground shadow-sm";
+  const inactive = "text-muted-foreground hover:text-foreground";
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="inline-flex items-center rounded-full border border-border bg-muted/40 p-1">
         <button
           type="button"
           onClick={() => set("monthly")}
-          className={cn(
-            "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
-            interval === "monthly"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground",
-          )}
+          className={cn(base, interval === "monthly" ? active : inactive)}
         >
           Monthly
         </button>
         <button
           type="button"
+          onClick={() => set("quarterly")}
+          className={cn(base, interval === "quarterly" ? active : inactive)}
+        >
+          Quarterly
+        </button>
+        <button
+          type="button"
           onClick={() => set("yearly")}
-          className={cn(
-            "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
-            interval === "yearly"
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground",
-          )}
+          className={cn(base, interval === "yearly" ? active : inactive)}
         >
           Yearly
         </button>
@@ -79,7 +83,15 @@ function IntervalToggle({
   );
 }
 
-function PlanHeader({ plan, interval }: { plan: BillingPlan; interval: BillingInterval }) {
+function PlanHeader({
+  plan,
+  interval,
+  currency = "$",
+}: {
+  plan: BillingPlan;
+  interval: BillingInterval;
+  currency?: string;
+}) {
   const activeInterval = planInterval(plan, interval);
   return (
     <div>
@@ -99,10 +111,10 @@ function PlanHeader({ plan, interval }: { plan: BillingPlan; interval: BillingIn
       )}
       <div className="mt-4 flex items-baseline gap-1">
         <span className="font-heading text-3xl font-bold text-foreground">
-          {planPriceLabel(plan, "$")}
+          {planPriceLabel(plan, currency, interval)}
         </span>
         {plan.price > 0 && (
-          <span className="text-sm text-muted-foreground">/{activeInterval}</span>
+          <span className="text-sm text-muted-foreground">/{intervalLabel(activeInterval)}</span>
         )}
       </div>
     </div>
@@ -177,7 +189,7 @@ export function BillingPage({ config, className }: BillingPageProps) {
             <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">{description}</p>
           )}
           <div className="mt-8">
-            <IntervalToggle config={config} onChange={setInterval} />
+            <IntervalToggle config={config} interval={interval} onChange={setInterval} />
           </div>
         </div>
       )}
@@ -200,7 +212,7 @@ export function BillingPage({ config, className }: BillingPageProps) {
               </div>
             )}
             <CardHeader>
-              <PlanHeader plan={plan} interval={interval} />
+              <PlanHeader plan={plan} interval={interval} currency={config.currency ?? "$"} />
             </CardHeader>
             <CardContent className="flex flex-1 flex-col justify-between gap-6">
               {config.badge?.(plan) ?? (plan.badge ? plan.badge(plan) : null)}
@@ -238,7 +250,7 @@ export function BillingPageTable({ config, rows, className }: BillingPageTablePr
             <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">{description}</p>
           )}
           <div className="mt-8">
-            <IntervalToggle config={config} onChange={setInterval} />
+            <IntervalToggle config={config} interval={interval} onChange={setInterval} />
           </div>
         </div>
       )}
@@ -270,10 +282,10 @@ export function BillingPageTable({ config, rows, className }: BillingPageTablePr
                       {plan.name}
                     </span>
                     <span className="font-heading text-2xl font-bold text-foreground">
-                      {planPriceLabel(plan, "$")}
+                      {planPriceLabel(plan, config.currency ?? "$", interval)}
                       {plan.price > 0 && (
                         <span className="text-xs font-normal text-muted-foreground">
-                          /{planInterval(plan, interval)}
+                          /{intervalLabel(planInterval(plan, interval))}
                         </span>
                       )}
                     </span>
@@ -368,7 +380,7 @@ export function BillingPageFreemium({ config, heroPlanId, className }: BillingPa
               </Badge>
             </div>
             <CardHeader>
-              <PlanHeader plan={hero} interval={interval} />
+              <PlanHeader plan={hero} interval={interval} currency={config.currency ?? "$"} />
             </CardHeader>
             <CardContent className="flex flex-1 flex-col justify-between gap-6">
               <FeatureList features={hero.features} />
@@ -384,7 +396,7 @@ export function BillingPageFreemium({ config, heroPlanId, className }: BillingPa
           {rest.map((plan) => (
             <Card key={plan.id} className="flex flex-col">
               <CardHeader>
-                <PlanHeader plan={plan} interval={interval} />
+                <PlanHeader plan={plan} interval={interval} currency={config.currency ?? "$"} />
               </CardHeader>
               <CardContent className="flex flex-1 flex-col justify-between gap-6">
                 <FeatureList features={plan.features} />
@@ -396,7 +408,7 @@ export function BillingPageFreemium({ config, heroPlanId, className }: BillingPa
       )}
 
       <div className="mt-8 flex justify-center">
-        <IntervalToggle config={config} onChange={setInterval} />
+        <IntervalToggle config={config} interval={interval} onChange={setInterval} />
       </div>
 
       {config.footer}

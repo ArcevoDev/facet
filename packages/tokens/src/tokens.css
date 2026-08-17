@@ -195,10 +195,13 @@
 }
 
 /* ── Base reset (opt-in via @layer base) ──────────────────────── */
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   border-color: var(--border);
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  display: none;
 }
 
 html {

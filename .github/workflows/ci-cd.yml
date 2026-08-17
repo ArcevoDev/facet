@@ -28,9 +28,8 @@ jobs:
 
   # Auto-open the "Version Packages" PR when changesets land on main.
   # This only VERSIONS (bumps versions + CHANGELOGs) and opens a PR; it does
-  # NOT publish to npm. Publishing stays local via `pnpm changeset publish`
-  # (authenticated from the maintainer's terminal) after the version PR is
-  # merged and the working tree is clean.
+  # NOT publish to npm itself. Publishing is automated in the `publish` job
+  # below, which runs only after that version PR merges to main.
   #
   # Requires `permissions: contents: write` so the GITHUB_TOKEN can push the
   # changeset-release/main branch. The old job failed here with a 403
@@ -56,5 +55,42 @@ jobs:
         with:
           title: "chore(release): version packages"
           commit: "chore(release): version packages"
-          # No `publish` command: versioning only. npm publish stays local.
+          # Version only: bumps package.json + CHANGELOG and opens a PR.
+          # npm publish happens in the `publish` job after that PR merges.
+
+  # After the "Version Packages" PR merges to main, this job publishes the
+  # versioned packages to npm. It gates on the `ci` job (typecheck + build must
+  # pass) and rebuilds `dist` from scratch before publishing, so a stale or
+  # dirty tree is never shipped — the same clean-tree guardrail the local
+  # `pnpm release` flow enforces.
+  #
+  # `changesets/action` in publish mode self-detects: if the versions in main
+  # already match what's on npm it is a no-op; if the merged version PR bumped
+  # versions beyond npm, it runs `pnpm changeset publish`.
+  #
+  # Requires a repo secret named `NPM_TOKEN` (publish-only, 2FA-exempt).
+  publish:
+    name: Publish to npm
+    needs: [ci]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+          auth-token: ${{ secrets.NPM_TOKEN }}
+      - run: pnpm install --frozen-lockfile
+      # Rebuild fresh dist so we never publish a stale build.
+      - run: pnpm -r build
+      - uses: changesets/action@v1
+        with:
+          publish: pnpm changeset publish
 

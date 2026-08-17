@@ -13,6 +13,7 @@ export default defineConfig({
   test: {
     projects: [
       "packages/sdk/vitest.config.ts",
+      "packages/store/vitest.config.ts",
       "packages/components/vitest.config.ts",
       "packages/auth/vitest.config.ts",
       "packages/layout/vitest.config.ts",

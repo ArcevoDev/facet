@@ -52,6 +52,9 @@ export interface OtpVerificationCardProps extends React.HTMLAttributes<HTMLDivEl
     disabled: boolean;
     className?: string;
   }) => React.ReactNode;
+  /** Icon overrides for the status states. Every icon defaults to a sensible
+   *  lucide glyph, and nothing here is hardcoded so consumers can theme them. */
+  icons?: Partial<Record<"error" | "success" | "timer" | "resend", IconName>>;
 }
 
 /**
@@ -65,6 +68,7 @@ export function OtpVerificationCard({
   length = 6,
   resendCooldown = 30,
   icon = "mail",
+  icons = {},
   copy = {},
   submitButton,
   className,
@@ -143,7 +147,7 @@ export function OtpVerificationCard({
           {copy.title ?? "Check your email"}
         </CardTitle>
         <CardDescription>
-          {copy.description ?? "We sent a 6-digit code. Enter it below to continue."}
+          {copy.description ?? `We sent a ${length}-digit code. Enter it below to continue.`}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -170,13 +174,13 @@ export function OtpVerificationCard({
             </div>
             {error && (
               <p role="alert" className="flex items-center justify-center gap-1.5 text-center text-sm text-destructive">
-                <Icon name="circle-alert" className="size-3.5" />
+                <Icon name={icons.error ?? "circle-alert"} className="size-3.5" />
                 {error}
               </p>
             )}
             {success && (
               <p className="flex items-center justify-center gap-1.5 text-center text-sm text-emerald-600">
-                <Icon name="circle-check" className="size-3.5" />
+                <Icon name={icons.success ?? "circle-check"} className="size-3.5" />
                 {copy.success ?? "Code verified."}
               </p>
             )}
@@ -188,12 +192,12 @@ export function OtpVerificationCard({
         <CardFooter className="flex items-center justify-center">
           {cooldown > 0 ? (
             <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Icon name="timer" className="size-3.5" />
+              <Icon name={icons.timer ?? "timer"} className="size-3.5" />
               {copy.resendActive ?? `Resend code in ${cooldown}s`}
             </p>
           ) : (
             <Button type="button" variant="ghost" size="sm" onClick={handleResend}>
-              <Icon name="rotate-ccw" className="mr-1.5 size-3.5" />
+              <Icon name={icons.resend ?? "rotate-ccw"} className="mr-1.5 size-3.5" />
               {copy.resend ?? "Resend code"}
             </Button>
           )}

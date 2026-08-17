@@ -239,7 +239,7 @@ export function buildPagesSection(): NavSection {
 }
 
 /**
- * Build the dedicated "Animation" sidebar section — a FLAT list (no nested
+ * Build the dedicated "Animation" sidebar section - a FLAT list (no nested
  * "Text"/"Cards" parents). TypewriterText is documented as tabs on the
  * text-animations page, so it has no standalone entry here.
  */

@@ -490,7 +490,10 @@ export {
   type BillingPlan,
   type BillingPageConfig,
   planPriceLabel,
+  planPriceForInterval,
   planInterval,
+  intervalLabel,
+  intervalMonths,
 } from "./ui/billing-types.js";
 
 export {
@@ -507,6 +510,12 @@ export {
   type FeedbackPageProps,
   FeedbackPage,
 } from "./ui/feedback-page.js";
+
+export {
+  type NotFoundProps,
+  NotFound,
+  type NotFoundAnimation,
+} from "./ui/not-found.js";
 
 /* ── Animations: card effects ─────────────────────────────── */
 export {

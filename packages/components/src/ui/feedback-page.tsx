@@ -54,7 +54,7 @@ export interface FeedbackPageProps {
   showEmailChannel?: boolean;
   /** Replace the default form entirely (e.g. a real API submit). */
   form?: React.ReactNode;
-  /** Animated submit button options. Default animation: "shine". */
+  /** Animated submit button options. Default animation: "sparkle". */
   submitButton?: {
     animation?: AnimatedButtonVariant;
     renderButton?: (props: AnimatedButtonRenderProps) => React.ReactNode;
@@ -153,7 +153,7 @@ export function FeedbackPage({
               </div>
               <AnimatedButton
                 type="submit"
-                animation={submitButton?.animation ?? "shine"}
+                animation={submitButton?.animation ?? "sparkle"}
                 renderButton={submitButton?.renderButton}
               >
                 Send feedback

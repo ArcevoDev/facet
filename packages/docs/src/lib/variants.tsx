@@ -222,6 +222,7 @@ import {
   ActivityFeed,
   Footer,
   FeedbackPage,
+  NotFound,
   BillingPage,
   BillingPageTable,
   BillingPageFreemium,
@@ -291,6 +292,7 @@ const BILLING_PLANS: BillingPlan[] = [
     name: "Pro",
     price: 19,
     highlight: true,
+    discounts: { quarterly: 30 },
     description: "For growing teams",
     icon: "zap",
     features: [
@@ -304,6 +306,7 @@ const BILLING_PLANS: BillingPlan[] = [
     id: "team",
     name: "Team",
     price: 49,
+    discounts: { quarterly: 20 },
     description: "For organizations",
     icon: "users",
     features: ["Everything in Pro", "Audit log", "Custom roles"],
@@ -2388,7 +2391,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Default",
           node: (
-            <div className="w-full rounded-lg border border-border">
+            <div className="w-full rounded-lg border border-border bg-background p-4">
               <Footer
                 brand={{ name: "facet", tagline: "The Arcevo UI system" }}
                 columns={[
@@ -2417,7 +2420,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Minimal",
           node: (
-            <div className="w-full rounded-lg border border-border">
+            <div className="w-full rounded-lg border border-border bg-background p-4">
               <Footer
                 variant="minimal"
                 brand={{ name: "facet", tagline: "The Arcevo UI system" }}
@@ -2430,7 +2433,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Columns",
           node: (
-            <div className="w-full rounded-lg border border-border">
+            <div className="w-full rounded-lg border border-border bg-background p-4">
               <Footer
                 variant="columns"
                 brand={{ name: "facet", tagline: "The Arcevo UI system" }}
@@ -2449,7 +2452,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Newsletter",
           node: (
-            <div className="w-full rounded-lg border border-border">
+            <div className="w-full rounded-lg border border-border bg-background p-4">
               <Footer
                 variant="newsletter"
                 brand={{ name: "facet", tagline: "The Arcevo UI system" }}
@@ -2471,7 +2474,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Split",
           node: (
-            <div className="w-full rounded-lg border border-border">
+            <div className="w-full rounded-lg border border-border bg-background p-4">
               <Footer
                 variant="split"
                 brand={{ name: "facet", tagline: "The Arcevo UI system" }}
@@ -2490,7 +2493,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Streamline",
           node: (
-            <div className="w-full rounded-lg border border-border">
+            <div className="w-full rounded-lg border border-border bg-background p-4">
               <Footer
                 variant="streamline"
                 brand={{ name: "facet", tagline: "The Arcevo UI system" }}
@@ -2516,7 +2519,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Default",
           node: (
-            <div className="w-full rounded-lg border border-border">
+            <div className="w-full rounded-lg border border-border bg-background p-4">
               <FeedbackPage
                 title="Feedback & contact"
                 description="Found a bug? Want a feature? We read everything."
@@ -2529,6 +2532,52 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                     description: "Chat with us directly",
                   },
                 ]}
+              />
+            </div>
+          ),
+        },
+      ];
+    case "not-found":
+      return [
+        {
+          label: "Gradient",
+          node: (
+            <div className="w-full rounded-lg border border-border bg-background p-4">
+              <NotFound animation="gradient" />
+            </div>
+          ),
+        },
+        {
+          label: "Shimmer",
+          node: (
+            <div className="w-full rounded-lg border border-border bg-background p-4">
+              <NotFound animation="shimmer" />
+            </div>
+          ),
+        },
+        {
+          label: "Aurora",
+          node: (
+            <div className="w-full rounded-lg border border-border bg-background p-4">
+              <NotFound animation="aurora" />
+            </div>
+          ),
+        },
+        {
+          label: "Custom",
+          node: (
+            <div className="w-full rounded-lg border border-border bg-background p-4">
+              <NotFound
+                animation="none"
+                title="Resource unavailable"
+                description="We couldn't load the content you requested. Try again in a few minutes or reach out to support."
+                actionLabel="Contact support"
+                actionHref="/contact"
+                actionIcon={
+                  <span className="text-xl" aria-hidden>
+                    &#8249;
+                  </span>
+                }
               />
             </div>
           ),
@@ -3003,8 +3052,10 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Card grid",
           node: (
-            <div className="w-full rounded-lg border border-border p-4">
-              <BillingPage config={{ plans: BILLING_PLANS, title: "Pricing" }} />
+            <div className="w-full overflow-x-auto rounded-lg border border-border p-4">
+              <div className="min-w-0 lg:min-w-[1152px]">
+                <BillingPage config={{ plans: BILLING_PLANS, title: "Pricing", annualDiscountNote: "Save up to 30% with quarterly · ~16% with yearly" }} />
+              </div>
             </div>
           ),
         },
@@ -3014,9 +3065,9 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Comparison",
           node: (
-            <div className="w-full rounded-lg border border-border p-4">
+            <div className="w-full overflow-x-auto rounded-lg border border-border p-4">
               <BillingPageTable
-                config={{ plans: BILLING_PLANS, title: "Compare plans" }}
+                config={{ plans: BILLING_PLANS, title: "Compare plans", annualDiscountNote: "Save up to 30% with quarterly · ~16% with yearly" }}
                 rows={[
                   { label: "Projects", supports: { free: true, pro: true, team: true, enterprise: true } },
                   { label: "SSO", supports: { free: false, pro: true, team: true, enterprise: true } },
@@ -3033,9 +3084,9 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "Freemium",
           node: (
-            <div className="w-full rounded-lg border border-border p-4">
+            <div className="w-full overflow-x-auto rounded-lg border border-border p-4">
               <BillingPageFreemium
-                config={{ plans: BILLING_PLANS, title: "Start free, scale when you're ready" }}
+                config={{ plans: BILLING_PLANS, title: "Start free, scale when you're ready", annualDiscountNote: "Save up to 30% with quarterly · ~16% with yearly" }}
                 heroPlanId="pro"
               />
             </div>
@@ -3318,6 +3369,7 @@ export function variantCells(slug: string): VariantCell[] | undefined {
               <CookieConsent
                 storageKey="facet-docs-cookie-consent"
                 position="bottom"
+                alwaysShow
                 className="static inset-auto p-0"
               />
             </div>
@@ -3368,9 +3420,9 @@ export function variantCells(slug: string): VariantCell[] | undefined {
                 className="w-full max-w-lg"
                 title="Frequently asked"
                 items={[
-                  { question: "Is it framework agnostic?", answer: "Yes. The core is dependency-free React." },
-                  { question: "Can I theme it?", answer: "Everything reads from your Tailwind theme tokens." },
-                  { question: "Is it accessible?", answer: "Yes. All primitives ship with ARIA wiring." },
+                  { q: "Is it framework agnostic?", a: "Yes. The core is dependency-free React." },
+                  { q: "Can I theme it?", a: "Everything reads from your Tailwind theme tokens." },
+                  { q: "Is it accessible?", a: "Yes. All primitives ship with ARIA wiring." },
                 ]}
               />
             </div>

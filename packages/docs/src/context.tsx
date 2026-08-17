@@ -42,7 +42,7 @@ const PACKAGE_MANAGER_KEY = "facet:docs:package-manager";
  * Shares the selected package manager (pnpm/npm/yarn/bun) across every
  * InstallTabs block on the entire docs site. The choice is persisted to
  * localStorage so the user's preference survives reloads and page
- * navigation — they only pick once.
+  * navigation - they only pick once.
  */
 export function PackageManagerProvider({ children }: { children: React.ReactNode }) {
   const [active, setActive] = React.useState<string>(() => {

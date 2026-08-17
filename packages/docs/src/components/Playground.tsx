@@ -26,7 +26,7 @@ export interface PlaygroundProps {
  */
 export function Playground({ controls, children, note }: PlaygroundProps) {
   return (
-    <div className="my-6 overflow-hidden rounded-lg border border-border">
+    <div className="my-6 overflow-visible rounded-lg border border-border">
       {controls && controls.length > 0 && (
         <div className="flex flex-wrap gap-4 border-b border-border bg-muted/30 px-4 py-3">
           {controls.map((control) => (

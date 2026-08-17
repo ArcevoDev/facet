@@ -259,10 +259,10 @@ export function DemoSection() {
       </div>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v)} className="w-full">
-        <div className="mb-8 flex justify-center">
-          <TabsList className="flex flex-wrap justify-center gap-1">
+        <div className="mb-8 overflow-x-auto text-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <TabsList className="inline-flex flex-nowrap items-center justify-center gap-1">
             {DEMOS.map((d) => (
-              <TabsTrigger key={d.id} value={d.id}>
+              <TabsTrigger key={d.id} value={d.id} className="flex-shrink-0">
                 {d.label}
               </TabsTrigger>
             ))}

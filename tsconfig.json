@@ -4,6 +4,7 @@
   "references": [
     { "path": "packages/tokens" },
     { "path": "packages/sdk" },
+    { "path": "packages/store" },
     { "path": "packages/components" },
     { "path": "packages/auth" },
     { "path": "packages/layout" },

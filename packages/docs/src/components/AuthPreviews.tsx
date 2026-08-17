@@ -23,7 +23,7 @@ function PreviewShell({
     <section className="not-prose mt-8">
       <h2 className="font-heading text-xl font-semibold text-foreground">{title}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{description}</p>
-      <div className="mt-4 overflow-hidden rounded-lg border border-border">
+      <div className="mt-4 overflow-visible rounded-lg border border-border">
         <div className="flex items-center justify-between gap-3 border-b border-border bg-muted/30 px-4 py-2.5">
           <span className="text-xs font-medium text-muted-foreground">Live preview</span>
           <button
@@ -35,7 +35,7 @@ function PreviewShell({
             {showCode ? "Hide code" : "View code"}
           </button>
         </div>
-        <div className="flex items-center justify-center bg-background p-6">{children}</div>
+        <div className="w-full bg-background p-6">{children}</div>
         {showCode && (
           <div className="border-t border-border">
             <CodeBlock code={code} />

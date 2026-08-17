@@ -68,7 +68,7 @@ export function ComponentDemoCard({
       {/* Collapsed: static preview */}
       {!open && (
         <ThemePreviewFrame>
-          <div className="flex items-center justify-center gap-4">{collapsed}</div>
+          <div className="flex w-full items-start justify-start gap-4">{collapsed}</div>
         </ThemePreviewFrame>
       )}
 
