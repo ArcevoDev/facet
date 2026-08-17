@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "pnpm build",
+  "buildCommand": "turbo run build --filter=@arcevo/facet-docs-site...",
   "outputDirectory": "dist",
   "installCommand": "pnpm install --ignore-scripts",
   "framework": "vite",
