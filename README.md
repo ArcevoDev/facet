@@ -8,19 +8,19 @@ design manual (Alpha Palette), and your auth requirements differ per sector
 
 ## Packages
 
-| Package              | Description                                                                                         | Status  |
-| -------------------- | --------------------------------------------------------------------------------------------------- | ------- |
-| `@arcevo/facet-tokens`     | Design tokens: Alpha Palette, typography, spacing, CSS vars                                         | ✅ 1.1.2 |
-| `@arcevo/facet-sdk`        | arc-id API client (pure fetch, typed, 10 domain SDKs)                                               | ✅ 1.1.0 |
-| `@arcevo/facet-components` | 85 styled UI components (Radix + tailwind-merge + variants)                               | ✅ 1.8.0 |
-| `@arcevo/facet-auth`       | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms                           | ✅ 1.2.0 |
-| `@arcevo/facet-layout`     | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.3.4 |
-| `@arcevo/facet-store`    | Framework-agnostic Zustand stores (auth + tenant) & token-refresh bridge (`createZustandTokenStorage`), web + React Native   | 🚧 0.0.0 |
-| `@arcevo/facet-docs`       | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages                          | ✅ 1.4.4 |
-| `@arcevo/facet-cli`        | Scaffold docs (`facet docs init` + `facet docs scan`), audit/update (`facet pkg/up/doctor`), copy components (`facet add`), generate a tree-shaken icon registry (`facet icons generate`) | ✅ 0.7.0 |
-| `@arcevo/facet-emails`     | Framework-agnostic email builder + React bridge (`renderEmail`, `emailLayout`, `EmailLayout`)       | ✅ 1.1.0 |
+| Package | Description | Status |
+| --- | --- | --- |
+| `@arcevo/facet-tokens` | Design tokens: Alpha Palette, typography, spacing, CSS vars | ✅ 1.1.4 |
+| `@arcevo/facet-sdk` | arc-id API client (pure fetch, typed, 10 domain SDKs) | ✅ 1.1.0 |
+| `@arcevo/facet-components` | 85 styled UI components (Radix + tailwind-merge + variants) | ✅ 1.10.0 |
+| `@arcevo/facet-auth` | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms | ✅ 1.2.2 |
+| `@arcevo/facet-layout` | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.4.1 |
+| `@arcevo/facet-store` | Framework-agnostic Zustand stores (auth + tenant) & token-refresh bridge (`createZustandTokenStorage`), web + React Native | ✅ 0.1.0 |
+| `@arcevo/facet-docs` | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages | ✅ 1.4.6 |
+| `@arcevo/facet-cli` | Scaffold docs (`facet docs init` + `facet docs scan`), audit/update (`facet pkg/up/doctor`), copy components (`facet add`), generate a tree-shaken icon registry (`facet icons generate`) | ✅ 0.8.0 |
+| `@arcevo/facet-emails` | Framework-agnostic email builder + React bridge (`renderEmail`, `emailLayout`, `EmailLayout`) | ✅ 1.1.1 |
 
-Published to npm: components 1.8.0, layout 1.3.4, docs 1.4.4, auth 1.2.0, cli 0.7.0, tokens 1.1.2, sdk 1.1.0, emails 1.1.0.
+Published to npm: components 1.10.0, layout 1.4.1, docs 1.4.6, auth 1.2.2, cli 0.8.0, tokens 1.1.4, store 0.1.0, sdk 1.1.0, emails 1.1.1.
 
 ## Sites
 
@@ -61,7 +61,7 @@ existing `package.json` rather than overwriting it. See
 pnpm install
 pnpm build
 pnpm test      # vitest workspace (sdk/store/components/auth/layout)
-pnpm typecheck # all 9 projects
+pnpm typecheck # all 11 projects
 ```
 
 Consume in your app:
@@ -116,32 +116,32 @@ Forms are independently importable: `LoginForm`, `MagicLinkForm`, `ForgotPasswor
 
 ## Publishing
 
-Packages publish to npm under the `@arcevo/facet-*` scope via Changesets.
-Publishing is done **locally** by the maintainer: run `pnpm changeset publish`
-from a terminal authenticated with npm. The GitHub Actions workflow
-(`.github/workflows/ci-cd.yml`) runs a validation gate (build, typecheck,
-docs inventory) AND an auto-VERSION job: `changesets/action@v1` opens the
-"Version Packages" PR on `main` whenever changesets land. It only versions
-(bumps versions + CHANGELOGs, opens a PR) - it never publishes to npm.
-Merge the version PR, then publish locally from a clean tree.
+Packages publish to npm under the `@arcevo/facet-*` scope via Changesets,
+driven by GitHub Actions (`.github/workflows/ci-cd.yml`). The workflow runs
+three jobs:
+
+1. **ci** — validation gate: `pnpm install`, `pnpm build`, `pnpm check:docs`,
+   `pnpm -r typecheck`.
+2. **changeset** — auto-opens/updates a "Version Packages" PR on `main`
+   whenever changesets land. It only versions (bumps `package.json` +
+   `CHANGELOG`, opens a PR) — never publishes. Requires
+   `permissions: contents: write` so the release bot can push the
+   changeset-release branch.
+3. **publish** — after the version PR merges to `main`, builds `dist` from a
+   clean checkout and publishes any unpublished packages to npm. It
+   `needs: [ci]` (the gate must pass) and runs `pnpm -r build` before
+   `pnpm changeset publish`, so a stale or dirty tree is never shipped.
+   Requires the `NPM_TOKEN` repo secret (publish-only, 2FA-exempt) exported
+   as `NPM_TOKEN` / `NODE_AUTH_TOKEN` in the job env (see the `publish` job).
+
+**Release rule:** only publish from a clean working tree, and only after the
+build passes. The `publish` job enforces this automatically — it rebuilds
+`dist` from merged HEAD before publishing.
 
 ```sh
-pnpm changeset publish   # ships unpublished packages at their current version
+pnpm changeset            # stage a changeset for the change you want released
+# push to main → CI opens the Version Packages PR → merge it → CI publishes
 ```
-
-**Release checklist** (prevents publishing a stale `dist`): only publish
-from a clean working tree, and only after the build passes.
-
-1. `git status` clean - no uncommitted source changes (the published tarball
-   must match `packages/*/dist` built from HEAD).
-2. `pnpm -r build` passes (all packages build against the bumped versions).
-3. `pnpm changeset status` shows exactly the intended release set (no
-   stragglers, no forgotten changesets).
-4. `pnpm changeset publish` - then push the version-bump commit + tags to
-   `origin/main`.
-
-Publishing from a dirty tree is how a release has shipped without the latest
-commands: always build first, then publish, then push.
 
 ## Dev Preview
 
