@@ -9,6 +9,7 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./index.css": "./dist/index.css",
     "./tokens.css": "./dist/tokens.css",
     "./tailwind.css": "./dist/tailwind.css",
     "./package.json": "./package.json"
@@ -22,7 +23,7 @@
     "**/*.css"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean && node -e \"require('fs').cpSync('src/tokens.css', 'dist/tokens.css'); require('fs').cpSync('src/tailwind.css', 'dist/tailwind.css')\"",
+    "build": "tsup src/index.ts --format esm --dts --clean && node -e \"require('fs').cpSync('src/tokens.css', 'dist/tokens.css'); require('fs').cpSync('src/tailwind.css', 'dist/tailwind.css'); require('fs').cpSync('src/index.css', 'dist/index.css')\"",
     "build:analyze": "tsup src/index.ts --format esm --dts --metafile",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"

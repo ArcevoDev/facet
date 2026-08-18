@@ -151,6 +151,7 @@ export function Navbar({
   ...props
 }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const navbarRef = React.useRef<HTMLElement>(null);
   const isPill = variant === "pill";
   // Variants that define their own sticky positioning must not be overridden
   // by the trailing "relative" (tailwind-merge keeps the last position class).
@@ -164,8 +165,22 @@ export function Navbar({
     onNavigate?.(href);
   };
 
+  // Close the mobile menu when clicking outside the navbar (toggle button
+  // and dropdown both live inside the nav, so clicking elsewhere collapses).
+  React.useEffect(() => {
+    if (!showHamburger || !mobileOpen) return;
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (navbarRef.current && !navbarRef.current.contains(event.target as Node)) {
+        setMobileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [showHamburger, mobileOpen]);
+
   return (
     <nav
+      ref={navbarRef}
       className={cn(navbarVariants({ variant, size }), hasOwnPosition ? "" : "relative", className)}
       {...props}
     >
@@ -205,24 +220,42 @@ export function Navbar({
           <button
             type="button"
             onClick={() => setMobileOpen((v) => !v)}
-            aria-label="Toggle menu"
+            aria-label={mobileOpen ? "Close menu" : "Toggle menu"}
             aria-expanded={mobileOpen}
             className={`inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 hover:bg-accent hover:text-accent-foreground ${mobileBreakpoint}:hidden`}
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="4" y1="6" x2="20" y2="6" />
-              <line x1="4" y1="12" x2="20" y2="12" />
-              <line x1="4" y1="18" x2="20" y2="18" />
-            </svg>
+            {mobileOpen ? (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            ) : (
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+              </svg>
+            )}
           </button>
         )}
       </div>
@@ -230,7 +263,6 @@ export function Navbar({
       {/* Mobile menu */}
       {showHamburger && mobileOpen && (
         <div
-          onClick={() => setMobileOpen(false)}
           className={cn(
             `absolute inset-x-0 top-full z-50 border-b border-border bg-background p-4 ${mobileBreakpoint}:hidden`,
             isPill && "mt-1 rounded-2xl shadow-lg",

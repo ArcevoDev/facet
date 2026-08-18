@@ -10,6 +10,7 @@ import { ArcIdClient } from "./client.js";
 import type { ApiResponse } from "./client.js";
 import type {
   Credential,
+  IssueCredentialParams,
   JsonObject,
   StatusList,
   VerificationResult,
@@ -36,7 +37,7 @@ export class VcSdk {
   }
 
   /** POST /credentials/issue: issue a new credential. */
-  issue(data: { type: string; subject: string; claims: JsonObject }): Promise<ApiResponse<void>> {
+  issue(data: IssueCredentialParams): Promise<ApiResponse<void>> {
     return this.client.post<void>("/credentials/issue", data);
   }
 

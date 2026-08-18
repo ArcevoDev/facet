@@ -27,3 +27,15 @@ if (!globalThis.matchMedia) {
 if (!Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = () => undefined;
 }
+
+// jsdom doesn't implement IntersectionObserver — embla-carousel requires it.
+if (!globalThis.IntersectionObserver) {
+  globalThis.IntersectionObserver = class {
+    disconnect() {}
+    observe() {}
+    unobserve() {}
+    takeRecords() {
+      return [];
+    }
+  } as typeof IntersectionObserver;
+}

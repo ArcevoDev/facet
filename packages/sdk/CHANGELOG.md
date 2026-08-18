@@ -1,5 +1,15 @@
 # @arcevo/facet-sdk
 
+## Unreleased
+
+### Minor Changes
+
+- feat(sdk): add `OAuthSdk.updateClient(clientId, data)` for full OAuth-client
+  CRUD (PATCH `/oauth/clients/:clientId`). Backed by arc-id's
+  `PATCH /oauth/clients/:clientId` route (requires `client:update` permission
+  + PRO plan); returns `ApiResponse<OAuthClient>`, same shape as
+  `createClient`. `UpdateClientParams` is exported from the package entry.
+
 ## 1.1.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join as pathJoin } from "node:path";
-import { discoverFacetPackages, resolveLatestVersion } from "./registry.js";
+import { discoverFacetPackages, resolveLatestVersion, ALL_FACET_PACKAGES } from "./registry.js";
 import { scanUnnecessaryDeps } from "./deps.js";
 import {
   compareVersions,
@@ -209,4 +209,41 @@ export function updateCommand(
     case "bun": return `bun add ${pkgs}`;
     default: return `npm install ${pkgs}`;
   }
+}
+
+/**
+ * Build the install command for a single facet package via the detected PM.
+ * Used by `facet add <pkgName>` when the user passes a @arcevo/facet-* name.
+ */
+export function installFacetPackage(
+  pm: PackageManager,
+  name: string,
+  latest: string,
+  workspace = false,
+): string {
+  const rootFlag = workspace ? " -w" : "";
+  switch (pm) {
+    case "pnpm": return `pnpm${rootFlag} add ${name}@^${latest}`;
+    case "yarn": return `yarn workspace add ${name}@^${latest}`;
+    case "bun": return `bun add ${name}@^${latest}`;
+    default: return `npm install ${name}@^${latest}`;
+  }
+}
+
+/** True when the given name is a facet package (starts with @arcevo/facet-). */
+export function isFacetPackage(name: string): boolean {
+  return name.startsWith("@arcevo/facet-");
+}
+
+/**
+ * Resolve a shorthand or full name to a facet package name.
+ * - "@arcevo/facet-layout" → "@arcevo/facet-layout"  (full name, returned as-is)
+ * - "layout"               → "@arcevo/facet-layout"  (shorthand)
+ * - "Button"               → undefined              (not a facet package → component copy)
+ */
+export function resolveFacetPackageName(name: string): string | undefined {
+  if (isFacetPackage(name)) return name;
+  const full = `@arcevo/facet-${name}` as const;
+  if ((ALL_FACET_PACKAGES as readonly string[]).includes(full)) return full;
+  return undefined;
 }

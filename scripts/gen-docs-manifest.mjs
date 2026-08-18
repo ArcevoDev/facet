@@ -89,6 +89,12 @@ const CATEGORY = {
   "micro-interactions": "animation",
   "animated-button": "animation",
   "card-animations": "animation",
+  // Composable building blocks
+  "aspect-ratio": "layout",
+  carousel: "data-display",
+  drawer: "feedback",
+  "input-group": "inputs",
+  resizable: "layout",
   // Full page components (new "Pages" section)
   "feedback-page": "pages",
   footer: "pages",

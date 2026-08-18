@@ -9,6 +9,10 @@
  *   @import "@arcevo/facet-tokens/tokens.css";
  *   @import "@arcevo/facet-tokens/tailwind.css";
  *
+ * (Or just use the combined entry point:
+ *   @import "@arcevo/facet-tokens/index.css";
+ *  which chains all three in the correct order.)
+ *
  * Also pulls in `tw-animate-css` (v4-native replacement for
  * tailwindcss-animate) so the enter/exit utilities used by the
  * facet components (animate-in/out, fade-*, zoom-*, slide-*) exist

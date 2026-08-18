@@ -64,6 +64,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "ready-to-use"
   },
   {
+    "name": "Aspect Ratio",
+    "slug": "aspect-ratio",
+    "description": "AspectRatio: constrain children to a fixed width-to-height ratio,",
+    "category": "layout"
+  },
+  {
     "name": "Avatar",
     "slug": "avatar",
     "description": "Avatar behavior.",
@@ -116,6 +122,18 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "card-animations",
     "description": "@arcevo/facet-components: card animations",
     "category": "animation"
+  },
+  {
+    "name": "Carousel",
+    "slug": "carousel",
+    "description": "Carousel: a composable, embla-based carousel",
+    "category": "data-display"
+  },
+  {
+    "name": "Carousel Vertical",
+    "slug": "carousel-vertical",
+    "description": "Carousel: vertical orientation variant with next/prev navigation.",
+    "category": "data-display"
   },
   {
     "name": "Checkbox",
@@ -190,6 +208,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "feedback"
   },
   {
+    "name": "Drawer",
+    "slug": "drawer",
+    "description": "Drawer: vaul-based bottom sheet, ideal for mobile-first detail panels",
+    "category": "feedback"
+  },
+  {
     "name": "Dropdown Menu",
     "slug": "dropdown-menu",
     "description": "",
@@ -250,6 +274,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "inputs"
   },
   {
+    "name": "Input Group",
+    "slug": "input-group",
+    "description": "InputGroup",
+    "category": "inputs"
+  },
+  {
     "name": "Input Otp",
     "slug": "input-otp",
     "description": "",
@@ -290,6 +320,13 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "marquee",
     "description": "Marquee: auto-scrolling horizontal ticker with pause-on-hover support.",
     "category": "ready-to-use"
+  },
+  {
+    "name": "Marquee Strip",
+    "slug": "marquee-strip",
+    "description": "Marquee strip variant: continuous motion, no pause-on-hover.",
+    "category": "ready-to-use",
+    "variant": "strip"
   },
   {
     "name": "Menubar",
@@ -386,6 +423,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "radio-group",
     "description": "",
     "category": "inputs"
+  },
+  {
+    "name": "Resizable",
+    "slug": "resizable",
+    "description": "ResizablePanelGroup",
+    "category": "layout"
   },
   {
     "name": "Roadmap",

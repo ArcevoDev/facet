@@ -108,20 +108,28 @@ export function QRCodeDemo() {
   );
 }
 
-export function MarqueeDemo() {
+export function MarqueeDemo({ variant = "loop" }: { variant?: "loop" | "strip" }) {
   const items = ["facet", "auth", "design tokens", "React 19", "Radix", "TypeScript"];
+  const content = items.map((label) => (
+    <span
+      key={label}
+      className="rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground"
+    >
+      {label}
+    </span>
+  ));
   return (
-    <div className="not-prose">
+    <div className="not-prose space-y-4">
+      {variant === "strip" && (
+        <p className="text-xs text-muted-foreground">
+          <code className="rounded bg-muted px-1.5 py-0.5">variant="strip"</code> — continuous motion,
+          no pause-on-hover by default.
+        </p>
+      )}
       <Marquee
-        items={items.map((label) => (
-          <span
-            key={label}
-            className="rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-foreground"
-          >
-            {label}
-          </span>
-        ))}
+        items={content}
         duration={18}
+        variant={variant === "strip" ? "strip" : "loop"}
       />
     </div>
   );

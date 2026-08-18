@@ -31,6 +31,8 @@ export { type ButtonProps, Button, buttonVariants } from "./ui/button.js";
 
 export { type InputProps, Input } from "./ui/input.js";
 
+export { InputGroup, InputGroupAddon } from "./ui/input-group.js";
+
 export { Label } from "./ui/label.js";
 
 export { type BadgeProps, Badge, badgeVariants } from "./ui/badge.js";
@@ -128,6 +130,21 @@ export {
   CardFlipBack,
 } from "./ui/card.js";
 
+export { AspectRatio } from "./ui/aspect-ratio.js";
+
+export {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselDots,
+  CarouselPrevious,
+  type CarouselApi,
+  type CarouselProps,
+} from "./ui/carousel.js";
+
+export { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "./ui/resizable.js";
+
 export { Separator } from "./ui/separator.js";
 
 export { Skeleton } from "./ui/skeleton.js";
@@ -158,6 +175,18 @@ export {
   dialogContentVariants,
 } from "./ui/dialog.js";
 export type { DialogOverlayProps, DialogContentProps } from "./ui/dialog.js";
+
+export {
+  Drawer,
+  DrawerTrigger,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerHeader,
+  DrawerFooter,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerClose,
+} from "./ui/drawer.js";
 
 export {
   Select,
@@ -318,7 +347,7 @@ export { type QRCodeProps, QRCode } from "./ui/qrcode.js";
 
 export { type InfiniteScrollProps, InfiniteScroll } from "./ui/infinite-scroll.js";
 
-export { type MarqueeProps, Marquee } from "./ui/marquee.js";
+export { type MarqueeProps, type MarqueeVariant, Marquee } from "./ui/marquee.js";
 
 export {
   type RoadmapItem,

@@ -165,6 +165,24 @@ import {
   PageHeader,
   StatCard,
   ActivityFeed,
+  AspectRatio,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselDots,
+  CarouselPrevious,
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  InputGroup,
+  InputGroupAddon,
+  ResizablePanelGroup,
+  ResizableHandle,
+  ResizablePanel,
 } from "@arcevo/facet-components";
 import {
   DropzoneDemo,
@@ -712,7 +730,9 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
     case "qrcode":
       return <QRCodeDemo />;
     case "marquee":
-      return <MarqueeDemo />;
+      return <MarqueeDemo variant={variant as "loop" | "strip"} />;
+    case "marquee-strip":
+      return <MarqueeDemo variant="strip" />;
     case "roadmap":
       return <RoadmapDemo />;
     case "form":
@@ -1063,6 +1083,149 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
               { id: "2", title: "API key created", description: "Staging server", timestamp: new Date(Date.now() - 2 * 3600000).toISOString(), icon: "key" },
             ]}
           />
+        </div>
+      );
+    case "aspect-ratio":
+      return (
+        <div className="w-full max-w-md space-y-3">
+          <AspectRatio ratio={16 / 9}>
+            <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
+              16:9
+            </div>
+          </AspectRatio>
+          <div className="grid grid-cols-2 gap-3">
+            <AspectRatio ratio={1}>
+              <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
+                1:1
+              </div>
+            </AspectRatio>
+            <AspectRatio ratio={4 / 3}>
+              <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
+                4:3
+              </div>
+            </AspectRatio>
+            <AspectRatio ratio={21 / 9}>
+              <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
+                21:9
+              </div>
+            </AspectRatio>
+            <AspectRatio ratio={3 / 4}>
+              <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
+                3:4
+              </div>
+            </AspectRatio>
+          </div>
+        </div>
+      );
+    case "carousel":
+      return (
+        <Carousel className="w-full max-w-xs" opts={{ loop: true }}>
+          <CarouselContent>
+            <CarouselItem>
+              <div className="flex h-40 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
+                1
+              </div>
+            </CarouselItem>
+            <CarouselItem>
+              <div className="flex h-40 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
+                2
+              </div>
+            </CarouselItem>
+            <CarouselItem>
+              <div className="flex h-40 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
+                3
+              </div>
+            </CarouselItem>
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+          <CarouselDots />
+        </Carousel>
+      );
+    case "carousel-vertical":
+      return (
+        <Carousel className="h-64 w-full max-w-xs" orientation="vertical">
+          <CarouselContent className="h-full">
+            <CarouselItem>
+              <div className="flex h-32 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
+                1
+              </div>
+            </CarouselItem>
+            <CarouselItem>
+              <div className="flex h-32 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
+                2
+              </div>
+            </CarouselItem>
+            <CarouselItem>
+              <div className="flex h-32 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
+                3
+              </div>
+            </CarouselItem>
+          </CarouselContent>
+          <CarouselPrevious orientation="vertical" />
+          <CarouselNext orientation="vertical" />
+        </Carousel>
+      );
+    case "drawer":
+      return (
+        <Drawer>
+          <DrawerTrigger asChild>
+            <Button variant="outline">Open Drawer</Button>
+          </DrawerTrigger>
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Drawer Title</DrawerTitle>
+              <DrawerDescription>
+                A vaul-based bottom sheet drawer.
+              </DrawerDescription>
+            </DrawerHeader>
+          </DrawerContent>
+        </Drawer>
+      );
+    case "input-group":
+      return (
+        <div className="w-full max-w-xs space-y-3">
+          <InputGroup>
+            <InputGroupAddon>
+              <span className="text-muted-foreground text-xs font-medium">
+                USD
+              </span>
+            </InputGroupAddon>
+            <Input type="text" placeholder="Amount" />
+          </InputGroup>
+        </div>
+      );
+    case "resizable":
+      return (
+        <div className="w-full max-w-lg space-y-4">
+          <p className="text-xs text-muted-foreground">horizontal</p>
+          <ResizablePanelGroup>
+            <ResizablePanel defaultSize={50}>
+              <div className="flex h-40 w-full items-center justify-center border-r bg-muted text-sm">
+                Panel 1
+              </div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={50}>
+              <div className="flex h-40 w-full items-center justify-center bg-muted text-sm">
+                Panel 2
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+          <p className="text-xs text-muted-foreground">vertical</p>
+          <ResizablePanelGroup orientation="vertical" className="h-40">
+            <ResizablePanel defaultSize={50}>
+              <div className="flex h-full w-full items-center justify-center border-b bg-muted text-sm">
+                Panel 1
+              </div>
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={50}>
+              <div className="flex h-full w-full items-center justify-center bg-muted text-sm">
+                Panel 2
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
       );
     default:

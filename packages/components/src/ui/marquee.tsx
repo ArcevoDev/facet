@@ -1,8 +1,12 @@
 /**
  * Marquee: auto-scrolling horizontal ticker with pause-on-hover support.
+ * Supports a "strip" variant for a continuous-motion strip (no pause-on-hover
+ * by default, composable via className).
  */
 import * as React from "react";
 import { cn } from "../utils.js";
+
+export type MarqueeVariant = "loop" | "strip";
 
 export interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Items rendered repeatedly across the track. */
@@ -11,13 +15,22 @@ export interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
   duration?: number;
   /** Reverse the scroll direction. Default: false */
   reverse?: boolean;
-  /** Pause scrolling while the pointer is over the track. Default: true */
+  /** Pause scrolling while the pointer is over the track. Default: true
+   *  (false for the "strip" variant). */
   pauseOnHover?: boolean;
   /**
    * Gap between items. Accepts a number (px, clamped to 4-32) or any CSS
    * length string ("0.5rem", "20px", ...). Default: 16 (px).
    */
   gap?: number | string;
+  /**
+   * Visual variant. "loop" (default) duplicates items for a seamless
+   * looping ticker with pause-on-hover. "strip" is a continuous-motion
+   * strip: no pause-on-hover, and a `facet-marquee--strip` class for
+   * consumer overrides (e.g. edge fade gradients or solid backgrounds).
+   * All other props (duration, reverse, gap, className) still apply.
+   */
+  variant?: MarqueeVariant;
 }
 
 /**
@@ -26,6 +39,11 @@ export interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
  * focus and hover pauses are handled without JavaScript animation state.
  * The `facet-marquee` keyframe is defined in `@arcevo/facet-tokens`
  * (tokens.css / tailwind.css).
+ *
+ * The "strip" variant shares the same engine (item duplication +
+ * translateX) but defaults `pauseOnHover` to false and applies a
+ * variant class so consumers can target it in CSS — e.g. to add a
+ * fade-to-background gradient at the edges or a distinct background.
  */
 const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
   (
@@ -33,8 +51,9 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
       items,
       duration = 20,
       reverse = false,
-      pauseOnHover = true,
+      pauseOnHover,
       gap = 16,
+      variant = "loop",
       className,
       ...props
     },
@@ -42,6 +61,9 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
   ) => {
     const track = React.useMemo(() => [...items, ...items], [items]);
     const [paused, setPaused] = React.useState(false);
+
+    // Strip variant: continuous motion by default (no hover pause).
+    const hover = pauseOnHover ?? variant === "loop";
 
     // Normalize gap: numeric px (clamped to a safe 4-32px band so spacing
     // never collapses or explodes), or a passthrough CSS length string.
@@ -52,9 +74,13 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
         ref={ref}
         role="marquee"
         aria-label="Scrolling content"
-        className={cn("group flex w-full overflow-hidden", className)}
-        onMouseEnter={pauseOnHover ? () => setPaused(true) : undefined}
-        onMouseLeave={pauseOnHover ? () => setPaused(false) : undefined}
+        className={cn(
+          "group flex w-full overflow-hidden",
+          variant === "strip" && "facet-marquee--strip",
+          className,
+        )}
+        onMouseEnter={hover ? () => setPaused(true) : undefined}
+        onMouseLeave={hover ? () => setPaused(false) : undefined}
         {...props}
       >
         <div

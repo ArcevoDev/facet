@@ -15,13 +15,15 @@ import {
   type Styling,
   type TemplateKind,
 } from "./lib/types.js";
-import { facetInstallCommand } from "./lib/registry.js";
+import { facetInstallCommand, resolveLatestVersion, discoverFacetPackages } from "./lib/registry.js";
 import {
   collectFacetPackageState,
   formatPackageTable,
   buildDoctorReport,
   planUpdates,
   updateCommand,
+  installFacetPackage,
+  resolveFacetPackageName,
 } from "./lib/commands.js";
 import {
   buildCleanPlan,
@@ -34,6 +36,12 @@ import {
   buildPrepPlan,
 } from "./lib/deps.js";
 import prompts from "prompts";
+import {
+  checkForCliUpdate,
+  printUpdateNotification,
+  currentCliVersion,
+  globalInstallCommand,
+} from "./lib/update.js";
 
 const program = new Command();
 const require = createRequire(import.meta.url);
@@ -43,6 +51,8 @@ program
   .name("facet")
   .description("Scaffold and generate @arcevo/facet-docs sites. Framework/language-agnostic.")
   .version(version)
+  .option("--log", "Verbose output: show internal steps and debug info")
+  .option("--no-update-check", "Skip the startup check for facet-cli updates")
   .addHelpText(
     "after",
     "\nFull docs and examples: https://docs.facet.arcevocirqle.com.ng/cli\n",
@@ -481,17 +491,57 @@ templatesCommand
     console.log(files.length ? `  files:\n${files.map((f) => `    ${f}`).join("\n")}` : "  files: (empty)");
   });
 
+/** Verbose log helper — only prints when --log is active. */
+function vlog(msg: string) {
+  if (process.argv.includes("--log")) console.log(`  · ${msg}`);
+}
+
 program
-  .command("add <component>")
-  .description("Copy a component into your source (shadcn-style). Recommended: import from the package instead.")
-  .option("--js", "Generate JavaScript instead of TypeScript")
+  .command("add <name>")
+  .description(
+    "Install a facet package (e.g. 'facet add layout' or '@arcevo/facet-layout'), or copy a component into your source (shadcn-style).",
+  )
+  .option("--js", "Generate JavaScript instead of TypeScript (component copy only)")
   .option("--dir <dir>", "Components directory (default: src/components)", "src/components")
   .option("--ui-dir <uiDir>", "Subdirectory that holds the copies (default: facet; ignored with --flat)", "facet")
   .option("--flat", "Place components directly in --dir instead of a subdirectory")
   .option("--no-barrel", "Do not create or update any barrel export")
   .option("--barrel", "Always create a barrel export (even when one does not exist yet)")
-  .action(async (component: string, opts: { js?: boolean; dir?: string; uiDir?: string; flat?: boolean; barrel?: boolean }) => {
+  .action(async (name: string, opts: { js?: boolean; dir?: string; uiDir?: string; flat?: boolean; barrel?: boolean }) => {
     const cwd = process.cwd();
+
+    // Branch: facet package install vs. component source copy.
+    // Supports full ("@arcevo/facet-layout") and shorthand ("layout") names.
+    const resolved = resolveFacetPackageName(name);
+    if (resolved) {
+      vlog(`Installing facet package: ${resolved}`);
+      const pm = detectPackageManager(cwd);
+      const workspace = detectMonorepo(cwd) !== null;
+      vlog(`Package manager: ${pm} (workspace: ${workspace})`);
+
+      const latest = await resolveLatestVersion(resolved);
+      if (!latest) {
+        console.error(`Could not resolve ${resolved} on the npm registry. Is the package name correct?`);
+        process.exitCode = 1;
+        return;
+      }
+      vlog(`Latest published: ${latest}`);
+
+      const installPkg = installFacetPackage(pm, resolved, latest, workspace);
+      console.log(`Installing ${resolved}@^${latest} (${pm})...`);
+      const { execSync } = await import("node:child_process");
+      try {
+        execSync(installPkg, { cwd, stdio: "inherit" });
+        console.log(`${resolved} installed.`);
+      } catch {
+        console.log("Could not install automatically. Run:");
+        console.log(`  ${installPkg}`);
+        process.exitCode = 1;
+      }
+      return;
+    }
+
+    // Component copy path (existing behavior).
     const answers = {
       language: (opts.js ? "javascript" : "typescript") as "typescript" | "javascript",
       target: opts.dir as string,
@@ -499,9 +549,9 @@ program
       dir: opts.uiDir as string,
       barrel: opts.barrel === undefined ? ("auto" as const) : opts.barrel,
     };
-    const files = generateComponentAdd(component, cwd, answers);
+    const files = generateComponentAdd(name, cwd, answers);
     const written = writeFiles(files);
-    console.log(`Copied ${component} to ${written[0]}`);
+    console.log(`Copied ${name} to ${written[0]}`);
     const barrel = written.find((f) => f.endsWith(`/index.${answers.language === "javascript" ? "js" : "ts"}`));
     if (barrel) console.log(`Barrel: ${barrel}`);
     console.log("Note: importing from @arcevo/facet-components is recommended over copying source.");
@@ -563,6 +613,7 @@ program
     }
     const pm = detectPackageManager(cwd);
     const workspace = detectMonorepo(cwd) !== null;
+    vlog(`update: pm=${pm} workspace=${workspace} outdated=${outdated.length}`);
     const targets = outdated
       .filter((i): i is typeof i & { latest: string } => Boolean(i.latest))
       .map((i) => ({ name: i.name, latest: i.latest! }));
@@ -662,6 +713,7 @@ program
     const plan = buildCleanPlan(cwd);
     const pm = detectPackageManager(cwd);
     const workspace = detectMonorepo(cwd) !== null;
+    vlog(`clean: pm=${pm} workspace=${workspace} manifests=${plan.manifests.length} imports=${plan.imports.length} deletable=${plan.deletableFiles.length}`);
 
     if (plan.manifests.length === 0 && plan.imports.length === 0 && plan.deletableFiles.length === 0) {
       console.log("Nothing to clean: no bundled deps, no shadcn-style imports, no dead local components.");
@@ -727,8 +779,23 @@ program
     if (rewritten.length) console.log(`  Rewrote imports in ${rewritten.length} file(s)`);
     if (deleted) console.log(`  Deleted ${deleted} unused local component file(s)`);
     if (removed.length) {
-      console.log("");
-      console.log(`Finish by running: ${removeCommand(pm, [...new Set(removed)], workspace)}`);
+      const removeCmd = removeCommand(pm, [...new Set(removed)], workspace);
+      if (opts.yes) {
+        console.log("");
+        console.log(`Auto-running: ${removeCmd}`);
+        const { execSync } = await import("node:child_process");
+        try {
+          execSync(removeCmd, { cwd, stdio: "inherit" });
+          console.log("Dependencies removed from node_modules.");
+        } catch (error) {
+          console.error("Could not remove deps automatically. Run manually:");
+          console.error(`  ${removeCmd}`);
+          process.exitCode = 1;
+        }
+      } else {
+        console.log("");
+        console.log(`Finish by running: ${removeCmd}`);
+      }
     }
   });
 
@@ -829,5 +896,71 @@ program
       console.log("facet prep: everything looks good to ship.");
     }
   });
+
+// `facet self-update`: update the globally-installed facet-cli.
+program
+  .command("self-update")
+  .description("Update the global facet-cli installation to the latest published version")
+  .option("--dry-run", "Only print the command without running it")
+  .action(async (opts: { dryRun?: boolean }) => {
+    vlog(`Current version: ${currentCliVersion()}`);
+    const latest = await resolveLatestVersion("@arcevo/facet-cli");
+    if (!latest) {
+      console.error("Could not resolve the latest facet-cli version from the npm registry.");
+      process.exitCode = 1;
+      return;
+    }
+    const cmd = globalInstallCommand();
+    if (opts.dryRun) {
+      console.log(`Would run: ${cmd}`);
+      return;
+    }
+    console.log(`facet-cli ${currentCliVersion()} -> ${latest}`);
+    console.log(`Running: ${cmd}`);
+    const { execSync } = await import("node:child_process");
+    try {
+      execSync(cmd, { stdio: "inherit" });
+      console.log(`facet-cli updated to ${latest}.`);
+    } catch (error) {
+      console.error("Could not update automatically. Run manually:");
+      console.error(`  ${cmd}`);
+      process.exitCode = 1;
+    }
+  });
+
+// `facet latest`: show the latest published versions of all facet packages.
+program
+  .command("latest")
+  .description("Show the latest published versions of all @arcevo/facet-* packages")
+  .action(async () => {
+    vlog("Resolving latest versions from npm registry...");
+    const names = await discoverFacetPackages();
+    const rows = await Promise.all(
+      names.map(async (name) => {
+        const latest = await resolveLatestVersion(name);
+        return { name, latest: latest ?? "n/a" };
+      }),
+    );
+    console.log("Latest facet package versions:");
+    for (const row of rows) {
+      console.log(`  ${row.name.padEnd(32)} ${row.latest}`);
+    }
+  });
+
+// Startup: check for facet-cli updates (pnpm-style notification box).
+// Skippable via --no-update-check. Best-effort: never blocks or throws.
+// Runs before parse so the notification appears before command output.
+if (!process.argv.includes("--no-update-check")) {
+  checkForCliUpdate()
+    .then((state) => {
+      if (state && state.outdated) {
+        if (process.argv.includes("--log")) vlog(`Update found: ${state.current} -> ${state.latest}`);
+        printUpdateNotification(state);
+      }
+    })
+    .catch(() => {
+      // Network error or other hiccup: silently skip the notification.
+    });
+}
 
 program.parse(process.argv);

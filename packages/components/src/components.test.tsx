@@ -49,6 +49,12 @@ import { relativeTime, dayLabel } from "./ui/activity-feed.js";
 import { FlipCard } from "./ui/card-animations.js";
 import { AnnouncementBar } from "./ui/announcement-bar.js";
 import { StatCard } from "./ui/stat-card.js";
+import { AspectRatio } from "./ui/aspect-ratio.js";
+import { Carousel, CarouselContent, CarouselDots, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel.js";
+import { Drawer, DrawerTrigger, DrawerContent, DrawerTitle, DrawerDescription } from "./ui/drawer.js";
+import { InputGroup, InputGroupAddon } from "./ui/input-group.js";
+import { Input } from "./ui/input.js";
+import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "./ui/resizable.js";
 
 describe("Button", () => {
   it("renders children", () => {
@@ -258,16 +264,44 @@ describe("Navbar", () => {
 
   it("toggles the mobile menu", async () => {
     render(<Navbar brand="Acme" links={links} />);
-
+  
     const toggle = screen.getByRole("button", { name: /toggle menu/i });
     // Desktop links are rendered but hidden; mobile menu starts closed
     expect(screen.getAllByText("Settings").length).toBe(1);
-
+  
     await userEvent.click(toggle);
     // Mobile menu adds a duplicate of the links
     expect(screen.getAllByText("Settings").length).toBe(2);
+  
+    await userEvent.click(toggle);
+    expect(screen.getAllByText("Settings").length).toBe(1);
+  });
+
+  it("switches the toggle label + icon to X when the menu is open", async () => {
+    render(<Navbar brand="Acme" links={links} />);
+
+    const toggle = screen.getByRole("button", { name: /toggle menu/i });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveAttribute("aria-label", "Toggle menu");
 
     await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(toggle).toHaveAttribute("aria-label", "Close menu");
+
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-label", "Toggle menu");
+  });
+
+  it("closes the mobile menu when clicking outside the navbar", async () => {
+    render(<Navbar brand="Acme" links={links} />);
+
+    const toggle = screen.getByRole("button", { name: /toggle menu/i });
+    await userEvent.click(toggle);
+    expect(screen.getAllByText("Settings").length).toBe(2);
+
+    // Click outside the navbar (on document.body)
+    await userEvent.click(document.body);
+    expect(screen.queryByRole("button", { name: /close menu/i })).not.toBeInTheDocument();
     expect(screen.getAllByText("Settings").length).toBe(1);
   });
 
@@ -924,5 +958,122 @@ describe("StatCard", () => {
     expect(container.textContent).toContain("+12.4%");
     const { container: c2 } = render(<StatCard label="C" value="1" delta={-0.4} />);
     expect(c2.textContent).toContain("-0.4%");
+  });
+});
+
+/* ── AspectRatio ── */
+
+describe("AspectRatio", () => {
+  it("renders children", () => {
+    render(
+      <AspectRatio ratio={16 / 9}>
+        <span data-testid="content">Content</span>
+      </AspectRatio>,
+    );
+    expect(screen.getByTestId("content")).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
+  });
+});
+
+/* ── Carousel ── */
+
+describe("Carousel", () => {
+  it("renders items and navigation buttons", () => {
+    render(
+      <Carousel>
+        <CarouselContent>
+          <CarouselItem>Slide 1</CarouselItem>
+          <CarouselItem>Slide 2</CarouselItem>
+        </CarouselContent>
+      </Carousel>,
+    );
+    expect(screen.getByText("Slide 1")).toBeInTheDocument();
+    expect(screen.getByText("Slide 2")).toBeInTheDocument();
+    // Two nav buttons (prev + next)
+    expect(screen.getAllByRole("button")).toHaveLength(2);
+  });
+
+  it("renders dots indicator and allows click navigation", async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <Carousel>
+        <CarouselContent>
+          <CarouselItem>Slide 1</CarouselItem>
+          <CarouselItem>Slide 2</CarouselItem>
+        </CarouselContent>
+        <CarouselDots />
+      </Carousel>,
+    );
+    const dots = container.querySelectorAll('[aria-label^="Go to slide"]');
+    expect(dots).toHaveLength(2);
+    await user.click(dots[1]);
+  });
+});
+
+/* ── Drawer ── */
+
+describe("Drawer", () => {
+  it("renders trigger; content is closed by default", () => {
+    render(
+      <Drawer>
+        <DrawerTrigger>Open</DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Drawer title</DrawerTitle>
+          <DrawerDescription>Drawer description</DrawerDescription>
+        </DrawerContent>
+      </Drawer>,
+    );
+    expect(screen.getByRole("button", { name: /open/i })).toBeInTheDocument();
+    expect(screen.queryByText("Drawer title")).not.toBeInTheDocument();
+  });
+
+  it("opens drawer on trigger click", async () => {
+    render(
+      <Drawer>
+        <DrawerTrigger>Open</DrawerTrigger>
+        <DrawerContent>
+          <DrawerTitle>Drawer title</DrawerTitle>
+        </DrawerContent>
+      </Drawer>,
+    );
+    await userEvent.click(screen.getByRole("button", { name: /open/i }));
+    expect(await screen.findByText("Drawer title")).toBeInTheDocument();
+  });
+});
+
+/* ── InputGroup ── */
+
+describe("InputGroup", () => {
+  it("renders input with prepend and append addons", () => {
+    render(
+      <InputGroup>
+        <InputGroupAddon>
+          <span data-testid="icon">icon</span>
+        </InputGroupAddon>
+        <Input placeholder="Search..." />
+        <InputGroupAddon>
+          <span data-testid="action">Go</span>
+        </InputGroupAddon>
+      </InputGroup>,
+    );
+    expect(screen.getByPlaceholderText("Search...")).toBeInTheDocument();
+    expect(screen.getAllByTestId("icon")).toHaveLength(1);
+    expect(screen.getAllByTestId("action")).toHaveLength(1);
+  });
+});
+
+/* ── Resizable ── */
+
+describe("Resizable", () => {
+  it("renders a panel group with panels and handle", () => {
+    render(
+      <ResizablePanelGroup>
+        <ResizablePanel>Panel 1</ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel>Panel 2</ResizablePanel>
+      </ResizablePanelGroup>,
+    );
+    expect(screen.getByText("Panel 1")).toBeInTheDocument();
+    expect(screen.getByText("Panel 2")).toBeInTheDocument();
   });
 });

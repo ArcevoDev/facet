@@ -8,6 +8,9 @@ import {
   planUpdates,
   readInstalledVersion,
   updateCommand,
+  installFacetPackage,
+  isFacetPackage,
+  resolveFacetPackageName,
   type FacetPackageInfo,
 } from "./commands.js";
 import { discoverFacetPackages, ALL_FACET_PACKAGES } from "./registry.js";
@@ -253,5 +256,60 @@ describe("detectPackageManager", () => {
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+describe("isFacetPackage", () => {
+  it("returns true for @arcevo/facet-* names", () => {
+    expect(isFacetPackage("@arcevo/facet-layout")).toBe(true);
+    expect(isFacetPackage("@arcevo/facet-components")).toBe(true);
+  });
+
+  it("returns false for non-facet names", () => {
+    expect(isFacetPackage("react")).toBe(false);
+    expect(isFacetPackage("Button")).toBe(false);
+    expect(isFacetPackage("@radix-ui/react-dialog")).toBe(false);
+  });
+});
+
+describe("resolveFacetPackageName", () => {
+  it("resolves full package names as-is", () => {
+    expect(resolveFacetPackageName("@arcevo/facet-components")).toBe("@arcevo/facet-components");
+    expect(resolveFacetPackageName("@arcevo/facet-layout")).toBe("@arcevo/facet-layout");
+  });
+
+  it("resolves shorthand names to full facet packages", () => {
+    expect(resolveFacetPackageName("components")).toBe("@arcevo/facet-components");
+    expect(resolveFacetPackageName("layout")).toBe("@arcevo/facet-layout");
+    expect(resolveFacetPackageName("tokens")).toBe("@arcevo/facet-tokens");
+  });
+
+  it("returns undefined for non-facet component names (falls through to copy)", () => {
+    expect(resolveFacetPackageName("Button")).toBeUndefined();
+    expect(resolveFacetPackageName("react")).toBeUndefined();
+    expect(resolveFacetPackageName("not-a-real-pkg")).toBeUndefined();
+  });
+});
+
+describe("installFacetPackage", () => {
+  it("builds a pnpm command with version", () => {
+    expect(installFacetPackage("pnpm", "@arcevo/facet-layout", "1.2.0")).toBe(
+      "pnpm add @arcevo/facet-layout@^1.2.0",
+    );
+  });
+
+  it("adds -w for pnpm workspaces", () => {
+    expect(installFacetPackage("pnpm", "@arcevo/facet-layout", "1.2.0", true)).toBe(
+      "pnpm -w add @arcevo/facet-layout@^1.2.0",
+    );
+  });
+
+  it("builds npm and yarn commands", () => {
+    expect(installFacetPackage("npm", "@arcevo/facet-tokens", "1.1.0")).toBe(
+      "npm install @arcevo/facet-tokens@^1.1.0",
+    );
+    expect(installFacetPackage("yarn", "@arcevo/facet-tokens", "1.1.0")).toBe(
+      "yarn workspace add @arcevo/facet-tokens@^1.1.0",
+    );
   });
 });

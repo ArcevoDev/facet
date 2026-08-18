@@ -1,0 +1,29 @@
+/* =================================================================
+ * @arcevo/facet-tokens: Bootstrap CSS
+ *
+ * Single-import entry point for consumers. Replaces the three-line
+ * import chain (tailwindcss + tokens.css + tailwind.css) with one:
+ *
+ *   @import "@arcevo/facet-tokens/index.css";
+ *
+ * Order matters:
+ *   1. tailwindcss   — base, components, utilities
+ *   2. tokens.css    — :root { --background, --primary, ... }
+ *   3. tailwind.css  — @theme { --color-* } maps tokens → tw utilities
+ *
+ * The @source hints below point Tailwind's scanner at the compiled
+ * facet component libraries so their utility classes are generated
+ * automatically — no manual @source in the consumer's globals.css.
+ * ================================================================= */
+
+@import "tailwindcss";
+@import "./tokens.css";
+@import "./tailwind.css";
+
+/* ── Scanner hints for facet packages (relative to dist/index.css) ── */
+/* dist/index.css sits at node_modules/@arcevo/facet-tokens/dist/
+   so ../../ reaches node_modules/@arcevo/ where sibling packages live. */
+@source "../../facet-components/dist/**/*.js";
+@source "../../facet-layout/dist/**/*.js";
+@source "../../facet-auth/dist/**/*.js";
+@source "../../facet-sdk/dist/**/*.js";

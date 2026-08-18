@@ -6,6 +6,10 @@
  *
  *   @import "@arcevo/facet-tokens/tokens.css";
  *
+ * (Or just use the combined one-liner entry point:
+ *   @import "@arcevo/facet-tokens/index.css";
+ *  which chains tailwindcss + tokens.css + tailwind.css for you.)
+ *
  * The variable names match arc-id's globals.css exactly so that
  * arc-id can replace its stylesheet with this one: zero migration cost.
  * ================================================================= */

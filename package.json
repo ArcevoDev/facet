@@ -23,6 +23,7 @@
     "build:turbo": "turbo run build",
     "test:turbo": "turbo run test",
     "typecheck:turbo": "turbo run typecheck",
+    "sandbox:e2e": "node scripts/sandbox-e2e.mjs",
     "lint:turbo": "turbo run lint",
     "analyze": "pnpm -r run build:analyze && pnpm analyze:apps",
     "analyze:apps": "pnpm --filter @arcevo/facet-landing analyze",

@@ -28,6 +28,12 @@ export type CreateClientParams = {
   projectId?: string;
 };
 
+/**
+ * Partial update for an OAuth client. Every field optional (PATCH semantics);
+ * tenantId is omitted since a client's owning tenant can never change.
+ */
+export type UpdateClientParams = Partial<Omit<CreateClientParams, "tenantId">>;
+
 export type GrantConsentParams = {
   clientId: string;
   scopes: string[];
@@ -46,6 +52,16 @@ export class OAuthSdk {
 
   createClient(data: CreateClientParams): Promise<ApiResponse<OAuthClient>> {
     return this.client.post<OAuthClient>("/oauth/clients", data);
+  }
+
+  updateClient(
+    clientId: string,
+    data: UpdateClientParams,
+  ): Promise<ApiResponse<OAuthClient>> {
+    return this.client.patch<OAuthClient>(
+      `/oauth/clients/${clientId}`,
+      data,
+    );
   }
 
   deleteClient(clientId: string): Promise<ApiResponse<void>> {

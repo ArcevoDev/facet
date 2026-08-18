@@ -345,6 +345,16 @@ export interface Credential {
   credentialSubject?: JsonObject;
 }
 
+/** POST /credentials/issue request body — mirrors IssueCredentialSchema. */
+export interface IssueCredentialParams {
+  subjectDid: string;
+  credentialSubject: JsonObject;
+  format?: "JWT" | "LDP" | "SD_JWT";
+  holderId?: string;
+  schemaId?: string;
+  expiresAt?: string;
+}
+
 export interface VerificationSession {
   sessionId: string;
   challenge: string;

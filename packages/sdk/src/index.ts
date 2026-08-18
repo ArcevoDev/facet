@@ -93,6 +93,7 @@ export type {
   AuditLogEntry,
   IdpConnection,
   Credential,
+  IssueCredentialParams,
   VerificationSession,
   VerificationResult,
   StatusList,
@@ -115,7 +116,11 @@ export { VcSdk } from "./vcs.sdk.js";
 export { IdentitySdk } from "./identity.sdk.js";
 
 export { OAuthSdk } from "./oauth.sdk.js";
-export type { CreateClientParams, GrantConsentParams } from "./oauth.sdk.js";
+export type {
+  CreateClientParams,
+  UpdateClientParams,
+  GrantConsentParams,
+} from "./oauth.sdk.js";
 
 export { TenantSdk } from "./tenant.sdk.js";
 
