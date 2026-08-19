@@ -147,12 +147,13 @@ const components = fs
   .sort()
   .map((name) => {
     const file = path.join(uiDir, `${name}.tsx`);
-    return {
+    const entry = {
       name: humanize(name),
       slug: name,
       description: firstDocLine(file),
       category: CATEGORY[name] ?? "general",
     };
+    return entry;
   });
 
 const foundations = [

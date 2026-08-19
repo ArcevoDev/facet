@@ -24,10 +24,13 @@ Three customization axes: `appearance` (style), `config` (behavior flags), `slot
 ```
 packages/tokens/       ← Design tokens (finished)
 packages/sdk/          ← arc-id SDK (finished)
-packages/components/   ← 92 styled Radix components (shadcn-style, Radix + tailwind-merge)
-packages/auth/         ← Auth components + presets
+packages/components/   ← 90 styled Radix components (shadcn-style, Radix + tailwind-merge)
+packages/auth/         ← Auth components + domain presets (fintech, med, edu)
 packages/layout/       ← Domain-configurable app shell (ConsoleLayout, AuthLayout, LandingLayout)
+packages/store/        ← Framework-agnostic Zustand stores (auth + tenant) + token-refresh bridge
+packages/emails/       ← Framework-agnostic email builder + React bridge (renderEmail, EmailLayout)
 packages/docs/         ← Installable docs engine: @arcevo/facet-docs (<DocsApp config pages />)
+packages/cli/          ← Scaffold docs, audit/update, add components, generate icon registry
 apps/docs/             ← Docs demo site: thin consumer of @arcevo/facet-docs (private, @arcevo/facet-docs-site)
 apps/landing/          ← Landing page
 ```
@@ -90,22 +93,22 @@ COMPLETE → (onSuccess callback) → redirect
 | Session TTL  | 15 min  | 30 min | 24 hr | 8 hr       |
 | Magic link   | ✅      | ❌     | ✅    | ❌         |
 
-## Build Status (2026-08-03)
+## Build Status (2026-08-18)
 
 1. ✅ `packages/tokens/`: Complete
 2. ✅ `packages/sdk/`: Complete, strict domain types (`sdk/src/types.ts`)
-3. ✅ `packages/components/`: 92 styled Radix components + theme system + IconRegistry (+20 this session: card animations, ready-to-use auth/security/settings/marketing/dashboard surfaces; notification-bell removed)
+3. ✅ `packages/components/`: 90 styled Radix components + theme system + IconRegistry
 4. ✅ `packages/auth/`: ArcProvider, SignIn (controlled `step`/`onStepChange` API), SignUp, UserButton, Guard, MfaDialog, 7 standalone forms
 5. ✅ `packages/layout/`: ConsoleLayout (full + rail modes), AuthLayout (renamed from AppLayout, alias kept), LandingLayout, 5 presets
 6. ✅ `packages/docs/`: installable config-driven docs engine (`@arcevo/facet-docs`) + thin demo consumer at `apps/docs/` (`@arcevo/facet-docs-site`)
 7. ✅ Changesets + npm publish pipeline
 8. ✅ `apps/landing/`: rebuilt public-facing site (vite + tailwind v4) + feedback page (`/feedback`) with mail/WhatsApp/socials
-9. ✅ Tests: vitest workspace, 129/130 components tests pass (1 pre-existing flake: theme.test.tsx Radix/jsdom), 22 new component tests green
+9. ✅ Tests: vitest workspace, 276 test definitions across 21 component test files (1 pre-existing flake: theme.test.tsx Radix/jsdom)
 10. ✅ SignIn mfa_challenge wired to MfaVerifyForm
 11. ✅ SignIn controlled `step`/`onStepChange` + `<SignInFlowDemo>` live-linked state machine + `<AuthDemo>` config block
 12. ✅ Docs restructure landed (568497d): old `apps/docs-site` removed, `packages/docs` engine + `apps/docs` thin consumer. Docs site includes an interactive SignIn demo with a method switcher (config toggles + preview + synced copyable code), a reusable `demo` content block for any manifest slug (auth/layout/forms guide pages), and a keyboard-shortcuts table on Overview + Getting Started.
 13. ✅ P0 fixes landed (2026-08-03): `check-docs-inventory.mjs` rewritten as a barrel+manifest drift gate (no story dependency); Storybook fully purged (48 story fixtures deleted, `@storybook/react-vite` removed from root devDeps); `packages/docs` added to root tsconfig references. Docs site has Auth as a nested sidebar group and Components grouped by category, with the interactive SignIn demo as the single home on /auth/sign-in.
-14. ✅ Docs-site gallery split (in-flight, uncommitted): base UI components, the auth/layout surfaces, and the "Ready to Use" extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form) are now separated. The base `/components` gallery shows UI primitives only, auth/layout have their own guide pages with interactive demos, and ready-to-use extras get a dedicated `/ready-to-use` section with live previews + copyable snippets. Component pages use the reusable `<InteractiveDemo>` (variant tabs with live preview + matching code side-by-side).
+14. ✅ Docs-site gallery split (committed in b1da261): base UI components, the auth/layout surfaces, and the "Ready to Use" extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form) are now separated. The base `/components` gallery shows UI primitives only, auth/layout have their own guide pages with interactive demos, and ready-to-use extras get a dedicated `/ready-to-use` section with live previews + copyable snippets. Component pages use the reusable `<InteractiveDemo>` (variant tabs with live preview + matching code side-by-side).
 15. ⚠️ `pnpm lint` hangs on this machine (environment issue). CLI `tsc` is pathologically slow; use editor LSP diagnostics on changed files as the typecheck signal.
 
 ## Known Gaps for arc-id Consumption
@@ -116,7 +119,7 @@ When arc-id adopts facet as its frontend, these need resolution:
 
 1. ✅ **SDK 401 auto-refresh**: Added `onTokenRefresh` callback to `ArcIdClient` (`client.ts:113-124`). Automatic retry on 401.
 2. ✅ **Placeholder handlers**: `handlePasskeyAuth` now calls `passkeySdk.authenticationOptions()` → `navigator.credentials.get()` → `passkeySdk.authenticate()`. `handleForgotPasswordSubmit` calls `authSdk.forgotPassword()`. No longer stubs.
-3. ✅ **Test infrastructure**: Vitest workspace, 108 tests across sdk/components/auth/layout (12 files).
+3. ✅ **Test infrastructure**: Vitest workspace, 362 test definitions across 31 files (sdk 2, components 21, auth 6, layout 2).
 4. ✅ **SignIn MFA challenge**: Wired to `MfaVerifyForm` (2026-07-31).
 5. ✅ **Duplicate dropdowns**: `layout/UserMenu` now uses `@arcevo/facet-components` `DropdownMenu`.
 6. ✅ **Type strictness**: SDK now has strict domain interfaces in `sdk/src/types.ts`; `Record<string, unknown>` eliminated.

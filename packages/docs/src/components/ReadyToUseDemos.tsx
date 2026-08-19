@@ -122,7 +122,7 @@ export function MarqueeDemo({ variant = "loop" }: { variant?: "loop" | "strip" }
     <div className="not-prose space-y-4">
       {variant === "strip" && (
         <p className="text-xs text-muted-foreground">
-          <code className="rounded bg-muted px-1.5 py-0.5">variant="strip"</code> — continuous motion,
+          <code className="rounded bg-muted px-1.5 py-0.5">variant="strip"</code> -- continuous motion,
           no pause-on-hover by default.
         </p>
       )}

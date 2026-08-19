@@ -230,6 +230,25 @@ export function installFacetPackage(
   }
 }
 
+/**
+ * Build a global install command for a facet package (e.g. `npm i -g
+ * @arcevo/facet-cli@<version>`). Used by `facet install -g` so a consumer
+ * can write `facet install -g facet-cli` (short name) instead of the full
+ * `@arcevo/facet-cli`. Global installs never use the workspace `-w` flag.
+ */
+export function globalInstallFacetPackage(
+  pm: PackageManager,
+  name: string,
+  latest: string,
+): string {
+  switch (pm) {
+    case "pnpm": return `pnpm add -g ${name}@${latest}`;
+    case "yarn": return `yarn global add ${name}@${latest}`;
+    case "bun": return `bun add -g ${name}@${latest}`;
+    default: return `npm i -g ${name}@${latest}`;
+  }
+}
+
 /** True when the given name is a facet package (starts with @arcevo/facet-). */
 export function isFacetPackage(name: string): boolean {
   return name.startsWith("@arcevo/facet-");
@@ -238,11 +257,20 @@ export function isFacetPackage(name: string): boolean {
 /**
  * Resolve a shorthand or full name to a facet package name.
  * - "@arcevo/facet-layout" → "@arcevo/facet-layout"  (full name, returned as-is)
+ * - "facet-layout"         → "@arcevo/facet-layout"  (alias: drops the @arcevo/ scope,
+ *   so users can write `facet install -g facet-cli` instead of `@arcevo/facet-cli`)
  * - "layout"               → "@arcevo/facet-layout"  (shorthand)
  * - "Button"               → undefined              (not a facet package → component copy)
  */
 export function resolveFacetPackageName(name: string): string | undefined {
   if (isFacetPackage(name)) return name;
+  // Alias that drops the @arcevo/ scope: "facet-cli" -> "@arcevo/facet-cli".
+  // Lets users reference the package the short way, e.g. `npm i -g facet-cli`.
+  if (name.startsWith("facet-")) {
+    const scoped = `@arcevo/${name}` as const;
+    if ((ALL_FACET_PACKAGES as readonly string[]).includes(scoped)) return scoped;
+  }
+  // Plain shorthand: "layout" -> "@arcevo/facet-layout"
   const full = `@arcevo/facet-${name}` as const;
   if ((ALL_FACET_PACKAGES as readonly string[]).includes(full)) return full;
   return undefined;

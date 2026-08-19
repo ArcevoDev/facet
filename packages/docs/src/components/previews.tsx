@@ -731,8 +731,6 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
       return <QRCodeDemo />;
     case "marquee":
       return <MarqueeDemo variant={variant as "loop" | "strip"} />;
-    case "marquee-strip":
-      return <MarqueeDemo variant="strip" />;
     case "roadmap":
       return <RoadmapDemo />;
     case "form":
@@ -1085,85 +1083,41 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
           />
         </div>
       );
-    case "aspect-ratio":
+    case "aspect-ratio": {
+      const ratioMap: Record<string, number> = {
+        "16:9": 16 / 9,
+        "1:1": 1,
+        "4:3": 4 / 3,
+        "21:9": 21 / 9,
+        "3:4": 3 / 4,
+      };
+      const ratio = ratioMap[variant] ?? 16 / 9;
+      const label = variant === "default" ? "16:9" : variant;
       return (
-        <div className="w-full max-w-md space-y-3">
-          <AspectRatio ratio={16 / 9}>
+        <div className="w-full max-w-md">
+          <AspectRatio ratio={ratio}>
             <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
-              16:9
+              {label}
             </div>
           </AspectRatio>
-          <div className="grid grid-cols-2 gap-3">
-            <AspectRatio ratio={1}>
-              <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
-                1:1
-              </div>
-            </AspectRatio>
-            <AspectRatio ratio={4 / 3}>
-              <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
-                4:3
-              </div>
-            </AspectRatio>
-            <AspectRatio ratio={21 / 9}>
-              <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
-                21:9
-              </div>
-            </AspectRatio>
-            <AspectRatio ratio={3 / 4}>
-              <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
-                3:4
-              </div>
-            </AspectRatio>
-          </div>
         </div>
       );
+    }
     case "carousel":
       return (
-        <Carousel className="w-full max-w-xs" opts={{ loop: true }}>
+        <Carousel className="w-full max-w-md" opts={{ loop: true }}>
           <CarouselContent>
-            <CarouselItem>
-              <div className="flex h-40 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
-                1
-              </div>
-            </CarouselItem>
-            <CarouselItem>
-              <div className="flex h-40 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
-                2
-              </div>
-            </CarouselItem>
-            <CarouselItem>
-              <div className="flex h-40 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
-                3
-              </div>
-            </CarouselItem>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <CarouselItem key={i}>
+                <div className="flex h-44 w-full items-center justify-center rounded-xl border bg-muted text-3xl font-bold text-muted-foreground/50">
+                  {i + 1}
+                </div>
+              </CarouselItem>
+            ))}
           </CarouselContent>
           <CarouselPrevious />
           <CarouselNext />
           <CarouselDots />
-        </Carousel>
-      );
-    case "carousel-vertical":
-      return (
-        <Carousel className="h-64 w-full max-w-xs" orientation="vertical">
-          <CarouselContent className="h-full">
-            <CarouselItem>
-              <div className="flex h-32 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
-                1
-              </div>
-            </CarouselItem>
-            <CarouselItem>
-              <div className="flex h-32 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
-                2
-              </div>
-            </CarouselItem>
-            <CarouselItem>
-              <div className="flex h-32 w-full items-center justify-center rounded-lg border bg-muted text-2xl font-medium">
-                3
-              </div>
-            </CarouselItem>
-          </CarouselContent>
-          <CarouselPrevious orientation="vertical" />
-          <CarouselNext orientation="vertical" />
         </Carousel>
       );
     case "drawer":
@@ -1195,39 +1149,28 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
           </InputGroup>
         </div>
       );
-    case "resizable":
+    case "resizable": {
+      const isVertical = variant === "vertical";
       return (
-        <div className="w-full max-w-lg space-y-4">
-          <p className="text-xs text-muted-foreground">horizontal</p>
-          <ResizablePanelGroup>
+        <div className={`w-full max-w-lg ${isVertical ? "h-64" : ""}`}>
+          <ResizablePanelGroup orientation={isVertical ? "vertical" : "horizontal"}>
             <ResizablePanel defaultSize={50}>
-              <div className="flex h-40 w-full items-center justify-center border-r bg-muted text-sm">
+              <div
+                className={`flex h-40 w-full items-center justify-center bg-muted text-sm ${isVertical ? "border-b" : "border-r"}`}
+              >
                 Panel 1
               </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={50}>
-              <div className="flex h-40 w-full items-center justify-center bg-muted text-sm">
-                Panel 2
-              </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
-          <p className="text-xs text-muted-foreground">vertical</p>
-          <ResizablePanelGroup orientation="vertical" className="h-40">
-            <ResizablePanel defaultSize={50}>
-              <div className="flex h-full w-full items-center justify-center border-b bg-muted text-sm">
-                Panel 1
-              </div>
-            </ResizablePanel>
-            <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={50}>
-              <div className="flex h-full w-full items-center justify-center bg-muted text-sm">
+              <div className="flex h-40 w-full items-center justify-center border bg-muted text-sm">
                 Panel 2
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>
         </div>
       );
+    }
     default:
       return (
         <div className="text-sm text-muted-foreground">

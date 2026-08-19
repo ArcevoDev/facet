@@ -1,10 +1,15 @@
 const fs = require("fs");
+const path = require("path");
 
 // 1. Read arc-id's ROUTES constant (the canonical contract list).
-const routesSrc = fs.readFileSync(
-  "C:/Users/HP/Desktop/ArcevoDev/arc-id/src/lib/api/routes/index.ts",
-  "utf8",
-);
+// Configurable via ARC_ID_ROUTES env var; defaults to ../arc-id relative
+// to this script's location so it works on any machine without a
+// hardcoded absolute path.
+const ARC_ID_ROUTES =
+  process.env.ARC_ID_ROUTES ||
+  path.resolve(__dirname, "../../arc-id/src/lib/api/routes/index.ts");
+
+const routesSrc = fs.readFileSync(ARC_ID_ROUTES, "utf8");
 
 // Extract all path literals (both plain strings and template fns like (id) => `/x/${id}`).
 const paths = new Set();
@@ -55,3 +60,7 @@ for (const p of [...sdkPaths].sort()) console.log("  ", p);
 console.log("\n=== arc-id paths NOT covered by the SDK ===");
 if (!uncovered.length) console.log("  (none - full coverage)");
 else for (const p of uncovered) console.log("  ", p);
+
+const covered = arcPaths.length - uncovered.length;
+console.log(`\n=== Coverage: ${covered}/${arcPaths.length} arc-id routes covered by @arcevo/facet-sdk ===`);
+if (uncovered.length) process.exitCode = 1;

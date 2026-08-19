@@ -126,13 +126,7 @@ export const docsManifest: DocsManifestEntry[] = [
   {
     "name": "Carousel",
     "slug": "carousel",
-    "description": "Carousel: a composable, embla-based carousel",
-    "category": "data-display"
-  },
-  {
-    "name": "Carousel Vertical",
-    "slug": "carousel-vertical",
-    "description": "Carousel: vertical orientation variant with next/prev navigation.",
+    "description": "Carousel: a composable, embla-based carousel.",
     "category": "data-display"
   },
   {
@@ -322,13 +316,6 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "ready-to-use"
   },
   {
-    "name": "Marquee Strip",
-    "slug": "marquee-strip",
-    "description": "Marquee strip variant: continuous motion, no pause-on-hover.",
-    "category": "ready-to-use",
-    "variant": "strip"
-  },
-  {
     "name": "Menubar",
     "slug": "menubar",
     "description": "",
@@ -343,7 +330,7 @@ export const docsManifest: DocsManifestEntry[] = [
   {
     "name": "Navbar",
     "slug": "navbar",
-    "description": "Active-state matching for plain anchors:",
+    "description": "Pre-built class strings per breakpoint so Tailwind's scanner can detect",
     "category": "layout"
   },
   {

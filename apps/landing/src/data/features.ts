@@ -2,7 +2,7 @@ import type { IconName } from "@arcevo/facet-components";
 
 /** Live library stats, verified against the packages on every release. */
 export const STATS = [
-  { value: "92", label: "components" },
+  { value: "90", label: "components" },
   { value: "10", label: "API SDKs" },
   { value: "3", label: "layout shells" },
   { value: "5", label: "auth presets" },
@@ -20,7 +20,7 @@ export interface Package {
 export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-components",
-    desc: "92 styled, accessible React components built on Radix primitives.",
+    desc: "90 styled, accessible React components built on Radix primitives.",
     version: "1.10.0",
     icon: "boxes",
   },

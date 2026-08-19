@@ -32,7 +32,7 @@ Published to npm: components 1.10.0, layout 1.4.1, docs 1.4.6, auth 1.2.2, cli 0
 The docs site (`apps/docs`) is a thin consumer of the installable
 `@arcevo/facet-docs` engine, the same package any project can mount with its
 own brand, nav, and pages. Guides cover getting started, auth, layout,
-theming, tokens, and the docs package itself; the component gallery shows all 92 components with live demos and usage tabs.
+theming, tokens, and the docs package itself; the component gallery shows all 90 components with live demos and usage tabs.
 
 ```sh
 pnpm dev:docs-site  # run the docs site locally (Vite, port 5173)
@@ -120,14 +120,14 @@ Packages publish to npm under the `@arcevo/facet-*` scope via Changesets,
 driven by GitHub Actions (`.github/workflows/ci-cd.yml`). The workflow runs
 three jobs:
 
-1. **ci** — validation gate: `pnpm install`, `pnpm build`, `pnpm check:docs`,
+1. **ci** -- validation gate: `pnpm install`, `pnpm build`, `pnpm check:docs`,
    `pnpm -r typecheck`.
-2. **changeset** — auto-opens/updates a "Version Packages" PR on `main`
+2. **changeset** -- auto-opens/updates a "Version Packages" PR on `main`
    whenever changesets land. It only versions (bumps `package.json` +
-   `CHANGELOG`, opens a PR) — never publishes. Requires
+   `CHANGELOG`, opens a PR) -- never publishes. Requires
    `permissions: contents: write` so the release bot can push the
    changeset-release branch.
-3. **publish** — after the version PR merges to `main`, builds `dist` from a
+3. **publish** -- after the version PR merges to `main`, builds `dist` from a
    clean checkout and publishes any unpublished packages to npm. It
    `needs: [ci]` (the gate must pass) and runs `pnpm -r build` before
    `pnpm changeset publish`, so a stale or dirty tree is never shipped.
@@ -135,7 +135,7 @@ three jobs:
    as `NPM_TOKEN` / `NODE_AUTH_TOKEN` in the job env (see the `publish` job).
 
 **Release rule:** only publish from a clean working tree, and only after the
-build passes. The `publish` job enforces this automatically — it rebuilds
+build passes. The `publish` job enforces this automatically -- it rebuilds
 `dist` from merged HEAD before publishing.
 
 ```sh

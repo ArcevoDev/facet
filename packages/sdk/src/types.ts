@@ -345,7 +345,7 @@ export interface Credential {
   credentialSubject?: JsonObject;
 }
 
-/** POST /credentials/issue request body — mirrors IssueCredentialSchema. */
+/** POST /credentials/issue request body -- mirrors IssueCredentialSchema. */
 export interface IssueCredentialParams {
   subjectDid: string;
   credentialSubject: JsonObject;

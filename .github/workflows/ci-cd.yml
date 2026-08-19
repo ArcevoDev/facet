@@ -61,7 +61,7 @@ jobs:
   # After the "Version Packages" PR merges to main, this job publishes the
   # versioned packages to npm. It gates on the `ci` job (typecheck + build must
   # pass) and rebuilds `dist` from scratch before publishing, so a stale or
-  # dirty tree is never shipped — the same clean-tree guardrail the local
+  # dirty tree is never shipped -- the same clean-tree guardrail the local
   # `pnpm release` flow enforces.
   #
   # `changesets/action` in publish mode self-detects: if the versions in main

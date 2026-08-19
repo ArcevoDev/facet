@@ -4,6 +4,7 @@ import {
   Alert,
   AlertTitle,
   AlertDescription,
+  AspectRatio,
   Badge,
   Button,
   Card,
@@ -160,6 +161,9 @@ import {
   QRCode,
   Marquee,
   Roadmap,
+  ResizablePanelGroup,
+  ResizableHandle,
+  ResizablePanel,
   Form,
   FormField,
   useForm,
@@ -686,6 +690,73 @@ function PaginationDemo() {
  */
 export function variantCells(slug: string): VariantCell[] | undefined {
   switch (slug) {
+    /* ── Aspect ratio variants ───────────────────────────────── */
+    case "aspect-ratio":
+      return (["16:9", "1:1", "4:3", "21:9", "3:4" as const]).map((ratio) => ({
+        label: ratio,
+        node: (
+          <div className="w-full max-w-md">
+            <AspectRatio
+              ratio={
+                {
+                  "16:9": 16 / 9,
+                  "1:1": 1,
+                  "4:3": 4 / 3,
+                  "21:9": 21 / 9,
+                  "3:4": 3 / 4,
+                }[ratio]
+              }
+            >
+              <div className="flex h-full w-full items-center justify-center bg-muted text-sm text-muted-foreground">
+                {ratio}
+              </div>
+            </AspectRatio>
+          </div>
+        ),
+      }));
+    case "resizable":
+      return [
+        {
+          label: "horizontal",
+          node: (
+            <div className="w-full max-w-lg">
+              <ResizablePanelGroup>
+                <ResizablePanel defaultSize={50}>
+                  <div className="flex h-40 w-full items-center justify-center border-r bg-muted text-sm">
+                    Panel 1
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel>
+                  <div className="flex h-40 w-full items-center justify-center border bg-muted text-sm">
+                    Panel 2
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
+          ),
+        },
+        {
+          label: "vertical",
+          node: (
+            <div className="w-full max-w-lg h-80">
+              <ResizablePanelGroup orientation="vertical">
+                <ResizablePanel defaultSize={50}>
+                  <div className="flex h-40 w-full items-center justify-center border-b bg-muted text-sm">
+                    Panel 1
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle withHandle orientation="vertical" />
+                <ResizablePanel>
+                  <div className="flex h-40 w-full items-center justify-center border bg-muted text-sm">
+                    Panel 2
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
+          ),
+        },
+      ];
     /* ── Buttons / actions ───────────────────────────────────── */
     case "button":
       return (

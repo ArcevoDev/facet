@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "../utils.js";
-import { GripVertical } from "lucide-react";
+import { GripHorizontal, GripVertical } from "lucide-react";
 import {
   Group as RrpGroup,
   Panel as RrpPanel,
@@ -52,17 +52,26 @@ const ResizableHandle = React.forwardRef<
   HTMLDivElement,
   Omit<React.ComponentPropsWithoutRef<typeof RrpSeparator>, "elementRef"> & {
     withHandle?: boolean;
+    orientation?: "horizontal" | "vertical";
   }
->(({ className, withHandle, ...props }, ref) => (
+>(({ className, withHandle, orientation = "horizontal", ...props }, ref) => (
   <RrpSeparator
     elementRef={ref}
     className={cn(
-      "relative flex w-1.5 cursor-col-resize items-center justify-center rounded-sm bg-border hover:bg-accent",
+      "relative flex items-center justify-center rounded-sm bg-border hover:bg-accent",
+      orientation === "vertical"
+        ? "h-1.5 w-full cursor-row-resize"
+        : "w-1.5 h-full cursor-col-resize",
       className,
     )}
     {...props}
   >
-    {withHandle && <GripVertical className="h-4 w-4 text-muted-foreground" />}
+    {withHandle &&
+      (orientation === "vertical" ? (
+        <GripHorizontal className="h-4 w-4 text-muted-foreground" />
+      ) : (
+        <GripVertical className="h-4 w-4 text-muted-foreground" />
+      ))}
   </RrpSeparator>
 ));
 ResizableHandle.displayName = "ResizableHandle";

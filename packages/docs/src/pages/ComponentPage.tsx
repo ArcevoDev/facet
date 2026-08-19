@@ -35,6 +35,24 @@ export function demoControls(slug: string): Control[] | undefined {
           onChange: () => {},
         },
       ];
+    case "aspect-ratio":
+      return [
+        {
+          label: "Variant",
+          options: ["16:9", "1:1", "4:3", "21:9", "3:4"],
+          value: "16:9",
+          onChange: () => {},
+        },
+      ];
+    case "resizable":
+      return [
+        {
+          label: "Variant",
+          options: ["horizontal", "vertical"],
+          value: "horizontal",
+          onChange: () => {},
+        },
+      ];
     default:
       return undefined;
   }
@@ -90,17 +108,21 @@ export function ComponentPage() {
         <p className="mt-2 text-muted-foreground">{entry.description}</p>
       )}
 
-      <ComponentDemoCard
-        name={entry.name}
-        description={entry.description}
-        collapsed={<ComponentPreview slug={slug} />}
-        controls={liveControls}
-        expanded={<ComponentPreview slug={slug} variant={variant} size={size} />}
-      />
+      <div className="mt-6">
+        <ComponentDemoCard
+          name={entry.name}
+          description={entry.description}
+          collapsed={<ComponentPreview slug={slug} />}
+          controls={liveControls}
+          expanded={<ComponentPreview slug={slug} variant={variant} size={size} />}
+        />
+      </div>
 
       {/* Variant tabs: each tab shows the live preview AND its matching
           copyable code side-by-side on desktop (stacked on mobile). */}
-      <InteractiveDemo slug={slug} title={null} />
+      <div className="mt-6">
+        <InteractiveDemo slug={slug} title={null} />
+      </div>
 
       <PageNav
         prev={prev ? { label: prev.label, to: prev.path } : undefined}

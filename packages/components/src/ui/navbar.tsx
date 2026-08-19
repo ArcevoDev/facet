@@ -133,6 +133,21 @@ export interface NavbarProps
 
 /* ── Component ─────────────────────────────────────────────── */
 
+/**
+ * Pre-built class strings per breakpoint so Tailwind's scanner can detect
+ * every possible responsive variant (sm, md, lg, xl). Dynamic template
+ * literals like `${mobileBreakpoint}:hidden` are invisible to the Tailwind v4
+ * scanner and silently fail to generate the CSS -- the hamburger would never
+ * hide on desktop. By keeping all four variants as static string literals in
+ * this object, every responsive utility is guaranteed to be generated.
+ */
+const BREAKPOINT_DISPLAY = {
+  sm: { hide: "sm:hidden", flex: "sm:flex", block: "sm:block" },
+  md: { hide: "md:hidden", flex: "md:flex", block: "md:block" },
+  lg: { hide: "lg:hidden", flex: "lg:flex", block: "lg:block" },
+  xl: { hide: "xl:hidden", flex: "xl:flex", block: "xl:block" },
+} as const;
+
 export function Navbar({
   variant,
   size,
@@ -159,6 +174,10 @@ export function Navbar({
 
   const hasMobileMenu = mobileMenu !== undefined || links.length > 0;
   const showHamburger = showMobileMenu ?? hasMobileMenu;
+
+  const bpHide = BREAKPOINT_DISPLAY[mobileBreakpoint].hide;
+  const bpFlex = BREAKPOINT_DISPLAY[mobileBreakpoint].flex;
+  const bpBlock = BREAKPOINT_DISPLAY[mobileBreakpoint].block;
 
   const handleNav = (href: string) => {
     setMobileOpen(false);
@@ -191,7 +210,7 @@ export function Navbar({
       {children ?? (
         <div
           className={cn(
-            `hidden items-center ${mobileBreakpoint}:flex`,
+            `hidden items-center ${bpFlex}`,
             isPill ? "gap-0.5 rounded-full bg-muted/40 p-1" : "gap-1",
           )}
         >
@@ -212,7 +231,7 @@ export function Navbar({
         {showThemeToggle && <ThemeToggle />}
         {actions}
         {user && (
-          <div className={`shrink-0 ${mobileBreakpoint}:block hidden`}>
+          <div className={`shrink-0 ${bpBlock} hidden`}>
             <UserAvatar user={user} />
           </div>
         )}
@@ -222,7 +241,7 @@ export function Navbar({
             onClick={() => setMobileOpen((v) => !v)}
             aria-label={mobileOpen ? "Close menu" : "Toggle menu"}
             aria-expanded={mobileOpen}
-            className={`inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 hover:bg-accent hover:text-accent-foreground ${mobileBreakpoint}:hidden`}
+            className={`inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground/70 hover:bg-accent hover:text-accent-foreground ${bpHide}`}
           >
             {mobileOpen ? (
               <svg
@@ -264,7 +283,7 @@ export function Navbar({
       {showHamburger && mobileOpen && (
         <div
           className={cn(
-            `absolute inset-x-0 top-full z-50 border-b border-border bg-background p-4 ${mobileBreakpoint}:hidden`,
+            `absolute inset-x-0 top-full z-50 border-b border-border bg-background p-4 ${bpHide}`,
             isPill && "mt-1 rounded-2xl shadow-lg",
           )}
         >

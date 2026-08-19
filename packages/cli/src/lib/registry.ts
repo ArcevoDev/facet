@@ -14,6 +14,7 @@ export const ALL_FACET_PACKAGES = [
   "@arcevo/facet-emails",
   "@arcevo/facet-layout",
   "@arcevo/facet-sdk",
+  "@arcevo/facet-store",
   "@arcevo/facet-tokens",
 ] as const;
 

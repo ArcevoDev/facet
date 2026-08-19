@@ -20,6 +20,7 @@
     "typecheck": "pnpm -r typecheck",
     "check:docs": "node scripts/check-docs-inventory.mjs",
     "check:icons": "node scripts/gen-icon-map.mjs --check",
+    "check:sdk-coverage": "node scripts/audit-sdk-coverage.cjs",
     "build:turbo": "turbo run build",
     "test:turbo": "turbo run test",
     "typecheck:turbo": "turbo run typecheck",

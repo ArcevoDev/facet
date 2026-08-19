@@ -82,7 +82,7 @@
 
 ### Minor Changes
 
-- 8595d91: feat(cli): facet docs scan — read the repo and draft documentation
+- 8595d91: feat(cli): facet docs scan -- read the repo and draft documentation
 
   `facet docs scan` inspects the current repo and drafts a documentation
   layer for review:
@@ -109,7 +109,7 @@
 
   `readInstalledVersion` built paths ending at the package directory but
   read them as files, so `fs.readFileSync` threw EISDIR and `installed`
-  always showed `-` — which made `facet up` report "All up to date" even
+  always showed `-` -- which made `facet up` report "All up to date" even
   when updates existed (e.g. auth 1.1.1 vs latest 1.1.3). The path now
   appends `package.json`, so `facet pkg` shows real installed versions and
   `facet up` offers the correct updates. Regression tests added.
@@ -120,7 +120,7 @@
 
 - feat(cli): add clean/scripts/prep/up commands + doctor dep detection + alias-aware imports; layout: full/rail sidebar + verified section behavior
 
-  CLI — new commands for consumer-safety and repo hygiene:
+  CLI -- new commands for consumer-safety and repo hygiene:
 
   - `facet clean`: detects dependencies already bundled by @arcevo/facet-components
     (radix primitives, lucide-react, cmdk, input-otp, qrcode.react, react-hook-form,
@@ -133,7 +133,7 @@
   - `facet scripts`: adds useful npm scripts (docs:dev/build/preview, quality
     lint/typecheck/test/build, facet:doctor/clean/prep) to package.json, never
     overwriting scripts the consumer already has.
-  - `facet prep`: pre-go-live sync — checks facet deps are current (pkg), audits
+  - `facet prep`: pre-go-live sync -- checks facet deps are current (pkg), audits
     repo health (doctor), and runs the consumer's own typecheck/build/test when the
     scripts exist. Non-destructive.
   - `facet up`: applies the facet package updates (non-dry-run sibling of
@@ -150,7 +150,7 @@
     else a correct relative path. Fixes generated route imports that pointed at
     the wrong location.
 
-  Layout — ConsoleLayout keeps `mode="full"` and `mode="rail"` only (the overlay
+  Layout -- ConsoleLayout keeps `mode="full"` and `mode="rail"` only (the overlay
   variant is removed; it was never released and did not display as intended). The
   sidebar section expand/collapse + auto-open-active-section behavior is now
   covered by tests, and the mobile Sheet close behavior is verified.
@@ -181,11 +181,11 @@
 ### Minor Changes
 
 - 79ec07a: - Adds `facet docs init`: an interactive wizard that scaffolds a docs site
-  in any repo. The wizard opens with a **"Decide for me"** option — detect
-  my stack and use the best defaults (also available as `--yes`) — or lets
+  in any repo. The wizard opens with a **"Decide for me"** option -- detect
+  my stack and use the best defaults (also available as `--yes`) -- or lets
   the consumer walk through each choice. Asks for the docs site name
   (blank falls back to the default `docs`), location (`.`, `docs/`, or
-  `src/docs/` — root recommended), language, framework (React+Vite,
+  `src/docs/` -- root recommended), language, framework (React+Vite,
   Next.js, Remix, plain JS, Python), and template kind.
   - Detects the consumer's styling setup (facet tokens / Tailwind / plain
     CSS) and recommends wiring `@arcevo/facet-tokens` so consumers get the
@@ -198,7 +198,7 @@
       (config + pages registry + app shell), which doubles as a reference
       implementation.
     - **Next.js**: a real `src/app/docs` route (`"use client"` rendering
-      `DocsApp`) plus `src/lib/docs/config` and `src/lib/docs/pages` — the
+      `DocsApp`) plus `src/lib/docs/config` and `src/lib/docs/pages` -- the
       docs site mounts at `/docs` in an existing Next app. Next scaffolds
       get `next`/`react` deps and `docs:dev`/`docs:build` scripts.
     - **Remix**: a real `app/routes/docs` route rendering `DocsApp` plus

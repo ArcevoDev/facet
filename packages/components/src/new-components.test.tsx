@@ -120,4 +120,18 @@ describe("Resizable", () => {
     expect(screen.getByText("Panel 1")).toBeInTheDocument();
     expect(screen.getByText("Panel 2")).toBeInTheDocument();
   });
+
+  it("renders vertical orientation with row-resize cursor", () => {
+    const { container } = render(
+      <ResizablePanelGroup orientation="vertical">
+        <ResizablePanel>Panel 1</ResizablePanel>
+        <ResizableHandle withHandle orientation="vertical" />
+        <ResizablePanel>Panel 2</ResizablePanel>
+      </ResizablePanelGroup>,
+    );
+    expect(screen.getByText("Panel 1")).toBeInTheDocument();
+    expect(screen.getByText("Panel 2")).toBeInTheDocument();
+    const handle = container.querySelector('[class*="cursor-row-resize"]');
+    expect(handle).toBeInTheDocument();
+  });
 });

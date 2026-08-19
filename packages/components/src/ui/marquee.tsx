@@ -42,7 +42,7 @@ export interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
  *
  * The "strip" variant shares the same engine (item duplication +
  * translateX) but defaults `pauseOnHover` to false and applies a
- * variant class so consumers can target it in CSS — e.g. to add a
+ * variant class so consumers can target it in CSS -- e.g. to add a
  * fade-to-background gradient at the edges or a distinct background.
  */
 const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(

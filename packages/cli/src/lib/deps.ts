@@ -158,6 +158,41 @@ export const BUNDLED_DEPS: { name: string; why: string }[] = [
   { name: "tailwind-merge", why: "bundled by @arcevo/facet-components" },
 ];
 
+/** Static why-map built from BUNDLED_DEPS — used to annotate deps discovered
+ * at runtime so the CLI shows which component bundles each one. */
+const WHY_MAP = new Map(BUNDLED_DEPS.map((d) => [d.name, d.why]));
+
+/**
+ * Dynamically resolve which dependencies @arcevo/facet-components bundles by
+ * reading its **installed** package.json from the consumer's node_modules.
+ * Falls back to the static BUNDLED_DEPS when the package isn't installed or
+ * can't be read (offline, edge cases, older versions).
+ *
+ * This keeps `facet clean` in sync with whichever version of
+ * facet-components is actually present — no manual BUNDLED_DEPS update needed
+ * when a new bundled dep is added upstream.
+ */
+export function resolveBundledDeps(cwd: string): { name: string; why: string }[] {
+  try {
+    const pkgPath = path.join(cwd, "node_modules/@arcevo/facet-components/package.json");
+    if (!existsSync(pkgPath)) return BUNDLED_DEPS;
+    const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as { dependencies?: Record<string, string> };
+    const deps = pkg.dependencies ?? {};
+    // Exclude facet's own workspace peers and React (peer dep) — those are
+    // not "bundled" in the sense that consumers should also install them.
+    const bundled = Object.keys(deps).filter(
+      (name) => !name.startsWith("@arcevo/") && name !== "react" && name !== "react-dom",
+    );
+    if (!bundled.length) return BUNDLED_DEPS;
+    return bundled.map((name) => ({
+      name,
+      why: WHY_MAP.get(name) ?? "bundled by @arcevo/facet-components",
+    }));
+  } catch {
+    return BUNDLED_DEPS;
+  }
+}
+
 /** A manifest (root or workspace member) that declares unnecessary deps. */
 export interface UnnecessaryDepEntry {
   /** Absolute path to the package.json. */
@@ -195,8 +230,9 @@ export function findManifests(cwd: string): string[] {
 
 /** Scan every manifest for deps that @arcevo/facet-components bundles. */
 export function scanUnnecessaryDeps(cwd: string): UnnecessaryDepEntry[] {
-  const bundled = new Set(BUNDLED_DEPS.map((d) => d.name));
-  const why = new Map(BUNDLED_DEPS.map((d) => [d.name, d.why]));
+  const deps = resolveBundledDeps(cwd);
+  const bundled = new Set(deps.map((d) => d.name));
+  const why = new Map(deps.map((d) => [d.name, d.why]));
   const entries: UnnecessaryDepEntry[] = [];
   for (const pkgPath of findManifests(cwd)) {
     const pkg = readExistingPackageJson(path.dirname(pkgPath));
@@ -259,18 +295,21 @@ export interface ImportMatch {
   kind: "radix" | "lucide" | "other-bundled" | "shadcn";
 }
 
-/** True when the import specifier points at one of the bundled deps. */
-export function isBundledImport(from: string): boolean {
-  return BUNDLED_DEPS.some((d) => {
-    // Exact package, or a subpath like "@radix-ui/react-dialog/dist/..."
-    return from === d.name || from.startsWith(d.name + "/");
-  });
+/** True when the import specifier points at one of the bundled deps.
+ * @param deps  optional resolved deps list (use resolveBundledDeps for dynamic discovery) */
+export function isBundledImport(
+  from: string,
+  deps: { name: string }[] = BUNDLED_DEPS,
+): boolean {
+  return deps.some((d) => from === d.name || from.startsWith(d.name + "/"));
 }
 
 /** The bundled dep an import points at, if any. */
-export function bundledDepFor(from: string): string | undefined {
-  const match = BUNDLED_DEPS.find((d) => from === d.name || from.startsWith(d.name + "/"));
-  return match?.name;
+export function bundledDepFor(
+  from: string,
+  deps: { name: string }[] = BUNDLED_DEPS,
+): string | undefined {
+  return deps.find((d) => from === d.name || from.startsWith(d.name + "/"))?.name;
 }
 
 /** True when the specifier looks like a shadcn/ui-style local folder
@@ -285,6 +324,7 @@ export function isShadcnImport(from: string): boolean {
  * shadcn/ui-style folder. Returns deduped matches.
  */
 export function scanImports(cwd: string): ImportMatch[] {
+  const deps = resolveBundledDeps(cwd);
   const out: ImportMatch[] = [];
   const seen = new Set<string>();
   for (const file of findSourceFiles(cwd)) {
@@ -297,10 +337,11 @@ export function scanImports(cwd: string): ImportMatch[] {
     for (const m of source.matchAll(IMPORT_RE)) {
       const from = m[1]!;
       let kind: ImportMatch["kind"] | undefined;
-      if (isBundledImport(from)) {
-        kind = bundledDepFor(from)?.startsWith("@radix-ui/")
+      if (isBundledImport(from, deps)) {
+        const bundled = bundledDepFor(from, deps)!;
+        kind = bundled.startsWith("@radix-ui/")
           ? "radix"
-          : bundledDepFor(from) === "lucide-react"
+          : bundled === "lucide-react"
             ? "lucide"
             : "other-bundled";
       } else if (isShadcnImport(from)) {

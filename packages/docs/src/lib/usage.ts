@@ -1234,6 +1234,34 @@ const items = [
 function Example() {
   return <ActivityFeed items={items} />;
 }`,
+  "aspect-ratio": `import { AspectRatio } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <AspectRatio ratio={16 / 9} className="w-full max-w-md">
+      <img src="https://placehold.co/640x360" alt="..." className="h-full w-full object-cover" />
+    </AspectRatio>
+  );
+}`,
+  "resizable": `import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <ResizablePanelGroup>
+      <ResizablePanel defaultSize={50}>
+        <div className="flex h-40 w-full items-center justify-center border-r bg-muted">
+          Panel 1
+        </div>
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel>
+        <div className="flex h-40 w-full items-center justify-center border bg-muted">
+          Panel 2
+        </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
+  );
+}`,
 };
 
 /** Minimal import + usage snippet for a component slug. */
@@ -1353,6 +1381,51 @@ function Example() {
  * showing the base usage snippet.
  */
 const VARIANT_USAGE: Record<string, Record<string, string>> = {
+  "aspect-ratio": {
+    "16:9": `<AspectRatio ratio={16 / 9}>
+  <img src="https://placehold.co/600x400" alt="..." className="h-full w-full object-cover" />
+</AspectRatio>`,
+    "1:1": `<AspectRatio ratio={1}>
+  <img src="https://placehold.co/400x400" alt="..." className="h-full w-full object-cover" />
+</AspectRatio>`,
+    "4:3": `<AspectRatio ratio={4 / 3}>
+  <img src="https://placehold.co/600x450" alt="..." className="h-full w-full object-cover" />
+</AspectRatio>`,
+    "21:9": `<AspectRatio ratio={21 / 9}>
+  <img src="https://placehold.co/600x286" alt="..." className="h-full w-full object-cover" />
+</AspectRatio>`,
+    "3:4": `<AspectRatio ratio={3 / 4}>
+  <img src="https://placehold.co/400x533" alt="..." className="h-full w-full object-cover" />
+</AspectRatio>`,
+  },
+  resizable: {
+    horizontal: `<ResizablePanelGroup>
+  <ResizablePanel defaultSize={50}>
+    <div className="flex h-40 w-full items-center justify-center border-r bg-muted">
+      Panel 1
+    </div>
+  </ResizablePanel>
+  <ResizableHandle withHandle />
+  <ResizablePanel>
+    <div className="flex h-40 w-full items-center justify-center border bg-muted">
+      Panel 2
+    </div>
+  </ResizablePanel>
+</ResizablePanelGroup>`,
+    vertical: `<ResizablePanelGroup orientation="vertical" className="h-64">
+  <ResizablePanel defaultSize={50}>
+    <div className="flex h-40 w-full items-center justify-center border-b bg-muted">
+      Panel 1
+    </div>
+  </ResizablePanel>
+  <ResizableHandle withHandle />
+  <ResizablePanel>
+    <div className="flex h-40 w-full items-center justify-center border bg-muted">
+      Panel 2
+    </div>
+  </ResizablePanel>
+</ResizablePanelGroup>`,
+  },
   button: {
     default: `<Button variant="default">Button</Button>`,
     secondary: `<Button variant="secondary">Button</Button>`,

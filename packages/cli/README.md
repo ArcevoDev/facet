@@ -11,6 +11,8 @@ and even Python repos all get a docs scaffold that fits.
 pnpm add -g @arcevo/facet-cli
 # or
 npx @arcevo/facet-cli
+# keep it current globally with the scoped-dropped short name:
+facet install -g facet-cli   # -> npm i -g @arcevo/facet-cli@latest
 ```
 
 ## How it stays current

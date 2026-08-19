@@ -1,7 +1,7 @@
 /**
  * Extended gallery manifest.
  *
- * The auto-generated `docsManifest` covers the 57 UI components in
+ * The auto-generated `docsManifest` covers the 90 UI components in
  * `@arcevo/facet-components`. The gallery should also preview auth and
  * layout surfaces, so this module merges hand-written entries for the
  * `@arcevo/facet-auth` and `@arcevo/facet-layout` packages into a single

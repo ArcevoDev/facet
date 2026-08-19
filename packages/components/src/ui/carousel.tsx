@@ -114,10 +114,8 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
           {...props}
         >
           <div ref={carouselRef} className="overflow-hidden">
-            <div className="flex">{children}</div>
+            <div className={cn("flex", orientation === "vertical" && "flex-col")}>{children}</div>
           </div>
-          <CarouselPrevious orientation={orientation} disabled={!canScrollPrev} />
-          <CarouselNext orientation={orientation} disabled={!canScrollNext} />
         </div>
       </CarouselContext.Provider>
     );
@@ -126,29 +124,35 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
 Carousel.displayName = "Carousel";
 
 const CarouselContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "w-full",
-        "overflow-hidden",
-        "flex",
-        className,
-      )}
-      {...props}
-    />
-  ),
+  ({ className, ...props }, ref) => {
+    const { orientation } = useCarousel();
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "w-full",
+          "overflow-hidden",
+          orientation === "vertical" ? "flex-col" : "flex",
+          className,
+        )}
+        {...props}
+      />
+    );
+  },
 );
 CarouselContent.displayName = "Carousel.Content";
 
 const CarouselItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn("min-w-0 shrink-0 grow-0 basis-full", className)}
-      {...props}
-    />
-  ),
+  ({ className, ...props }, ref) => {
+    const { orientation } = useCarousel();
+    return (
+      <div
+        ref={ref}
+        className={cn(orientation === "vertical" ? "min-h-0" : "min-w-0", "shrink-0 grow-0 basis-full", className)}
+        {...props}
+      />
+    );
+  },
 );
 CarouselItem.displayName = "Carousel.Item";
 
@@ -170,7 +174,7 @@ const CarouselPrevious = React.forwardRef<
         carouselNavButton,
         orientation === "horizontal"
           ? "left-2 top-1/2 -translate-y-1/2 rotate-0"
-          : "left-1/2 top-1/2 -translate-x-1/2 -rotate-90",
+          : "top-2 left-1/2 -translate-x-1/2 -rotate-90",
         className,
       )}
       disabled={!canScrollPrev}
@@ -197,7 +201,7 @@ const CarouselNext = React.forwardRef<
         carouselNavButton,
         orientation === "horizontal"
           ? "right-2 top-1/2 -translate-y-1/2 rotate-0"
-          : "bottom-1/2 left-1/2 -translate-y-1/2 rotate-90",
+          : "bottom-2 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
       disabled={!canScrollNext}

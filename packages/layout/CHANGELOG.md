@@ -15,33 +15,33 @@
 - 18547dc: feat(components): MailInput with domain suggestions + Dissolve animation family
 
   ### @arcevo/facet-components (minor)
-  - **MailInput** — email input with a domain-suggestion dropdown. Typing `@` (or
+  - **MailInput** -- email input with a domain-suggestion dropdown. Typing `@` (or
     continuing after it) surfaces common provider domains (gmail.com,
     icloud.com, etc.); click or press Enter to auto-complete. Works controlled
     (RHF/Shadcn forms) and uncontrolled.
-  - **DissolveText** — 10th text animation (char-by-char dissolve-in). SSR-safe.
-  - **DissolveButton** — micro-interaction that emits a particle-dissolve burst
+  - **DissolveText** -- 10th text animation (char-by-char dissolve-in). SSR-safe.
+  - **DissolveButton** -- micro-interaction that emits a particle-dissolve burst
     on click. SSR-safe.
-  - **DissolveCard** — card-surface animation that dissolves in on mount with a
+  - **DissolveCard** -- card-surface animation that dissolves in on mount with a
     subtle hover overlay.
-  - **AnimatedButton** — new `animation="dissolve"` variant.
-  - **Footer** — new `variant="streamline"` with `steps` (how-it-works grid) and
+  - **AnimatedButton** -- new `animation="dissolve"` variant.
+  - **Footer** -- new `variant="streamline"` with `steps` (how-it-works grid) and
     `notices` (research notices, cookie callouts) slots; new `FooterStep` type.
-  - **FaqSection** — `type="multiple"|"single"` accordion behavior + `children`
+  - **FaqSection** -- `type="multiple"|"single"` accordion behavior + `children`
     slot for footer strips.
-  - **Roadmap** — `maxHeight` prop for scrollable timeline layouts.
-  - **BillingPage / PlanCta** — CTA now renders a real `<a>` (via `Button
+  - **Roadmap** -- `maxHeight` prop for scrollable timeline layouts.
+  - **BillingPage / PlanCta** -- CTA now renders a real `<a>` (via `Button
 asChild`) for accessible, right/middle-clickable links; `renderButton`
     override preserved.
   - New `facet-dissolve` CSS keyframe in tokens (shared by DissolveText,
     DissolveButton, DissolveCard, AnimatedButton dissolve variant).
 
   ### @arcevo/facet-layout (minor)
-  - **Sidebar** — new `singleOpen` (accordion) prop; `Collapse all` / `Expand
+  - **Sidebar** -- new `singleOpen` (accordion) prop; `Collapse all` / `Expand
 all` toolbar buttons; active section scrolls into view.
-  - **ConsoleLayout** — passes `singleOpen` through to the sidebar (both docked
+  - **ConsoleLayout** -- passes `singleOpen` through to the sidebar (both docked
     and mobile Sheet).
-  - **LayoutContext** — new `openSection`, `collapseAll`, `expandAll` methods
+  - **LayoutContext** -- new `openSection`, `collapseAll`, `expandAll` methods
     (all persisted to localStorage alongside the existing `toggleSection`).
   - The docs layout opts into `singleOpen`.
 
@@ -164,7 +164,7 @@ all` toolbar buttons; active section scrolls into view.
 
 - feat(cli): add clean/scripts/prep/up commands + doctor dep detection + alias-aware imports; layout: full/rail sidebar + verified section behavior
 
-  CLI — new commands for consumer-safety and repo hygiene:
+  CLI -- new commands for consumer-safety and repo hygiene:
 
   - `facet clean`: detects dependencies already bundled by @arcevo/facet-components
     (radix primitives, lucide-react, cmdk, input-otp, qrcode.react, react-hook-form,
@@ -177,7 +177,7 @@ all` toolbar buttons; active section scrolls into view.
   - `facet scripts`: adds useful npm scripts (docs:dev/build/preview, quality
     lint/typecheck/test/build, facet:doctor/clean/prep) to package.json, never
     overwriting scripts the consumer already has.
-  - `facet prep`: pre-go-live sync — checks facet deps are current (pkg), audits
+  - `facet prep`: pre-go-live sync -- checks facet deps are current (pkg), audits
     repo health (doctor), and runs the consumer's own typecheck/build/test when the
     scripts exist. Non-destructive.
   - `facet up`: applies the facet package updates (non-dry-run sibling of
@@ -194,7 +194,7 @@ all` toolbar buttons; active section scrolls into view.
     else a correct relative path. Fixes generated route imports that pointed at
     the wrong location.
 
-  Layout — ConsoleLayout keeps `mode="full"` and `mode="rail"` only (the overlay
+  Layout -- ConsoleLayout keeps `mode="full"` and `mode="rail"` only (the overlay
   variant is removed; it was never released and did not display as intended). The
   sidebar section expand/collapse + auto-open-active-section behavior is now
   covered by tests, and the mobile Sheet close behavior is verified.

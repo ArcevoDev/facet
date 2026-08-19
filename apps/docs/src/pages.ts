@@ -25,7 +25,7 @@ export const docsPages: DocsPage[] = [
         items: [
           "`@arcevo/facet-tokens`: Alpha Palette design tokens, typography, spacing, CSS variables.",
           "`@arcevo/facet-sdk`: arc-id API client (pure fetch, typed, 10 domain SDKs).",
-          "`@arcevo/facet-components`: 85 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
+          "`@arcevo/facet-components`: 90 styled UI components (Radix + tailwind-merge + variants), including ready-to-use extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form).",
           "`@arcevo/facet-auth`: auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms.",
           "`@arcevo/facet-layout`: domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets.",
            "`@arcevo/facet-store`: framework-agnostic Zustand state stores - auth session + tenant state, plus `createZustandTokenStorage` bridge for 401 auto-refresh, web + React Native.",
@@ -44,7 +44,7 @@ export const docsPages: DocsPage[] = [
         type: "code",
         text: `pnpm install
 pnpm build
-pnpm test      # 140+ tests across the workspace (vitest)
+pnpm test      # 560+ test cases across 45 test files (vitest workspace)
 pnpm typecheck # all projects`,
       },
       { type: "p", text: "Consume in your app:" },
@@ -946,18 +946,34 @@ facet docs init -y`,
         type: "p",
         text: "Every framework gets the same `@arcevo/facet-docs` engine: the content is plain data, so any host can render it.",
       },
+      { type: "h2", text: "Install a package" },
+      {
+        type: "code",
+        lang: "bash",
+        text: `facet install layout
+# or the full name:
+facet install @arcevo/facet-layout
+# the scoped-dropped alias also works:
+facet install facet-cli
+# install globally (e.g. keep facet-cli current) with the short name:
+facet install -g facet-cli`,
+      },
+      {
+        type: "p",
+        text: "`facet install` adds any facet package to your project by its shorthand (e.g. `layout`, `store`, `auth`), its scoped-dropped alias (e.g. `facet-cli` -> `@arcevo/facet-cli`), or its full name (e.g. `@arcevo/facet-layout`). It resolves the latest published version from npm and runs the install with your project's package manager. Pass `-g`/`--global` to install globally - `facet install -g facet-cli` (re)installs the CLI under the short name. `facet add` is an alias. To copy a component instead, use `facet copy <ComponentName>`.",
+      },
       { type: "h2", text: "Copy a component" },
       {
         type: "code",
         lang: "bash",
-        text: `facet add Button
+        text: `facet copy Button
 # placement: decide (default) / subdir / flat
-facet add Button --flat
-facet add Button --ui-dir ui`,
+facet copy Button --flat
+facet copy Button --ui-dir ui`,
       },
       {
         type: "p",
-        text: "`facet add` copies a component into your source. By default it decides based on what you already have: flat into your components root when a barrel exists, else a clean `facet/` subdirectory. `--dir`, `--ui-dir`, `--flat`, `--no-barrel`, and `--barrel` give you explicit control. An existing barrel is merged, never overwritten.",
+        text: "`facet copy` copies a component into your source. By default it decides based on what you already have: flat into your components root when a barrel exists, else a clean `facet/` subdirectory. `--dir`, `--ui-dir`, `--flat`, `--no-barrel`, and `--barrel` give you explicit control. An existing barrel is merged, never overwritten.",
       },
       {
         type: "p",
@@ -1027,11 +1043,14 @@ facet docs scan --out docs && facet docs scan -y`,
           ["`facet update`", "Apply updates for installed facet packages (confirm prompt, `-y` to skip; `--dry-run` to only print)"],
           ["`facet docs init`", "Scaffold a docs site (interactive wizard or `-y`)"],
           ["`facet docs scan`", "Read this repo and draft a documentation layer (pages + sidebar + API reference) for review"],
-          ["`facet add <component>`", "Copy a component into your source (shadcn-style)"],
+          ["`facet copy <component>`", "Copy a component into your source (shadcn-style)"],
+          ["`facet add <name> [-g]` / `facet install <name> [-g]`", "Install a facet package by shorthand (e.g. 'layout'), scoped-dropped alias (e.g. 'facet-cli'), or full name (e.g. '@arcevo/facet-layout'). Pass -g/--global to install globally"],
           ["`facet icons generate`", "Scan your source and emit a tree-shaken lucide icon registry"],
           ["`facet emails init`", "Scaffold or migrate email templates wired to facet-emails (detects react-email/mjml/nodemailer/resend)"],
           ["`facet templates list`", "Discover template dirs in the repo (under `./templates/`)"],
           ["`facet templates describe <name>`", "Show a template's manifest and files"],
+          ["`facet latest`", "Show the latest published versions of all @arcevo/facet-* packages"],
+          ["`facet self-update`", "Update the globally-installed facet-cli to the latest published version"],
         ],
       },
       { type: "h2", text: "Flags" },
@@ -1046,6 +1065,8 @@ facet docs scan --out docs && facet docs scan -y`,
         rows: [
           ["`-V, --version`", "Print the installed CLI version"],
           ["`-h, --help`", "Show the command reference and exit"],
+          ["`--no-update-check`", "Skip the startup check for facet-cli updates"],
+          ["`--log`", "Verbose output: show internal steps and debug info"],
         ],
       },
       { type: "h2", text: "facet docs init flags" },
@@ -1114,7 +1135,7 @@ facet emails init --provider resend`,
           ["`--name <name>`", "Brand name used in the email layout header"],
         ],
       },
-      { type: "h2", text: "facet add flags" },
+      { type: "h2", text: "facet copy flags" },
       {
         type: "table",
         headers: ["Flag", "Description"],
@@ -1358,8 +1379,7 @@ const client = new ArcIdClient({
           ["`OAuthSdk`", "clients, consent, tokens, introspection, revocation, userinfo, jwks"],
           ["`PasskeySdk`", "WebAuthn registration + authentication options/verify"],
           ["`TenantSdk`", "tenants, members, policies, signing keys, DID, invites"],
-          ["`CredentialsSdk`", "issue, verify, revoke, status lists, offers"],
-          ["`VcSdk`", "verifiable credential workflows"],
+          ["`VcSdk`", "issue, verify, revoke, status lists, offers, verifiable credential workflows"],
           ["`WebhooksSdk`", "endpoint management + events + retry"],
           ["`BillingSdk`", "subscription"],
           ["`AuditSdk`", "audit logs"],

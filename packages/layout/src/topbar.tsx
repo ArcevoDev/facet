@@ -89,7 +89,7 @@ export function Topbar({
                 className="absolute inset-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
               >
                 <rect x="3" y="4" width="18" height="16" rx="2" />
-                <line x1="3" y1="9" x2="21" y2="9" />
+                <line x1="9" y1="5" x2="9" y2="19" />
               </svg>
             </span>
           )}

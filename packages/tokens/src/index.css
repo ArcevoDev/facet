@@ -7,13 +7,13 @@
  *   @import "@arcevo/facet-tokens/index.css";
  *
  * Order matters:
- *   1. tailwindcss   — base, components, utilities
- *   2. tokens.css    — :root { --background, --primary, ... }
- *   3. tailwind.css  — @theme { --color-* } maps tokens → tw utilities
+ *   1. tailwindcss   -- base, components, utilities
+ *   2. tokens.css    -- :root { --background, --primary, ... }
+ *   3. tailwind.css  -- @theme { --color-* } maps tokens → tw utilities
  *
  * The @source hints below point Tailwind's scanner at the compiled
  * facet component libraries so their utility classes are generated
- * automatically — no manual @source in the consumer's globals.css.
+ * automatically -- no manual @source in the consumer's globals.css.
  * ================================================================= */
 
 @import "tailwindcss";
