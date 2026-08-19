@@ -24,7 +24,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm check:docs
+      - run: pnpm check:icons
+      - run: pnpm check:sdk-drift
       - run: pnpm -r typecheck
+      - run: pnpm test
+      - run: pnpm sandbox:e2e
 
   # Auto-open the "Version Packages" PR when changesets land on main.
   # This only VERSIONS (bumps versions + CHANGELOGs) and opens a PR; it does
