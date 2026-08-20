@@ -3,6 +3,8 @@ import {
   currentCliVersion,
   globalInstallCommand,
   checkForCliUpdate,
+  isCiEnvironment,
+  npxRunCommand,
 } from "./update.js";
 
 describe("currentCliVersion", () => {
@@ -21,10 +23,62 @@ describe("globalInstallCommand", () => {
   });
 });
 
-describe("checkForCliUpdate", () => {
-  it("returns null in CI environments", async () => {
+describe("npxRunCommand", () => {
+  it("returns an npx command for @arcevo/facet-cli", () => {
+    expect(npxRunCommand()).toBe("npx @arcevo/facet-cli@latest");
+  });
+});
+
+describe("isCiEnvironment", () => {
+  it("returns true when CI=true", () => {
     const prev = process.env.CI;
     process.env.CI = "true";
+    try {
+      expect(isCiEnvironment()).toBe(true);
+    } finally {
+      if (prev === undefined) delete process.env.CI;
+      else process.env.CI = prev;
+    }
+  });
+
+  it("returns true when CI=1", () => {
+    const prev = process.env.CI;
+    process.env.CI = "1";
+    try {
+      expect(isCiEnvironment()).toBe(true);
+    } finally {
+      if (prev === undefined) delete process.env.CI;
+      else process.env.CI = prev;
+    }
+  });
+
+  it("returns false when CI is unset", () => {
+    const prev = process.env.CI;
+    delete process.env.CI;
+    try {
+      expect(isCiEnvironment()).toBe(false);
+    } finally {
+      if (prev !== undefined) process.env.CI = prev;
+    }
+  });
+});
+
+describe("checkForCliUpdate", () => {
+  it("returns null in CI environments when CI=true", async () => {
+    const prev = process.env.CI;
+    process.env.CI = "true";
+    try {
+      const state = await checkForCliUpdate();
+      expect(state).toBeNull();
+    } finally {
+      if (prev === undefined) delete process.env.CI;
+      else process.env.CI = prev;
+    }
+  });
+
+  it("returns null in CI environments when CI=1", async () => {
+    const prev = process.env.CI;
+    process.env.CI = "1";
     try {
       const state = await checkForCliUpdate();
       expect(state).toBeNull();

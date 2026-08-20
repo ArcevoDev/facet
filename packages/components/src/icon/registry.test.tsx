@@ -3,14 +3,20 @@
  * dynamic lowercase lucide name resolution / brand icons / kebab aliases.
  */
 
-import { describe, expect, it, beforeEach } from "vitest";
+import { beforeAll, describe, expect, it, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Settings, LogOut, Copy, Compass, User, Heart } from "lucide-react";
-import { Icon, IconProvider, getIcon, registerIcon, resetIconRegistry } from "./index.js";
+import { Icon, IconProvider, getIcon, registerIcon, resetIconRegistry, iconCatalogReady } from "./index.js";
 import { lucideIconMap, type LucideIconName } from "./icon-map.js";
 import { brandIcons } from "./brand-icons.js";
 
 describe("icon registry", () => {
+  // The 1,500-icon catalog loads lazily (deferred chunk); await it
+  // before assertions that resolve an arbitrary lucide icon by name.
+  beforeAll(async () => {
+    await iconCatalogReady();
+  });
+
   // registerIcon mutates the module-level globalRegistry; reset between
   // tests so override cases can't pollute later renders.
   beforeEach(resetIconRegistry);

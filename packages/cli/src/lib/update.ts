@@ -59,7 +59,7 @@ function touchCache(): void {
  * when the check should be skipped (CI, cache too fresh, network error).
  */
 export async function checkForCliUpdate(): Promise<CliVersionState | null> {
-  if (process.env.CI === "true" || process.env.CI === "1") return null;
+  if (isCiEnvironment()) return null;
   if (cacheAgeMs() < CHECK_CACHE_MS) return null;
 
   const current = currentCliVersion();
@@ -87,6 +87,12 @@ export function printUpdateNotification(state: CliVersionState): void {
   console.log("");
 }
 
+/** True when running inside a CI environment where global installs are
+ *  not appropriate (no interactive shell, no global write permissions). */
+export function isCiEnvironment(): boolean {
+  return process.env.CI === "true" || process.env.CI === "1";
+}
+
 /** Return the global update command for facet-cli.
  *  Prefers the PM that installed the CLI (detected via npm_config_user_agent),
  *  falling back to npm (always available). */
@@ -96,4 +102,10 @@ export function globalInstallCommand(): string {
   if (ua.includes("yarn")) return "yarn global add @arcevo/facet-cli@latest";
   if (ua.includes("bun")) return "bun add -g @arcevo/facet-cli@latest";
   return "npm i -g @arcevo/facet-cli@latest";
+}
+
+/** Ephemeral command that runs the latest facet-cli without a global install.
+ *  Works in restricted/CI environments that lack global write permissions. */
+export function npxRunCommand(): string {
+  return "npx @arcevo/facet-cli@latest";
 }

@@ -61,13 +61,18 @@
     "react-router-dom": "^7.1.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.4",
+    "jsdom": "^30.0.0",
     "react": "^19",
     "react-dom": "^19",
     "react-router-dom": "^7.1.1",
     "tsup": "^8.5.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   },
   "engines": {
     "node": ">=20"

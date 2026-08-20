@@ -6,6 +6,7 @@ import {
   scanUnnecessaryDeps,
   scanImports,
   buildCleanPlan,
+  deleteIfUnused,
   rewriteImports,
   removeBundledDeps,
   removeCommand,
@@ -312,6 +313,49 @@ describe("detectPathAliases + importSpecifier", () => {
       fs.mkdirSync(path.join(dir, "src"), { recursive: true });
       const aliases = detectPathAliases(dir);
       expect(aliases).toContainEqual({ alias: "@/", target: "src/" });
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});
+
+describe("deleteIfUnused", () => {
+  it("does NOT delete files outside of a ui/ folder", () => {
+    const dir = tmp();
+    try {
+      const file = path.join(dir, "src/components/modal.tsx");
+      write(dir, "src/components/modal.tsx", "export const Modal = () => null;");
+      const result = deleteIfUnused(file, dir);
+      expect(result).toBe(false);
+      expect(fs.existsSync(file)).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("does NOT delete a ui component that is still imported elsewhere", () => {
+    const dir = tmp();
+    try {
+      const file = path.join(dir, "src/components/ui/dialog.tsx");
+      write(dir, "src/components/ui/dialog.tsx", "export const Dialog = () => null;");
+      write(dir, "src/app.tsx", `import { Dialog } from "@/components/ui/dialog";\n`);
+      const result = deleteIfUnused(file, dir);
+      expect(result).toBe(false);
+      expect(fs.existsSync(file)).toBe(true);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("deletes a ui component when nothing imports it (requires --delete-local)", () => {
+    const dir = tmp();
+    try {
+      const file = path.join(dir, "src/components/ui/dialog.tsx");
+      write(dir, "src/components/ui/button.tsx", "export const Button = () => null;");
+      write(dir, "src/components/ui/dialog.tsx", "export const Dialog = () => null;");
+      const result = deleteIfUnused(file, dir);
+      expect(result).toBe(true);
+      expect(fs.existsSync(file)).toBe(false);
     } finally {
       fs.rmSync(dir, { recursive: true, force: true });
     }

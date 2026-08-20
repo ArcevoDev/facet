@@ -1,14 +1,16 @@
 import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
+  plugins: [react()],
   test: {
-    // The docs package is an engine with no unit test files today; the
-    // config exists so `pnpm -F @arcevo/facet-docs test` runs its own
-    // project instead of walking up to the root workspace config (which
-    // resolves projects relative to the wrong dir and crashes).
-    include: [],
-    passWithNoTests: true,
-    environment: "node",
+    // Docs engine tests: content-driven navigation, slugs, manifest, layout
+    // config building, and component rendering against a consumer config.
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["../../scripts/test-setup.ts"],
+    include: ["src/**/*.test.{ts,tsx}"],
+    passWithNoTests: false,
     pool: "vmThreads",
     env: { NODE_ENV: "test" },
   },

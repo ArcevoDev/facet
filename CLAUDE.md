@@ -110,6 +110,8 @@ COMPLETE → (onSuccess callback) → redirect
 13. ✅ P0 fixes landed (2026-08-03): `check-docs-inventory.mjs` rewritten as a barrel+manifest drift gate (no story dependency); Storybook fully purged (48 story fixtures deleted, `@storybook/react-vite` removed from root devDeps); `packages/docs` added to root tsconfig references. Docs site has Auth as a nested sidebar group and Components grouped by category, with the interactive SignIn demo as the single home on /auth/sign-in.
 14. ✅ Docs-site gallery split (committed in b1da261): base UI components, the auth/layout surfaces, and the "Ready to Use" extras (Dropzone, ColorPicker, QRCode, Marquee, Roadmap, Form) are now separated. The base `/components` gallery shows UI primitives only, auth/layout have their own guide pages with interactive demos, and ready-to-use extras get a dedicated `/ready-to-use` section with live previews + copyable snippets. Component pages use the reusable `<InteractiveDemo>` (variant tabs with live preview + matching code side-by-side).
 15. ⚠️ `pnpm lint` hangs on this machine (environment issue). CLI `tsc` is pathologically slow; use editor LSP diagnostics on changed files as the typecheck signal.
+16. ✅ Architectural debt sprint — 10 items resolved and committed: `@arcevo/facet-store` stabilized at 1.0.0 (was 0.1.0-alpha), `@arcevo/facet-cli` stabilized at 1.0.0 (was 0.8.0); CLI deps resolved dynamically from the installed components package.json (no hardcoded BUNDLED_DEPS); CLI self-update is CI-aware (skips update check in CI, suggests npx fallback); docs engine has 6 test files (manifest, nav, pages, docs-app integration); scan.ts detects Fastify/OpenAPI backend routes + generates API reference pages; `facet clean` is opt-in destructive (`--delete-local` flag; `--yes` preset never deletes files); icon catalog is lazy-loaded (1,500-icon map deferred, ~30 semantic icons resolved synchronously); SDK table↔barrel + icon-map drift gates wired into CI; `facet install` (`.alias("add")`) + `facet copy` (component source) split clarifies the commands; template-merge.ts marker bug fixed. See `.changeset/stabilize-cli-store.md`.
+17. ✅ CI gates: `build → check:docs → check:icons → check:sdk-drift → typecheck → test (workspace) → sandbox:e2e`. Version job has `permissions: contents: write` (fixes 403 on changesets version PR push).
 
 ## Known Gaps for arc-id Consumption
 
@@ -159,6 +161,8 @@ pnpm format               # Prettier format all files
 node gen-snapshot.js              # Regenerate ui_codebase_snapshot.txt (local/agent use)
 node scripts/gen-docs-manifest.mjs # Regenerate packages/docs/src/manifest.ts
 node scripts/check-docs-inventory.mjs # Drift gate (pnpm check:docs)
+pnpm check:icons            # Icon-map drift gate
+pnpm check:sdk-drift        # Docs SDK table ↔ barrel drift gate
 ```
 
 ## AGENTS.md

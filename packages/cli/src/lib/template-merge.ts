@@ -28,7 +28,7 @@ const MERGEABLE = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs"]);
 
 /** Does this template file opt into the code-append merge? */
 function hasMergeMarker(content: string): boolean {
-  return content.includes(`@${MARKER}`);
+  return content.includes(MARKER);
 }
 
 /** Recursively collect relative file paths under `dir` (no dirs, and
@@ -38,7 +38,7 @@ function walkFiles(dir: string, base = ""): string[] {
   for (const entry of readdirSafe(dir)) {
     if (entry.startsWith(".")) continue;
     const abs = path.join(dir, entry);
-    const rel = base ? path.join(base, entry) : entry;
+    const rel = base ? path.posix.join(base, entry) : entry;
     const stat = statSafe(abs);
     if (!stat) continue;
     if (stat.isDirectory()) out.push(...walkFiles(abs, rel));
@@ -87,9 +87,9 @@ function mergePackageJsonContent(
  * opt-in way to "merge the implementation in" without clobbering.
  */
 function appendMergedCode(targetAbs: string, templateContent: string): string | null {
-  const markerIdx = templateContent.indexOf(`@${MARKER}`);
+  const markerIdx = templateContent.indexOf(MARKER);
   if (markerIdx === -1) return null;
-  const addition = templateContent.slice(markerIdx + `@${MARKER}`.length).replace(/^\s*\n/, "");
+  const addition = templateContent.slice(markerIdx + MARKER.length).replace(/^\s*\n/, "");
   const existing = readFileSync(targetAbs, "utf8");
   const braceIdx = existing.lastIndexOf("}");
   if (braceIdx !== -1) {

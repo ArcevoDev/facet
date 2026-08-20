@@ -14,7 +14,7 @@
  * and print the exact install/remove command instead of auto-running it.
  */
 
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { detectMonorepo, detectPackageManager, type PackageManager } from "./types.js";
 import { readExistingPackageJson } from "./writer.js";
@@ -460,7 +460,6 @@ export function deleteIfUnused(file: string, cwd: string): boolean {
     return false;
   }
   try {
-    const { unlinkSync } = require("node:fs") as typeof import("node:fs");
     unlinkSync(file);
     return true;
   } catch {

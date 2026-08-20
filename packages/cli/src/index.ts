@@ -42,6 +42,8 @@ import {
   printUpdateNotification,
   currentCliVersion,
   globalInstallCommand,
+  isCiEnvironment,
+  npxRunCommand,
 } from "./lib/update.js";
 
 const program = new Command();
@@ -731,7 +733,8 @@ program
   .description("Remove deps bundled by @arcevo/facet-components and rewrite shadcn/ui-style imports to the facet package")
   .option("--dry-run", "Show what would change without touching files")
   .option("-y, --yes", "Skip confirmation prompts")
-  .action(async (opts: { dryRun?: boolean; yes?: boolean }) => {
+  .option("--delete-local", "Also delete dead local component files (destructive; not run by default)")
+  .action(async (opts: { dryRun?: boolean; yes?: boolean; deleteLocal?: boolean }) => {
     const cwd = process.cwd();
     const plan = buildCleanPlan(cwd);
     const pm = detectPackageManager(cwd);
@@ -753,7 +756,7 @@ program
         console.log(`  rewrite ${imp.from} -> @arcevo/facet-components (${imp.kind})`);
       }
       if (plan.deletableFiles.length) {
-        console.log("  delete unused local components:");
+        console.log(`  delete unused local components (requires --delete-local):`);
         for (const f of plan.deletableFiles) console.log(`    ${f}`);
       }
       const names = [...new Set(plan.manifests.flatMap((e) => e.deps.map((d) => d.name)))];
@@ -766,7 +769,7 @@ program
       const res = await prompts({
         type: "confirm",
         name: "ok",
-        message: `Remove ${plan.manifests.flatMap((e) => e.deps.map((d) => d.name)).length} bundled deps, rewrite ${plan.imports.length} imports, delete ${plan.deletableFiles.length} dead local components?`,
+        message: `Remove ${plan.manifests.flatMap((e) => e.deps.map((d) => d.name)).length} bundled deps, rewrite ${plan.imports.length} imports${opts.deleteLocal ? `, delete ${plan.deletableFiles.length} dead local components` : " (pass --delete-local to also delete dead local components)"}?`:
         initial: false,
       });
       proceed = res.ok ?? false;
@@ -791,10 +794,12 @@ program
     // Rewrite imports to the facet package.
     const rewritten = rewriteImports(plan.imports);
 
-    // Delete dead shadcn-style local components.
+    // Delete dead shadcn-style local components (only with --delete-local).
     let deleted = 0;
-    for (const f of plan.deletableFiles) {
-      if (deleteIfUnused(f, cwd)) deleted++;
+    if (opts.deleteLocal) {
+      for (const f of plan.deletableFiles) {
+        if (deleteIfUnused(f, cwd)) deleted++;
+      }
     }
 
     console.log("facet clean done.");
@@ -926,6 +931,13 @@ program
   .description("Update the global facet-cli installation to the latest published version")
   .option("--dry-run", "Only print the command without running it")
   .action(async (opts: { dryRun?: boolean }) => {
+    // In CI / restricted environments, global install is not appropriate.
+    if (isCiEnvironment()) {
+      console.log("CI environment detected: global self-update is skipped.");
+      console.log("Run the latest version without installing:");
+      console.log(`  ${npxRunCommand()} <command>`);
+      return;
+    }
     vlog(`Current version: ${currentCliVersion()}`);
     const latest = await resolveLatestVersion("@arcevo/facet-cli");
     if (!latest) {
@@ -936,6 +948,7 @@ program
     const cmd = globalInstallCommand();
     if (opts.dryRun) {
       console.log(`Would run: ${cmd}`);
+      console.log(`Fallback (restricted env): ${npxRunCommand()} <command>`);
       return;
     }
     console.log(`facet-cli ${currentCliVersion()} -> ${latest}`);
@@ -945,12 +958,21 @@ program
       execSync(cmd, { stdio: "inherit" });
       console.log(`facet-cli updated to ${latest}.`);
     } catch {
-      console.error("Could not update automatically (global install may need permissions).");
-      console.error("Run one of:");
-      console.error(`  ${cmd}`);
-      console.error("  npx @arcevo/facet-cli@latest <command>  # run latest without installing");
-      console.error("  pnpm add -g @arcevo/facet-cli@latest  # or use pnpm");
-      process.exitCode = 1;
+      console.error("Could not update globally (restricted environment without global permissions).");
+      console.log("");
+      console.log("Trying ephemeral npx fallback...");
+      try {
+        execSync(`npx --yes @arcevo/facet-cli@latest --help`, { stdio: "inherit" });
+        console.log("");
+        console.log("Latest version verified via npx. Run without installing:");
+        console.log(`  ${npxRunCommand()} <command>`);
+      } catch {
+        console.error("npx fallback also failed. Run one of these manually:");
+        console.error(`  ${cmd}`);
+        console.error(`  ${npxRunCommand()} <command>`);
+        console.error("  pnpm add -g @arcevo/facet-cli@latest");
+        process.exitCode = 1;
+      }
     }
   });
 

@@ -24,7 +24,8 @@ if (!globalThis.matchMedia) {
     }) as unknown as MediaQueryList;
 }
 
-if (!Element.prototype.scrollIntoView) {
+if (typeof Element !== "undefined" && !Element.prototype.scrollIntoView) {
+  // @ts-expect-error -- not every env (e.g. node test runner) exposes Element
   Element.prototype.scrollIntoView = () => undefined;
 }
 

@@ -15,12 +15,12 @@ design manual (Alpha Palette), and your auth requirements differ per sector
 | `@arcevo/facet-components` | 90 styled UI components (Radix + tailwind-merge + variants) | ✅ 1.10.0 |
 | `@arcevo/facet-auth` | Auth components + domain presets: SignIn, SignUp, Guard, MfaDialog, forms | ✅ 1.2.2 |
 | `@arcevo/facet-layout` | Domain-configurable app shell: ConsoleLayout, AuthLayout, LandingLayout, Sidebar, Topbar, 5 presets | ✅ 1.4.1 |
-| `@arcevo/facet-store` | Framework-agnostic Zustand stores (auth + tenant) & token-refresh bridge (`createZustandTokenStorage`), web + React Native | ✅ 0.1.0 |
+| `@arcevo/facet-store` | Framework-agnostic Zustand stores (auth + tenant) & token-refresh bridge (`createZustandTokenStorage`), web + React Native | ✅ 1.0.0 |
 | `@arcevo/facet-docs` | Installable docs engine: mount `<DocsApp>` with your own brand, nav, pages | ✅ 1.4.6 |
-| `@arcevo/facet-cli` | Scaffold docs (`facet docs init` + `facet docs scan`), audit/update (`facet pkg/up/doctor`), copy components (`facet add`), generate a tree-shaken icon registry (`facet icons generate`) | ✅ 0.8.0 |
+| `@arcevo/facet-cli` | Scaffold docs (`facet docs init` + `facet docs scan`), audit/update (`facet pkg/up/doctor`), copy components (`facet copy`), generate a tree-shaken icon registry (`facet icons generate`) | ✅ 1.0.0 |
 | `@arcevo/facet-emails` | Framework-agnostic email builder + React bridge (`renderEmail`, `emailLayout`, `EmailLayout`) | ✅ 1.1.1 |
 
-Published to npm: components 1.10.0, layout 1.4.1, docs 1.4.6, auth 1.2.2, cli 0.8.0, tokens 1.1.4, store 0.1.0, sdk 1.1.0, emails 1.1.1.
+Published to npm: components 1.10.0, layout 1.4.1, docs 1.4.6, auth 1.2.2, cli 1.0.0, tokens 1.1.4, store 1.0.0, sdk 1.1.0, emails 1.1.1.
 
 ## Sites
 
@@ -45,7 +45,7 @@ wizard, or copy a component into your source:
 
 ```sh
 npx @arcevo/facet-cli docs init   # pick name, location, stack, styling
-npx @arcevo/facet-cli add button  # shadcn-style copy (package import recommended)
+npx @arcevo/facet-cli copy button  # shadcn-style copy (package import recommended)
 npx @arcevo/facet-cli icons generate  # scan repo, emit a tree-shaken icons.generated.tsx
 ```
 
