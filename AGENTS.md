@@ -33,29 +33,34 @@ It overrides/supplements CLAUDE.md for AI agents.
 See `CLAUDE.md` and the README for the verified build/test/typecheck state.
 `.agent/output.txt` is the local-only live dashboard.
 
-The working tree carries a large UNCOMMITTED changeset (docs engine
-`packages/docs`, rebuilt consumer `apps/docs`, +11 components, landing
-rework, changesets). The three P0 breakages from the previous analysis
-(storiesDir path, missing @storybook/react, root tsconfig reference) are
-fixed as of 2026-08-03: Storybook is fully purged and the drift gate is a
-barrel + manifest check. See `.agent/analysis-current-state.md` for the
-current priority backlog.
+The repo is in a commit-stable state (working tree clean). The three P0
+breakages from the previous analysis (storiesDir path, missing
+@storybook/react, root tsconfig reference) were fixed on 2026-08-03 in
+commit 43ccd14: Storybook is fully purged and the drift gate is a barrel
++ manifest check. See CLAUDE.md build status for the verified
+build/test/typecheck state.
 
 ## Publish Status
 
-Packages publish to npm under the `@arcevo/facet-*` scope via Changesets.
-Publishing is done **locally** by the maintainer (`pnpm changeset publish`,
-authenticated from the terminal). The GitHub Actions workflow
-(`.github/workflows/ci-cd.yml`) runs a validation gate (build, typecheck,
-docs inventory) AND an auto-VERSION job: `changesets/action@v1` opens the
-"Version Packages" PR on main (needs `permissions: contents: write`, which
-the previous job was missing - it died with a 403 push error, not a
-repo-fetch issue). The CI job does NOT publish to npm; it only versions.
-Merge the version PR, then publish locally from a clean tree. See the
-README Publishing section.
+Packages publish to npm under the `@arcevo/facet-*` scope via Changesets,
+driven by GitHub Actions (`.github/workflows/ci-cd.yml`). The workflow runs
+three jobs:
+
+1. **ci** -- validation gate: `pnpm install`, `pnpm build`, `pnpm check:docs`,
+   `pnpm check:icons`, `pnpm check:sdk-drift`, `pnpm -r typecheck`, `pnpm test`,
+   `pnpm sandbox:e2e`.
+2. **changeset** -- auto-opens/updates a "Version Packages" PR on `main`
+   whenever changesets land. It only versions (bumps `package.json` +
+   `CHANGELOG`, opens a PR) -- never publishes. Requires
+   `permissions: contents: write` so the release bot can push the
+   changeset-release branch.
+3. **publish** -- after the version PR merges to `main`, builds `dist` from a
+   clean checkout and publishes any unpublished packages to npm. It
+   `needs: [ci]` (the gate must pass) and runs `pnpm -r build` before
+   `pnpm changeset publish`, so a stale or dirty tree is never shipped.
+   Requires the `NPM_TOKEN` repo secret exported as `NODE_AUTH_TOKEN` in the
+   job env.
 
 **Release rule:** publish ONLY from a clean working tree, AFTER `pnpm -r
-build` passes, and verify `pnpm changeset status` shows exactly the intended
-set. Publishing from a dirty tree ships a stale `dist` - that is how
-`@arcevo/facet-cli@0.2.0` went out without the `pkg`/`doctor`/`update`
-commands and `@arcevo/facet-layout@1.1.1` without the overlay sidebar.
+build` passes. The `publish` CI job enforces this automatically -- it rebuilds
+`dist` from merged HEAD before publishing. See the README Publishing section.

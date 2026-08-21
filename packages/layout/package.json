@@ -18,8 +18,8 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean",
-    "build:analyze": "tsup src/index.ts --format esm --dts --metafile",
+    "build": "tsup",
+    "build:analyze": "tsup --metafile",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

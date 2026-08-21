@@ -215,7 +215,7 @@ export const ROADMAP: RoadmapItem[] = [
   {
     phase: "Phase 8",
     title: "Polish & consistency",
-    desc: "SpotlightCard spotlight visibility, BorderBeamCard beam refinement, default button animation switched to sparkle, global scrollbar hiding across all apps, em-dash purge, FAQ/version sync, facet-store package, and 85th component (NotFound).",
+    desc: "SpotlightCard spotlight visibility, BorderBeamCard beam refinement, default button animation switched to sparkle, global scrollbar hiding across all apps, em-dash purge, FAQ/version sync, facet-store package, and the NotFound component, bringing the total to 90 components.",
     status: "done",
   },
 ];
@@ -265,7 +265,7 @@ export const FAQ: FaqItem[] = [
   },
   {
     q: "Can I copy components into my source instead of installing the package?",
-    a: "Yes - `facet add <component>` copies the component source plus its imports into your tree. Installing from the package is recommended so you keep getting updates and tree-shaking.",
+    a: "Yes - `facet copy <ComponentName>` (e.g. `facet copy Button`) copies the component source plus its imports into your tree. Installing from the package is recommended so you keep getting updates and tree-shaking.",
   },
   {
     q: "How do I use the icon registry, and can I override it?",

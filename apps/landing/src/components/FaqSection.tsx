@@ -9,7 +9,7 @@ export function FaqSection() {
     <FacetFaqSection
       items={FAQ}
       title="Frequently asked qs"
-      description="Quick as for the qs consumers ask most."
+      description="Quick answers to the questions consumers ask most."
       type="single"
       id="faq"
       className="mx-auto max-w-3xl px-8 py-24"

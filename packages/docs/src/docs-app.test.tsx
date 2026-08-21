@@ -74,7 +74,7 @@ import type { DocsSiteConfig, DocsPage } from "./index.js";
 // ── Consumer-style fixtures (mirrors what an arc-id docs site passes) ──
 
 const consumerConfig: DocsSiteConfig = {
-  brand: { name: "ArcID", href: "https://arc.id" },
+  brand: { name: "ArcID" },
   navigation: [{ title: "Guides", items: [{ label: "Overview", href: "/" }] }],
   ecosystem: [{ label: "GitHub", href: "https://github.com/arcevodev" }],
 };

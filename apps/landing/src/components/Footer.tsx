@@ -36,6 +36,8 @@ export function Footer() {
           </Link>
           <a
             href="https://github.com/arcevodev/facet"
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
             <GithubIcon size={14} />
@@ -43,6 +45,8 @@ export function Footer() {
           </a>
           <a
             href={getDocsUrl()}
+            target="_blank"
+            rel="noreferrer"
             className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
             <LightIcon name="book-open" size={14} />

@@ -23,7 +23,7 @@ CLI enhancements:
   Supports the scoped-dropped alias `facet-cli` -> `@arcevo/facet-cli` (so any
   `facet-X` alias resolves), and `-g`/`--global` to install globally, e.g.
   `facet install -g facet-cli` runs `npm i -g @arcevo/facet-cli@latest`.
-- `facet add <component>`: copies a component into your source (shadcn-style) only
+- `facet copy <ComponentName>`: copies a component into your source (shadcn-style) only
   (passing a package name prints a redirect hint to `facet install`)
 - `facet latest`: shows latest published versions of all facet packages
 - `facet --log`: global verbose flag for detailed command output

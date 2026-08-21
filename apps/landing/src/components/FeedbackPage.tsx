@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Sepa
 import { LightIcon } from "@arcevo/facet-components/light";
 import { CONTACT } from "../lib/socials.js";
 import { Nav } from "./Nav.js";
+import { Footer } from "./Footer.js";
 import {
   FacebookIcon,
   InstagramIcon,
@@ -173,6 +174,7 @@ export function FeedbackPage() {
         </a>
         </div>
       </div>
+      <Footer />
     </>
   );
 }

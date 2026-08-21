@@ -68,14 +68,14 @@ Consume in your app:
 
 ```tsx
 import { ConsoleLayout, enterpriseLayoutPreset } from "@arcevo/facet-layout";
-import { AuthGuard } from "@arcevo/facet-auth";
+import { Guard } from "@arcevo/facet-auth";
 
 function App() {
   return (
     <ConsoleLayout config={enterpriseLayoutPreset} tenants={tenants}>
-      <AuthGuard>
+      <Guard>
         <YourRoutes />
-      </AuthGuard>
+      </Guard>
     </ConsoleLayout>
   );
 }
@@ -121,7 +121,8 @@ driven by GitHub Actions (`.github/workflows/ci-cd.yml`). The workflow runs
 three jobs:
 
 1. **ci** -- validation gate: `pnpm install`, `pnpm build`, `pnpm check:docs`,
-   `pnpm -r typecheck`.
+   `pnpm check:icons`, `pnpm check:sdk-drift`, `pnpm -r typecheck`, `pnpm test`,
+   `pnpm sandbox:e2e`.
 2. **changeset** -- auto-opens/updates a "Version Packages" PR on `main`
    whenever changesets land. It only versions (bumps `package.json` +
    `CHANGELOG`, opens a PR) -- never publishes. Requires
@@ -147,7 +148,7 @@ pnpm changeset            # stage a changeset for the change you want released
 
 ```sh
 pnpm dev:docs-site  # Docs demo site → http://localhost:5173 (local)
-pnpm dev:landing    # Landing → http://localhost:5173 (local)
+pnpm dev:landing    # Landing → http://localhost:5174 (local)
 ```
 
 ## License

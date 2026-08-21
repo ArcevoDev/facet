@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect } from "vitest";
 import { buildDocsLayoutConfig, isExtendedLayoutSlug, type DocsSiteConfig } from "./nav.js";
-import type { DocsPage } from "../pages.js";
+import type { DocsPage } from "./pages.js";
 import type { NavSection } from "@arcevo/facet-layout";
 
 // ── Test helpers ──────────────────────────────────────────

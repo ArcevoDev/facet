@@ -13,6 +13,7 @@ const LINKS: NavLink[] = [
   { href: "#roadmap", label: "Roadmap" },
   { href: "#faq", label: "FAQ" },
   { href: "#install", label: "Install" },
+  { href: "/about", label: "About" },
   { href: "/feedback", label: "Feedback" },
 ];
 
@@ -114,6 +115,8 @@ export function Nav() {
         <div className="flex items-center gap-2">
           <a
             href="https://github.com/arcevodev/facet"
+            target="_blank"
+            rel="noreferrer"
             className="hidden items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground lg:flex"
           >
             <GithubIcon size={16} />

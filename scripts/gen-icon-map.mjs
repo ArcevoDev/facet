@@ -97,30 +97,31 @@ const mapEntries = [...seen.entries()]
   .map(([kebab, name]) => `  "${kebab}": ${name},`)
   .join("\n");
 
-// Drift guard: every semantic key the registry references must exist in
-// the generated map. lucide renames/deprecates icons between versions
-// (e.g. HelpCircle -> CircleQuestionMark in 1.30.0), which used to
-// surface as a confusing "not assignable to LucideIconName" type error.
-// Fail here, at generation time, with the offending key named.
-const registryPath = fileURLToPath(
-  new URL("../packages/components/src/icon/registry.tsx", import.meta.url),
+// Drift guard: every lucide component that semantic-icons.ts imports directly
+// must still be exported (and not deprecated) by the installed lucide-react.
+// lucide renames/deprecates icons between versions (e.g. HelpCircle ->
+// CircleQuestionMark in 1.30.0), which used to surface as a confusing
+// "not assignable to LucideIconName" type error. Fail here, at
+// generation/check time, with the offending import named.
+const semanticPath = fileURLToPath(
+  new URL("../packages/components/src/icon/semantic-icons.ts", import.meta.url),
 );
-const registrySrc = readFileSync(registryPath, "utf8");
-const semanticSection = registrySrc.slice(
-  registrySrc.indexOf("SEMANTIC_LUCIDE_KEYS"),
-  registrySrc.indexOf("SEMANTIC_DIRECT"),
+const semanticSrc = readFileSync(semanticPath, "utf8");
+const importBlock = semanticSrc.match(/import\s*\{([\s\S]*?)\}\s*from\s*"lucide-react"/);
+const semanticImports = importBlock
+  ? [...importBlock[1].matchAll(/\b([A-Z]\w*)\b/g)].map((m) => m[1])
+  : [];
+const exportSet = new Set(exportNames);
+const missingSemantic = semanticImports.filter(
+  (n) => !exportSet.has(n) || DEPRECATED.has(n),
 );
-const semanticKeys = [...semanticSection.matchAll(/^\s*\w[^:]*:\s*"([^"]+)"/gm)].map(
-  (m) => m[1],
-);
-const missingSemantic = semanticKeys.filter((k) => !seen.has(k));
 if (missingSemantic.length > 0) {
   console.error(
-    `Drift detected: registry.tsx references lucide keys missing from the generated map:`,
+    `Drift detected: semantic-icons.ts imports lucide components missing from lucide-react v${lucideVersion}:`,
   );
-  for (const k of missingSemantic) console.error(`  - "${k}"`);
+  for (const n of missingSemantic) console.error(`  - ${n}`);
   console.error(
-    `These were renamed/deprecated in lucide v${lucideVersion}. Update SEMANTIC_LUCIDE_KEYS in registry.tsx to the current lucide name.`,
+    `These were renamed/deprecated in lucide v${lucideVersion}. Update the import and its SEMANTIC_ICONS entry in semantic-icons.ts to the current lucide name.`,
   );
   process.exit(1);
 }

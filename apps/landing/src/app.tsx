@@ -1,6 +1,6 @@
 import * as React from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { ThemeProvider } from "@arcevo/facet-components";
+import { NotFound, ThemeProvider } from "@arcevo/facet-components";
 import { LandingLayout } from "@arcevo/facet-layout";
 import { Nav } from "./components/Nav.js";
 import { HeroSection } from "./components/HeroSection.js";
@@ -13,6 +13,7 @@ import { FaqSection } from "./components/FaqSection.js";
 import { CTASection } from "./components/CTASection.js";
 import { Footer } from "./components/Footer.js";
 import { FeedbackPage } from "./components/FeedbackPage.js";
+import { AboutPage } from "./components/AboutPage.js";
 
 function HomePage() {
   return (
@@ -41,8 +42,27 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/feedback" element={<FeedbackPage />} />
-      <Route path="*" element={<HomePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
+  );
+}
+
+function NotFoundPage() {
+  return (
+    <>
+      <Nav />
+      <main className="mx-auto max-w-7xl px-8 py-20">
+        <NotFound
+          animation="gradient"
+          title="Page not found"
+          description="The page you're looking for doesn't exist or has been moved."
+          actionLabel="Go back home"
+          actionHref="/"
+        />
+      </main>
+      <Footer />
+    </>
   );
 }
 

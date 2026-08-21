@@ -103,7 +103,7 @@ COMPLETE → (onSuccess callback) → redirect
 6. ✅ `packages/docs/`: installable config-driven docs engine (`@arcevo/facet-docs`) + thin demo consumer at `apps/docs/` (`@arcevo/facet-docs-site`)
 7. ✅ Changesets + npm publish pipeline
 8. ✅ `apps/landing/`: rebuilt public-facing site (vite + tailwind v4) + feedback page (`/feedback`) with mail/WhatsApp/socials
-9. ✅ Tests: vitest workspace, 276 test definitions across 21 component test files (1 pre-existing flake: theme.test.tsx Radix/jsdom)
+9. ✅ Tests: vitest workspace, 362 test definitions across 31 files (sdk 2, components 21, auth 6, layout 2); 276 of those are component tests (21 files, 1 pre-existing flake: theme.test.tsx Radix/jsdom)
 10. ✅ SignIn mfa_challenge wired to MfaVerifyForm
 11. ✅ SignIn controlled `step`/`onStepChange` + `<SignInFlowDemo>` live-linked state machine + `<AuthDemo>` config block
 12. ✅ Docs restructure landed (568497d): old `apps/docs-site` removed, `packages/docs` engine + `apps/docs` thin consumer. Docs site includes an interactive SignIn demo with a method switcher (config toggles + preview + synced copyable code), a reusable `demo` content block for any manifest slug (auth/layout/forms guide pages), and a keyboard-shortcuts table on Overview + Getting Started.
@@ -154,7 +154,7 @@ pnpm build                # Build all packages
 pnpm build:tokens         # Build tokens only
 pnpm build:sdk            # Build SDK only
 pnpm dev:docs-site      # Start docs demo site (Vite, port 5173)
-pnpm dev:landing        # Start landing page (Vite, port 5173)
+pnpm dev:landing        # Start landing page (Vite, port 5174)
 pnpm typecheck            # TypeScript check all packages
 pnpm lint                 # ESLint all packages
 pnpm format               # Prettier format all files

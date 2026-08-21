@@ -769,7 +769,7 @@ program
       const res = await prompts({
         type: "confirm",
         name: "ok",
-        message: `Remove ${plan.manifests.flatMap((e) => e.deps.map((d) => d.name)).length} bundled deps, rewrite ${plan.imports.length} imports${opts.deleteLocal ? `, delete ${plan.deletableFiles.length} dead local components` : " (pass --delete-local to also delete dead local components)"}?`:
+        message: `Remove ${plan.manifests.flatMap((e) => e.deps.map((d) => d.name)).length} bundled deps, rewrite ${plan.imports.length} imports${opts.deleteLocal ? `, delete ${plan.deletableFiles.length} dead local components` : " (pass --delete-local to also delete dead local components)"}?`,
         initial: false,
       });
       proceed = res.ok ?? false;

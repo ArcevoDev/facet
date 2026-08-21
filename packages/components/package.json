@@ -36,8 +36,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts src/theme/index.ts src/icons.ts src/light.ts --format esm --dts --clean && node -e \"require('fs').cpSync('../tokens/src/tokens.css', 'dist/tokens.css')\"",
-    "build:analyze": "tsup src/index.ts src/theme/index.ts src/icons.ts --format esm --dts --metafile",
+    "build": "tsup && node -e \"require('fs').cpSync('../tokens/src/tokens.css', 'dist/tokens.css')\"",
+    "build:analyze": "tsup --metafile",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

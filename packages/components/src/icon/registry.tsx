@@ -148,51 +148,6 @@ export type IconOverrides = Partial<Record<IconName, IconComponent>>;
 
 /* ── Built-in map ─────────────────────────────────────────── */
 
-/**
- * Semantic name -> lucide kebab key. Most semantic names match their
- * kebab form in lucide, but a few use lucide's own key (log-out, qr-code,
- * layout-dashboard, ...). `close` and `x` are the same glyph (X), and
- * building/trash use the -2 variants for the person/side variants. The
- * map is resolved through lucideIconMap (single import surface), so the
- * three exceptions above are the only direct lucide imports needed.
- */
-const SEMANTIC_LUCIDE_KEYS: Partial<Record<SemanticIconName, LucideIconName>> = {
-  settings: "settings",
-  logout: "log-out",
-  "chevron-down": "chevron-down",
-  search: "search",
-  check: "check",
-  moon: "moon",
-  sun: "sun",
-  bell: "bell",
-  menu: "menu",
-  "chevron-left": "chevron-left",
-  "chevron-right": "chevron-right",
-  "arrow-right": "arrow-right",
-  sparkles: "sparkles",
-  "book-open": "book-open",
-  building: "building",
-  users: "users",
-  shield: "shield",
-  "credit-card": "credit-card",
-  dashboard: "layout-dashboard",
-  document: "file-text",
-  help: "circle-question-mark",
-  grid: "layout-grid",
-  list: "list",
-  "triangle-alert": "triangle-alert",
-  copy: "copy",
-  "chevron-up-down": "chevrons-up-down",
-  compass: "compass",
-  layers: "layers",
-  palette: "palette",
-  "key-round": "key-round",
-  user: "user",
-  upload: "upload",
-  qrcode: "qr-code",
-  trash: "trash",
-};
-
 /** Icons that don't resolve through the lucide name map (X glyph, -2 variants). */
 const SEMANTIC_DIRECT: Partial<Record<SemanticIconName, IconComponent>> = {
   close: X,
