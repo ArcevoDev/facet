@@ -1,5 +1,16 @@
 # @arcevo/facet-docs
 
+## 1.4.7
+
+### Patch Changes
+
+- Updated dependencies [b1da261]
+- Updated dependencies [cfabae9]
+  - @arcevo/facet-components@1.11.0
+  - @arcevo/facet-sdk@1.2.0
+  - @arcevo/facet-auth@1.2.3
+  - @arcevo/facet-layout@1.4.2
+
 ## 1.4.6
 
 ### Patch Changes

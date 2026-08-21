@@ -1,6 +1,6 @@
 {
   "name": "@arcevo/facet-sdk",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "arc-id API client: framework-agnostic fetch SDK for the ArcevoCirqle identity platform. Auth, credentials, passkeys, OAuth, tenants, billing, webhooks, audit, IdP.",
   "type": "module",
   "exports": {
