@@ -48,7 +48,7 @@ export function demoControls(slug: string): Control[] | undefined {
       return [
         {
           label: "Variant",
-          options: ["horizontal", "vertical"],
+          options: ["horizontal", "vertical", "collapsible", "vertical-collapsible"],
           value: "horizontal",
           onChange: () => {},
         },

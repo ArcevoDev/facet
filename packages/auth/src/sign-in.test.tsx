@@ -51,7 +51,7 @@ describe("SignIn initialStep", () => {
     );
 
     expect(await screen.findByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText("Password")).toBeInTheDocument();
     // The method picker step is not shown, but the alternates are embedded.
     expect(
       screen.queryByRole("button", { name: /continue with email & password/i }),
@@ -82,7 +82,7 @@ describe("SignIn initialStep", () => {
     );
 
     expect(await screen.findByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByLabelText("Password")).toBeInTheDocument();
   });
 });
 

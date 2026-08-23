@@ -1,0 +1,20 @@
+facet — Agent Live Dashboard
+============================
+
+## Current Focus
+Hamburger hover-toggle + click-to-pin for mobile sidebar — COMPLETE.
+All 8 new tests pass, full workspace build + typecheck + test green.
+
+## Priority List
+[x] EP 25 — Footer + Brand icons consolidation  (committed 43ccd14, published)
+[x] EP 26 — Sidebar accordion fix  (committed 43ccd14)
+[x] EP 27 — Hamburger hover-toggle + click-to-pin  (working tree, pending commit)
+
+## Build / Test Status
+- pnpm -r build     → 11/11 packages pass (187s)
+- pnpm -r typecheck → 11/11 packages pass (120s)
+- pnpm test         → 608 passed, 0 failed
+
+## Release Status
+- @arcevo/facet-components 1.3.9 → 1.4.0  (published)
+- @arcevo/facet-layout 1.4.0 → 1.4.1  (working tree, pending changeset + build)

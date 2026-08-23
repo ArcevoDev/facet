@@ -183,6 +183,7 @@ import {
   ResizablePanelGroup,
   ResizableHandle,
   ResizablePanel,
+  useResizable,
 } from "@arcevo/facet-components";
 import {
   DropzoneDemo,
@@ -1150,11 +1151,40 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
         </div>
       );
     case "resizable": {
-      const isVertical = variant === "vertical";
+      const isVertical = variant === "vertical" || variant === "vertical-collapsible";
+      const isCollapsible = variant === "collapsible" || variant === "vertical-collapsible";
+      const sidebarRef = useResizable();
+      const collapsed = isCollapsible ? sidebarRef.isCollapsed() : false;
       return (
         <div className={`w-full max-w-lg ${isVertical ? "h-64" : ""}`}>
-          <ResizablePanelGroup orientation={isVertical ? "vertical" : "horizontal"}>
-            <ResizablePanel defaultSize={50}>
+          <div className="mb-2 flex items-center gap-2">
+            <Button
+              size="sm"
+              disabled={!isCollapsible}
+              onClick={() => {
+                if (isCollapsible) {
+                  if (sidebarRef.isCollapsed()) {
+                    sidebarRef.expand();
+                  } else {
+                    sidebarRef.collapse();
+                  }
+                }
+              }}
+            >
+              {isCollapsible ? (collapsed ? "Expand" : "Collapse") : "Collapsible"}
+            </Button>
+          </div>
+          <ResizablePanelGroup
+            orientation={isVertical ? "vertical" : "horizontal"}
+            className="border"
+          >
+            <ResizablePanel
+              panelRef={sidebarRef.panelRef}
+              id="sidebar"
+              defaultSize={isCollapsible ? 20 : 50}
+              collapsible={isCollapsible}
+              collapsedSize={0}
+            >
               <div
                 className={`flex h-40 w-full items-center justify-center bg-muted text-sm ${isVertical ? "border-b" : "border-r"}`}
               >
@@ -1162,7 +1192,7 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
               </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={50}>
+            <ResizablePanel defaultSize={isCollapsible ? 80 : 50}>
               <div className="flex h-40 w-full items-center justify-center border bg-muted text-sm">
                 Panel 2
               </div>

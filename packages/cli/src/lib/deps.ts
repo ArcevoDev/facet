@@ -158,7 +158,7 @@ export const BUNDLED_DEPS: { name: string; why: string }[] = [
   { name: "tailwind-merge", why: "bundled by @arcevo/facet-components" },
 ];
 
-/** Static why-map built from BUNDLED_DEPS — used to annotate deps discovered
+/** Static why-map built from BUNDLED_DEPS - used to annotate deps discovered
  * at runtime so the CLI shows which component bundles each one. */
 const WHY_MAP = new Map(BUNDLED_DEPS.map((d) => [d.name, d.why]));
 
@@ -169,7 +169,7 @@ const WHY_MAP = new Map(BUNDLED_DEPS.map((d) => [d.name, d.why]));
  * can't be read (offline, edge cases, older versions).
  *
  * This keeps `facet clean` in sync with whichever version of
- * facet-components is actually present — no manual BUNDLED_DEPS update needed
+ * facet-components is actually present - no manual BUNDLED_DEPS update needed
  * when a new bundled dep is added upstream.
  */
 export function resolveBundledDeps(cwd: string): { name: string; why: string }[] {
@@ -178,7 +178,7 @@ export function resolveBundledDeps(cwd: string): { name: string; why: string }[]
     if (!existsSync(pkgPath)) return BUNDLED_DEPS;
     const pkg = JSON.parse(readFileSync(pkgPath, "utf8")) as { dependencies?: Record<string, string> };
     const deps = pkg.dependencies ?? {};
-    // Exclude facet's own workspace peers and React (peer dep) — those are
+    // Exclude facet's own workspace peers and React (peer dep) - those are
     // not "bundled" in the sense that consumers should also install them.
     const bundled = Object.keys(deps).filter(
       (name) => !name.startsWith("@arcevo/") && name !== "react" && name !== "react-dom",

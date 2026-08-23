@@ -10,8 +10,9 @@ It overrides/supplements CLAUDE.md for AI agents.
 2. After every significant milestone, update `.agent/todo.txt` status dashboard.
 3. When starting a new package, read any existing `.agent/**` planning files
    first before writing code.
-4. `.agent/` is gitignored (tracker is local-only); any important details
-   must be synced into the tracked README before a session ends.
+4. `.agent/` is tracked in git; it contains the live dashboard
+   (`output.txt`), todo tracker (`todo.txt`), and the architectural
+   episode canon (`episodes.md`, `episodes-plain.md`).
 
 ## Architecture Rules
 

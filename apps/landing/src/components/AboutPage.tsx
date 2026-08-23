@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { LandingLayout } from "@arcevo/facet-layout";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { STATS, PACKAGES, FEATURES, ROADMAP } from "../data/features.js";
+import { getDocsUrl } from "../lib/docs-url.js";
 import { Nav } from "./Nav.js";
 import { Footer } from "./Footer.js";
 import type { Package } from "../data/features.js";
@@ -55,7 +56,10 @@ export function AboutPage() {
       footer={<Footer />}
       hero={
         <div className="mx-auto max-w-3xl text-center">
-          <h1 className="font-heading text-4xl font-bold text-foreground sm:text-5xl">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/50 ring-1 ring-border">
+            <img src="/facet-2d-flat.png" alt="" aria-hidden="true" className="h-6 w-auto" />
+          </span>
+          <h1 className="mt-3 font-heading text-4xl font-bold text-foreground sm:text-5xl">
             facet
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
@@ -66,12 +70,12 @@ export function AboutPage() {
         </div>
       }
     >
-      {/* ── The problem ───────────────────────────────────────── */}
+      {/* The problem */}
       <section className="mx-auto max-w-3xl px-8 py-16">
         <h2 className="text-2xl font-bold text-foreground">The problem</h2>
         <p className="mt-4 text-muted-foreground">
           Building auth-heavy user interfaces is fragmented. You cobble together an unstyled
-          component library, a generic auth flow, hand-rolled layouts, and separate docs —
+          component library, a generic auth flow, hand-rolled layouts, and separate docs -
           then watch them drift on every release. Worse, auth isn't one-size-fits-all:
           fintech needs MFA and audit trails, healthcare needs HIPAA-aware sessions, and
           education needs low-friction social login. A single auth surface can't serve all
@@ -85,7 +89,7 @@ export function AboutPage() {
         </p>
       </section>
 
-      {/* ── What facet is ─────────────────────────────────────── */}
+      {/* What facet is */}
       <section className="bg-secondary/30 mx-auto max-w-5xl px-8 py-16">
         <div className="mb-12 text-center">
           <h2 className="text-2xl font-bold text-foreground">What facet is</h2>
@@ -100,9 +104,9 @@ export function AboutPage() {
           ))}
         </div>
         <p className="mt-10 text-center text-sm text-muted-foreground">
-          One component surface, three auth axes — <span className="font-medium text-foreground">appearance</span>,{" "}
+          One component surface, three auth axes - <span className="font-medium text-foreground">appearance</span>,{" "}
           <span className="font-medium text-foreground">config</span>, and{" "}
-          <span className="font-medium text-foreground">slots</span> — so each domain gets
+          <span className="font-medium text-foreground">slots</span> - so each domain gets
           its own auth experience from the same package.
         </p>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -112,12 +116,12 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* ── Mission / vision ─────────────────────────────────── */}
+      {/* Mission / vision */}
       <section className="mx-auto max-w-3xl px-8 py-16">
         <h2 className="text-2xl font-bold text-foreground">Mission &amp; vision</h2>
         <p className="mt-4 text-muted-foreground">
           <span className="font-medium text-foreground">Mission.</span> Make it possible to ship
-          a domain-tailored, auth-first application without rebuilding the boring parts — and
+          a domain-tailored, auth-first application without rebuilding the boring parts - and
           without sacrificing accessibility, type safety, or consistency.
         </p>
         <p className="mt-3 text-muted-foreground">
@@ -128,7 +132,7 @@ export function AboutPage() {
         </p>
       </section>
 
-      {/* ── Core capabilities ─────────────────────────────────── */}
+      {/* Core capabilities */}
       <section className="mx-auto max-w-5xl px-8 py-16">
         <h2 className="text-2xl font-bold text-foreground">Core capabilities</h2>
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -145,7 +149,7 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* ── Built with ───────────────────────────────────────── */}
+      {/* Built with */}
       <section className="bg-secondary/30 mx-auto max-w-3xl px-8 py-16">
         <h2 className="text-2xl font-bold text-foreground">Built with</h2>
         <p className="mt-3 text-sm text-muted-foreground">
@@ -164,18 +168,18 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* ── How it's maintained ───────────────────────────────── */}
+      {/* How it's maintained */}
       <section className="mx-auto max-w-3xl px-8 py-16">
         <h2 className="text-2xl font-bold text-foreground">How it's maintained</h2>
         <p className="mt-3 text-muted-foreground">
           facet is MIT-licensed and published to npm under <code className="rounded px-1.5 py-0.5 bg-secondary/50">@arcevo</code>.
           Releases are driven by Changesets: a PR is opened automatically whenever a changeset
-          lands, and packages publish from a clean, rebuilt tree after CI passes — never from a
+          lands, and packages publish from a clean, rebuilt tree after CI passes - never from a
           stale or dirty checkout.
         </p>
         <p className="mt-3 text-muted-foreground">
           Every change clears five gates before it ships: dependency install, full build, and
-          the sync checks — <code className="rounded px-1.5 py-0.5 bg-secondary/50">check:docs</code> (components
+          the sync checks - <code className="rounded px-1.5 py-0.5 bg-secondary/50">check:docs</code> (components
           barrel ↔ docs manifest, 90 components), <code className="rounded px-1.5 py-0.5 bg-secondary/50">check:icons</code>
           (lucide rename/deprecation drift), and <code className="rounded px-1.5 py-0.5 bg-secondary/50">check:sdk-drift</code>{" "}
           (SDK table ↔ barrel). Typecheck, unit tests, and an end-to-end CLI sandbox close the
@@ -211,7 +215,7 @@ export function AboutPage() {
         </div>
       </section>
 
-      {/* ── CTA ────────────────────────────────────────────── */}
+      {/* CTA */}
       <section className="bg-primary/5 mx-auto max-w-3xl rounded-2xl px-8 py-16 text-center">
         <h2 className="font-heading text-2xl font-bold text-foreground">Ready to try it?</h2>
         <p className="mt-3 text-muted-foreground">
@@ -220,7 +224,7 @@ export function AboutPage() {
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
             to="/"
-            onClick={() => window.open("https://facet.arcevocirqle.com.ng", "_blank")}
+            onClick={() => window.open(getDocsUrl(), "_blank")}
             className="inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             <LightIcon name="book-open" className="mr-2 size-4" />

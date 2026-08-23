@@ -23,6 +23,24 @@ export type {
   IconProviderProps,
 } from "./icon/index.js";
 
+/* ── Brand icons (inline SVG, independent of lucide) ─────────── */
+export {
+  GithubIcon,
+  LinkedinIcon,
+  InstagramIcon,
+  FacebookIcon,
+  TiktokIcon,
+  WhatsappIcon,
+  XIcon,
+  TwitterIcon,
+  YoutubeIcon,
+  SlackIcon,
+  DiscordIcon,
+  TelegramIcon,
+  FigmaIcon,
+  SpotifyIcon,
+} from "./icon/brand-icons.js";
+
 /* ── Theme system ────────────────────────────────────────────── */
 export { ThemeProvider, useTheme, ThemeToggle } from "./theme/index.js";
 export type { Theme, ThemeProviderProps, ThemeToggleProps } from "./theme/index.js";
@@ -143,7 +161,18 @@ export {
   type CarouselProps,
 } from "./ui/carousel.js";
 
-export { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "./ui/resizable.js";
+export {
+  ResizablePanelGroup,
+  ResizableHandle,
+  ResizablePanel,
+  useResizable,
+  useResizableLayout,
+  type ResizablePanelGroupProps,
+  type ResizablePanelProps,
+  type ResizableHandleProps,
+  type ResizableImperativeHandle,
+  type ResizableLayoutResult,
+} from "./ui/resizable.js";
 
 export { Separator } from "./ui/separator.js";
 

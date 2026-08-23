@@ -26,6 +26,8 @@ export interface RouterAdapter {
   Link: React.ComponentType<RouterLinkProps>;
   /** True when `href` matches the current route (prefix-aware). */
   isActive: (href: string) => boolean;
+  /** Current route path (e.g. Next.js `router.asPath`). Falls back to `window.location`. */
+  asPath?: string;
 }
 
 /** Default active-path matcher: exact match or child-path prefix. */
@@ -70,5 +72,9 @@ export function createDefaultAdapter(): RouterAdapter {
       if (typeof window === "undefined") return false;
       return matchPath(href, window.location.pathname);
     },
+    asPath:
+      typeof window !== "undefined"
+        ? window.location.pathname + window.location.hash
+        : undefined,
   };
 }

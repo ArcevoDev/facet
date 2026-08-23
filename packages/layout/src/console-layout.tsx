@@ -2,14 +2,14 @@
  * @arcevo/facet-layout: ConsoleLayout
  *
  * Dashboard shell: fixed sidebar + topbar + content area.
- * On mobile the sidebar is a click-to-open Sheet; the brand trigger in the
- * topbar opens it, and clicking outside (or the trigger again) closes it.
+ * On mobile the sidebar is a slide-in panel (no overlay so the hamburger
+ * stays clickable). Hovering the hamburger previews the sidebar; clicking
+ * pins it open. Clicking outside (or pressing Escape) closes it.
  * Uses LayoutProvider for sidebar state.
  */
 
 import * as React from "react";
 import { useOptionalAuth } from "@arcevo/facet-auth";
-import { Sheet, SheetContent } from "@arcevo/facet-components";
 import { useLayout, LayoutProvider } from "./layout-context.js";
 import { Sidebar } from "./sidebar.js";
 import { Topbar } from "./topbar.js";
@@ -113,17 +113,29 @@ function ConsoleLayoutInner({
 
   const sidebarWidthPx = mode === "rail" && sidebarCollapsed ? 68 : sidebarWidth;
 
-  // Click-outside closes the mobile sidebar.
+  // Click-outside (and Escape) closes the mobile sidebar.
+  // The hamburger button is excluded via [data-mobile-trigger] so that
+  // click-to-pin works even while the sidebar is open on hover.
+  const setSidebarOpenRef = React.useRef(setSidebarOpen);
+  setSidebarOpenRef.current = setSidebarOpen;
   React.useEffect(() => {
     if (!sidebarOpen) return;
+    const close = () => setSidebarOpenRef.current(false);
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as HTMLElement | null;
-      if (target?.closest("[data-sidebar]")) return;
-      setSidebarOpen(false);
+      if (target?.closest("[data-sidebar]") || target?.closest("[data-mobile-trigger]")) return;
+      close();
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") close();
     };
     document.addEventListener("pointerdown", onPointerDown);
-    return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [sidebarOpen, setSidebarOpen]);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [sidebarOpen]);
 
   // Classic mode: the sidebar is persistent and pushes content (full/rail).
   const classicDesktop = isDesktop;
@@ -143,13 +155,15 @@ function ConsoleLayoutInner({
         </div>
       )}
 
-      {/* Classic mode mobile: Sheet overlay */}
+      {/* Mobile: slide-in sidebar panel (no overlay — the hamburger stays
+          clickable so you can pin it even while the preview is open). */}
       {!isDesktop && (
-        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-          <SheetContent side="left" className="w-[260px] p-0" data-sidebar>
-            <Sidebar config={config} singleOpen={singleOpen} />
-          </SheetContent>
-        </Sheet>
+        <div
+          className={`fixed inset-y-0 left-0 z-[40] flex h-screen w-[260px] transform flex-col border-r bg-sidebar transition-transform duration-200 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+          data-sidebar
+        >
+          <Sidebar config={config} singleOpen={singleOpen} />
+        </div>
       )}
 
       {/* Main area */}
@@ -162,7 +176,6 @@ function ConsoleLayoutInner({
           onTenantSwitch={onTenantSwitch}
           mode={mode}
           themeToggle={themeToggle}
-          onMobileSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
         >
           {topbar}
         </Topbar>

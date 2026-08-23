@@ -95,6 +95,16 @@ export interface LayoutContextValue {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
+  /** Whether the sidebar is pinned open (survives hover-leave). Reset on page navigation. */
+  sidebarPinned: boolean;
+  /** Pin the sidebar open (click-to-stay-open). */
+  pinSidebar: () => void;
+  /** Unpin + close the sidebar (e.g. after a page navigation). */
+  unpinSidebar: () => void;
+  /** Open the sidebar as a hover preview — closes on mouse-leave unless pinned. */
+  hoverEnterSidebar: () => void;
+  /** Arm the close timer for hover preview — closes the sidebar after a short delay unless the mouse re-enters. */
+  hoverLeaveSidebar: () => void;
   /** Rail mode: sidebar collapsed to icon-only (desktop only). Default: false */
   sidebarCollapsed: boolean;
   setSidebarCollapsed: (collapsed: boolean) => void;

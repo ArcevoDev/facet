@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { LandingLayout } from "@arcevo/facet-layout";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Separator, Label, Input, Textarea } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { CONTACT } from "../lib/socials.js";
@@ -39,10 +40,11 @@ export function FeedbackPage() {
   };
 
   return (
-    <>
-      <Nav />
-      <div className="mx-auto max-w-3xl px-6 py-16">
-        <div className="mb-8">
+    <LandingLayout
+      nav={<Nav />}
+      footer={<Footer />}
+      hero={
+        <div className="mx-auto max-w-2xl text-center">
           <button
             type="button"
             onClick={handleBack}
@@ -51,13 +53,16 @@ export function FeedbackPage() {
             <LightIcon name="arrow-left" size={16} />
             Back
           </button>
-          <h1 className="mt-4 font-heading text-4xl font-bold text-foreground">Feedback &amp; contact</h1>
-        <p className="mt-3 text-muted-foreground">
-          Found a bug, want a feature, or just want to say hi? We read everything. The
-          professional channel is email, but pick whatever works for you.
-        </p>
-      </div>
-
+          <h1 className="mt-4 font-heading text-4xl font-bold text-foreground sm:text-5xl">
+            Feedback &amp; contact
+          </h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Found a bug, want a feature, or just want to say hi? We read everything. The
+            professional channel is email, but pick whatever works for you.
+          </p>
+        </div>
+      }
+    >
       {/* Email form (professional standard) */}
       <Card className="mb-6">
         <CardHeader>
@@ -172,9 +177,7 @@ export function FeedbackPage() {
             <div className="text-xs text-muted-foreground">@kenny.gr8</div>
           </div>
         </a>
-        </div>
       </div>
-      <Footer />
-    </>
+    </LandingLayout>
   );
 }

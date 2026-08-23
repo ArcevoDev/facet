@@ -33,6 +33,7 @@ type CarouselContextValue = {
   canScrollNext: boolean;
   selectedIndex: number;
   scrollSnapList: number[];
+  slidesCount: number;
 };
 
 const CarouselContext = React.createContext<CarouselContextValue | null>(null);
@@ -72,7 +73,13 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
     const [canScrollPrev, setCanScrollPrev] = React.useState(true);
     const [canScrollNext, setCanScrollNext] = React.useState(true);
     const [selectedIndex, setSelectedIndex] = React.useState(0);
-    const [scrollSnapList, setScrollSnapList] = React.useState<number[]>([]);
+
+    // Count CarouselItem children so we can provide a non-empty scrollSnapList
+    // before embla finishes measuring (in jsdom embla may report an empty list).
+    const slidesCount = React.useMemo(() => countCarouselItems(children), [children]);
+    const [scrollSnapList, setScrollSnapList] = React.useState<number[]>(
+      slidesCount > 0 ? Array.from({ length: slidesCount }, (_, i) => i) : []
+    );
 
     React.useEffect(() => {
       if (!api) return;
@@ -81,7 +88,11 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         setCanScrollPrev(api.canScrollPrev());
         setCanScrollNext(api.canScrollNext());
         setSelectedIndex(api.selectedScrollSnap());
-        setScrollSnapList(api.scrollSnapList());
+        const snaps = api.scrollSnapList();
+        // Only adopt embla's snap list when its length matches the counted
+        // slide count. In jsdom embla can report a shorter list (no layout
+        // measurements) - keep the children-count fallback in that case.
+        if (snaps.length === slidesCount) setScrollSnapList(snaps);
       };
 
       update();
@@ -91,7 +102,7 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
         api?.off("reInit", update);
         api?.off("select", update);
       };
-    }, [api]);
+    }, [api, slidesCount]);
 
     return (
       <CarouselContext.Provider
@@ -106,6 +117,7 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
           canScrollNext,
           selectedIndex,
           scrollSnapList,
+          slidesCount,
         }}
       >
         <div
@@ -114,7 +126,7 @@ const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
           {...props}
         >
           <div ref={carouselRef} className="overflow-hidden">
-            <div className={cn("flex", orientation === "vertical" && "flex-col")}>{children}</div>
+            {children}
           </div>
         </div>
       </CarouselContext.Provider>
@@ -131,7 +143,6 @@ const CarouselContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HT
         ref={ref}
         className={cn(
           "w-full",
-          "overflow-hidden",
           orientation === "vertical" ? "flex-col" : "flex",
           className,
         )}
@@ -218,10 +229,10 @@ const CarouselDots = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
   ({ className, ...props }, ref) => {
     const { api, selectedIndex, scrollSnapList } = useCarousel();
 
-    if (!api) return null;
+    if (scrollSnapList.length === 0) return null;
 
     const handleClick = (index: number) => {
-      api.scrollTo(index);
+      api?.scrollTo(index);
     };
 
     return (
@@ -250,6 +261,22 @@ const CarouselDots = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
   },
 );
 CarouselDots.displayName = "Carousel.Dots";
+
+/** Count the number of CarouselItem children inside any CarouselContent child. */
+function countCarouselItems(children: React.ReactNode): number {
+  let count = 0;
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && child.type === CarouselContent) {
+      const contentProps = child.props as { children?: React.ReactNode };
+      React.Children.forEach(contentProps.children, (item) => {
+        if (React.isValidElement(item) && item.type === CarouselItem) {
+          count++;
+        }
+      });
+    }
+  });
+  return count;
+}
 
 export {
   Carousel,

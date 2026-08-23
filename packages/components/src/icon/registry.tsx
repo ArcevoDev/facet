@@ -47,9 +47,9 @@ export type { LucideIconName } from "./icon-map.js";
 // `Icon` re-renders via useSyncExternalStore when the chunk lands.
 //
 // Built-in semantic icons resolve through SEMANTIC_ICONS (direct imports) and
-// are therefore synchronous on first paint — no flash, no catalog dependency.
-// The full ~1,500-icon catalog (./icon-map.js) is loaded ON DEMAND — not at
-// module evaluation — so consumers that only use semantic icons never fetch it
+// are therefore synchronous on first paint - no flash, no catalog dependency.
+// The full ~1,500-icon catalog (./icon-map.js) is loaded ON DEMAND - not at
+// module evaluation - so consumers that only use semantic icons never fetch it
 // at all (the catalog is only pulled when an arbitrary icon like "heart" is
 // first resolved). The namespace and promise are cached; `Icon` re-renders via
 // useSyncExternalStore when the deferred chunk lands so arbitrary lucide icons
@@ -120,6 +120,8 @@ export type SemanticIconName =
   | "triangle-alert"
   | "copy"
   | "chevron-up-down"
+  | "chevrons-up"
+  | "chevrons-down"
   | "compass"
   | "layers"
   | "palette"

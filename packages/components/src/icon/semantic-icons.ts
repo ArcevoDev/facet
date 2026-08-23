@@ -2,7 +2,7 @@
  * Direct (tree-shakeable) imports for the ~30 lucide icons the component UI
  * resolves by semantic name. Emitting them as direct imports (instead of
  * reading them out of the 1,700-entry `lucideIconMap` at runtime) means any
- * consumer using the built-in semantic icons never pulls the full catalog —
+ * consumer using the built-in semantic icons never pulls the full catalog -
  * the full map is only loaded lazily for arbitrary lucide names
  * ("heart", ...). See registry.tsx.
  *
@@ -40,6 +40,8 @@ import {
   TriangleAlert,
   Copy,
   ChevronsUpDown,
+  ChevronsUp,
+  ChevronsDown,
   Compass,
   Layers,
   Palette,
@@ -78,6 +80,8 @@ export const SEMANTIC_ICONS: Partial<Record<string, IconComponent>> = {
   "triangle-alert": TriangleAlert,
   "copy": Copy,
   "chevron-up-down": ChevronsUpDown,
+  "chevrons-up": ChevronsUp,
+  "chevrons-down": ChevronsDown,
   "compass": Compass,
   "layers": Layers,
   "palette": Palette,

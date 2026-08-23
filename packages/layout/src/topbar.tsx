@@ -27,8 +27,6 @@ export interface TopbarProps {
   onSignOut?: () => void;
   /** Rail mode: show the desktop collapse toggle. Default: "full" */
   mode?: "full" | "rail";
-  /** Mobile: brand logo acts as the sidebar trigger. Click toggles. */
-  onMobileSidebarToggle?: () => void;
   /** Mobile: brand logo node to show in place of the hamburger. */
   mobileBrand?: React.ReactNode;
 }
@@ -42,21 +40,32 @@ export function Topbar({
   settingsPath,
   onSignOut,
   mode = "full",
-  onMobileSidebarToggle,
   mobileBrand,
 }: TopbarProps) {
-  const { toggleSidebar, sidebarCollapsed, toggleSidebarCollapsed } = useLayout();
+  const {
+    sidebarOpen,
+    toggleSidebar,
+    sidebarCollapsed,
+    toggleSidebarCollapsed,
+    hoverEnterSidebar,
+    hoverLeaveSidebar,
+  } = useLayout();
 
   return (
     <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-sm md:px-6">
       <div className="flex items-center gap-3">
-        {/* Mobile: brand logo morphs into a window on hover; click opens the sidebar */}
+        {/* Mobile: brand logo morphs into a window on hover. Mouse hover
+            previews the sidebar; click pins it open. Hover-leave closes
+            it (after a short delay) unless pinned. */}
         <button
           type="button"
-          onClick={onMobileSidebarToggle ?? toggleSidebar}
-          className="group rounded-md p-1 text-foreground/70 transition-colors hover:bg-accent hover:text-foreground lg:hidden"
+          onClick={toggleSidebar}
+          onMouseEnter={hoverEnterSidebar}
+          onMouseLeave={hoverLeaveSidebar}
+          data-mobile-trigger
+          className="group relative z-40 rounded-md p-1 text-foreground/70 transition-colors hover:bg-accent hover:text-foreground lg:hidden"
           aria-label="Toggle sidebar"
-          aria-expanded={false}
+          aria-expanded={sidebarOpen}
         >
           {mobileBrand ?? (
             <span className="relative block">

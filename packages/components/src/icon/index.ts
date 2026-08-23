@@ -8,5 +8,21 @@ export type {
   IconProviderProps,
 } from "./registry.js";
 export type { LucideIconName } from "./icon-map.js";
-export { brandIcons } from "./brand-icons.js";
+export {
+  brandIcons,
+  GithubIcon,
+  LinkedinIcon,
+  InstagramIcon,
+  FacebookIcon,
+  TiktokIcon,
+  WhatsappIcon,
+  XIcon,
+  TwitterIcon,
+  YoutubeIcon,
+  SlackIcon,
+  DiscordIcon,
+  TelegramIcon,
+  FigmaIcon,
+  SpotifyIcon,
+} from "./brand-icons.js";
 export type { IconComponent as BrandIconComponent } from "./registry.js";

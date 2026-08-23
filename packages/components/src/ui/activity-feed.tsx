@@ -36,8 +36,8 @@ export function relativeTime(iso: string, now = new Date()): string {
   const then = new Date(iso).getTime();
   const diff = Math.max(0, now.getTime() - then);
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
+  if (mins < 2) return "just now";
+  if (mins <= 60) return `${mins}m ago`;
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);

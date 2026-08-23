@@ -1253,6 +1253,7 @@ function Example() {
           Panel 1
         </div>
       </ResizablePanel>
+      {/* Orientation is auto-inferred from the parent group */}
       <ResizableHandle withHandle />
       <ResizablePanel>
         <div className="flex h-40 w-full items-center justify-center border bg-muted">
@@ -1422,6 +1423,32 @@ const VARIANT_USAGE: Record<string, Record<string, string>> = {
   <ResizablePanel>
     <div className="flex h-40 w-full items-center justify-center border bg-muted">
       Panel 2
+    </div>
+  </ResizablePanel>
+</ResizablePanelGroup>`,
+    collapsible: `<ResizablePanelGroup>
+  <ResizablePanel defaultSize={20} collapsible collapsedSize={0}>
+    <div className="flex h-40 w-full items-center justify-center border-r bg-muted">
+      Sidebar
+    </div>
+  </ResizablePanel>
+  <ResizableHandle withHandle />
+  <ResizablePanel defaultSize={80}>
+    <div className="flex h-40 w-full items-center justify-center border bg-muted">
+      Main
+    </div>
+  </ResizablePanel>
+</ResizablePanelGroup>`,
+    verticalCollapsible: `<ResizablePanelGroup orientation="vertical" className="h-64">
+  <ResizablePanel defaultSize={20} collapsible collapsedSize={0}>
+    <div className="flex h-40 w-full items-center justify-center border-b bg-muted">
+      Sidebar
+    </div>
+  </ResizablePanel>
+  <ResizableHandle withHandle />
+  <ResizablePanel defaultSize={80}>
+    <div className="flex h-40 w-full items-center justify-center border bg-muted">
+      Main
     </div>
   </ResizablePanel>
 </ResizablePanelGroup>`,

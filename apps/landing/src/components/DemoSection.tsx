@@ -138,9 +138,10 @@ function ThemeDemo() {
   );
 }
 
-/** 4. QR code: type a URL, see it encoded live. */
+/** 4. QR code: type a URL, see it encoded live with the facet logo centered. */
 function QrDemo() {
   const [url, setUrl] = useState("https://facet.arcevocirqle.com.ng");
+  const safeUrl = url || "https://facet.arcevocirqle.com.ng";
   return (
     <div className="mx-auto max-w-md">
       <DemoCard title="QR Code" icon="qr-code">
@@ -153,9 +154,15 @@ function QrDemo() {
             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-ring"
           />
           <div className="rounded-lg border border-border bg-background p-3">
-            <QRCode value={url || "https://facet.arcevocirqle.com.ng"} size={140} />
+            <QRCode
+              value={safeUrl}
+              size={180}
+              logo="/facet-b&w.png"
+              logoSize={56}
+              level="H"
+            />
           </div>
-          <p className="text-xs text-muted-foreground">Scan it with your phone.</p>
+          <p className="text-xs text-muted-foreground">The facet mark is centered in the code. Scan it with your phone.</p>
         </div>
       </DemoCard>
     </div>

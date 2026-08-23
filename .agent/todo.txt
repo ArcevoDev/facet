@@ -1,0 +1,45 @@
+facet — Agent Session Tracker
+============================
+
+STATUS: COMMIT-STABLE (working tree clean as of 43ccd14)
+Branch: main
+
+--- Priority List ---
+
+[x] 1. EP 25 — Footer + Brand icons consolidation
+[x]    a. Export individual brand icons from facet-components barrel
+[x]    b. Rewrite landing BrandIcons.tsx as thin re-export
+[x]    c. Rewrite landing Footer.tsx to render facet-components <Footer>
+[x]    d. Fix AboutPage hardcoded docs URL -> getDocsUrl()
+[x]    e. Add changeset (@arcevo/facet-components: minor)
+[x]    f. Update episodes.md + episodes-plain.md with EP 25
+[x]    g. Update output.txt dashboard
+[x]    h. Build + typecheck + test to verify
+
+[x] 2. EP 26 — Sidebar accordion fix
+[x]    a. SingleOpen accordion behavior in Sidebar
+[x]    b. Active route auto-open override
+[x]    c. Tests for accordion + active route
+[x]    d. Update episodes
+
+[✓] 3. Hamburger hover-toggle + click-to-pin for mobile sidebar  (IN PROGRESS → DONE)
+    a. hoverEnterSidebar / hoverLeaveSidebar with ref-tracked hover + 150ms close timer  [layout-context.tsx]
+    b. toggleSidebar with open+pin / pin / close+unpin logic  [layout-context.tsx]
+    c. useEffect resets sidebarPinned to false when sidebarOpen becomes false  [layout-context.tsx]
+    d. Hamburger button: onMouseEnter / onMouseLeave → hover handlers, onClick → toggleSidebar,
+       hamburger ↔ window icon morph via CSS group-hover, aria-expanded={sidebarOpen}  [topbar.tsx]
+    e. data-mobile-trigger attribute on hamburger button  [topbar.tsx]
+    f. Fixed-position mobile sidebar panel (no Sheet overlay so hamburger stays clickable)  [console-layout.tsx]
+    g. Click-outside handler excludes [data-sidebar] AND [data-mobile-trigger]; added Escape key support  [console-layout.tsx]
+    h. Sidebar has onMouseEnter/onMouseLeave with same hover handlers (shared hoverRef prevents flicker)  [sidebar.tsx]
+    i. handleNav (leaf nav / page click) closes the sidebar and resets pin  [sidebar.tsx]
+    j. Section expansion (onExpand → setSidebarCollapsed(false)) does NOT close the sidebar  [sidebar.tsx]
+    k. Removed unused onMobileSidebarToggle prop from TopbarProps + ConsoleLayout usage
+    l. route-change effect auto-expands sections containing the active route  [sidebar.tsx]
+    m. Added asPath to RouterAdapter  [router.tsx]
+    n. Tests: hover/pin/leave-timer/pin-reset  [layout.test.tsx]
+
+[x] 4. Build + typecheck + test (full workspace)
+    a. pnpm -r build — all 11 packages pass
+    b. pnpm -r typecheck — all 11 packages pass
+    c. pnpm test — 608 passed, 0 failed  (1 act() warning in existing infinite-scroll test is pre-existing)

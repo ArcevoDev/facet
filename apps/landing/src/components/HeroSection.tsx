@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Badge, Aurora, Beams, SparkleButton, Spotlight, TypewriterText } from "@arcevo/facet-components";
+import { Badge, Aurora, Beams, BorderBeamCard, SparkleButton, Spotlight, TypewriterText } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { STATS } from "../data/features.js";
@@ -25,6 +25,20 @@ export function HeroSection() {
       <Aurora className="absolute inset-0 -z-20" opacity={0.75} colors={["#6366f1", "#a855f7", "#06b6d4", "#6366f1"]} />
       <Aurora className="absolute -inset-10 -z-20 opacity-40" opacity={0.4} colors={["#0ea5e9", "#d946ef", "#22d3ee"]} />
       <Beams count={4} className="absolute inset-0 -z-10" color="rgba(129,140,248,0.35)" />
+      {/* facet-3d logo: a glossy 3D mark that reads on the dark aurora backdrop,
+          framed by an animated primary→fuchsia→cyan border beam. */}
+      <div className="pointer-events-none absolute top-14 right-2 z-10 hidden lg:block">
+        <BorderBeamCard className="h-52 w-52">
+          <img src="/facet-3d.png" alt="" aria-hidden="true" className="block h-full w-full object-contain" />
+        </BorderBeamCard>
+      </div>
+      {/* facet-b&w watermark: subtle monochrome mark toward the lower-left. */}
+      <img
+        src="/facet-b&w.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-8 left-6 z-0 hidden h-36 opacity-3 lg:block"
+      />
       <Badge
         variant="outline"
         icon={<LightIcon name="sparkles" size={12} />}

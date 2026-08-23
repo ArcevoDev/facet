@@ -69,7 +69,8 @@ describe("auth form copy overrides", () => {
 
   it("LoginForm falls back to default copy", () => {
     render(<LoginForm onSubmit={vi.fn()} />);
-    expect(screen.getByText("Sign In")).toBeInTheDocument();
+    // Default title and submit label are both "Sign In" - both render.
+    expect(screen.getAllByText("Sign In")).toHaveLength(2);
     expect(screen.getByText("Email")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /sign in/i })).toBeInTheDocument();
   });

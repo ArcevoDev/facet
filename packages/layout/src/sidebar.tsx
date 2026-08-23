@@ -40,7 +40,16 @@ export interface SidebarProps {
 /* ── Component ────────────────────────────────────────────── */
 
 export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_SIDEBAR_WIDTH, singleOpen = false }: SidebarProps) {
-  const { setSidebarOpen, router, setSidebarWidth, setSidebarCollapsed, collapseAll, expandAll } = useLayout();
+  const {
+    setSidebarOpen,
+    router,
+    setSidebarWidth,
+    setSidebarCollapsed,
+    collapseAll,
+    expandAll,
+    hoverEnterSidebar,
+    hoverLeaveSidebar,
+  } = useLayout();
 
   const handleNav = React.useCallback(() => {
     setSidebarOpen(false);
@@ -80,10 +89,16 @@ export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_
 
   return (
     <aside
+      data-sidebar
       className={`fixed left-0 top-0 z-30 flex h-screen flex-col border-r bg-sidebar transition-[width] duration-200 ${
         collapsed ? "w-[68px]" : ""
       }`}
       style={collapsed ? undefined : { width: `${sidebarWidth}px` }}
+      // Track hover across the sidebar content so the hamburger's close timer
+      // is cancelled while the mouse is inside the sidebar — the user can
+      // open sections/subsections without the sidebar snapping shut.
+      onMouseEnter={hoverEnterSidebar}
+      onMouseLeave={hoverLeaveSidebar}
     >
       {/* Resize handle (VS Code style, right edge) */}
       {!collapsed && (
@@ -219,15 +234,30 @@ function NavSectionRenderer({
   const sectionKey = section.id ?? section.title;
   const isActive = router ? router.isActive : (href: string) => href === window.location.pathname;
   const hasActive = sectionHasActiveItem(section, isActive);
-  // A section containing the active page auto-expands so the current
-  // location stays visible, but an explicit collapse (chevron click or
-  // "collapse all") always wins: the user can collapse the active section.
+  // Section open state is driven solely by the persisted collapse map.
+  // An active section auto-expands via the route-change effect above
+  // (one-shot), so the user can still collapse it afterwards — keeping
+  // accordion (singleOpen) behavior intact.
   const explicitlyCollapsed = collapsedSections[sectionKey] === true;
-  const open = explicitlyCollapsed ? false : (hasActive ? true : !collapsedSections[sectionKey]);
+  const open = !explicitlyCollapsed;
 
-  // In single-open (accordion) mode the active section is always visible:
-  // scroll it into view on mount/update so it isn't cut off at the bottom
-  // of the scrollable rail.
+  // On route change, auto-expand the section that now contains the active
+  // route (even if the user previously collapsed it). This is a one-shot
+  // side effect — it only triggers when the URL actually changes, so it
+  // never interferes with accordion (singleOpen) logic or explicit
+  // collapses from chevron clicks / collapse-all.
+  const routeKey = router?.asPath ?? window.location.pathname + window.location.hash;
+  React.useEffect(() => {
+    // Auto-expand the section that contains the active route.
+    // Only runs on mount / route change — never on state writes from
+    // chevron clicks or accordion toggling — so the user can still
+    // collapse the active section.
+    if (hasActive && explicitlyCollapsed) {
+      toggleSection(sectionKey);
+    }
+  }, [routeKey]);
+
+  // Scroll the active section into view when it opens.
   const sectionRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
     if (open && hasActive && sectionRef.current) {

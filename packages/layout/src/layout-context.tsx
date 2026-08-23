@@ -33,10 +33,67 @@ export function LayoutProvider({
   router?: RouterAdapter;
 }) {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [sidebarPinned, setSidebarPinned] = React.useState(false);
 
-  const toggleSidebar = React.useCallback(() => {
-    setSidebarOpen((prev) => !prev);
+  // Ref-tracked hover state so the sidebar doesn't flicker closed when the
+  // mouse moves between the hamburger button and the sidebar content.
+  const hoverRef = React.useRef(false);
+  const closeTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearCloseTimer = React.useCallback(() => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
   }, []);
+
+  const hoverEnterSidebar = React.useCallback(() => {
+    hoverRef.current = true;
+    clearCloseTimer();
+    if (!sidebarPinned) {
+      setSidebarOpen(true);
+    }
+  }, [sidebarPinned, clearCloseTimer]);
+
+  const hoverLeaveSidebar = React.useCallback(() => {
+    hoverRef.current = false;
+    clearCloseTimer();
+    if (sidebarPinned) return;
+    closeTimerRef.current = setTimeout(() => {
+      if (!hoverRef.current && !sidebarPinned) {
+        setSidebarOpen(false);
+      }
+    }, 150);
+  }, [sidebarPinned, clearCloseTimer]);
+
+  const pinSidebar = React.useCallback(() => {
+    setSidebarPinned(true);
+    setSidebarOpen(true);
+    clearCloseTimer();
+  }, [clearCloseTimer]);
+
+  const unpinSidebar = React.useCallback(() => {
+    setSidebarPinned(false);
+    setSidebarOpen(false);
+    clearCloseTimer();
+  }, [clearCloseTimer]);
+
+  // Click toggle: open+pin, or close+unpin. If already open via hover only,
+  // clicking pins it in place.
+  const toggleSidebar = React.useCallback(() => {
+    if (!sidebarOpen) {
+      setSidebarOpen(true);
+      setSidebarPinned(true);
+      clearCloseTimer();
+    } else if (!sidebarPinned) {
+      setSidebarPinned(true);
+      clearCloseTimer();
+    } else {
+      setSidebarOpen(false);
+      setSidebarPinned(false);
+      clearCloseTimer();
+    }
+  }, [sidebarOpen, sidebarPinned, clearCloseTimer]);
 
   // Rail collapse state, persisted so the choice survives reloads.
   const [sidebarCollapsed, setSidebarCollapsedState] = React.useState(() => {
@@ -151,11 +208,30 @@ export function LayoutProvider({
   const defaultRouter = React.useMemo(() => createDefaultAdapter(), []);
   const activeRouter = router ?? defaultRouter;
 
+  // When the sidebar closes by any means (leaf-nav click, click-outside,
+  // Sheet close, toggle), reset the pinned flag so the next hover preview
+  // can open it again. Without this, clicking a page would leave the
+  // sidebar pinned — and since hoverEnterSidebar bails while pinned,
+  // the hamburger would stop responding to hover afterwards.
+  React.useEffect(() => {
+    if (!sidebarOpen) {
+      setSidebarPinned(false);
+    }
+  }, [sidebarOpen, setSidebarPinned]);
+
+  // Clean up the close timer when the provider unmounts.
+  React.useEffect(() => clearCloseTimer, [clearCloseTimer]);
+
   const value: LayoutContextValue = React.useMemo(
     () => ({
       sidebarOpen,
       setSidebarOpen,
       toggleSidebar,
+      sidebarPinned,
+      pinSidebar,
+      unpinSidebar,
+      hoverEnterSidebar,
+      hoverLeaveSidebar,
       sidebarCollapsed,
       setSidebarCollapsed,
       toggleSidebarCollapsed,
@@ -172,6 +248,11 @@ export function LayoutProvider({
       sidebarOpen,
       setSidebarOpen,
       toggleSidebar,
+      sidebarPinned,
+      pinSidebar,
+      unpinSidebar,
+      hoverEnterSidebar,
+      hoverLeaveSidebar,
       sidebarCollapsed,
       setSidebarCollapsed,
       toggleSidebarCollapsed,

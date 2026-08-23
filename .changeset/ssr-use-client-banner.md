@@ -8,7 +8,7 @@ Add an ESM `"use client"` banner to the `dist` builds of `@arcevo/facet-componen
 `@arcevo/facet-auth`, and `@arcevo/facet-layout`.
 
 Next.js 15+/16 App Router builds React Server Components with the `react-server`
-condition, which resolves `react-hook-form` to `react-server.esm.mjs` — an entry that
+condition, which resolves `react-hook-form` to `react-server.esm.mjs` - an entry that
 does not export `Controller`, `FormProvider`, `useForm`, or `useFormContext`. Importing
 any of these packages from a Server Component therefore failed the build with
 `Export Controller/FormProvider/useForm/useFormContext doesn't exist in target module`.

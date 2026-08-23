@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar, Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
@@ -5,16 +6,43 @@ import type { NavLink } from "@arcevo/facet-components";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { GithubIcon } from "./BrandIcons.js";
 
-// Anchor links scroll to in-page sections; no dead routes.
+/**
+ * Navigation links grouped into dropdown sections.
+ * Top-level entries with `children` render as dropdown menus on desktop;
+ * leaf links (About) render as direct nav items.
+ */
 const LINKS: NavLink[] = [
-  { href: "#packages", label: "Packages" },
-  { href: "#features", label: "Features" },
-  { href: "#demo", label: "Demo" },
-  { href: "#roadmap", label: "Roadmap" },
-  { href: "#faq", label: "FAQ" },
-  { href: "#install", label: "Install" },
+  {
+    href: "#product",
+    label: "Product",
+    children: [
+      { href: "#packages", label: "Packages", icon: <LightIcon name="boxes" size={14} /> },
+      { href: "#features", label: "Features", icon: <LightIcon name="sparkles" size={14} /> },
+      { href: "#demo", label: "Demo", icon: <LightIcon name="layout-dashboard" size={14} /> },
+      { href: "#roadmap", label: "Roadmap", icon: <LightIcon name="compass" size={14} /> },
+    ],
+  },
+  {
+    href: "#resources",
+    label: "Resources",
+    children: [
+      { href: "#faq", label: "FAQ", icon: <LightIcon name="circle-question-mark" size={14} /> },
+      { href: "/feedback", label: "Feedback", icon: <LightIcon name="message-circle" size={14} /> },
+    ],
+  },
+  {
+    href: "#developers",
+    label: "Developers",
+    children: [
+      {
+        href: "#install",
+        label: "Install",
+        description: "Get started in 5 minutes",
+        icon: <LightIcon name="terminal" size={14} />,
+      },
+    ],
+  },
   { href: "/about", label: "About" },
-  { href: "/feedback", label: "Feedback" },
 ];
 
 function Brand({ onHome }: { onHome: () => void }) {
@@ -25,39 +53,81 @@ function Brand({ onHome }: { onHome: () => void }) {
       className="flex items-center gap-2.5"
       aria-label="facet home"
     >
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-primary">
-        <path
-          d="M12 2L4 6V12C4 17.52 7.58 22.48 12 24C16.42 22.48 20 17.52 20 12V6L12 2Z"
-          fill="currentColor"
-          opacity="0.8"
-        />
-        <path
-          d="M12 6L8 8V12C8 14.5 9.67 16.8 12 17.5C14.33 16.8 16 14.5 16 12V8L12 6Z"
-          fill="currentColor"
-          opacity="0.4"
-        />
-      </svg>
+      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-secondary/50 ring-1 ring-border">
+        <img src="/facet-2d-flat.png" alt="" aria-hidden="true" className="h-4 w-auto opacity-90" />
+      </span>
       <span className="font-heading text-lg font-bold text-foreground">facet</span>
     </button>
   );
 }
 
 function MobileMenu({ onNavigate }: { onNavigate: (href: string) => void }) {
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+
   return (
     <div className="flex flex-col gap-1">
-      {LINKS.map((link) => (
-        <a
-          key={link.href}
-          href={link.href}
-          onClick={(e) => {
-            e.preventDefault();
-            onNavigate(link.href);
-          }}
-          className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
-        >
-          {link.label}
-        </a>
-      ))}
+      {LINKS.map((link) => {
+        if (link.children?.length) {
+          const isOpen = openGroup === link.href;
+          return (
+            <div key={link.href} className="flex flex-col">
+              <button
+                type="button"
+                onClick={() => setOpenGroup(isOpen ? null : link.href)}
+                className="flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
+                aria-expanded={isOpen}
+              >
+                <span>{link.label}</span>
+                <LightIcon
+                  name="chevron-down"
+                  size={14}
+                  className={`text-muted-foreground/60 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+              {isOpen && (
+                <div className="ml-4 flex flex-col gap-0.5 border-l pl-4">
+                  {link.children.map((child) => (
+                    <>
+                      <button
+                        key={child.href}
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onNavigate(child.href);
+                        }}
+                        className="flex flex-col items-start gap-0.5 rounded-md px-3 py-2 text-sm text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
+                      >
+                        <span className="flex items-center gap-2">
+                          {child.icon}
+                          {child.label}
+                        </span>
+                        {child.description && (
+                          <span className="text-xs text-muted-foreground">{child.description}</span>
+                        )}
+                      </button>
+                    </>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        }
+
+        return (
+          <button
+            key={link.href}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate(link.href);
+            }}
+            className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
+          >
+            {link.label}
+          </button>
+        );
+      })}
+
       <div className="my-1 h-px bg-border" />
       <a
         href="https://github.com/arcevodev/facet"
@@ -87,10 +157,8 @@ export function Nav() {
   // scroll in-page; real routes navigate via the router.
   const handleNav = (href: string) => {
     if (href.startsWith("#")) {
-      // If we're not on the home page, go home first, then scroll.
       if (location.pathname !== "/") {
         navigate("/");
-        // Wait for the home page to mount before scrolling.
         setTimeout(() => {
           document.getElementById(href.slice(1))?.scrollIntoView({ behavior: "smooth" });
         }, 100);

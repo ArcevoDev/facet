@@ -414,7 +414,7 @@ export const docsManifest: DocsManifestEntry[] = [
   {
     "name": "Resizable",
     "slug": "resizable",
-    "description": "ResizablePanelGroup",
+    "description": "Split-pane layouts with draggable separators, collapsible panels, and optional size persistence.",
     "category": "layout"
   },
   {

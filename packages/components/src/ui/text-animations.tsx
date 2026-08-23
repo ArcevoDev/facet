@@ -412,7 +412,9 @@ export function CountUpText({
   className,
   ...props
 }: CountUpTextProps) {
-  const [value, setValue] = React.useState(from);
+  // SSR-safe: render the target first so the initial paint shows the final
+  // value; the effect below animates from `from` to `to` on the client.
+  const [value, setValue] = React.useState(to);
   const started = React.useRef(false);
 
   React.useEffect(() => {

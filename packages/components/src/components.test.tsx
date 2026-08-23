@@ -50,7 +50,7 @@ import { FlipCard } from "./ui/card-animations.js";
 import { AnnouncementBar } from "./ui/announcement-bar.js";
 import { StatCard } from "./ui/stat-card.js";
 import { AspectRatio } from "./ui/aspect-ratio.js";
-import { Carousel, CarouselContent, CarouselDots, CarouselItem } from "./ui/carousel.js";
+import { Carousel, CarouselContent, CarouselDots, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel.js";
 import { Drawer, DrawerTrigger, DrawerContent, DrawerTitle, DrawerDescription } from "./ui/drawer.js";
 import { InputGroup, InputGroupAddon } from "./ui/input-group.js";
 import { Input } from "./ui/input.js";
@@ -985,6 +985,8 @@ describe("Carousel", () => {
           <CarouselItem>Slide 1</CarouselItem>
           <CarouselItem>Slide 2</CarouselItem>
         </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
       </Carousel>,
     );
     expect(screen.getByText("Slide 1")).toBeInTheDocument();

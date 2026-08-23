@@ -31,7 +31,7 @@ describe("LoginForm validation", () => {
     render(<LoginForm onSubmit={onSubmit} validate />);
 
     await userEvent.type(screen.getByLabelText(/email/i), "user@example.com");
-    await userEvent.type(screen.getByLabelText(/password/i), "correct-horse");
+    await userEvent.type(screen.getByLabelText("Password"), "correct-horse");
     await userEvent.click(screen.getByRole("button", { name: /sign in/i }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledWith("user@example.com", "correct-horse"));
