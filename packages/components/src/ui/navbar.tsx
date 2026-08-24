@@ -380,7 +380,7 @@ function NavLinkItem({
     const dropdownOpen = hoverDropdowns ? openDropdown === link.href : undefined;
     const dropdownOnOpenChange = hoverDropdowns
       ? (open: boolean) => {
-          if (!open) {
+          if (!open && openDropdown === link.href) {
             clearCloseTimer();
             setOpenDropdown?.(null);
           }
