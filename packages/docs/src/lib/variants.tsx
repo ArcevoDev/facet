@@ -719,16 +719,16 @@ export function variantCells(slug: string): VariantCell[] | undefined {
         {
           label: "horizontal",
           node: (
-            <div className="w-full max-w-lg">
+            <div className="w-full max-w-lg h-80">
               <ResizablePanelGroup>
                 <ResizablePanel defaultSize={50}>
-                  <div className="flex h-40 w-full items-center justify-center border-r bg-muted text-sm">
+                  <div className="flex h-full w-full items-center justify-center border-r bg-muted text-sm">
                     Panel 1
                   </div>
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel>
-                  <div className="flex h-40 w-full items-center justify-center border bg-muted text-sm">
+                  <div className="flex h-full w-full items-center justify-center border border-l-0 bg-muted text-sm">
                     Panel 2
                   </div>
                 </ResizablePanel>
@@ -742,13 +742,13 @@ export function variantCells(slug: string): VariantCell[] | undefined {
             <div className="w-full max-w-lg h-80">
               <ResizablePanelGroup orientation="vertical">
                 <ResizablePanel defaultSize={50}>
-                  <div className="flex h-40 w-full items-center justify-center border-b bg-muted text-sm">
+                  <div className="flex h-full w-full items-center justify-center border-b bg-muted text-sm">
                     Panel 1
                   </div>
                 </ResizablePanel>
                 <ResizableHandle withHandle orientation="vertical" />
                 <ResizablePanel>
-                  <div className="flex h-40 w-full items-center justify-center border bg-muted text-sm">
+                  <div className="flex h-full w-full items-center justify-center border border-t-0 bg-muted text-sm">
                     Panel 2
                   </div>
                 </ResizablePanel>

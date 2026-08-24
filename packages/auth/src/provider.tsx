@@ -76,6 +76,26 @@ export function ArcProvider({
   onSessionRestore,
   onAuthChange,
 }: ArcProviderProps) {
+  // Dev-time warning: defaultStorage uses localStorage for tokens, which is
+  // vulnerable to XSS.  Fires once per page-load when no explicit storage is
+  // provided.  Consumers should pass a cookie-backed or in-memory adapter.
+  const warnedRef = React.useRef(false);
+  if (
+    !warnedRef.current &&
+    storage === defaultStorage &&
+    typeof process !== "undefined" &&
+    process.env?.NODE_ENV !== "production"
+  ) {
+    warnedRef.current = true;
+    // eslint-disable-next-line no-console
+    console.warn(
+      "[@arcevo/facet-auth] ArcProvider is using defaultStorage (localStorage). " +
+        "localStorage is vulnerable to XSS — refresh tokens stored here can be " +
+        "stolen. For production, pass an explicit `storage` prop backed by " +
+        "httpOnly cookies. This warning is shown once per page-load.",
+    );
+  }
+
   const authSdk = React.useMemo(() => new AuthSdk(client), [client]);
 
   // SSR-safe: do not read storage during render. Initial state has no

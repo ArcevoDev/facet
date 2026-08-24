@@ -12,6 +12,9 @@ import { emailOnlySchema } from "../../validators.js";
 import type { Appearance } from "../../types.js";
 
 import {
+  ShineButton,
+  buttonVariants,
+  cn,
   Button,
   Input,
   Label,
@@ -109,9 +112,12 @@ export function ForgotPasswordForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button variant="outline" className="w-full" onClick={() => setSent(false)}>
+          <ShineButton
+            className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+            onClick={() => setSent(false)}
+          >
             Send again
-          </Button>
+          </ShineButton>
         </CardContent>
         {onBack && (
           <CardFooter className="justify-center">

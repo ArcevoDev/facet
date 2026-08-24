@@ -29,6 +29,11 @@ export interface TokenRefresher {
  * - On a 401, calls `sdk.refresh()` → updates the store with the new token bundle
  * - Clears auth on refresh failure (expired/invalid refresh token)
  * - Re-entrancy guard prevents infinite recursion if the refresh request itself 401s
+ *
+ * `persist` (optional): a key-value adapter that persists the **access token only**
+ * to a secure medium (e.g. httpOnly cookie via a server callback).  The refresh
+ * token should never be persisted through this adapter — use an httpOnly cookie
+ * on the arc-id backend instead.
  */
 export interface TokenStorage {
   getAccessToken: () => string | null;
@@ -38,12 +43,28 @@ export interface TokenStorage {
   onTokenRefresh: (failedToken: string) => Promise<string | null>;
 }
 
+/** Optional adapter for persisting tokens to a secure medium (e.g. httpOnly cookie). */
+export interface PersistAdapter {
+  getAccessToken: () => string | null;
+  setAccessToken: (token: string | null) => void;
+}
+
 export function createZustandTokenStorage({
   authStore,
   sdk,
+  persist,
 }: {
   authStore: TokenStoreLike;
   sdk: TokenRefresher;
+  /**
+   * Optional adapter for persisting the **access token** to a secure medium
+   * (e.g. httpOnly cookie via a server callback).  When provided,
+   * `setTokens` also calls `persist.setAccessToken()` so the token survives
+   * a full-page reload without relying on Zustand's in-memory state.
+   * The refresh token is NEVER passed through this adapter — it should
+   * live in an httpOnly cookie on the arc-id backend.
+   */
+  persist?: PersistAdapter;
 }): TokenStorage {
   // Re-entrancy guard: the client's request() retries with a fresh token after
   // onTokenRefresh resolves, but the refresh call itself goes through the same
@@ -53,16 +74,18 @@ export function createZustandTokenStorage({
   let refreshInFlight = false;
 
   return {
-    getAccessToken: () => authStore.getState().accessToken ?? null,
+    getAccessToken: () => persist?.getAccessToken() ?? authStore.getState().accessToken ?? null,
 
     getRefreshToken: () => authStore.getState().refreshToken ?? null,
 
     setTokens: (accessToken, refreshToken) => {
       authStore.setTokens(accessToken, refreshToken);
+      persist?.setAccessToken(accessToken);
     },
 
     clearTokens: () => {
       authStore.clearAuth();
+      persist?.setAccessToken(null);
     },
 
     onTokenRefresh: async () => {
@@ -74,10 +97,12 @@ export function createZustandTokenStorage({
         const { data, error } = await sdk.refresh(state.refreshToken);
         if (error || !data?.accessToken) {
           authStore.clearAuth();
+          persist?.setAccessToken(null);
           return null;
         }
 
         authStore.setTokens(data.accessToken, data.refreshToken);
+        persist?.setAccessToken(data.accessToken);
         return data.accessToken;
       } finally {
         refreshInFlight = false;

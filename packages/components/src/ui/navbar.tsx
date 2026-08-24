@@ -31,7 +31,7 @@ export interface NavbarRouter {
 /* ── Navbar variants ───────────────────────────────────────── */
 
 export const navbarVariants = cva(
-  "flex w-full items-center justify-between gap-4 px-4 py-3 sm:px-6",
+  "flex w-full items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8",
   {
     variants: {
       variant: {
@@ -46,7 +46,7 @@ export const navbarVariants = cva(
           "border-b border-border/60 bg-background/80 px-3 py-2 shadow-sm shadow-black/5",
           "backdrop-blur-xl supports-[backdrop-filter]:bg-background/60",
           "transition-colors",
-          "md:top-3 md:mx-auto md:w-[calc(100%-2rem)] md:max-w-7xl md:rounded-full md:border md:border-border/60 md:bg-background/70 md:px-3 md:shadow-lg md:shadow-black/5",
+          "md:top-3 md:mx-auto md:w-[calc(100%-2rem)] md:max-w-7xl md:rounded-full md:border md:border-border/60 md:bg-background/70 md:px-3 md:shadow-lg md:shadow-black/5 lg:px-4",
         ].join(" "),
       },
       size: {
@@ -127,6 +127,11 @@ export interface NavbarProps
    *  ("sm" | "md" | "lg" | "xl"). Default: "md". Raise it (e.g. "lg")
    *  when the navbar carries many links. */
   mobileBreakpoint?: "sm" | "md" | "lg" | "xl";
+  /** When true, dropdown menus open on hover (desktop) instead of click.
+   *  Hovering another link closes the current dropdown; hovering the
+   *  dropdown content does NOT close it. Click still toggles the dropdown
+   *  as a fallback. Default: false. */
+  hoverDropdowns?: boolean;
   /** Render children instead of links */
   children?: React.ReactNode;
 }
@@ -161,12 +166,17 @@ export function Navbar({
   mobileMenu,
   showMobileMenu,
   mobileBreakpoint = "md",
+  hoverDropdowns = false,
   children,
   className,
   ...props
 }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const navbarRef = React.useRef<HTMLElement>(null);
+  // Hover-dropdown coordination: only one dropdown open at a time; the
+  // shared closeTimerRef bridges the gap between trigger and portaled content.
+  const [openDropdown, setOpenDropdown] = React.useState<string | null>(null);
+  const closeTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const isPill = variant === "pill";
   // Variants that define their own sticky positioning must not be overridden
   // by the trailing "relative" (tailwind-merge keeps the last position class).
@@ -179,8 +189,13 @@ export function Navbar({
   const bpFlex = BREAKPOINT_DISPLAY[mobileBreakpoint].flex;
   const bpBlock = BREAKPOINT_DISPLAY[mobileBreakpoint].block;
 
+  // Clear any pending close timer when the navbar unmounts.
+  React.useEffect(() => () => { if (closeTimerRef.current) clearTimeout(closeTimerRef.current); }, []);
+
   const handleNav = (href: string) => {
     setMobileOpen(false);
+    // Close any open hover dropdown when navigating.
+    setOpenDropdown(null);
     onNavigate?.(href);
   };
 
@@ -216,12 +231,16 @@ export function Navbar({
         >
           {links.map((link) => (
             <NavLinkItem
-              key={link.href}
-              link={link}
-              router={router}
-              onNavigate={handleNav}
-              isPill={isPill}
-            />
+               key={link.href}
+               link={link}
+               router={router}
+               onNavigate={handleNav}
+               isPill={isPill}
+               hoverDropdowns={hoverDropdowns}
+               openDropdown={openDropdown}
+               setOpenDropdown={setOpenDropdown}
+               closeTimerRef={closeTimerRef}
+             />
           ))}
         </div>
       )}
@@ -307,11 +326,19 @@ function NavLinkItem({
   router,
   onNavigate,
   isPill = false,
+  hoverDropdowns = false,
+  openDropdown = null,
+  setOpenDropdown,
+  closeTimerRef,
 }: {
   link: NavLink;
   router: NavbarRouter | undefined;
   onNavigate: (href: string) => void;
   isPill?: boolean;
+  hoverDropdowns?: boolean;
+  openDropdown?: string | null;
+  setOpenDropdown?: React.Dispatch<React.SetStateAction<string | null>>;
+  closeTimerRef?: React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
 }) {
   const isActive =
     link.active ??
@@ -334,10 +361,52 @@ function NavLinkItem({
   if (link.children?.length) {
     const isMega = (link.columns ?? 1) > 1;
     const panelWidth = link.panelWidth ?? (isMega ? "w-[32rem]" : "w-64");
+
+    // Hover-dropdown helpers (shared timer lifted to Navbar so moving
+    // between links cancels the previous close and opens the next).
+    const clearCloseTimer = React.useCallback(() => {
+      if (closeTimerRef?.current) {
+        clearTimeout(closeTimerRef.current);
+        closeTimerRef.current = null;
+      }
+    }, [closeTimerRef]);
+    const scheduleClose = React.useCallback(() => {
+      clearCloseTimer();
+      if (closeTimerRef) {
+        closeTimerRef.current = setTimeout(() => setOpenDropdown?.(null), 150);
+      }
+    }, [closeTimerRef, clearCloseTimer, setOpenDropdown]);
+
+    const dropdownOpen = hoverDropdowns ? openDropdown === link.href : undefined;
+    const dropdownOnOpenChange = hoverDropdowns
+      ? (open: boolean) => {
+          if (!open) {
+            clearCloseTimer();
+            setOpenDropdown?.(null);
+          }
+        }
+      : undefined;
+
+    const triggerHoverProps = hoverDropdowns
+      ? {
+          onMouseEnter: () => {
+            clearCloseTimer();
+            setOpenDropdown?.(link.href);
+          },
+          onMouseLeave: scheduleClose,
+        }
+      : {};
+    const contentHoverProps = hoverDropdowns
+      ? {
+          onMouseEnter: clearCloseTimer,
+          onMouseLeave: scheduleClose,
+        }
+      : {};
+
     return (
-      <DropdownMenu>
+      <DropdownMenu open={dropdownOpen} onOpenChange={dropdownOnOpenChange}>
         <DropdownMenuTrigger asChild>
-          <button type="button" className={cn(itemClass, "data-[state=open]:bg-accent/60")}>
+          <button type="button" className={cn(itemClass, "data-[state=open]:bg-accent/60")} {...triggerHoverProps}>
             {link.icon && <span className="size-4 shrink-0">{link.icon}</span>}
             <span>{link.label}</span>
             {link.badge != null && (
@@ -366,6 +435,7 @@ function NavLinkItem({
           side="bottom"
           sideOffset={8}
           className={cn("p-2", panelWidth)}
+          {...contentHoverProps}
         >
           {isMega ? (
             /* Wide multi-column megamenu (OpenAI-style) */

@@ -4,7 +4,7 @@
 
 import * as React from "react";
 
-import { Button, Input, DialogHeader, DialogTitle, DialogDescription } from "@arcevo/facet-components";
+import { Button, ShineButton, buttonVariants, cn, Input, DialogHeader, DialogTitle, DialogDescription } from "@arcevo/facet-components";
 
 /* ── Props ─────────────────────────────────────────────────── */
 
@@ -39,13 +39,13 @@ export function MfaRecoveryForm({
           disabled={isSubmitting}
         />
         {error && <p className="text-sm text-destructive">{error}</p>}
-        <Button
-          className="w-full"
+        <ShineButton
+          className={cn(buttonVariants({ variant: "default" }), "w-full")}
           disabled={!recoveryCode || isSubmitting}
           onClick={() => onVerify(recoveryCode)}
         >
           {isSubmitting ? "Verifying…" : "Verify"}
-        </Button>
+        </ShineButton>
         {onBack && (
           <Button variant="ghost" size="sm" className="w-full" onClick={onBack}>
             Back to authenticator code

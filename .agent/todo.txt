@@ -1,45 +1,63 @@
 facet — Agent Session Tracker
 ============================
 
-STATUS: COMMIT-STABLE (working tree clean as of 43ccd14)
+STATUS: IN PROGRESS — Phase 0 security fix + arc-id summary
 Branch: main
 
---- Priority List ---
+--- Current Session Priority List ---
 
-[x] 1. EP 25 — Footer + Brand icons consolidation
-[x]    a. Export individual brand icons from facet-components barrel
-[x]    b. Rewrite landing BrandIcons.tsx as thin re-export
-[x]    c. Rewrite landing Footer.tsx to render facet-components <Footer>
-[x]    d. Fix AboutPage hardcoded docs URL -> getDocsUrl()
-[x]    e. Add changeset (@arcevo/facet-components: minor)
-[x]    f. Update episodes.md + episodes-plain.md with EP 25
-[x]    g. Update output.txt dashboard
-[x]    h. Build + typecheck + test to verify
+[x] 1. Verify UI changes from pre-crash session
+     [x] a. sidebar.tsx — accordion collapse fix verified
+     [x] b. navbar.tsx — hover dropdown support verified
+     [x] c. Nav.tsx — Brand bw logo + Ecosystem dropdown verified
+     [x] d. HeroSection.tsx — white Aurora/Beams in dark mode verified
+     [x] e. Footer.tsx (landing) — per-link icons verified
+     [x] f. footer.tsx (components) — FooterLink icon type verified
+     [x] g. Auth forms — ShineButton -> AnimatedButton on submit verified
+     [x] h. HeroSection — no images/spinning logo present (clean)
+     [x] i. Ecosystem pages exist (EcosystemPage, EcosystemDetailPage, About, Feedback)
+     [x] j. Padding on lg screens (Nav.tsx has lg:px-8)
 
-[x] 2. EP 26 — Sidebar accordion fix
-[x]    a. SingleOpen accordion behavior in Sidebar
-[x]    b. Active route auto-open override
-[x]    c. Tests for accordion + active route
-[x]    d. Update episodes
+[x] 2. arc-id security gap — facet-side fixes
+     [x] a. Verified token storage claims: localStorage in storage.ts
+     [x] b. Added dev-time warning in provider.tsx (fires once when defaultStorage used)
+     [x] c. Added JSDoc security warning to storage.ts
+     [x] d. Added warnDefaultStorage() once-fired warning in storage.ts setTokens
+     [x] e. Added PersistAdapter interface + persist option to createZustandTokenStorage
+     [x] f. Exported PersistAdapter type from store index.ts
 
-[✓] 3. Hamburger hover-toggle + click-to-pin for mobile sidebar  (IN PROGRESS → DONE)
-    a. hoverEnterSidebar / hoverLeaveSidebar with ref-tracked hover + 150ms close timer  [layout-context.tsx]
-    b. toggleSidebar with open+pin / pin / close+unpin logic  [layout-context.tsx]
-    c. useEffect resets sidebarPinned to false when sidebarOpen becomes false  [layout-context.tsx]
-    d. Hamburger button: onMouseEnter / onMouseLeave → hover handlers, onClick → toggleSidebar,
-       hamburger ↔ window icon morph via CSS group-hover, aria-expanded={sidebarOpen}  [topbar.tsx]
-    e. data-mobile-trigger attribute on hamburger button  [topbar.tsx]
-    f. Fixed-position mobile sidebar panel (no Sheet overlay so hamburger stays clickable)  [console-layout.tsx]
-    g. Click-outside handler excludes [data-sidebar] AND [data-mobile-trigger]; added Escape key support  [console-layout.tsx]
-    h. Sidebar has onMouseEnter/onMouseLeave with same hover handlers (shared hoverRef prevents flicker)  [sidebar.tsx]
-    i. handleNav (leaf nav / page click) closes the sidebar and resets pin  [sidebar.tsx]
-    j. Section expansion (onExpand → setSidebarCollapsed(false)) does NOT close the sidebar  [sidebar.tsx]
-    k. Removed unused onMobileSidebarToggle prop from TopbarProps + ConsoleLayout usage
-    l. route-change effect auto-expands sections containing the active route  [sidebar.tsx]
-    m. Added asPath to RouterAdapter  [router.tsx]
-    n. Tests: hover/pin/leave-timer/pin-reset  [layout.test.tsx]
+[x] 3. arc-id summary file
+      [x] a. Created .agent/arcid_summary.md with all verified claims + fix plan
+      [~] b. Note: arc-id repo not available locally — summary in facet .agent/ for sync
 
-[x] 4. Build + typecheck + test (full workspace)
-    a. pnpm -r build — all 11 packages pass
-    b. pnpm -r typecheck — all 11 packages pass
-    c. pnpm test — 608 passed, 0 failed  (1 act() warning in existing infinite-scroll test is pre-existing)
+[x] 4. Typecheck verification (full workspace)
+      [x] a. pnpm -r typecheck → all 11 packages pass
+      [x] b. pnpm -r build → all 11 packages pass
+      [x] c. pnpm test → 609 passed, 0 failed (was 6 timeout failures + 1 icon test; fixed via 3s fetch abort + 15s testTimeout + alert-circle→circle-alert alias)
+
+[x] 5. Phase 0 security fix — changesets created
+      [x] a. phase0-security-fix.md — auth patch + store patch
+      [x] b. auth-forms-animated-button.md — auth patch
+      [x] c. navbar-hover-dropdowns.md — components minor
+      [x] d. docs-resizable-cleanup.md — docs patch
+
+[x] 6. Docs cleanup — removed collapsible Resizable variants, polished horizontal
+      [x] a. previews.tsx — removed collapsible/vertical-collapsible cases, toggle button, useResizable import
+      [x] b. variants.tsx — added h-80 to horizontal (matches vertical)
+      [x] c. usage.ts — removed collapsible/verticalCollapsible entries, added h-64 to horizontal
+
+[~] 7. Commit + push
+      [~] a. Stage all working tree changes + new changesets
+      [~] b. Commit with co-author trailer
+      [ ] c. Push to main — CI auto-opens Version Packages PR
+
+[ ] 8. Phase 0 doc cleanup (noted, not yet done — can ship as follow-up)
+      [~] a. .glow-indigo used in 7 places across 6 files — rename pending
+      [~] b. Color palette decision (cyan vs indigo) — noted in summary
+
+--- Next Actions ---
+- Sync arcid_summary.md into ../arc-id/.agent/ when arc-id repo is available
+- arc-id-side: implement httpOnly cookie for refresh token + delete persistSession
+- arc-id-side: bump facet-cli and facet-store pins to ^1.0.0
+- arc-id-side: fix Tailwind @source path in tailwind config
+- arc-id-side: correct doc claim "tokens stored in memory only"

@@ -802,9 +802,49 @@ How we fixed it:
 State: automated. The handle now inherits orientation from context; the doc
 comment ("inferred from the parent group") is now actually true.
 
-Lesson: a prop with a misleading default — especially one that contradicts its
-own JSDoc — is a silent footgun. When a child can read its parent's config,
-it should — override should be the exception, not the requirement.
+    Lesson: a prop with a misleading default — especially one that contradicts its
+    own JSDoc — is a silent footgun. When a child can read its parent's config,
+    it should — override should be the exception, not the requirement.
+
+--------------------------------------------------------------------------------
+
+EP 28 -- The Tests That Hung on the Registry
+--------------------------------------------------------------------------------
+What broke:
+   Six tests in commands.test.ts and wizard.e2e.test.ts failed with 5s timeouts
+   when the npm registry was unreachable or slow. Two functions in the CLI's
+   registry.ts were responsible:
+   - resolveFacetVersions: called fetch() with no AbortController — hung forever.
+   - discoverFacetPackages: had a 5s abort that exactly matched the 5s vitest
+     default testTimeout, leaving zero margin for test setup/teardown.
+
+Root cause:
+   Network calls in production code had no independent timeout bound. When a
+   fetch hung (DNS stall, 502, slow CDN), the test inherited the full 5s default
+   timeout with no headroom. The 5s abort in discoverFacetPackages was intended
+   to protect users, but it aligned exactly with the test timeout — so any slow
+   registry response killed the test.
+
+How we fixed it:
+   - resolveFacetVersions: added a 3s AbortController timeout on the fetch
+     (was unbounded).
+   - discoverFacetPackages: reduced abort timeout from 5s to 3s.
+   - vitest.config.ts: set testTimeout: 15000 as a global ceiling to absorb slow
+     CI, DTS parsing overhead, and occasional network bumps.
+   - icons.ts: added LUCIDE_ALIASES entry "alert-circle" → "circle-alert" so the
+     deprecated lucide name resolves correctly in generated icon registries
+     (AlertCircle was renamed to CircleAlert in the installed lucide-react 1.30).
+   - light-icon.tsx: added AlertCircle, ExternalLink, Globe, Store to the
+     SEMANTIC_LUCIDE map so the landing/docs sites' LightIcon usage renders
+     synchronously instead of falling through to the lazy catalog.
+
+State: automated. pnpm test: 609/609 pass. check:docs (90 components),
+   check:icons (1763 icons @ lucide v1.30.0), check:sdk-drift (10 SDK classes)
+   all green.
+
+Lesson: a network timeout that equals the test timeout leaves no headroom for
+   execution overhead. Production code needs its own timeout bound (3s); tests
+   need a wider ceiling (15s) that absorbs variance.
 
 ================================================================================
 END

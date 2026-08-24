@@ -3,8 +3,8 @@ import { LandingLayout } from "@arcevo/facet-layout";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { STATS, PACKAGES, FEATURES, ROADMAP } from "../data/features.js";
 import { getDocsUrl } from "../lib/docs-url.js";
-import { Nav } from "./Nav.js";
-import { Footer } from "./Footer.js";
+import { Nav } from "../components/Nav.js";
+import { Footer } from "../components/Footer.js";
 import type { Package } from "../data/features.js";
 
 /** "Built with" stack for the About page. Hand-curated to match the toolchain

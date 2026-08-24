@@ -29,7 +29,9 @@ import { ForgotPasswordForm } from "./forms/auth/forgot-password-form.js";
 import { MfaVerifyForm } from "./forms/mfa/verify-form.js";
 
 import {
-  Button,
+  ShineButton,
+  buttonVariants,
+  cn,
   Card,
   CardHeader,
   CardTitle,
@@ -93,35 +95,39 @@ function SelectMethodStep({
         )}
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <Button className="w-full" onClick={() => onSelectMethod("login_form")}>
+        <ShineButton
+          className={cn(buttonVariants({ variant: "default" }), "w-full")}
+          onClick={() => onSelectMethod("login_form")}
+        >
           Continue with Email & Password
-        </Button>
+        </ShineButton>
         {cfg.allowMagicLink && (
-          <Button
-            variant="outline"
-            className="w-full"
+          <ShineButton
+            className={cn(buttonVariants({ variant: "outline" }), "w-full")}
             onClick={() => onSelectMethod("magic_link_form")}
           >
             Continue with Magic Link
-          </Button>
+          </ShineButton>
         )}
         {cfg.allowPasskey && (
-          <Button variant="outline" className="w-full" onClick={handlePasskeyAuth}>
+          <ShineButton
+            className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+            onClick={handlePasskeyAuth}
+          >
             Continue with Passkey
-          </Button>
+          </ShineButton>
         )}
         {cfg.oauthProviders.length > 0 && (
           <>
             <Separator className="my-2" />
             {cfg.oauthProviders.map((provider) => (
-              <Button
+              <ShineButton
                 key={provider}
-                variant="outline"
-                className="w-full"
+                className={cn(buttonVariants({ variant: "outline" }), "w-full")}
                 onClick={() => onOAuth?.(provider)}
               >
                 Sign in with {provider}
-              </Button>
+              </ShineButton>
             ))}
           </>
         )}
@@ -332,31 +338,32 @@ export function SignIn({
           {(cfg.allowMagicLink || cfg.allowPasskey || cfg.oauthProviders.length > 0) && (
             <div className="space-y-3">
               {cfg.allowMagicLink && (
-                <Button
-                  variant="outline"
-                  className="w-full"
+                <ShineButton
+                  className={cn(buttonVariants({ variant: "outline" }), "w-full")}
                   onClick={() => go("magic_link_form")}
                 >
                   Continue with Magic Link
-                </Button>
+                </ShineButton>
               )}
               {cfg.allowPasskey && (
-                <Button variant="outline" className="w-full" onClick={handlePasskeyAuth}>
+                <ShineButton
+                  className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+                  onClick={handlePasskeyAuth}
+                >
                   Continue with Passkey
-                </Button>
+                </ShineButton>
               )}
               {cfg.oauthProviders.length > 0 && (
                 <>
                   <Separator className="my-2" />
                   {cfg.oauthProviders.map((provider) => (
-                    <Button
+                    <ShineButton
                       key={provider}
-                      variant="outline"
-                      className="w-full"
+                      className={cn(buttonVariants({ variant: "outline" }), "w-full")}
                       onClick={() => onOAuth?.(provider)}
                     >
                       Sign in with {provider}
-                    </Button>
+                    </ShineButton>
                   ))}
                 </>
               )}
@@ -404,9 +411,12 @@ export function SignIn({
             <CardDescription>{error ?? "An unexpected error occurred"}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button className="w-full" onClick={() => go("select_method")}>
+            <ShineButton
+              className={cn(buttonVariants({ variant: "default" }), "w-full")}
+              onClick={() => go("select_method")}
+            >
               Try Again
-            </Button>
+            </ShineButton>
           </CardContent>
         </Card>
       );

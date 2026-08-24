@@ -1,5 +1,6 @@
 import type { DocsPage, DocsSiteConfig } from "@arcevo/facet-docs";
 import { docsPages } from "./pages.js";
+import { createElement } from "react";
 
 /**
  * Demo instance configuration for facet's own docs site.
@@ -14,6 +15,11 @@ export const demoConfig: DocsSiteConfig = {
   brand: {
     name: "facet",
     tagline: "Component library for the Arcevo ecosystem",
+    logo: createElement("img", {
+      src: "/facet-b&w.png",
+      alt: "facet",
+      className: "h-5 w-auto dark:invert",
+    }),
   },
   navigation: [],
   // arc-id is an ecosystem page in the registry (section "ecosystem"), so

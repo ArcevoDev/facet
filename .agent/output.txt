@@ -13,7 +13,8 @@ All 8 new tests pass, full workspace build + typecheck + test green.
 ## Build / Test Status
 - pnpm -r build     → 11/11 packages pass (187s)
 - pnpm -r typecheck → 11/11 packages pass (120s)
-- pnpm test         → 608 passed, 0 failed
+- pnpm test         → 609 passed, 0 failed
+- check:docs / check:icons / check:sdk-drift → all green
 
 ## Release Status
 - @arcevo/facet-components 1.3.9 → 1.4.0  (published)

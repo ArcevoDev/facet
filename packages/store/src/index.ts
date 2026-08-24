@@ -9,4 +9,5 @@ export {
   type TokenStorage,
   type TokenStoreLike,
   type TokenRefresher,
+  type PersistAdapter,
 } from "./token-storage.js";

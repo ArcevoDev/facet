@@ -9,6 +9,9 @@ import * as React from "react";
 import type { Appearance } from "../../types.js";
 
 import {
+  ShineButton,
+  buttonVariants,
+  cn,
   Button,
   InputOTP,
   InputOTPGroup,
@@ -74,9 +77,12 @@ export function MfaVerifyForm({
       </div>
       <div className="flex flex-col gap-2">
         {onRecovery && (
-          <Button variant="outline" size="sm" className="w-full" onClick={onRecovery}>
+          <ShineButton
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-full")}
+            onClick={onRecovery}
+          >
             Use a recovery code
-          </Button>
+          </ShineButton>
         )}
         {onCancel && (
           <Button variant="ghost" size="sm" className="w-full" onClick={onCancel}>

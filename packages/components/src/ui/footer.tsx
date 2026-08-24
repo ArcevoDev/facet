@@ -32,6 +32,8 @@ export interface FooterLink {
   href: string;
   /** Open in a new tab. Default: false for internal, true for http(s). */
   external?: boolean;
+  /** Optional icon name (resolved through the Icon registry). */
+  icon?: IconName;
 }
 
 export interface FooterColumn {

@@ -42,6 +42,19 @@ const LINKS: NavLink[] = [
       },
     ],
   },
+  {
+    href: "/ecosystem",
+    label: "Ecosystem",
+    children: [
+      { href: "/ecosystem/docs-package", label: "Docs Package", icon: <LightIcon name="book-open" size={14} /> },
+      { href: "/ecosystem/layout", label: "Layout", icon: <LightIcon name="building" size={14} /> },
+      { href: "/ecosystem/cli", label: "CLI", icon: <LightIcon name="terminal" size={14} /> },
+      { href: "/ecosystem/emails", label: "Emails", icon: <LightIcon name="mail" size={14} /> },
+      { href: "/ecosystem/sdk", label: "SDK", icon: <LightIcon name="zap" size={14} /> },
+      { href: "/ecosystem/store", label: "Store", icon: <LightIcon name="store" size={14} /> },
+      { href: "/ecosystem/stack-agnosticism", label: "Stack Agnosticism", icon: <LightIcon name="globe" size={14} /> },
+    ],
+  },
   { href: "/about", label: "About" },
 ];
 
@@ -54,7 +67,8 @@ function Brand({ onHome }: { onHome: () => void }) {
       aria-label="facet home"
     >
       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-secondary/50 ring-1 ring-border">
-        <img src="/facet-2d-flat.png" alt="" aria-hidden="true" className="h-4 w-auto opacity-90" />
+        <img src="/facet-2d-flat.png" alt="" aria-hidden="true" className="h-4 w-auto opacity-90 lg:hidden" />
+        <img src="/facet-b&w.png" alt="" aria-hidden="true" className="h-4 w-auto opacity-90 hidden lg:block dark:brightness-0 dark:invert" />
       </span>
       <span className="font-heading text-lg font-bold text-foreground">facet</span>
     </button>
@@ -178,6 +192,7 @@ export function Nav() {
       onNavigate={handleNav}
       mobileMenu={<MobileMenu onNavigate={handleNav} />}
       mobileBreakpoint="lg"
+      hoverDropdowns
       showThemeToggle
       actions={
         <div className="flex items-center gap-2">

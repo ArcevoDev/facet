@@ -256,6 +256,9 @@ export const DEFAULT_SEMANTIC_NAMES = [
   "lock",
   "ruler",
   "fingerprint-pattern",
+  "store",
+  "globe",
+  "external-link",
 ];
 
 /** Resolve a placement for the generated registry from the consumer layout. */
@@ -483,6 +486,7 @@ export const LUCIDE_ALIASES: Record<string, string> = {
   dashboard: "layout-dashboard",
   "chevron-up-down": "chevrons-up-down",
   "alert-triangle": "triangle-alert",
+  "alert-circle": "circle-alert",
   "circle-alert": "circle-alert",
   "check-circle": "circle-check",
   "x-circle": "circle-x",

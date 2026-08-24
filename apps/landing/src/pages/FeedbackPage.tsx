@@ -1,17 +1,17 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { LandingLayout } from "@arcevo/facet-layout";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Separator, Label, Input, Textarea } from "@arcevo/facet-components";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, ShineButton, buttonVariants, cn, Separator, Label, Input, Textarea } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { CONTACT } from "../lib/socials.js";
-import { Nav } from "./Nav.js";
-import { Footer } from "./Footer.js";
+import { Nav } from "../components/Nav.js";
+import { Footer } from "../components/Footer.js";
 import {
   FacebookIcon,
   InstagramIcon,
   LinkedinIcon,
   TikTokIcon,
-} from "./BrandIcons.js";
+} from "../components/BrandIcons.js";
 
 /**
  * Feedback + contact page. The professional standard is email; WhatsApp and
@@ -108,7 +108,12 @@ export function FeedbackPage() {
                 onChange={(e) => setMessage(e.target.value)}
               />
             </div>
-            <Button type="submit">Send feedback</Button>
+            <ShineButton
+              type="submit"
+              className={cn(buttonVariants({ variant: "default", size: "default" }))}
+            >
+              Send feedback
+            </ShineButton>
           </form>
         </CardContent>
       </Card>

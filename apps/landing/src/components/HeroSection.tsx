@@ -1,12 +1,21 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Badge, Aurora, Beams, BorderBeamCard, SparkleButton, Spotlight, TypewriterText } from "@arcevo/facet-components";
-import { LightIcon } from "@arcevo/facet-components/light";
+import { Badge, Aurora, Beams, SparkleButton, Spotlight, TypewriterText } from "@arcevo/facet-components";
+import { LightIcon, useTheme } from "@arcevo/facet-components/light";
 import { getDocsUrl } from "../lib/docs-url.js";
 import { STATS } from "../data/features.js";
 
 export function HeroSection() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
+
+  // Theme-adaptive aurora: bright accent gradients on light, clean white
+  // gradients on dark so the hero stays crisp in both modes.
+  const auroraColorsLight = ["#6366f1", "#a855f7", "#06b6d4", "#6366f1"];
+  const auroraColorsDark = ["#ffffff", "#f0f0f0", "#e0e0e0", "#ffffff"];
+  const auroraColorsSubLight = ["#0ea5e9", "#d946ef", "#22d3ee"];
+  const auroraColorsSubDark = ["#f8fafc", "#e2e8f0", "#cbd5e1"];
 
   const scrollToInstall = () => {
     if (location.pathname !== "/") {
@@ -22,23 +31,9 @@ export function HeroSection() {
     <Spotlight className="relative flex flex-col items-center overflow-hidden text-center">
       {/* Animated layers: aurora + beams (zero-dep facet animated
           surfaces). Brighter opacity so the motion reads. */}
-      <Aurora className="absolute inset-0 -z-20" opacity={0.75} colors={["#6366f1", "#a855f7", "#06b6d4", "#6366f1"]} />
-      <Aurora className="absolute -inset-10 -z-20 opacity-40" opacity={0.4} colors={["#0ea5e9", "#d946ef", "#22d3ee"]} />
-      <Beams count={4} className="absolute inset-0 -z-10" color="rgba(129,140,248,0.35)" />
-      {/* facet-3d logo: a glossy 3D mark that reads on the dark aurora backdrop,
-          framed by an animated primary→fuchsia→cyan border beam. */}
-      <div className="pointer-events-none absolute top-14 right-2 z-10 hidden lg:block">
-        <BorderBeamCard className="h-52 w-52">
-          <img src="/facet-3d.png" alt="" aria-hidden="true" className="block h-full w-full object-contain" />
-        </BorderBeamCard>
-      </div>
-      {/* facet-b&w watermark: subtle monochrome mark toward the lower-left. */}
-      <img
-        src="/facet-b&w.png"
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-8 left-6 z-0 hidden h-36 opacity-3 lg:block"
-      />
+      <Aurora className="absolute inset-0 -z-20" opacity={0.75} colors={isDark ? auroraColorsDark : auroraColorsLight} />
+      <Aurora className="absolute -inset-10 -z-20 opacity-40" opacity={0.4} colors={isDark ? auroraColorsSubDark : auroraColorsSubLight} />
+      <Beams count={4} className="absolute inset-0 -z-10" color={isDark ? "rgba(255,255,255,0.25)" : "rgba(129,140,248,0.35)"} />
       <Badge
         variant="outline"
         icon={<LightIcon name="sparkles" size={12} />}

@@ -23,12 +23,12 @@ export type AllFacetPackage = (typeof ALL_FACET_PACKAGES)[number];
 /** Discover facet packages dynamically: the npm @arcevo scope (via the
  *  registry search API) merged with the static baseline. Returns a set of
  *  package names; falls back to the baseline alone if the registry is
- *  unreachable or slow (5s timeout so the CLI never hangs on the network). */
+ *  unreachable or slow (3s timeout so the CLI never hangs on the network). */
 export async function discoverFacetPackages(): Promise<string[]> {
   const baseline = [...ALL_FACET_PACKAGES];
   try {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 5000);
+    const timer = setTimeout(() => controller.abort(), 3000);
     try {
       const res = await fetch("https://registry.npmjs.org/-/v1/search?text=scope:arcevo&size=100", {
         headers: { "User-Agent": "facet-cli" },
@@ -84,18 +84,27 @@ const FALLBACK_RANGES: Record<FacetPackage, string> = {
  */
 export async function resolveFacetVersions(): Promise<Record<FacetPackage, string>> {
   const result = { ...FALLBACK_RANGES } as Record<FacetPackage, string>;
-  await Promise.all(
-    FACET_PACKAGES.map(async (name) => {
-      try {
-        const res = await fetch(`https://registry.npmjs.org/${name}/latest`);
-        if (!res.ok) return;
-        const data = (await res.json()) as { version?: string };
-        if (data.version) result[name] = `^${data.version}`;
-      } catch {
-        // Offline or registry hiccup: keep the loose fallback.
-      }
-    }),
-  );
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 3000);
+  try {
+    await Promise.all(
+      FACET_PACKAGES.map(async (name) => {
+        try {
+          const res = await fetch(`https://registry.npmjs.org/${name}/latest`, {
+            headers: { "User-Agent": "facet-cli" },
+            signal: controller.signal,
+          });
+          if (!res.ok) return;
+          const data = (await res.json()) as { version?: string };
+          if (data.version) result[name] = `^${data.version}`;
+        } catch {
+          // Offline or registry hiccup: keep the loose fallback.
+        }
+      }),
+    );
+  } finally {
+    clearTimeout(timer);
+  }
   return result;
 }
 

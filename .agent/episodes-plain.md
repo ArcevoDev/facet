@@ -503,3 +503,25 @@ The fix:
 Takeaway: a prop default that silently overrides context is a trap. When a
 child component can read its parent's configuration, it should — explicit
 override should be the exception, not the requirement.
+
+--------------------------------------------------------------------------------
+
+CHAPTER 28 -- The Tests That Hung on the Registry
+
+Our CLI tests started failing with 5-second timeouts whenever the npm registry
+was slow or unreachable. Six tests across two files just stopped responding.
+
+Root cause: the CLI code that contacts the npm registry had no timeout at all
+(resolveFacetVersions), and the one timeout it did have (discoverFacetPackages)
+was set to 5 seconds — exactly the same as the test runner's default timeout.
+So any slow registry response burned through the entire test budget, leaving
+zero margin for setup and teardown.
+
+The fix: added a 3-second timeout to the fetch calls (enough for a healthy
+network, short enough to leave room in the test). Raised the test timeout
+ceiling to 15 seconds to absorb slow CI runs. Also fixed a related icon issue:
+the "alert-circle" icon name from lucide was deprecated and renamed, so the
+CLI's icon scanner couldn't find it — added an alias to map it to the new name.
+
+Takeaway: never let a network timeout equal a test timeout. Give your code a
+timeout bound, and give your tests a wider ceiling to absorb variance.

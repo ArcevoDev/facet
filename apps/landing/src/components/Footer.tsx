@@ -1,5 +1,5 @@
 import { Footer as FacetFooter } from "@arcevo/facet-components";
-import type { FooterSocial } from "@arcevo/facet-components";
+import type { FooterSocial, FooterLink, FooterColumn } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { CONTACT } from "../lib/socials.js";
 import { getDocsUrl } from "../lib/docs-url.js";
@@ -11,17 +11,61 @@ const SOCIALS: FooterSocial[] = [
   { label: "TikTok", href: CONTACT.tiktok, icon: "tiktok" },
 ];
 
-const FOOTER_LINKS = [
+const FOOTER_LINKS: FooterLink[] = [
   { label: "Feedback", href: "/feedback", icon: "mail" },
-  { label: "GitHub", href: "https://github.com/arcevodev/facet", icon: "github", external: true },
-  { label: "Documentation", href: getDocsUrl(), icon: "book-open", external: true },
+  { label: "GitHub", href: "https://github.com/arcevodev/facet", icon: "github" },
+  { label: "Documentation", href: getDocsUrl(), icon: "book-open" },
+];
+
+const FOOTER_COLUMNS: FooterColumn[] = [
+  {
+    title: "Product",
+    links: [
+      { label: "Packages", href: "#packages" },
+      { label: "Features", href: "#features" },
+      { label: "Demo", href: "#demo" },
+      { label: "Roadmap", href: "#roadmap" },
+    ],
+  },
+  {
+    title: "Ecosystem",
+    links: [
+      { label: "Docs Package", href: "/ecosystem/docs-package" },
+      { label: "Layout", href: "/ecosystem/layout" },
+      { label: "CLI", href: "/ecosystem/cli" },
+      { label: "Emails", href: "/ecosystem/emails" },
+      { label: "SDK", href: "/ecosystem/sdk" },
+      { label: "Store", href: "/ecosystem/store" },
+    ],
+  },
+  {
+    title: "Resources",
+    links: [
+      { label: "FAQ", href: "#faq" },
+      { label: "Feedback", href: "/feedback" },
+      { label: "Documentation", href: getDocsUrl() },
+    ],
+  },
+  {
+    title: "Developers",
+    links: [
+      { label: "Install", href: "#install" },
+      { label: "GitHub", href: "https://github.com/arcevodev/facet" },
+    ],
+  },
 ];
 
 export function Footer() {
   return (
     <FacetFooter
-      variant="minimal"
-      brand={{ name: "facet" }}
+      variant="columns"
+      brand={{
+        name: "facet",
+        tagline: "Component library for the Arcevo ecosystem",
+      }}
+      columns={FOOTER_COLUMNS}
+      socials={SOCIALS}
+      bottomLinks={FOOTER_LINKS}
       legal={`© ${new Date().getFullYear()} facet. MIT License.`}
       socialArea={
         <div className="flex flex-col gap-3">
@@ -30,48 +74,46 @@ export function Footer() {
               <a
                 key={link.label}
                 href={link.href}
-                target={link.external ? "_blank" : undefined}
-                rel={link.external ? "noreferrer" : undefined}
+                target={/^https?:\/\//.test(link.href) ? "_blank" : undefined}
+                rel={/^https?:\/\//.test(link.href) ? "noreferrer" : undefined}
                 className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
-                <LightIcon name={link.icon} size={14} />
+                <LightIcon name={link.icon ?? "mail"} size={14} />
                 {link.label}
               </a>
             ))}
           </div>
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-            <p className="text-xs text-muted-foreground">
-              Feedback:{" "}
+          <p className="text-xs text-muted-foreground">
+            Feedback:{" "}
+            <a
+              href={`mailto:${CONTACT.email}`}
+              className="hover:text-foreground"
+            >
+              {CONTACT.email}
+            </a>
+            {" "}· WhatsApp:{" "}
+            <a
+              href={CONTACT.whatsapp}
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-foreground"
+            >
+              <LightIcon name="whatsapp" size={12} className="inline" /> Chat
+            </a>
+          </p>
+          <div className="flex items-center gap-4">
+            {SOCIALS.map((social) => (
               <a
-                href={`mailto:${CONTACT.email}`}
-                className="hover:text-foreground"
-              >
-                {CONTACT.email}
-              </a>
-              {" "}· WhatsApp:{" "}
-              <a
-                href={CONTACT.whatsapp}
+                key={social.label}
+                href={social.href}
                 target="_blank"
                 rel="noreferrer"
-                className="hover:text-foreground"
+                aria-label={social.label}
+                className="text-muted-foreground transition-colors hover:text-foreground"
               >
-                <LightIcon name="whatsapp" size={12} className="inline" /> Chat
+                <LightIcon name={social.icon} size={16} />
               </a>
-            </p>
-            <div className="flex items-center gap-4">
-              {SOCIALS.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={social.label}
-                  className="text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  <LightIcon name={social.icon} size={16} />
-                </a>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       }

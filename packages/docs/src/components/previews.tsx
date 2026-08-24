@@ -183,7 +183,6 @@ import {
   ResizablePanelGroup,
   ResizableHandle,
   ResizablePanel,
-  useResizable,
 } from "@arcevo/facet-components";
 import {
   DropzoneDemo,
@@ -1151,49 +1150,23 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
         </div>
       );
     case "resizable": {
-      const isVertical = variant === "vertical" || variant === "vertical-collapsible";
-      const isCollapsible = variant === "collapsible" || variant === "vertical-collapsible";
-      const sidebarRef = useResizable();
-      const collapsed = isCollapsible ? sidebarRef.isCollapsed() : false;
+      const isVertical = variant === "vertical";
       return (
-        <div className={`w-full max-w-lg ${isVertical ? "h-64" : ""}`}>
-          <div className="mb-2 flex items-center gap-2">
-            <Button
-              size="sm"
-              disabled={!isCollapsible}
-              onClick={() => {
-                if (isCollapsible) {
-                  if (sidebarRef.isCollapsed()) {
-                    sidebarRef.expand();
-                  } else {
-                    sidebarRef.collapse();
-                  }
-                }
-              }}
-            >
-              {isCollapsible ? (collapsed ? "Expand" : "Collapse") : "Collapsible"}
-            </Button>
-          </div>
+        <div className="w-full max-w-lg h-64">
           <ResizablePanelGroup
             orientation={isVertical ? "vertical" : "horizontal"}
             className="border"
           >
-            <ResizablePanel
-              panelRef={sidebarRef.panelRef}
-              id="sidebar"
-              defaultSize={isCollapsible ? 20 : 50}
-              collapsible={isCollapsible}
-              collapsedSize={0}
-            >
+            <ResizablePanel defaultSize={50}>
               <div
-                className={`flex h-40 w-full items-center justify-center bg-muted text-sm ${isVertical ? "border-b" : "border-r"}`}
+                className={`flex h-full w-full items-center justify-center bg-muted text-sm ${isVertical ? "border-b" : "border-r"}`}
               >
                 Panel 1
               </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={isCollapsible ? 80 : 50}>
-              <div className="flex h-40 w-full items-center justify-center border bg-muted text-sm">
+            <ResizablePanel defaultSize={50}>
+              <div className={`flex h-full w-full items-center justify-center border ${isVertical ? "border-t-0" : "border-l-0"} bg-muted text-sm`}>
                 Panel 2
               </div>
             </ResizablePanel>

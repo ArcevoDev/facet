@@ -33,7 +33,9 @@ export interface SidebarProps {
   collapsed?: boolean;
   /** Current expanded sidebar width in px. Default: 260 */
   width?: number;
-  /** Accordion mode: opening a section closes the others. Default: false */
+  /** Accordion mode: opening a section closes the others, and collapsible
+   *  child groups within an open section also behave as accordion (opening
+   *  one closes its siblings). Default: false */
   singleOpen?: boolean;
 }
 
@@ -280,6 +282,12 @@ function NavSectionRenderer({
     }
   };
 
+  // Item-level accordion state: when singleOpen is true, opening a
+  // collapsible child group closes its siblings — mirroring the
+  // section-level behaviour so the Components sidebar sub-groups behave
+  // the same as the top-level sections.
+  const [openItem, setOpenItem] = React.useState<string | null>(null);
+
   // Collapsed rail (YouTube-style): one icon slot per section, not a list.
   // All section icons stack together with no scroll; the full item list
   // only shows when the sidebar is expanded.
@@ -348,6 +356,9 @@ function NavSectionRenderer({
               onExpand={onExpand}
               depth={0}
               collapsed={collapsed}
+              singleOpen={singleOpen}
+              openItem={openItem}
+              setOpenItem={setOpenItem}
             />
           ))}
         </ul>
@@ -365,6 +376,9 @@ function NavItemRenderer({
   onExpand,
   depth,
   collapsed,
+  singleOpen = false,
+  openItem = null,
+  setOpenItem,
 }: {
   item: NavItem;
   router: RouterAdapter | undefined;
@@ -372,8 +386,16 @@ function NavItemRenderer({
   onExpand: () => void;
   depth: number;
   collapsed: boolean;
+  /** When true, opening a collapsible group closes sibling groups
+   *  (accordion) using the section-level openItem state. */
+  singleOpen?: boolean;
+  openItem?: string | null;
+  setOpenItem?: React.Dispatch<React.SetStateAction<string | null>>;
 }) {
   const [internalOpen, setInternalOpen] = React.useState(false);
+  // Local accordion state for nested levels (depth 1+) that don't
+  // receive an external openItem/setOpenItem from their parent.
+  const [localOpenItem, setLocalOpenItem] = React.useState<string | null>(null);
   const children = item.children;
   const hasChildren = children?.length;
   const getActive = router ? router.isActive : (href: string) => href === window.location.pathname;
@@ -382,7 +404,26 @@ function NavItemRenderer({
   const childActive = hasChildren
     ? children.some((child) => isItemActive(child, getActive))
     : false;
-  const open = childActive ? true : internalOpen;
+  // In single-open (accordion) mode the open state is owned by openItem
+  // (external at depth 0, local at depth 1+) — so the user can collapse an
+  // active group. childActive only drives a one-shot auto-expand on route
+  // change (below), not a forced-open state.
+  const hasExternalOpenState = singleOpen && setOpenItem;
+  const effectiveOpenItem = hasExternalOpenState ? openItem : localOpenItem;
+  const effectiveSetOpenItem = hasExternalOpenState ? setOpenItem : setLocalOpenItem;
+  const open = singleOpen
+    ? effectiveOpenItem === item.href
+    : (childActive ? true : internalOpen);
+
+  // On route change, auto-expand the group that now contains the active
+  // child (mirrors the section-level behaviour). One-shot via [routeKey]
+  // so it never fights an explicit user collapse.
+  const routeKey = router?.asPath ?? (typeof window !== "undefined" ? window.location.pathname + window.location.hash : "");
+  React.useEffect(() => {
+    if (childActive && singleOpen && effectiveOpenItem !== item.href) {
+      effectiveSetOpenItem(item.href);
+    }
+  }, [routeKey]);
 
   // Group item: toggles its children inline (full mode) or shows icon-only trigger
   if (hasChildren) {
@@ -393,7 +434,7 @@ function NavItemRenderer({
             <TooltipTrigger asChild>
               <button
                 type="button"
-                onClick={() => (collapsed ? onExpand() : setInternalOpen((v) => !v))}
+                onClick={() => collapsed ? onExpand() : (singleOpen ? (effectiveOpenItem === item.href ? effectiveSetOpenItem(null) : effectiveSetOpenItem(item.href)) : setInternalOpen((v) => !v))}
                 aria-expanded={collapsed ? undefined : open}
                 aria-label={collapsed ? item.label : undefined}
                 className={`flex w-full items-center gap-3 rounded-md px-2.5 py-2 text-sm font-medium transition-colors text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
@@ -440,6 +481,7 @@ function NavItemRenderer({
                 onExpand={onExpand}
                 depth={depth + 1}
                 collapsed={collapsed}
+                singleOpen={singleOpen}
               />
             ))}
           </ul>

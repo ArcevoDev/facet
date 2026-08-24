@@ -12,8 +12,10 @@ import { RoadmapSection } from "./components/RoadmapSection.js";
 import { FaqSection } from "./components/FaqSection.js";
 import { CTASection } from "./components/CTASection.js";
 import { Footer } from "./components/Footer.js";
-import { FeedbackPage } from "./components/FeedbackPage.js";
-import { AboutPage } from "./components/AboutPage.js";
+import { FeedbackPage } from "./pages/FeedbackPage.js";
+import { AboutPage } from "./pages/AboutPage.js";
+import { EcosystemPage } from "./pages/EcosystemPage.js";
+import { EcosystemDetailPage } from "./pages/EcosystemDetailPage.js";
 
 function HomePage() {
   return (
@@ -41,8 +43,10 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/feedback" element={<FeedbackPage />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/feedback" element={<FeedbackPage />} />
+      <Route path="/ecosystem" element={<EcosystemPage />} />
+      <Route path="/ecosystem/:slug" element={<EcosystemDetailPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

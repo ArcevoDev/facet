@@ -60,6 +60,10 @@ import {
   Lock,
   Ruler,
   FingerprintPattern,
+  AlertCircle,
+  ExternalLink,
+  Globe,
+  Store,
   type LucideIcon,
 } from "lucide-react";
 import { brandIcons } from "./brand-icons.js";
@@ -118,6 +122,10 @@ const SEMANTIC_LUCIDE: Record<string, LucideIcon> = {
   lock: Lock,
   ruler: Ruler,
   "fingerprint-pattern": FingerprintPattern,
+  "alert-circle": AlertCircle,
+  "external-link": ExternalLink,
+  "globe": Globe,
+  "store": Store,
 };
 
 const DIRECT: Record<string, IconComponent> = {

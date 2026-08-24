@@ -11,6 +11,9 @@ import { emailOnlySchema } from "../../validators.js";
 import type { Appearance } from "../../types.js";
 
 import {
+  ShineButton,
+  buttonVariants,
+  cn,
   Button,
   Input,
   Label,
@@ -109,9 +112,12 @@ export function MagicLinkForm({
           <p className="text-sm text-muted-foreground">
             We sent a link to <strong>{email}</strong>. Click it to sign in.
           </p>
-          <Button variant="outline" onClick={() => setSent(false)}>
+          <ShineButton
+            className={cn(buttonVariants({ variant: "outline" }), "w-full")}
+            onClick={() => setSent(false)}
+          >
             Send again
-          </Button>
+          </ShineButton>
         </CardContent>
         {onBack && (
           <CardFooter className="justify-center">
