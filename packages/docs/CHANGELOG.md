@@ -1,5 +1,24 @@
 # @arcevo/facet-docs
 
+## 1.4.7
+
+### Patch Changes
+
+- 205d83b: Remove the collapsible/vertical-collapsible docs gallery variants for Resizable (were never wired to the variants.tsx list, leaving dead code in previews.tsx and usage.ts). Make the horizontal variant as polished as the vertical by adding the same height constraint and proper border separation.
+- Updated dependencies [205d83b]
+- Updated dependencies [205d83b]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [205d83b]
+- Updated dependencies [b1da261]
+- Updated dependencies [205d83b]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [cfabae9]
+  - @arcevo/facet-auth@1.2.3
+  - @arcevo/facet-components@1.11.0
+  - @arcevo/facet-sdk@1.2.0
+  - @arcevo/facet-layout@1.4.2
+
 ## 1.4.6
 
 ### Patch Changes

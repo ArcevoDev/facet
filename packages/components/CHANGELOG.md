@@ -1,5 +1,103 @@
 # @arcevo/facet-components
 
+## 1.11.0
+
+### Minor Changes
+
+- 1bf5de5: Export individual brand icon components (GithubIcon, LinkedinIcon, InstagramIcon,
+  FacebookIcon, TiktokIcon, WhatsappIcon, XIcon, TwitterIcon, YoutubeIcon, SlackIcon,
+  DiscordIcon, TelegramIcon, FigmaIcon, SpotifyIcon) from the main barrel so consuming
+  apps can import them directly without duplicating the SVGs. These components already
+  power the icon registry's `brandIcons` map and `LightIcon` — they were simply not
+  re-exported as named exports from the package entry point.
+- 205d83b: Add `hoverDropdowns` prop to Navbar for hover-to-open dropdown menus on desktop, with shared close-timer coordination so only one dropdown is open at a time. Also add optional `icon` field to FooterLink and `lg:px-8` to navbar padding.
+
+  - facet-components: Navbar accepts `hoverDropdowns?: boolean` (default `false`). When enabled, desktop dropdown menus open on hover and close on mouse-leave with a short delay; rapid transitions between links cancel the previous close timer. Click still toggles as a fallback on touch devices.
+  - facet-components: FooterLink now accepts an optional `icon?: IconName` resolved through the icon registry.
+
+- b1da261: Add 5 new composable UI components: AspectRatio, Carousel, Drawer,
+  InputGroup, Resizable. Also fix Navbar hamburger (X-icon toggle +
+  outside-click close) and register new bundled deps in facet-cli.
+
+  Carousel: add <CarouselDots> pagination component (uses context API, no extra deps);
+  update docs preview with dots + loop. Add carousel-vertical variant to docs.
+  Marquee: add composable `variant` prop ("loop" | "strip"); strip variant
+  defaults to no pause-on-hover + dedicated className. Add marquee-strip variant to docs.
+  Resizable: docs preview now shows both horizontal and vertical orientations.
+
+  CLI enhancements:
+  - `facet clean -y` now auto-runs the remove command instead of just printing it
+  - Auto-update check on CLI startup (pnpm-style notification box, 24h cache, CI skip, --no-update-check)
+  - `facet self-update`: updates the globally-installed facet-cli
+  - `facet install <name>`: installs a facet package by shorthand or full name
+    (full: `facet install @arcevo/facet-layout`, shorthand: `facet install layout`)
+    Supports the scoped-dropped alias `facet-cli` -> `@arcevo/facet-cli` (so any
+    `facet-X` alias resolves), and `-g`/`--global` to install globally, e.g.
+    `facet install -g facet-cli` runs `npm i -g @arcevo/facet-cli@latest`.
+  - `facet copy <ComponentName>`: copies a component into your source (shadcn-style) only
+    (passing a package name prints a redirect hint to `facet install`)
+  - `facet latest`: shows latest published versions of all facet packages
+  - `facet --log`: global verbose flag for detailed command output
+
+  SDK: add `OAuthSdk.updateClient(clientId, data)` for full OAuth-client
+  CRUD (PATCH `/oauth/clients/:clientId`); add `IssueCredentialParams` interface.
+
+- 1bf5de5: Rebuild the Resizable component for react-resizable-panels v4 compatibility and
+  flexibility:
+
+  - **Fix defaultSize bug**: react-resizable-panels v4 interprets bare numbers as
+    pixels (e.g. `defaultSize={50}` → 50 px), but facet docs and examples all
+    pass `defaultSize={50}` expecting 50 %. The component now normalizes 0–100
+    numbers to percentage strings automatically (`normalizeSize`).
+  - **Add `useResizable` hook** for imperative control — `groupRef`, `panelRef`,
+    `getLayout`, `setLayout`, `collapse`, `expand`, `isCollapsed`, `resize`,
+    `getSize`.
+  - **Add `useResizableLayout` hook** wrapping v4's `useDefaultLayout` for
+    localStorage persistence of panel sizes.
+  - **Export TypeScript types**: `ResizablePanelGroupProps`,
+    `ResizablePanelProps`, `ResizableHandleProps`, `ResizableImperativeHandle`.
+  - **Expose collapsible panel support** (`collapsible` / `collapsedSize` props)
+    via v4 pass-through.
+  - **Fix** stale manifest description and **add** a collapsible variant to the
+    docs gallery.
+  - **Fix** flaky `docs-app.test.tsx` — lazy-loaded `DocsLayout` needs >1000 ms
+    under load; `findByTestId` timeout raised to 5000 ms.
+
+- 1bf5de5: Fix sidebar accordion (singleOpen) collapse, auto-infer ResizableHandle orientation, and export brand icons from the components barrel.
+
+  - facet-components: `ResizableHandle` now inherits `orientation` from its parent
+    `ResizablePanelGroup` via context (explicit prop still overrides). Exported
+    individual brand icon components (`GithubIcon`, `LinkedinIcon`, etc.) from the
+    barrel for direct import. Added `ChevronsUp`/`ChevronsDown` to the eagerly-loaded
+    semantic icon maps so they render synchronously.
+  - facet-layout: restored explicit-collapse-wins rule in `NavSectionRenderer.open`
+    so active sections can be collapsed (fixes accordion/singleOpen). Auto-open-on-
+    navigation moved to a `useEffect` keyed on route change. Added `asPath` to
+    `RouterAdapter` interface and default adapter.
+
+### Patch Changes
+
+- 205d83b: Add a 3s fetch timeout to `resolveFacetVersions` and `discoverFacetPackages` so the CLI never hangs on an unreachable or slow npm registry. Add a global `testTimeout: 15000` in the CLI vitest config to absorb slow CI and DTS parsing overhead.
+
+  - cli: `resolveFacetVersions()` now uses an `AbortController` with a 3s timeout (was unbounded); `discoverFacetPackages()` timeout reduced from 5s to 3s.
+  - cli: Add `LUCIDE_ALIASES` entry `alert-circle → circle-alert` so the deprecated lucide name still resolves in generated icon registries.
+  - components: Add `alert-circle`, `external-link`, `globe`, and `store` to the `@arcevo/facet-components/light` `LightIcon` set (used by the landing and docs sites).
+
+- cfabae9: Add an ESM `"use client"` banner to the `dist` builds of `@arcevo/facet-components`,
+  `@arcevo/facet-auth`, and `@arcevo/facet-layout`.
+
+  Next.js 15+/16 App Router builds React Server Components with the `react-server`
+  condition, which resolves `react-hook-form` to `react-server.esm.mjs` - an entry that
+  does not export `Controller`, `FormProvider`, `useForm`, or `useFormContext`. Importing
+  any of these packages from a Server Component therefore failed the build with
+  `Export Controller/FormProvider/useForm/useFormContext doesn't exist in target module`.
+
+  The banner marks each package's module graph as a client boundary, so those imports
+  resolve to the normal client entry under RSC. The directive is a no-op for non-RSC
+  consumers (Vite/CRA/Rolldown ignore it), so this is a transparent fix.
+
+  Consumers hitting the Next 16 error pick this up on the next published release.
+
 ## 1.10.0
 
 ### Minor Changes

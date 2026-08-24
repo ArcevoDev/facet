@@ -1,5 +1,48 @@
 # @arcevo/facet-layout
 
+## 1.4.2
+
+### Patch Changes
+
+- 1bf5de5: Fix sidebar accordion (singleOpen) collapse, auto-infer ResizableHandle orientation, and export brand icons from the components barrel.
+
+  - facet-components: `ResizableHandle` now inherits `orientation` from its parent
+    `ResizablePanelGroup` via context (explicit prop still overrides). Exported
+    individual brand icon components (`GithubIcon`, `LinkedinIcon`, etc.) from the
+    barrel for direct import. Added `ChevronsUp`/`ChevronsDown` to the eagerly-loaded
+    semantic icon maps so they render synchronously.
+  - facet-layout: restored explicit-collapse-wins rule in `NavSectionRenderer.open`
+    so active sections can be collapsed (fixes accordion/singleOpen). Auto-open-on-
+    navigation moved to a `useEffect` keyed on route change. Added `asPath` to
+    `RouterAdapter` interface and default adapter.
+
+- cfabae9: Add an ESM `"use client"` banner to the `dist` builds of `@arcevo/facet-components`,
+  `@arcevo/facet-auth`, and `@arcevo/facet-layout`.
+
+  Next.js 15+/16 App Router builds React Server Components with the `react-server`
+  condition, which resolves `react-hook-form` to `react-server.esm.mjs` - an entry that
+  does not export `Controller`, `FormProvider`, `useForm`, or `useFormContext`. Importing
+  any of these packages from a Server Component therefore failed the build with
+  `Export Controller/FormProvider/useForm/useFormContext doesn't exist in target module`.
+
+  The banner marks each package's module graph as a client boundary, so those imports
+  resolve to the normal client entry under RSC. The directive is a no-op for non-RSC
+  consumers (Vite/CRA/Rolldown ignore it), so this is a transparent fix.
+
+  Consumers hitting the Next 16 error pick this up on the next published release.
+
+- Updated dependencies [205d83b]
+- Updated dependencies [205d83b]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [205d83b]
+- Updated dependencies [b1da261]
+- Updated dependencies [205d83b]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [cfabae9]
+  - @arcevo/facet-auth@1.2.3
+  - @arcevo/facet-components@1.11.0
+
 ## 1.4.1
 
 ### Patch Changes

@@ -1,5 +1,21 @@
 # @arcevo/facet-docs-site
 
+## 1.0.12
+
+### Patch Changes
+
+- Updated dependencies [205d83b]
+- Updated dependencies [205d83b]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [205d83b]
+- Updated dependencies [b1da261]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [cfabae9]
+  - @arcevo/facet-components@1.11.0
+  - @arcevo/facet-docs@1.4.7
+  - @arcevo/facet-layout@1.4.2
+
 ## 1.0.11
 
 ### Patch Changes
