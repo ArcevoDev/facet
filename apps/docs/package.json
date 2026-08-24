@@ -1,6 +1,6 @@
 {
   "name": "@arcevo/facet-docs-site",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "private": true,
   "description": "facet's own docs site: a thin consumer of @arcevo/facet-docs, deployed to docs.facet.arcevocirqle.com.ng.",
   "type": "module",

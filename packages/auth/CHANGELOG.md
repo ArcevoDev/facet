@@ -1,5 +1,40 @@
 # @arcevo/facet-auth
 
+## 1.2.3
+
+### Patch Changes
+
+- 205d83b: Swap ShineButton for the shared AnimatedButton component on auth form submit buttons (forgot-password, magic-link, MFA recovery, MFA verify) for visual consistency across the form suite.
+- 205d83b: Phase 0 security fix: warn developers when `defaultStorage` (localStorage) is used for tokens, surface the XSS risk prominently, and add an optional `persist` adapter so consumers can plug in a cookie-backed strategy.
+
+  - facet-auth: `<ArcProvider>` now emits a dev-time `console.warn` when no explicit `storage` prop is provided (fires once per page-load). `defaultStorage` and the `TokenStorage` type now carry a prominent JSDoc security warning documenting the XSS risk of storing tokens in `localStorage`.
+  - facet-store: `createZustandTokenStorage` gains an optional `persist` adapter argument so consumers can plug in a cookie-backed persistence strategy for the access token. The refresh token is never passed through the persist adapter.
+
+- cfabae9: Add an ESM `"use client"` banner to the `dist` builds of `@arcevo/facet-components`,
+  `@arcevo/facet-auth`, and `@arcevo/facet-layout`.
+
+  Next.js 15+/16 App Router builds React Server Components with the `react-server`
+  condition, which resolves `react-hook-form` to `react-server.esm.mjs` - an entry that
+  does not export `Controller`, `FormProvider`, `useForm`, or `useFormContext`. Importing
+  any of these packages from a Server Component therefore failed the build with
+  `Export Controller/FormProvider/useForm/useFormContext doesn't exist in target module`.
+
+  The banner marks each package's module graph as a client boundary, so those imports
+  resolve to the normal client entry under RSC. The directive is a no-op for non-RSC
+  consumers (Vite/CRA/Rolldown ignore it), so this is a transparent fix.
+
+  Consumers hitting the Next 16 error pick this up on the next published release.
+
+- Updated dependencies [205d83b]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [205d83b]
+- Updated dependencies [b1da261]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [1bf5de5]
+- Updated dependencies [cfabae9]
+  - @arcevo/facet-components@1.11.0
+  - @arcevo/facet-sdk@1.2.0
+
 ## 1.2.2
 
 ### Patch Changes
