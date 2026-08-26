@@ -180,7 +180,7 @@ export function AboutPage() {
         <p className="mt-3 text-muted-foreground">
           Every change clears five gates before it ships: dependency install, full build, and
           the sync checks - <code className="rounded px-1.5 py-0.5 bg-secondary/50">check:docs</code> (components
-          barrel ↔ docs manifest, 90 components), <code className="rounded px-1.5 py-0.5 bg-secondary/50">check:icons</code>
+          barrel ↔ docs manifest, 93 components), <code className="rounded px-1.5 py-0.5 bg-secondary/50">check:icons</code>
           (lucide rename/deprecation drift), and <code className="rounded px-1.5 py-0.5 bg-secondary/50">check:sdk-drift</code>{" "}
           (SDK table ↔ barrel). Typecheck, unit tests, and an end-to-end CLI sandbox close the
           loop, so the counts you see here never drift from the code.

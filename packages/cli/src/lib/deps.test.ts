@@ -10,6 +10,7 @@ import {
   rewriteImports,
   removeBundledDeps,
   removeCommand,
+  globalRemoveCommand,
   mergeScripts,
   PRESET_SCRIPTS,
   findSourceFiles,
@@ -167,6 +168,15 @@ describe("removeBundledDeps + removeCommand", () => {
     );
     expect(removeCommand("npm", ["lucide-react"])).toBe("npm uninstall lucide-react");
     expect(removeCommand("pnpm", ["lucide-react"], true)).toBe("pnpm -w remove lucide-react");
+  });
+
+  it("builds the correct global remove command per package manager", () => {
+    expect(globalRemoveCommand("pnpm", ["@radix-ui/react-dialog", "lucide-react"])).toBe(
+      "pnpm remove -g @radix-ui/react-dialog lucide-react",
+    );
+    expect(globalRemoveCommand("npm", ["@arcevo/facet-cli"])).toBe("npm uninstall -g @arcevo/facet-cli");
+    expect(globalRemoveCommand("yarn", ["@arcevo/facet-cli"])).toBe("yarn global remove @arcevo/facet-cli");
+    expect(globalRemoveCommand("bun", ["@arcevo/facet-cli"])).toBe("bun remove -g @arcevo/facet-cli");
   });
 });
 

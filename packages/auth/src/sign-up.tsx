@@ -16,6 +16,7 @@ import {
   Input,
   Label,
   PasswordInput,
+  PasswordStrengthMeter,
   AnimatedButton,
   type AnimatedButtonRenderProps,
   type AnimatedButtonVariant,
@@ -40,12 +41,25 @@ export interface SignUpProps {
     animation?: AnimatedButtonVariant;
     renderButton?: (props: AnimatedButtonRenderProps) => React.ReactNode;
   };
+  /**
+   * Show the live PasswordStrengthMeter under the password field.
+   * Default: true (most apps want this signal on sign-up).
+   */
+  showPasswordStrength?: boolean;
   onSuccess?: () => void;
 }
 
 /* ── Component ─────────────────────────────────────────────── */
 
-export function SignUp({ appearance, config: configOverrides, slots, copy, submitButton, onSuccess }: SignUpProps) {
+export function SignUp({
+  appearance,
+  config: configOverrides,
+  slots,
+  copy,
+  submitButton,
+  showPasswordStrength = true,
+  onSuccess,
+}: SignUpProps) {
   const cfg = { ...defaultConfig, ...configOverrides };
   const { register } = useAuth();
   const c = { ...defaultSignUpCopy, ...copy };
@@ -129,6 +143,7 @@ export function SignUp({ appearance, config: configOverrides, slots, copy, submi
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
             />
+            {showPasswordStrength && <PasswordStrengthMeter value={password} />}
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="signup-confirm">{c.confirmLabel}</Label>

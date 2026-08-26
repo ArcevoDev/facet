@@ -35,9 +35,12 @@ jobs:
   # NOT publish to npm itself. Publishing is automated in the `publish` job
   # below, which runs only after that version PR merges to main.
   #
-  # Requires `permissions: contents: write` so the GITHUB_TOKEN can push the
-  # changeset-release/main branch. The old job failed here with a 403
-  # "Permission denied to github-actions[bot]" because this block was missing.
+  # Requires `contents: write` to push the changeset-release/main branch,
+  # `pull-requests: write` to open/update the version PR, and `issues: write`
+  # for the action to post a comment on that PR (PR comments are issue comments
+  # in the GitHub GraphQL API). All three were needed — the old job lacked
+  # `issues: write`, causing "Resource not accessible by integration" on PR
+  # comment creation.
   changeset:
     name: Version Packages
     runs-on: ubuntu-latest
@@ -45,6 +48,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      issues: write
     steps:
       - uses: actions/checkout@v7
         with:

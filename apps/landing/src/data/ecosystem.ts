@@ -26,9 +26,9 @@ export function getEcosystemDocsUrl(entry: EcosystemEntry): string {
 export const ECOSYSTEM: EcosystemEntry[] = [
   {
     slug: "docs-package",
-    name: "@arcevo/facet-docs",
-    title: "Docs Package",
-    version: "1.4.6",
+  name: "@arcevo/facet-docs",
+  title: "Docs Engine",
+  version: "1.4.7",
     icon: "book-open",
     short: "Config-driven docs engine",
     description:
@@ -44,7 +44,7 @@ export const ECOSYSTEM: EcosystemEntry[] = [
       "Typed page blocks: p, h2, ul, code, install, table",
       "Zero-config - install and render, no convention files",
       "SSR-safe with no-flash theme init",
-      "CI gate: check:docs verifies barrel ↔ manifest (90 components)",
+      "CI gate: check:docs verifies barrel ↔ manifest (93 components)",
     ],
     example: [
       {
@@ -60,7 +60,7 @@ export const ECOSYSTEM: EcosystemEntry[] = [
     slug: "layout",
     name: "@arcevo/facet-layout",
     title: "Layout",
-    version: "1.4.1",
+    version: "1.4.2",
     icon: "building",
     short: "Domain-configurable app shells",
     description:
@@ -94,7 +94,7 @@ export const ECOSYSTEM: EcosystemEntry[] = [
     slug: "stack-agnosticism",
     name: "Stack Agnosticism",
     title: "Stack Agnosticism",
-    version: "1.0.0",
+    version: "concept",
     icon: "globe",
     short: "Beyond-React adoption assessment",
     description:
@@ -129,7 +129,7 @@ const { data } = await auth.me();`,
     slug: "cli",
     name: "@arcevo/facet-cli",
     title: "CLI",
-    version: "1.0.0",
+    version: "2.0.0",
     icon: "terminal",
     short: "Scaffold, audit, and maintain facet projects",
     description:
@@ -201,9 +201,9 @@ const html = renderEmail(
   },
   {
     slug: "sdk",
-    name: "@arcevo/facet-sdk",
-    title: "SDK",
-    version: "1.1.0",
+  name: "@arcevo/facet-sdk",
+  title: "arc-id SDK",
+  version: "1.2.0",
     icon: "zap",
     short: "Typed arc-id API client",
     description:
@@ -237,9 +237,9 @@ const { data, error } = await auth.login("user@example.com", "pw");
   },
   {
     slug: "store",
-    name: "@arcevo/facet-store",
-    title: "Store",
-    version: "1.0.0",
+  name: "@arcevo/facet-store",
+  title: "State Stores",
+  version: "2.0.0",
     icon: "store",
     short: "Zustand state stores for arc-id sessions",
     description:
@@ -277,5 +277,124 @@ const client = new ArcIdClient({
       },
     ],
     docsPath: "/store",
+  },
+  {
+    slug: "components",
+    name: "@arcevo/facet-components",
+    title: "Components",
+    version: "1.11.0",
+    icon: "boxes",
+    short: "93 styled, accessible React components",
+    description:
+      "Radix-quality primitives, themed with the Alpha Palette, ready to copy or import.",
+    analysis: [
+      "The components package is the visual layer: 90 polished, accessible React components built on Radix primitives and themed with the Alpha Palette tokens. Every component ships typed, focus-managed, dark-mode-aware, and SSR-safe - so consumers get shadcn quality without inheriting shadcn's drift problem.",
+      "Three layers of composition: Layer 1 are headless primitives (Button, Input, Card); Layer 2 are styled surfaces built on those primitives (Marquee, Tabs, DataTable, NumberInput); Layer 3 are ready-to-use pages wired from the layers below (BillingPage, FeedbackPage, AccountSettingsPanel, StatCard, ActivityFeed, PageHeader, ApiKeyManager, TestimonialShowcase, OtpVerificationCard, TwoFactorSetupPanel, InviteTeamForm, PasswordStrengthMeter, SecuritySectionCard, CookieConsent, AnnouncementBar, NotFound, FaqSection).",
+      "The card-animation family (FlipCard, SpotlightCard, BorderBeamCard, ShineCard, GradientBorderCard, RevealCard, HoverScaleCard, MagneticCard, DissolveCard, GlowCard, TiltCard) covers the 'shadcn-ish aesthetic' without forcing consumers to wire it up - drop one in and you get a motion story that respects the design system.",
+      "Iconography is pluggable: <Icon> resolves any lucide-style kebab name out of the box via the IconRegistry (registered in component-facet 1.0.2). To use react-icons, heroicons, or your own SVG components, pass overrides via <IconProvider overrides={{ settings: MyIcon }}> per app/domain, or `registerIcon(\"name\", MyIcon)` globally.",
+      "Theming happens through CSS variables emitted by @arcevo/facet-tokens. Override any token at runtime via <ThemeProvider overrideVars={{ '--primary': '...' }}> without recompiling. Dark mode is built in and respects the system preference until the user overrides it.",
+    ],
+    features: [
+      "90 typed Radix-powered components, named-export only",
+      "Layered architecture: primitives → styled surfaces → ready-to-use pages",
+      "Alpha Palette tokens via @arcevo/facet-tokens (CSS variables, no recompile)",
+      "Icon registry: lucide out of the box, swap in any icon set per app/domain",
+      "Card-animation family (11 motion cards) and micro-interactions (10+ buttons)",
+      "SSR-safe: one-shot animations render initial state on the server",
+      "All exports are typed; barrel index; CI gate (check:docs) verifies coverage",
+    ],
+    example: [
+      {
+        lang: "tsx",
+        code: `import { Button, Card, CardHeader, CardTitle, CardContent, Marquee, TypewriterText } from "@arcevo/facet-components";
+
+<Card>
+  <CardHeader>
+    <CardTitle>Hello, facet</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <Button variant="default">A primary action</Button>
+  </CardContent>
+</Card>`,
+      },
+    ],
+    docsPath: "/components",
+  },
+  {
+    slug: "auth",
+    name: "@arcevo/facet-auth",
+    title: "Auth",
+    version: "1.2.3",
+    icon: "shield-check",
+    short: "Sign-in state machine with domain presets",
+    description:
+      "ArcProvider, SignIn, SignUp, Guard, MfaDialog, UserButton, and seven standalone forms.",
+    analysis: [
+      "The auth package is a configurable, controlled state machine for sign-in and sign-up flows. The SignIn component is a fully typed IDLE → CHECK_SESSION → SELECT_METHOD → LOGIN_FORM / MAGIC_LINK_FORM / SOCIAL_LOGIN / PASSKEY_AUTH → CHECK_MFA → MFA_CHALLENGE → COMPLETE → STEP_UP machine. The host application can subscribe to step changes via the controlled `step` / `onStepChange` props and render whatever custom UI it needs at any stage.",
+      "Three customization axes make it domain-customizable: `appearance` (style overrides), `config` (behavior flags like which methods are enabled, MFA requirement, session TTL), and `slots` (render props for form fields, action buttons, redirect target). This is why a fintech deployment can wire step-up MFA on every session, a healthcare deployment can plug HIPAA-aware session TTL into the same SignIn, and an education deployment can default to passkeys and social login.",
+      "Domain presets ship out of the box: fintech (MFA required, 15-minute TTL, magic link enabled), med (MFA required, 30-minute TTL, magic link disabled), edu (passkeys enabled, 24-hour TTL, magic link enabled), enterprise (MFA required, optional passkeys, 8-hour TTL). Each preset is a plain AuthConfig object you can start from and override.",
+      "Seven standalone forms (EmailLoginForm, MagicLinkForm, OtpForm, MfaVerifyForm, PasskeyForm, ForgotPasswordForm, ResetPasswordForm, SignUpForm) let consumers compose their own flow without inheriting the full SignIn machine. All forms wire react-hook-form + Zod for inline validation; no plumbing code required on the consumer side.",
+      "Token storage is pluggable: pass any TokenStorage implementation to <ArcProvider storage={...}>. The default uses localStorage in development with a clear, once-fired console.warn (added in the Phase 0 security fix); production deployments are expected to wire an httpOnly cookie adapter or an in-memory store.",
+    ],
+    features: [
+      "SignIn: configurable state machine, controlled step/onStepChange API",
+      "Seven standalone forms (email, magic link, OTP, MFA, passkey, forgot/reset, sign-up)",
+      "Four domain presets: fintech, med, edu, enterprise (with override surface)",
+      "react-hook-form + Zod validation wired in for every form",
+      "Pluggable token storage: dev default warns, production wires cookie or in-memory",
+      "Guard component for protected-route gating; UserButton for account menu",
+    ],
+    example: [
+      {
+        lang: "tsx",
+        code: `import { ArcProvider, SignIn, fintechPreset } from "@arcevo/facet-auth";
+
+<ArcProvider config={fintechPreset} client={arcIdClient}>
+  <SignIn
+    onSuccess={() => navigate("/dashboard")}
+    appearance={{ accent: "primary" }}
+  />
+</ArcProvider>`,
+      },
+    ],
+    docsPath: "/auth",
+  },
+  {
+    slug: "tokens",
+    name: "@arcevo/facet-tokens",
+    title: "Tokens",
+    version: "1.1.4",
+    icon: "palette",
+    short: "Alpha Palette design tokens as CSS variables",
+    description:
+      "Color, typography, spacing, surfaces, and animation keyframes as plain CSS variables.",
+    analysis: [
+      "The tokens package is the design system source of truth. Every color, spacing unit, typography scale, surface radius, shadow depth, and animation keyframe lives in tokens.css as a custom property. Consumers import the CSS, and the components package picks them up via Tailwind v4's @theme directive. No JS dependency, no build step - just one CSS file.",
+      "The Alpha Palette is a curated, accessible-by-default palette: foreground/background pairs pass WCAG AA contrast in both light and dark mode; the primary accent is Electric Cyan (#06b6d4 family) in web/dark contexts, which gives the components their characteristic crisp tone. Sub-brand palettes (consumer/enterprise/fintech/med/edu) are defined in tokens/src/sub-brands.ts as plain TS objects, ready to be re-exported as React Native theme objects for the mobile kit planned in Phase 3 of the roadmap.",
+      "Animation tokens ship as named keyframes: facet-shimmer, facet-flip, facet-bounce, facet-pulse-soft, facet-tilt, facet-spotlight, facet-beam, facet-dissolve, facet-magnetic. They are referenced by the components package's card-animation family and micro-interactions - so any CSS utility class that needs them just emits the right keyframe reference. tw-animate-css is included as a dependency so Tailwind consumers get them in the build for free.",
+      "Override at runtime via <ThemeProvider overrideVars={{ '--primary': '#ff6b6b' }}> to retheme without a rebuild. Override at build time by replacing tokens.css. Override per-component via Tailwind className. The same surface, three escape hatches, all type-safe.",
+    ],
+    features: [
+      "Single tokens.css file: colors, typography, spacing, surfaces, animations",
+      "Alpha Palette: WCAG-AA contrast in light + dark mode",
+      "Electric Cyan primary in web/dark contexts (consistent with components)",
+      "tw-animate-css included - animation keyframes emit in Tailwind builds",
+      "Sub-brand palettes exported as plain TS objects (RN-ready)",
+      "Three escape hatches: runtime overrideVars, build-time CSS swap, per-component Tailwind",
+    ],
+    example: [
+      {
+        lang: "tsx",
+        code: `/* tokens.css */
+@import "@arcevo/facet-tokens/tokens.css";
+
+:root {
+  /* override per-brand */
+  --primary: oklch(0.6 0.18 250);
+  --radius: 0.75rem;
+}`,
+      },
+    ],
+    docsPath: "/tokens",
   },
 ];

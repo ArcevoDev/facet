@@ -212,40 +212,52 @@ export function updateCommand(
 }
 
 /**
- * Build the install command for a single facet package via the detected PM.
- * Used by `facet add <pkgName>` when the user passes a @arcevo/facet-* name.
+ * A resolved facet package target: its full name and the latest published
+ * version to install.
  */
-export function installFacetPackage(
+export interface FacetInstallTarget {
+  name: string;
+  latest: string;
+}
+
+/**
+ * Build a local install command for one or more facet packages with resolved
+ * version ranges. Used by `facet add`/`facet install <names...>`. Multiple
+ * packages are joined into a single add invocation so the consumer gets one
+ * lockfile write instead of one per package.
+ */
+export function installFacetPackages(
   pm: PackageManager,
-  name: string,
-  latest: string,
+  targets: FacetInstallTarget[],
   workspace = false,
 ): string {
   const rootFlag = workspace ? " -w" : "";
+  const pkgs = targets.map((t) => `${t.name}@^${t.latest}`).join(" ");
   switch (pm) {
-    case "pnpm": return `pnpm${rootFlag} add ${name}@^${latest}`;
-    case "yarn": return `yarn workspace add ${name}@^${latest}`;
-    case "bun": return `bun add ${name}@^${latest}`;
-    default: return `npm install ${name}@^${latest}`;
+    case "pnpm": return `pnpm${rootFlag} add ${pkgs}`;
+    case "yarn": return `yarn workspace add ${pkgs}`;
+    case "bun": return `bun add ${pkgs}`;
+    default: return `npm install ${pkgs}`;
   }
 }
 
 /**
- * Build a global install command for a facet package (e.g. `npm i -g
- * @arcevo/facet-cli@<version>`). Used by `facet install -g` so a consumer
- * can write `facet install -g facet-cli` (short name) instead of the full
- * `@arcevo/facet-cli`. Global installs never use the workspace `-w` flag.
+ * Build a global install command for one or more facet packages (e.g.
+ * `pnpm add -g @arcevo/facet-cli@2.0.0`). Used by `facet install -g` so a
+ * consumer can write `facet install -g facet-cli` (short name) instead of
+ * the full `@arcevo/facet-cli`. Global installs never use the workspace
+ * `-w` flag.
  */
-export function globalInstallFacetPackage(
+export function globalInstallFacetPackages(
   pm: PackageManager,
-  name: string,
-  latest: string,
+  targets: FacetInstallTarget[],
 ): string {
+  const pkgs = targets.map((t) => `${t.name}@${t.latest}`).join(" ");
   switch (pm) {
-    case "pnpm": return `pnpm add -g ${name}@${latest}`;
-    case "yarn": return `yarn global add ${name}@${latest}`;
-    case "bun": return `bun add -g ${name}@${latest}`;
-    default: return `npm i -g ${name}@${latest}`;
+    case "pnpm": return `pnpm add -g ${pkgs}`;
+    case "yarn": return `yarn global add ${pkgs}`;
+    case "bun": return `bun add -g ${pkgs}`;
+    default: return `npm i -g ${pkgs}`;
   }
 }
 

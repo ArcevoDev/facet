@@ -397,6 +397,17 @@ export function removeCommand(
   }
 }
 
+/** Compute the global remove/uninstall command for the detected package manager. */
+export function globalRemoveCommand(pm: PackageManager, names: string[]): string {
+  const pkgs = names.join(" ");
+  switch (pm) {
+    case "pnpm": return `pnpm remove -g ${pkgs}`;
+    case "yarn": return `yarn global remove ${pkgs}`;
+    case "bun": return `bun remove -g ${pkgs}`;
+    default: return `npm uninstall -g ${pkgs}`;
+  }
+}
+
 /** Rewrite imports that point at bundled deps or a shadcn-style folder to
  * `@arcevo/facet-components`. Returns the files changed. */
 export function rewriteImports(matches: ImportMatch[]): string[] {

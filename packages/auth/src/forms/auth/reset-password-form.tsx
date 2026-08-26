@@ -17,6 +17,7 @@ import {
   Button,
   Label,
   PasswordInput,
+  PasswordStrengthMeter,
   AnimatedButton,
   type AnimatedButtonRenderProps,
   type AnimatedButtonVariant,
@@ -47,6 +48,11 @@ export interface ResetPasswordFormProps {
   onBack?: () => void;
   /** Enable zod client-side validation. Default: false */
   validate?: boolean;
+  /**
+   * Show the live PasswordStrengthMeter under the new-password field.
+   * Default: true (most apps want this signal on reset).
+   */
+  showPasswordStrength?: boolean;
 }
 
 type ResetValues = { password: string; confirm: string };
@@ -62,6 +68,7 @@ export function ResetPasswordForm({
   onSuccess,
   onBack,
   validate = false,
+  showPasswordStrength = true,
 }: ResetPasswordFormProps) {
   const c = { ...defaultResetPasswordCopy, ...copy };
   const [password, setPassword] = React.useState("");
@@ -174,6 +181,7 @@ export function ResetPasswordForm({
               {...passwordFieldProps}
               aria-invalid={passwordError ? true : undefined}
             />
+            {showPasswordStrength && <PasswordStrengthMeter value={password} />}
             {passwordError && <p className="text-sm text-destructive">{passwordError}</p>}
           </div>
           <div className="flex flex-col gap-2">

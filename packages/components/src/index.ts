@@ -676,3 +676,160 @@ export {
   relativeTime,
   dayLabel,
 } from "./ui/activity-feed.js";
+
+/* ── Headless-first primitives ─────────────────────────────── */
+export {
+  type StepperStepDef,
+  type StepperDirection,
+  type StepperVariant,
+  type UseStepperOptions,
+  type StepperApi,
+  type StepperNavProps,
+  type StepperPanelProps,
+  type StepperFooterProps,
+  type StepperProps,
+  useStepper,
+  StepperProvider,
+  StepperNav,
+  StepperPanel,
+  StepperFooter,
+  Stepper,
+} from "./ui/stepper.js";
+
+/* ── Ready-to-use: project & tracking ─────────────────────── */
+export {
+  type KanbanCardDef,
+  type KanbanColumnDef,
+  type UseKanbanOptions,
+  type KanbanApi,
+  type KanbanCardProps,
+  type KanbanColumnProps,
+  type KanbanBoardProps,
+  useKanban,
+  KanbanCard,
+  KanbanColumn,
+  KanbanBoard,
+} from "./ui/kanban-board.js";
+
+export {
+  type ChangelogChangeKind,
+  type ChangelogChange,
+  type ChangelogRelease,
+  type ChangelogListProps,
+  ChangelogList,
+} from "./ui/changelog-list.js";
+
+export {
+  type WizardFormStep,
+  type WizardFormPageProps,
+  WizardFormPage,
+} from "./ui/wizard-form-page.js";
+
+export {
+  type DateRangePreset,
+  type DateRange,
+  type DateRangePickerProps,
+  DateRangePicker,
+} from "./ui/date-range-picker.js";
+
+export {
+  type ChartSeries,
+  type ChartProps,
+  Chart,
+} from "./ui/chart.js";
+
+export {
+  type EmptyStatePageCTA,
+  type EmptyStatePageProps,
+  EmptyStatePage,
+} from "./ui/empty-state-page.js";
+
+export {
+  type QrScannerStatus,
+  type QrScannerProps,
+  QrScanner,
+} from "./ui/qr-scanner.js";
+
+export {
+  type ConsentCaptureProps,
+  ConsentCapture,
+} from "./ui/consent-capture.js";
+
+export {
+  type DataTablePageFilter,
+  type DataTablePageBreadcrumb,
+  type DataTableDensity,
+  type DataTablePageProps,
+  DataTablePage,
+} from "./ui/data-table-page.js";
+
+export {
+  type PricingTier,
+  type PricingFeature,
+  type PricingComparisonProps,
+  PricingComparison,
+} from "./ui/pricing-comparison.js";
+
+export {
+  type TreeNode,
+  type TreeProps,
+  Tree,
+} from "./ui/tree.js";
+
+export {
+  type MultiComboboxOption,
+  type MultiComboboxProps,
+  MultiCombobox,
+} from "./ui/multi-combobox.js";
+
+export {
+  type TagInputProps,
+  TagInput,
+} from "./ui/tag-input.js";
+
+export {
+  type RangeSliderProps,
+  RangeSlider,
+} from "./ui/range-slider.js";
+
+export {
+  type RatingInputProps,
+  RatingInput,
+} from "./ui/rating-input.js";
+
+export {
+  type CookieBannerProps,
+  CookieBanner,
+} from "./ui/cookie-banner.js";
+
+export {
+  type OtpInputProps,
+  OtpInput,
+} from "./ui/otp-input.js";
+
+export {
+  type RichTextEditorProps,
+  RichTextEditor,
+} from "./ui/rich-text-editor.js";
+
+export {
+  type PhoneCountry,
+  type PhoneInputProps,
+  PhoneInput,
+} from "./ui/phone-input.js";
+
+export {
+  type MentionUser,
+  type MentionInputProps,
+  MentionInput,
+} from "./ui/mention-input.js";
+
+export {
+  type ShineBorderCardProps,
+  ShineBorderCard,
+} from "./ui/shine-border-card.js";
+
+export {
+  type GlowBorderCardProps,
+  GlowBorderCard,
+} from "./ui/glow-border-card.js";

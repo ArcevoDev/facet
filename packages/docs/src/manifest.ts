@@ -130,6 +130,18 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "data-display"
   },
   {
+    "name": "Changelog List",
+    "slug": "changelog-list",
+    "description": "@arcevo/facet-components: ChangelogList",
+    "category": "ready-to-use"
+  },
+  {
+    "name": "Chart",
+    "slug": "chart",
+    "description": "@arcevo/facet-components: Chart",
+    "category": "general"
+  },
+  {
     "name": "Checkbox",
     "slug": "checkbox",
     "description": "",
@@ -160,10 +172,22 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "general"
   },
   {
+    "name": "Consent Capture",
+    "slug": "consent-capture",
+    "description": "@arcevo/facet-components: ConsentCapture",
+    "category": "general"
+  },
+  {
     "name": "Context Menu",
     "slug": "context-menu",
     "description": "",
     "category": "feedback"
+  },
+  {
+    "name": "Cookie Banner",
+    "slug": "cookie-banner",
+    "description": "@arcevo/facet-components: CookieBanner",
+    "category": "general"
   },
   {
     "name": "Cookie Consent",
@@ -184,6 +208,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "data-display"
   },
   {
+    "name": "Data Table Page",
+    "slug": "data-table-page",
+    "description": "@arcevo/facet-components: DataTablePage",
+    "category": "general"
+  },
+  {
     "name": "Date Input",
     "slug": "date-input",
     "description": "DateInput: a text input that parses and validates ISO (YYYY-MM-DD) dates,",
@@ -194,6 +224,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "date-picker",
     "description": "DatePicker: an in-house calendar date picker built on the facet Popover",
     "category": "inputs"
+  },
+  {
+    "name": "Date Range Picker",
+    "slug": "date-range-picker",
+    "description": "@arcevo/facet-components: DateRangePicker",
+    "category": "general"
   },
   {
     "name": "Dialog",
@@ -226,6 +262,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "feedback"
   },
   {
+    "name": "Empty State Page",
+    "slug": "empty-state-page",
+    "description": "@arcevo/facet-components: EmptyStatePage",
+    "category": "general"
+  },
+  {
     "name": "Faq Section",
     "slug": "faq-section",
     "description": "@arcevo/facet-components: FaqSection",
@@ -248,6 +290,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "form",
     "description": "Form: lightweight react-hook-form + zod field wrapper.",
     "category": "inputs"
+  },
+  {
+    "name": "Glow Border Card",
+    "slug": "glow-border-card",
+    "description": "@arcevo/facet-components: GlowBorderCard",
+    "category": "general"
   },
   {
     "name": "Hover Card",
@@ -286,6 +334,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "ready-to-use"
   },
   {
+    "name": "Kanban Board",
+    "slug": "kanban-board",
+    "description": "@arcevo/facet-components: KanbanBoard",
+    "category": "ready-to-use"
+  },
+  {
     "name": "Kbd",
     "slug": "kbd",
     "description": "Render the platform modifier key (⌘ on macOS, Ctrl elsewhere)",
@@ -316,6 +370,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "ready-to-use"
   },
   {
+    "name": "Mention Input",
+    "slug": "mention-input",
+    "description": "@arcevo/facet-components: MentionInput",
+    "category": "general"
+  },
+  {
     "name": "Menubar",
     "slug": "menubar",
     "description": "",
@@ -326,6 +386,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "micro-interactions",
     "description": "@arcevo/facet-components: card & button micro-interactions",
     "category": "animation"
+  },
+  {
+    "name": "Multi Combobox",
+    "slug": "multi-combobox",
+    "description": "@arcevo/facet-components: MultiCombobox",
+    "category": "general"
   },
   {
     "name": "Navbar",
@@ -358,6 +424,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "inputs"
   },
   {
+    "name": "Otp Input",
+    "slug": "otp-input",
+    "description": "@arcevo/facet-components: OtpInput",
+    "category": "general"
+  },
+  {
     "name": "Otp Verification Card",
     "slug": "otp-verification-card",
     "description": "@arcevo/facet-components: OtpVerificationCard",
@@ -388,16 +460,34 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "ready-to-use"
   },
   {
+    "name": "Phone Input",
+    "slug": "phone-input",
+    "description": "@arcevo/facet-components: PhoneInput",
+    "category": "general"
+  },
+  {
     "name": "Popover",
     "slug": "popover",
     "description": "",
     "category": "feedback"
   },
   {
+    "name": "Pricing Comparison",
+    "slug": "pricing-comparison",
+    "description": "@arcevo/facet-components: PricingComparison",
+    "category": "general"
+  },
+  {
     "name": "Progress",
     "slug": "progress",
     "description": "",
     "category": "feedback"
+  },
+  {
+    "name": "Qr Scanner",
+    "slug": "qr-scanner",
+    "description": "@arcevo/facet-components: QrScanner",
+    "category": "general"
   },
   {
     "name": "Qrcode",
@@ -412,10 +502,28 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "inputs"
   },
   {
+    "name": "Range Slider",
+    "slug": "range-slider",
+    "description": "@arcevo/facet-components: RangeSlider",
+    "category": "general"
+  },
+  {
+    "name": "Rating Input",
+    "slug": "rating-input",
+    "description": "@arcevo/facet-components: RatingInput",
+    "category": "general"
+  },
+  {
     "name": "Resizable",
     "slug": "resizable",
-    "description": "Split-pane layouts with draggable separators, collapsible panels, and optional size persistence.",
+    "description": "Lets <ResizableHandle> auto-infer the orientation from its parent",
     "category": "layout"
+  },
+  {
+    "name": "Rich Text Editor",
+    "slug": "rich-text-editor",
+    "description": "@arcevo/facet-components: RichTextEditor",
+    "category": "general"
   },
   {
     "name": "Roadmap",
@@ -454,6 +562,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "layout"
   },
   {
+    "name": "Shine Border Card",
+    "slug": "shine-border-card",
+    "description": "@arcevo/facet-components: ShineBorderCard",
+    "category": "general"
+  },
+  {
     "name": "Skeleton",
     "slug": "skeleton",
     "description": "",
@@ -484,6 +598,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "ready-to-use"
   },
   {
+    "name": "Stepper",
+    "slug": "stepper",
+    "description": "@arcevo/facet-components: Stepper",
+    "category": "ready-to-use"
+  },
+  {
     "name": "Switch",
     "slug": "switch",
     "description": "",
@@ -500,6 +620,12 @@ export const docsManifest: DocsManifestEntry[] = [
     "slug": "tabs",
     "description": "",
     "category": "layout"
+  },
+  {
+    "name": "Tag Input",
+    "slug": "tag-input",
+    "description": "@arcevo/facet-components: TagInput",
+    "category": "general"
   },
   {
     "name": "Testimonial Showcase",
@@ -538,10 +664,22 @@ export const docsManifest: DocsManifestEntry[] = [
     "category": "feedback"
   },
   {
+    "name": "Tree",
+    "slug": "tree",
+    "description": "@arcevo/facet-components: Tree",
+    "category": "general"
+  },
+  {
     "name": "Two Factor Setup Panel",
     "slug": "two-factor-setup-panel",
     "description": "@arcevo/facet-components: TwoFactorSetupPanel",
     "category": "ready-to-use"
+  },
+  {
+    "name": "Wizard Form Page",
+    "slug": "wizard-form-page",
+    "description": "@arcevo/facet-components: WizardFormPage",
+    "category": "general"
   },
   {
     "name": "Icon",

@@ -89,6 +89,38 @@ Safe by default:
 - It prints the exact remove command (`pnpm remove ...` / `npm uninstall ...`)
   instead of auto-running it, so you control the lockfile change.
 
+### `facet install <name...>` (alias `facet add`)
+
+Install one or more facet packages by shorthand (`layout`, `store`, `auth`),
+alias (`facet-cli`), or full name (`@arcevo/facet-layout`). Pass several names
+to install them together in a single add invocation (one lockfile write).
+
+```bash
+facet add layout tokens sdk        # installs @arcevo/facet-layout, -tokens, -sdk
+facet install @arcevo/facet-auth   # full name works too
+facet add layout layout            # deduped automatically
+facet install -g facet-cli         # global install (alias of `pnpm add -g`)
+```
+
+Versions are resolved from the npm registry at install time, so you always get
+the latest compatible release. In a monorepo the workspace `-w` flag is applied
+automatically. If the install can't run (offline, no package manager), the exact
+command is printed instead.
+
+### `facet remove <name...>` (aliases `facet rm`, `facet uninstall`)
+
+Remove one or more installed facet packages by the same shorthand/alias/full-name
+syntax as install. Multiple names are removed in a single invocation.
+
+```bash
+facet remove layout tokens     # removes @arcevo/facet-layout, @arcevo/facet-tokens
+facet rm -g facet-cli          # global uninstall (alias of `npm uninstall -g`)
+```
+
+Removal resolves the same way as install (no version pinning needed). If the
+remove can't run (offline, no package manager), the exact command is printed
+instead.
+
 ### `facet emails init`
 
 Scaffold or migrate email templates wired to `@arcevo/facet-emails`. It
@@ -225,7 +257,7 @@ to any React host for rendering.
 (`@arcevo/facet-docs`) and an empty `pages` registry to fill with your
 content.
 
-### `facet add <component>`
+### `facet copy <component>`
 
 Copy a component into your source (shadcn-style). **Recommended:** import
 from `@arcevo/facet-components` instead: you get updates, tree-shaking,

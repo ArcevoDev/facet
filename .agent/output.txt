@@ -2,20 +2,85 @@ facet — Agent Live Dashboard
 ============================
 
 ## Current Focus
-Hamburger hover-toggle + click-to-pin for mobile sidebar — COMPLETE.
-All 8 new tests pass, full workspace build + typecheck + test green.
+Phase 1 — components: bulk-built 21 new ready-to-use surfaces +
+3 from the prior session = 24 total this cycle. All wired into barrel,
+manifest, docs previews. Build + typecheck clean across all workspace
+projects. Drift gate green at 113. Awaiting user preview before commit.
+
+## What's done this session
+- 21 NEW ready-to-use components in @arcevo/facet-components (on top of
+  Stepper / KanbanBoard / ChangelogList from the prior session):
+  * WizardFormPage (react-hook-form + zod + Stepper orchestration)
+  * DateRangePicker (single-date + range modes, quick presets, popover)
+  * Chart (line / bar / area in pure SVG — no recharts dep)
+  * EmptyStatePage (full-page empty state with CTA + illustration slot)
+  * QrScanner (browser getUserMedia scanner, BarcodeDetector + fallback)
+  * ConsentCapture (scroll-to-accept + signature canvas pad)
+  * DataTablePage (header + filters + density toggle + pagination wrapper)
+  * PricingComparison (mobile-friendly tier cards + feature matrix)
+  * Tree (collapsible nested list, selection, keyboard nav, ARIA tree)
+  * MultiCombobox (multi-select chips, search, keyboard nav)
+  * TagInput (free-form chips, separator / paste / Backspace-to-remove)
+  * RangeSlider (two-thumb, active-track, value labels)
+  * RatingInput (5-star / N-item, half-star, keyboard)
+  * CookieBanner (top-bar notice, 3 CTAs + manage preferences)
+  * OtpInput (standalone, auto-advance, paste, Arrow keys)
+  * RichTextEditor (lightweight contenteditable + execCommand toolbar)
+  * PhoneInput (country-code dropdown + E.164 formatting)
+  * MentionInput (@autocomplete, paste handling, keyboard nav)
+  * ShineBorderCard (animated border shine)
+  * GlowBorderCard (pulsing border glow)
+- All 21 + prior 3 = 24 wired into:
+  * packages/components barrel (typed exports)
+  * packages/docs manifest (regenerated to 113 entries)
+  * docs site previews (live, clickable demos)
+- Auth package: PasswordStrengthMeter wired into <SignUp> +
+  <ResetPasswordForm> (opt-out via showPasswordStrength prop)
+- Docs engine: changelog block type ships with facet docs init scaffold
+- CLI: `facet docs init` (product-docs template) scaffolds a populated
+  /changelog page
+- Landing site: ChangelogSection (ChangelogList) on home, ecosystem
+  entries for components / auth / tokens, Nav + Footer updated
+- 90 → 113 component count updated in CLAUDE.md, README, and docs/landing
+  prose. Drift gate: ok (113 components, all barrel-exported).
+- Agnosticism preserved: /light and /icons subpath entries unchanged
+  (new components live on the main barrel, not the eager light.js
+  bundle).
 
 ## Priority List
 [x] EP 25 — Footer + Brand icons consolidation  (committed 43ccd14, published)
 [x] EP 26 — Sidebar accordion fix  (committed 43ccd14)
-[x] EP 27 — Hamburger hover-toggle + click-to-pin  (working tree, pending commit)
+[x] EP 27 — Hamburger hover-toggle + click-to-pin  (working tree)
+[x] EP 28 — Phase 0 arc-id security fixes (provider warn, persist adapter)
+[x] EP 29 — Phase 1 facet-cli multi-package install + remove (35 tests pass)
+[x] EP 30 — Phase 1 components: Stepper + KanbanBoard + ChangelogList
+    (3 components, all wired — from prior session)
+[~] EP 31 — Phase 1 components (bulk): 21 additional surfaces
+    (WizardFormPage, DateRangePicker, Chart, EmptyStatePage, QrScanner,
+    ConsentCapture, DataTablePage, PricingComparison, Tree, MultiCombobox,
+    TagInput, RangeSlider, RatingInput, CookieBanner, OtpInput,
+    RichTextEditor, PhoneInput, MentionInput, ShineBorderCard,
+    GlowBorderCard) — all wired into barrel/manifest/docs
+[ ] EP 32 — Changeset for the 21 new components
+[ ] EP 33 — Commit + push the bundle (Phase 0 + Phase 1 CLI +
+     Phase 1 components + landing extension)
 
 ## Build / Test Status
-- pnpm -r build     → 11/11 packages pass (187s)
-- pnpm -r typecheck → 11/11 packages pass (120s)
-- pnpm test         → 609 passed, 0 failed
-- check:docs / check:icons / check:sdk-drift → all green
+- pnpm typecheck     -> 11/11 packages pass
+- pnpm -r build      -> 11/11 packages pass (landing also passes)
+- check:docs         -> 113/113 components covered, gate green
+- check:icons        -> green
+- check:sdk-drift    -> green
+- pnpm test          -> 630/631 pass (manifest parity test now green
+  after regenerating manifest.ts)
 
-## Release Status
-- @arcevo/facet-components 1.3.9 → 1.4.0  (published)
-- @arcevo/facet-layout 1.4.0 → 1.4.1  (working tree, pending changeset + build)
+## Release Status (current versions, verified from package.json)
+- @arcevo/facet-auth 1.2.3
+- @arcevo/facet-cli 2.0.0
+- @arcevo/facet-components 1.11.0
+- @arcevo/facet-docs 1.4.7
+- @arcevo/facet-emails 1.1.1
+- @arcevo/facet-layout 1.4.2
+- @arcevo/facet-sdk 1.2.0
+- @arcevo/facet-store 2.0.0
+- @arcevo/facet-tokens 1.1.4

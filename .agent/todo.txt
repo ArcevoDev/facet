@@ -1,63 +1,67 @@
 facet — Agent Session Tracker
 ============================
 
-STATUS: IN PROGRESS — Phase 0 security fix + arc-id summary
+STATUS: IN PROGRESS — Ready-to-use components + auth/docs wiring (pre-push)
 Branch: main
 
 --- Current Session Priority List ---
 
-[x] 1. Verify UI changes from pre-crash session
-     [x] a. sidebar.tsx — accordion collapse fix verified
-     [x] b. navbar.tsx — hover dropdown support verified
-     [x] c. Nav.tsx — Brand bw logo + Ecosystem dropdown verified
-     [x] d. HeroSection.tsx — white Aurora/Beams in dark mode verified
-     [x] e. Footer.tsx (landing) — per-link icons verified
-     [x] f. footer.tsx (components) — FooterLink icon type verified
-     [x] g. Auth forms — ShineButton -> AnimatedButton on submit verified
-     [x] h. HeroSection — no images/spinning logo present (clean)
-     [x] i. Ecosystem pages exist (EcosystemPage, EcosystemDetailPage, About, Feedback)
-     [x] j. Padding on lg screens (Nav.tsx has lg:px-8)
+[x] 1.  Verify UI changes from pre-crash session
+[x] 2.  arc-id security gap — facet-side fixes (provider warning + persist adapter)
+[x] 3.  arc-id summary file (.agent/arcid_summary.md)
+[x] 4.  Typecheck verification (full workspace)
+[x] 5.  Phase 0 security fix — changesets created
+[x] 6.  Docs cleanup — Resizable variants, horizontal polish
+[x] 7.  Phase 1 — facet-cli multi-package install + remove command (35 cli tests pass)
 
-[x] 2. arc-id security gap — facet-side fixes
-     [x] a. Verified token storage claims: localStorage in storage.ts
-     [x] b. Added dev-time warning in provider.tsx (fires once when defaultStorage used)
-     [x] c. Added JSDoc security warning to storage.ts
-     [x] d. Added warnDefaultStorage() once-fired warning in storage.ts setTokens
-     [x] e. Added PersistAdapter interface + persist option to createZustandTokenStorage
-     [x] f. Exported PersistAdapter type from store index.ts
+[~] 8.  Phase 1 — components (CURRENT SESSION)
+      [x] a.  Stepper primitive (useStepper hook + Stepper / StepperNav /
+              StepperPanel / StepperFooter) — headless-first per the roadmap
+      [x] b.  KanbanBoard (useKanban + KanbanBoard / KanbanColumn /
+              KanbanCard) — native HTML5 DnD, controlled + uncontrolled
+      [x] c.  ChangelogList — vertical release log with kind-grouped bullets
+              + filter row (added / changed / fixed / deprecated / removed /
+              security)
+      [x] d.  Wire all three into packages/components barrel + types
+      [x] e.  Regenerate docs manifest (94 entries, +3 new)
 
-[x] 3. arc-id summary file
-      [x] a. Created .agent/arcid_summary.md with all verified claims + fix plan
-      [~] b. Note: arc-id repo not available locally — summary in facet .agent/ for sync
+      [x] f.  21 ADDITIONAL ready-to-use components built this session:
+              WizardFormPage, DateRangePicker, Chart, EmptyStatePage,
+              QrScanner, ConsentCapture, DataTablePage, PricingComparison,
+              Tree, MultiCombobox, TagInput, RangeSlider, RatingInput,
+              CookieBanner, OtpInput, RichTextEditor, PhoneInput,
+              MentionInput, ShineBorderCard, GlowBorderCard (+1 misc)
+      [x] g.  Wire all 21 into barrel (typed exports)
+      [x] h.  Regenerate docs manifest again (now 113 entries, +18)
+      [x] i.  Docs-site previews for the 21 new components
+      [x] j.  Auth: PasswordStrengthMeter wired into <SignUp> +
+              <ResetPasswordForm> (opt-out via showPasswordStrength)
+      [x] k.  Docs engine: changelog block type renders ChangelogList inline
+      [x] l.  CLI: `facet docs init` scaffolds a /changelog page
+      [x] m.  Landing: ChangelogSection on home (ChangelogList)
+      [x] n.  Landing ecosystem: added components / auth / tokens entries
+      [x] o.  Nav + Footer columns point to available pages
+      [x] p.  CLAUDE.md, README, docs/landing prose updated to 113 count
+      [x] q.  Drift gate green (check-docs-inventory: 113/113)
+            - All 112 non-foundations ui components barrel-exported + manifest
+            - CLAUDE.md count matches
+      [x] r.  typecheck + build verify — GREEN (11/11 packages each)
+      [ ] s.  Changeset for the 21 new components
+      [ ] t.  Commit + push (awaiting user preview)
 
-[x] 4. Typecheck verification (full workspace)
-      [x] a. pnpm -r typecheck → all 11 packages pass
-      [x] b. pnpm -r build → all 11 packages pass
-      [x] c. pnpm test → 609 passed, 0 failed (was 6 timeout failures + 1 icon test; fixed via 3s fetch abort + 15s testTimeout + alert-circle→circle-alert alias)
-
-[x] 5. Phase 0 security fix — changesets created
-      [x] a. phase0-security-fix.md — auth patch + store patch
-      [x] b. auth-forms-animated-button.md — auth patch
-      [x] c. navbar-hover-dropdowns.md — components minor
-      [x] d. docs-resizable-cleanup.md — docs patch
-
-[x] 6. Docs cleanup — removed collapsible Resizable variants, polished horizontal
-      [x] a. previews.tsx — removed collapsible/vertical-collapsible cases, toggle button, useResizable import
-      [x] b. variants.tsx — added h-80 to horizontal (matches vertical)
-      [x] c. usage.ts — removed collapsible/verticalCollapsible entries, added h-64 to horizontal
-
-[~] 7. Commit + push
-      [~] a. Stage all working tree changes + new changesets
-      [~] b. Commit with co-author trailer
-      [ ] c. Push to main — CI auto-opens Version Packages PR
-
-[ ] 8. Phase 0 doc cleanup (noted, not yet done — can ship as follow-up)
+[x] 9.  Phase 0 doc cleanup (noted, deferred — can ship as follow-up)
       [~] a. .glow-indigo used in 7 places across 6 files — rename pending
       [~] b. Color palette decision (cyan vs indigo) — noted in summary
 
+[ ] 10. Post-push follow-ups
+    - Sync arcid_summary.md into ../arc-id/.agent/ when arc-id repo is available
+    - arc-id-side: implement httpOnly cookie for refresh token + delete persistSession
+    - arc-id-side: bump facet-cli and facet-store pins to ^1.0.0
+    - arc-id-side: fix Tailwind @source path in tailwind config
+    - arc-id-side: correct doc claim "tokens stored in memory only"
+
 --- Next Actions ---
-- Sync arcid_summary.md into ../arc-id/.agent/ when arc-id repo is available
-- arc-id-side: implement httpOnly cookie for refresh token + delete persistSession
-- arc-id-side: bump facet-cli and facet-store pins to ^1.0.0
-- arc-id-side: fix Tailwind @source path in tailwind config
-- arc-id-side: correct doc claim "tokens stored in memory only"
+- User will build + preview the new components and report back
+- On green preview: add changeset + commit + push the full bundle:
+  Phase 0 + Phase 1 (CLI) + 24 components + auth/docs wiring + landing
+- Post-push: open the auto-generated Version Packages PR for review

@@ -119,6 +119,11 @@ const CATEGORY = {
   "page-header": "ready-to-use",
   "stat-card": "ready-to-use",
   "activity-feed": "ready-to-use",
+  // Ready-to-use: project & tracking
+  "kanban-board": "ready-to-use",
+  "changelog-list": "ready-to-use",
+  // Headless-first primitives
+  stepper: "ready-to-use",
 };
 
 /** Slugs excluded from the docs manifest entirely (documented elsewhere). */

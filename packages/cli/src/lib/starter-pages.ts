@@ -72,6 +72,30 @@ export function starterPages(template: TemplateKind, name: string) {
             { type: "ul", items: ["Question one?", "Question two?"] },
           ],
         },
+        {
+          path: "/changelog",
+          title: "Changelog",
+          section: "guides",
+          description: "What shipped in each release.",
+          blocks: [
+            { type: "h2", text: "Release log" },
+            { type: "p", text: `Recent releases of ${name}. Edit the releases array below to keep this in sync with your published versions.` },
+            {
+              type: "changelog",
+              showFilter: true,
+              releases: [
+                {
+                  version: "0.1.0",
+                  date: new Date().toISOString().slice(0, 10),
+                  tag: "release",
+                  changes: [
+                    { kind: "added", text: `Initial release of ${name}.` },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       ];
     default:
       return [

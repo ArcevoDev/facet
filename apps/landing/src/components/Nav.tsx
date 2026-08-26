@@ -26,6 +26,9 @@ const LINKS: NavLink[] = [
     href: "#resources",
     label: "Resources",
     children: [
+      { href: "/dashboard-demo", label: "Console demo", icon: <LightIcon name="layout-dashboard" size={14} /> },
+      { href: "/security", label: "Security surfaces", icon: <LightIcon name="shield-check" size={14} /> },
+      { href: "/pricing", label: "Free forever", icon: <LightIcon name="credit-card" size={14} /> },
       { href: "#faq", label: "FAQ", icon: <LightIcon name="circle-question-mark" size={14} /> },
       { href: "/feedback", label: "Feedback", icon: <LightIcon name="message-circle" size={14} /> },
     ],
@@ -46,8 +49,11 @@ const LINKS: NavLink[] = [
     href: "/ecosystem",
     label: "Ecosystem",
     children: [
-      { href: "/ecosystem/docs-package", label: "Docs Package", icon: <LightIcon name="book-open" size={14} /> },
+      { href: "/ecosystem/components", label: "Components", icon: <LightIcon name="boxes" size={14} /> },
+      { href: "/ecosystem/auth", label: "Auth", icon: <LightIcon name="shield-check" size={14} /> },
       { href: "/ecosystem/layout", label: "Layout", icon: <LightIcon name="building" size={14} /> },
+      { href: "/ecosystem/tokens", label: "Tokens", icon: <LightIcon name="palette" size={14} /> },
+      { href: "/ecosystem/docs-package", label: "Docs Package", icon: <LightIcon name="book-open" size={14} /> },
       { href: "/ecosystem/cli", label: "CLI", icon: <LightIcon name="terminal" size={14} /> },
       { href: "/ecosystem/emails", label: "Emails", icon: <LightIcon name="mail" size={14} /> },
       { href: "/ecosystem/sdk", label: "SDK", icon: <LightIcon name="zap" size={14} /> },
@@ -67,8 +73,7 @@ function Brand({ onHome }: { onHome: () => void }) {
       aria-label="facet home"
     >
       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-secondary/50 ring-1 ring-border">
-        <img src="/facet-2d-flat.png" alt="" aria-hidden="true" className="h-4 w-auto opacity-90 lg:hidden" />
-        <img src="/facet-b&w.png" alt="" aria-hidden="true" className="h-4 w-auto opacity-90 hidden lg:block dark:brightness-0 dark:invert" />
+        <img src="/facet-b&w.png" alt="" aria-hidden="true" className="h-4 w-auto opacity-90 dark:brightness-0 dark:invert" />
       </span>
       <span className="font-heading text-lg font-bold text-foreground">facet</span>
     </button>

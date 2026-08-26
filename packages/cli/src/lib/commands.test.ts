@@ -8,8 +8,8 @@ import {
   planUpdates,
   readInstalledVersion,
   updateCommand,
-  installFacetPackage,
-  globalInstallFacetPackage,
+  installFacetPackages,
+  globalInstallFacetPackages,
   isFacetPackage,
   resolveFacetPackageName,
   type FacetPackageInfo,
@@ -300,55 +300,75 @@ describe("resolveFacetPackageName", () => {
   });
 });
 
-describe("installFacetPackage", () => {
+describe("installFacetPackages", () => {
   it("builds a pnpm command with version", () => {
-    expect(installFacetPackage("pnpm", "@arcevo/facet-layout", "1.2.0")).toBe(
-      "pnpm add @arcevo/facet-layout@^1.2.0",
-    );
+    expect(
+      installFacetPackages("pnpm", [{ name: "@arcevo/facet-layout", latest: "1.2.0" }]),
+    ).toBe("pnpm add @arcevo/facet-layout@^1.2.0");
   });
 
   it("adds -w for pnpm workspaces", () => {
-    expect(installFacetPackage("pnpm", "@arcevo/facet-layout", "1.2.0", true)).toBe(
-      "pnpm -w add @arcevo/facet-layout@^1.2.0",
-    );
+    expect(
+      installFacetPackages("pnpm", [{ name: "@arcevo/facet-layout", latest: "1.2.0" }], true),
+    ).toBe("pnpm -w add @arcevo/facet-layout@^1.2.0");
+  });
+
+  it("joins multiple packages into one command", () => {
+    expect(
+      installFacetPackages("pnpm", [
+        { name: "@arcevo/facet-layout", latest: "1.2.0" },
+        { name: "@arcevo/facet-tokens", latest: "1.1.0" },
+      ]),
+    ).toBe("pnpm add @arcevo/facet-layout@^1.2.0 @arcevo/facet-tokens@^1.1.0");
   });
 
   it("builds npm and yarn commands", () => {
-    expect(installFacetPackage("npm", "@arcevo/facet-tokens", "1.1.0")).toBe(
-      "npm install @arcevo/facet-tokens@^1.1.0",
-    );
-    expect(installFacetPackage("yarn", "@arcevo/facet-tokens", "1.1.0")).toBe(
-      "yarn workspace add @arcevo/facet-tokens@^1.1.0",
-    );
+    expect(
+      installFacetPackages("npm", [{ name: "@arcevo/facet-tokens", latest: "1.1.0" }]),
+    ).toBe("npm install @arcevo/facet-tokens@^1.1.0");
+    expect(
+      installFacetPackages("yarn", [{ name: "@arcevo/facet-tokens", latest: "1.1.0" }]),
+    ).toBe("yarn workspace add @arcevo/facet-tokens@^1.1.0");
   });
 });
 
-describe("globalInstallFacetPackage", () => {
-  it("builds npm command with -g and no caret (e.g. facet-cli)", () => {
-    expect(globalInstallFacetPackage("npm", "@arcevo/facet-cli", "0.8.0")).toBe(
-      "npm i -g @arcevo/facet-cli@0.8.0",
-    );
+describe("globalInstallFacetPackages", () => {
+  it("builds npm command with -g and no caret", () => {
+    expect(
+      globalInstallFacetPackages("npm", [{ name: "@arcevo/facet-cli", latest: "0.8.0" }]),
+    ).toBe("npm i -g @arcevo/facet-cli@0.8.0");
   });
 
   it("builds pnpm global command", () => {
-    expect(globalInstallFacetPackage("pnpm", "@arcevo/facet-cli", "0.8.0")).toBe(
-      "pnpm add -g @arcevo/facet-cli@0.8.0",
-    );
+    expect(
+      globalInstallFacetPackages("pnpm", [{ name: "@arcevo/facet-cli", latest: "0.8.0" }]),
+    ).toBe("pnpm add -g @arcevo/facet-cli@0.8.0");
   });
 
   it("builds yarn global command", () => {
-    expect(globalInstallFacetPackage("yarn", "@arcevo/facet-cli", "0.8.0")).toBe(
-      "yarn global add @arcevo/facet-cli@0.8.0",
-    );
+    expect(
+      globalInstallFacetPackages("yarn", [{ name: "@arcevo/facet-cli", latest: "0.8.0" }]),
+    ).toBe("yarn global add @arcevo/facet-cli@0.8.0");
   });
 
   it("builds bun global command", () => {
-    expect(globalInstallFacetPackage("bun", "@arcevo/facet-cli", "0.8.0")).toBe(
-      "bun add -g @arcevo/facet-cli@0.8.0",
-    );
+    expect(
+      globalInstallFacetPackages("bun", [{ name: "@arcevo/facet-cli", latest: "0.8.0" }]),
+    ).toBe("bun add -g @arcevo/facet-cli@0.8.0");
+  });
+
+  it("joins multiple packages into one global command", () => {
+    expect(
+      globalInstallFacetPackages("pnpm", [
+        { name: "@arcevo/facet-cli", latest: "0.8.0" },
+        { name: "@arcevo/facet-layout", latest: "1.2.0" },
+      ]),
+    ).toBe("pnpm add -g @arcevo/facet-cli@0.8.0 @arcevo/facet-layout@1.2.0");
   });
 
   it("never emits a workspace -w flag", () => {
-    expect(globalInstallFacetPackage("pnpm", "@arcevo/facet-cli", "0.8.0")).not.toContain(" -w");
+    expect(
+      globalInstallFacetPackages("pnpm", [{ name: "@arcevo/facet-cli", latest: "0.8.0" }]),
+    ).not.toContain(" -w");
   });
 });

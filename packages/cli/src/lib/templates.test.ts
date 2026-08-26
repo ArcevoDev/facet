@@ -172,6 +172,9 @@ describe("starterPages", () => {
 
   it("returns product-docs pages", () => {
     const pages = starterPages("product-docs", "demo");
-    expect(pages.map((p) => p.path)).toEqual(["/", "/guides", "/faq"]);
+    expect(pages.map((p) => p.path)).toEqual(["/", "/guides", "/faq", "/changelog"]);
+    const changelog = pages.find((p) => p.path === "/changelog");
+    expect(changelog).toBeDefined();
+    expect(changelog?.blocks.some((b) => b.type === "changelog")).toBe(true);
   });
 });

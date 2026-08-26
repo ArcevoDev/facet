@@ -40,6 +40,26 @@ export type DocsBlock =
       description?: string;
       /** Optional subset of variant labels to surface as tabs. */
       labels?: string[];
+    }
+  | {
+      /** Release log block — renders the facet-components ChangelogList. */
+      type: "changelog";
+      /** Releases to render, newest first. Each entry mirrors ChangelogRelease. */
+      releases: Array<{
+        version: string;
+        date: string;
+        tag?: string;
+        title?: string;
+        pre?: boolean;
+        changes: Array<{
+          kind: "added" | "changed" | "fixed" | "removed" | "deprecated" | "security";
+          text: string;
+          href?: string;
+          author?: string;
+        }>;
+      }>;
+      /** Show the kind filter row. Default: true. */
+      showFilter?: boolean;
     };
 
 export interface DocsPage {

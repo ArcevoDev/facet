@@ -20,8 +20,8 @@ export interface Package {
 export const PACKAGES: Package[] = [
   {
     name: "@arcevo/facet-components",
-    desc: "90 styled, accessible React components built on Radix primitives.",
-    version: "1.10.0",
+    desc: "93 styled, accessible React components built on Radix primitives.",
+    version: "1.11.0",
     icon: "boxes",
   },
   {

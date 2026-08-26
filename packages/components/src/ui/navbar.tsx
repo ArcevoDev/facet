@@ -119,8 +119,10 @@ export interface NavbarProps
   /** Render the built-in theme toggle in the actions area.
    *  Requires a <ThemeProvider> ancestor (from @arcevo/facet-components). */
   showThemeToggle?: boolean;
-  /** Mobile menu content: defaults to a stacked list of links */
-  mobileMenu?: React.ReactNode;
+   /** Mobile menu content: defaults to a stacked list of links.
+    *  When provided, the element receives `onNavigate` (which closes the menu
+    *  on navigation) via prop injection. */
+  mobileMenu?: React.ReactElement;
   /** Show mobile hamburger. Default: true when links/mobileMenu provided */
   showMobileMenu?: boolean;
   /** Breakpoint at which the desktop links show and the hamburger hides
@@ -306,13 +308,19 @@ export function Navbar({
             isPill && "mt-1 rounded-2xl shadow-lg",
           )}
         >
-          {mobileMenu ?? (
-            <div className="flex flex-col gap-1">
-              {links.map((link) => (
-                <MobileNavLink key={link.href} link={link} router={router} onNavigate={handleNav} />
-              ))}
-            </div>
-          )}
+          {mobileMenu
+            // mobileMenu is typed as React.ReactElement, whose props don't
+            // include our injected `onNavigate`. Cast the element to a generic
+            // shape so the inject overrides pass React's cloneElement check;
+            // the consumer-side mobile menu contract still requires it.
+            ? React.cloneElement(mobileMenu as React.ReactElement<{ onNavigate?: (href: string) => void }>, { onNavigate: handleNav })
+            : (
+              <div className="flex flex-col gap-1">
+                {links.map((link) => (
+                  <MobileNavLink key={link.href} link={link} router={router} onNavigate={handleNav} />
+                ))}
+              </div>
+            )}
         </div>
       )}
     </nav>

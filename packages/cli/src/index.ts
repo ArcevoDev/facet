@@ -22,8 +22,8 @@ import {
   buildDoctorReport,
   planUpdates,
   updateCommand,
-  installFacetPackage,
-  globalInstallFacetPackage,
+  installFacetPackages,
+  globalInstallFacetPackages,
   resolveFacetPackageName,
 } from "./lib/commands.js";
 import {
@@ -31,6 +31,7 @@ import {
   rewriteImports,
   deleteIfUnused,
   removeCommand,
+  globalRemoveCommand,
   removeBundledDeps,
   PRESET_SCRIPTS,
   mergeScripts,
@@ -536,48 +537,125 @@ program
   });
 
 program
-  .command("install <name>")
+  .command("install <names...>")
   .alias("add")
-  .description("Install a facet package by shorthand (e.g. 'layout'), alias (e.g. 'facet-cli'), or full name (e.g. '@arcevo/facet-layout'). Alias: `facet add`.")
+  .description("Install one or more facet packages by shorthand (e.g. 'layout'), alias (e.g. 'facet-cli'), or full name (e.g. '@arcevo/facet-layout'). Alias: `facet add`. Pass multiple names to install them together in one go.")
   .option("-g, --global", "Install globally (e.g. `facet install -g facet-cli`) instead of locally")
-  .action(async (name: string, opts: { global?: boolean }) => {
+  .action(async (names: string[], opts: { global?: boolean }) => {
     const cwd = process.cwd();
-    const resolved = resolveFacetPackageName(name);
-    if (!resolved) {
-      console.error(`"${name}" is not a known facet package.`);
+
+    // Resolve each name, separating known facet packages from unknown inputs.
+    const resolved: { name: string; input: string }[] = [];
+    const unknown: string[] = [];
+    for (const input of names) {
+      const r = resolveFacetPackageName(input);
+      if (r) resolved.push({ name: r, input });
+      else unknown.push(input);
+    }
+
+    if (unknown.length) {
+      for (const input of unknown) {
+        console.error(`"${input}" is not a known facet package.`);
+      }
       console.error("Install by shorthand (e.g. 'layout', 'store', 'auth'), alias (e.g. 'facet-cli'), or full name (e.g. '@arcevo/facet-layout').");
-      console.error("To copy a component instead, use `facet copy <ComponentName>`.");
+      for (const input of unknown) {
+        console.error(`To copy the "${input}" component instead, use: facet copy ${input}`);
+      }
       process.exitCode = 1;
       return;
     }
-    vlog(`Installing facet package: ${resolved}`);
+
+    // Dedupe (e.g. `facet add layout @arcevo/facet-layout` -> one install).
+    const unique = Array.from(new Map(resolved.map((r) => [r.name, r])).values());
+
+    vlog(`Installing facet packages: ${unique.map((r) => r.name).join(", ")}`);
     const pm = detectPackageManager(cwd);
     const workspace = opts.global ? false : detectMonorepo(cwd) !== null;
     vlog(`Package manager: ${pm} (workspace: ${workspace}, global: ${Boolean(opts.global)})`);
 
-    const latest = await resolveLatestVersion(resolved);
-    if (!latest) {
-      console.error(`Could not resolve ${resolved} on the npm registry. Is the package name correct?`);
+    // Resolve latest published versions for all targets in parallel.
+    const withVersions = await Promise.all(
+      unique.map(async ({ name }) => ({ name, latest: await resolveLatestVersion(name) })),
+    );
+    const unresolved = withVersions.filter((v) => !v.latest);
+    if (unresolved.length) {
+      for (const v of unresolved) {
+        console.error(`Could not resolve ${v.name} on the npm registry. Is the package name correct?`);
+      }
       process.exitCode = 1;
       return;
     }
-    vlog(`Latest published: ${latest}`);
 
+    const targets = withVersions as { name: string; latest: string }[];
     const installPkg = opts.global
-      ? globalInstallFacetPackage(pm, resolved, latest)
-      : installFacetPackage(pm, resolved, latest, workspace);
+      ? globalInstallFacetPackages(pm, targets)
+      : installFacetPackages(pm, targets, workspace);
+
     if (opts.global) {
-      console.log(`Installing ${resolved}@${latest} globally (${pm})...`);
+      console.log(`Installing ${targets.map((t) => `${t.name}@${t.latest}`).join(", ")} globally (${pm})...`);
     } else {
-      console.log(`Installing ${resolved}@^${latest} (${pm})...`);
+      console.log(`Installing ${targets.map((t) => `${t.name}@^${t.latest}`).join(", ")} (${pm})...`);
     }
     const { execSync } = await import("node:child_process");
     try {
       execSync(installPkg, { cwd, stdio: "inherit" });
-      console.log(`${resolved} installed${opts.global ? " globally" : ""}.`);
+      const label =
+        targets.length === 1 ? unique[0]!.input : `${targets.length} facet packages`;
+      console.log(`${label} installed${opts.global ? " globally" : ""}.`);
     } catch {
       console.log("Could not install automatically. Run:");
       console.log(`  ${installPkg}`);
+      process.exitCode = 1;
+    }
+  });
+
+program
+  .command("remove <names...>")
+  .aliases(["rm", "uninstall"])
+  .description("Remove one or more installed facet packages by shorthand (e.g. 'layout'), alias (e.g. 'facet-cli'), or full name (e.g. '@arcevo/facet-layout'). Aliases: `facet rm`, `facet uninstall`.")
+  .option("-g, --global", "Remove globally (e.g. `facet remove -g facet-cli`) instead of locally")
+  .action(async (names: string[], opts: { global?: boolean }) => {
+    const cwd = process.cwd();
+
+    // Resolve each name, separating known facet packages from unknown inputs.
+    const resolved: string[] = [];
+    const unknown: string[] = [];
+    for (const input of names) {
+      const r = resolveFacetPackageName(input);
+      if (r) resolved.push(r);
+      else unknown.push(input);
+    }
+
+    if (unknown.length) {
+      for (const input of unknown) {
+        console.error(`"${input}" is not a known facet package.`);
+      }
+      console.error("Remove by shorthand (e.g. 'layout', 'store', 'auth'), alias (e.g. 'facet-cli'), or full name (e.g. '@arcevo/facet-layout').");
+      process.exitCode = 1;
+      return;
+    }
+
+    // Dedupe (e.g. `facet rm layout @arcevo/facet-layout` -> one removal).
+    const unique = Array.from(new Set(resolved));
+
+    vlog(`Removing facet packages: ${unique.join(", ")}`);
+    const pm = detectPackageManager(cwd);
+    const workspace = opts.global ? false : detectMonorepo(cwd) !== null;
+    vlog(`Package manager: ${pm} (workspace: ${workspace}, global: ${Boolean(opts.global)})`);
+
+    const removePkg = opts.global
+      ? globalRemoveCommand(pm, unique)
+      : removeCommand(pm, unique, workspace);
+
+    console.log(`Removing ${unique.join(", ")}${opts.global ? " globally" : ""} (${pm})...`);
+    const { execSync } = await import("node:child_process");
+    try {
+      execSync(removePkg, { cwd, stdio: "inherit" });
+      const label = unique.length === 1 ? unique[0]! : `${unique.length} facet packages`;
+      console.log(`${label} removed${opts.global ? " globally" : ""}.`);
+    } catch {
+      console.log("Could not remove automatically. Run:");
+      console.log(`  ${removePkg}`);
       process.exitCode = 1;
     }
   });

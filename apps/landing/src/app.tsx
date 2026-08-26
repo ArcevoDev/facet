@@ -11,11 +11,19 @@ import { InstallSection } from "./components/InstallSection.js";
 import { RoadmapSection } from "./components/RoadmapSection.js";
 import { FaqSection } from "./components/FaqSection.js";
 import { CTASection } from "./components/CTASection.js";
+import { TestimonialsSection } from "./components/TestimonialsSection.js";
+import { DashboardPreviewSection } from "./components/DashboardPreviewSection.js";
+import { AuthShowcaseSection } from "./components/AuthShowcaseSection.js";
+import { PricingTeaserSection } from "./components/PricingTeaserSection.js";
+import { ChangelogSection } from "./components/ChangelogSection.js";
 import { Footer } from "./components/Footer.js";
 import { FeedbackPage } from "./pages/FeedbackPage.js";
 import { AboutPage } from "./pages/AboutPage.js";
 import { EcosystemPage } from "./pages/EcosystemPage.js";
 import { EcosystemDetailPage } from "./pages/EcosystemDetailPage.js";
+import { PricingPage } from "./pages/PricingPage.js";
+import { SecurityPage } from "./pages/SecurityPage.js";
+import { DashboardDemoPage } from "./pages/DashboardDemoPage.js";
 
 function HomePage() {
   return (
@@ -23,7 +31,12 @@ function HomePage() {
       <PackagesSection />
       <FeaturesSection />
       <DemoSection />
+      <DashboardPreviewSection />
+      <AuthShowcaseSection />
+      <PricingTeaserSection />
+      <TestimonialsSection />
       <RoadmapSection />
+      <ChangelogSection />
       <FaqSection />
       <InstallSection />
       <CTASection />
@@ -47,6 +60,9 @@ function AppRoutes() {
       <Route path="/feedback" element={<FeedbackPage />} />
       <Route path="/ecosystem" element={<EcosystemPage />} />
       <Route path="/ecosystem/:slug" element={<EcosystemDetailPage />} />
+      <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/security" element={<SecurityPage />} />
+      <Route path="/dashboard-demo" element={<DashboardDemoPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

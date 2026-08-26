@@ -183,6 +183,13 @@ import {
   ResizablePanelGroup,
   ResizableHandle,
   ResizablePanel,
+  StepperNav,
+  StepperFooter,
+  StepperProvider,
+  useStepper,
+  KanbanBoard,
+  useKanban,
+  ChangelogList,
 } from "@arcevo/facet-components";
 import {
   DropzoneDemo,
@@ -1171,6 +1178,112 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>
+        </div>
+      );
+    }
+    case "stepper": {
+      const stepper = useStepper({
+        steps: [
+          { id: "account", title: "Account", description: "Pick your workspace" },
+          { id: "profile", title: "Profile", description: "Name, email, locale" },
+          { id: "verify", title: "Verify", description: "Email + 2FA" },
+          { id: "finish", title: "Finish", description: "Review and ship" },
+        ],
+      });
+      return (
+        <div className="flex w-full items-start justify-center rounded-lg border border-border bg-background p-6">
+          <div className="w-full max-w-2xl">
+            <StepperProvider value={stepper}>
+              <StepperNav />
+              <div className="mt-6 min-h-24 rounded-md border border-dashed border-border bg-muted/20 p-6 text-center text-sm text-muted-foreground">
+                Step content for{" "}
+                <span className="font-medium text-foreground">{stepper.current.title}</span>
+              </div>
+              <StepperFooter />
+            </StepperProvider>
+          </div>
+        </div>
+      );
+    }
+    case "kanban-board": {
+      const board = useKanban({
+        columns: [
+          {
+            id: "todo",
+            title: "Todo",
+            icon: "inbox",
+            accent: "#06b6d4",
+            cards: [
+              { id: "1", title: "Audit SDK coverage", description: "Re-run scripts/audit-sdk-coverage.cjs", tags: ["sdk"], assignee: "Ada" },
+              { id: "2", title: "Wire docs engine for changelog", tags: ["docs"] },
+              { id: "3", title: "Migrate tokens to electric cyan", tags: ["tokens", "design"] },
+            ],
+          },
+          {
+            id: "doing",
+            title: "In progress",
+            icon: "loader-circle",
+            accent: "#a855f7",
+            cards: [
+              { id: "4", title: "Stepper primitive", description: "Headless useStepper hook + renderers", tags: ["components"], assignee: "Ada" },
+              { id: "5", title: "ChangelogList", tags: ["components"] },
+            ],
+            limit: 5,
+          },
+          {
+            id: "done",
+            title: "Done",
+            icon: "circle-check",
+            accent: "#10b981",
+            cards: [
+              { id: "6", title: "BillingPage quarterly interval", tags: ["components"], assignee: "Kenny" },
+            ],
+          },
+        ],
+      });
+      return (
+        <div className="w-full overflow-x-auto rounded-lg border border-border bg-background p-4">
+          <KanbanBoard board={board} />
+        </div>
+      );
+    }
+    case "changelog-list": {
+      const releases = [
+        {
+          version: "1.11.0",
+          date: "2026-08-26",
+          tag: "release",
+          changes: [
+            { kind: "added" as const, text: "Stepper primitive (Phase 1 roadmap item)" },
+            { kind: "added" as const, text: "KanbanBoard with native HTML5 drag-and-drop" },
+            { kind: "added" as const, text: "ChangelogList with filter chips" },
+            { kind: "fixed" as const, text: "MFA verify form on the SignIn state machine" },
+          ],
+        },
+        {
+          version: "1.10.0",
+          date: "2026-08-18",
+          tag: "release",
+          changes: [
+            { kind: "added" as const, text: "AccountSettingsPanel nav component" },
+            { kind: "added" as const, text: "SecuritySectionCard grid" },
+            { kind: "changed" as const, text: "NotFound component animation API" },
+          ],
+        },
+        {
+          version: "1.9.0",
+          date: "2026-08-03",
+          tag: "release",
+          pre: true,
+          changes: [
+            { kind: "deprecated" as const, text: "Storybook fixtures removed; docs inventory drift gate replaces" },
+            { kind: "security" as const, text: "ArcProvider dev-time warning on defaultStorage" },
+          ],
+        },
+      ];
+      return (
+        <div className="w-full rounded-lg border border-border bg-background p-6">
+          <ChangelogList releases={releases} showFilter />
         </div>
       );
     }

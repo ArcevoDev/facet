@@ -24,14 +24,19 @@ const FOOTER_COLUMNS: FooterColumn[] = [
       { label: "Packages", href: "#packages" },
       { label: "Features", href: "#features" },
       { label: "Demo", href: "#demo" },
+      { label: "Console demo", href: "/dashboard-demo" },
+      { label: "Security surfaces", href: "/security" },
       { label: "Roadmap", href: "#roadmap" },
     ],
   },
   {
     title: "Ecosystem",
     links: [
-      { label: "Docs Package", href: "/ecosystem/docs-package" },
+      { label: "Components", href: "/ecosystem/components" },
+      { label: "Auth", href: "/ecosystem/auth" },
       { label: "Layout", href: "/ecosystem/layout" },
+      { label: "Tokens", href: "/ecosystem/tokens" },
+      { label: "Docs Package", href: "/ecosystem/docs-package" },
       { label: "CLI", href: "/ecosystem/cli" },
       { label: "Emails", href: "/ecosystem/emails" },
       { label: "SDK", href: "/ecosystem/sdk" },
@@ -41,6 +46,9 @@ const FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: "Resources",
     links: [
+      { label: "Console demo", href: "/dashboard-demo" },
+      { label: "Security surfaces", href: "/security" },
+      { label: "Free forever", href: "/pricing" },
       { label: "FAQ", href: "#faq" },
       { label: "Feedback", href: "/feedback" },
       { label: "Documentation", href: getDocsUrl() },

@@ -3,3 +3,5 @@ packages:
   - "apps/*"
 allowBuilds:
   esbuild: true
+minimumReleaseAgeExclude:
+  - '@arcevo/facet-cli@2.0.0'
