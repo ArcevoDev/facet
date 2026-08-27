@@ -17,6 +17,20 @@
 import * as React from "react";
 import { cn } from "../utils.js";
 import { Icon, type IconName } from "../icon/index.js";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "./dialog.js";
+import { Input } from "./input.js";
+import { Textarea } from "./textarea.js";
+import { Button } from "./button.js";
+import { Label } from "./label.js";
 
 /* ── Types ─────────────────────────────────────────────────── */
 
@@ -68,6 +82,29 @@ export interface UseKanbanOptions {
   /** Disable drag-and-drop. The board still renders, but as a static grid. */
   readOnly?: boolean;
 }
+
+/** Data submitted when creating a card through the add-card form. */
+export interface AddCardData {
+  title: string;
+  description?: string;
+  tags?: string[];
+}
+
+/**
+ * Render-prop for a fully custom add-card surface (a modal, an inline form,
+ * etc.). The kanban stays in control of when it opens / closes and of the
+ * resulting column, but you decide what the form looks like.
+ */
+export type RenderAddCard = (ctx: {
+  /** Column the card is being added to. */
+  column: KanbanColumnDef;
+  /** True while the surface is open. */
+  open: boolean;
+  /** Close the surface without saving. */
+  onClose: () => void;
+  /** Persist the card for `column`. */
+  onSubmit: (data: AddCardData) => void;
+}) => React.ReactNode;
 
 export interface KanbanApi {
   columns: KanbanColumnDef[];
@@ -238,7 +275,7 @@ export function useKanban(options: UseKanbanOptions): KanbanApi {
   };
 }
 
-/* ── DnD context (kept tiny — pure HTML5, no library) ─────── */
+/* ── DnD context (kept tiny - pure HTML5, no library) ─────── */
 
 interface DragState {
   cardId: string;
@@ -252,6 +289,10 @@ const KanbanContext = React.createContext<{
   setDrag: (s: DragState | null) => void;
   overColumnId: string | null;
   setOverColumnId: (id: string | null) => void;
+  /** Optional custom add-card surface. */
+  renderAddCard?: RenderAddCard;
+  /** Optional handler for card creation (defaults to board.addCard). */
+  onAddCard?: (data: AddCardData, columnId: string) => void;
 } | null>(null);
 
 function useKanbanContext(component: string) {
@@ -382,20 +423,45 @@ export interface KanbanColumnProps extends React.HTMLAttributes<HTMLDivElement> 
 
 /**
  * A kanban column: header + drop zone + scrollable card list. Hosts
- * usually don't render this directly — <KanbanBoard> renders one per
+ * usually don't render this directly - <KanbanBoard> renders one per
  * column.
  */
 export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   function KanbanColumn({ column, emptyHint = "Drop cards here", className, ...props }, ref) {
     const ctx = useKanbanContext("KanbanColumn");
-    const { readOnly, drag, setDrag, overColumnId, setOverColumnId, board } = ctx;
+    const { readOnly, drag, setDrag, overColumnId, setOverColumnId, board, renderAddCard, onAddCard } = ctx;
     const isOver = overColumnId === column.id && drag != null;
+    const isDragging = drag?.cardId != null;
+    const [adding, setAdding] = React.useState(false);
+    const [insertAt, setInsertAt] = React.useState<number | null>(null);
+
+    // Figure out which slot the pointer is over. A card drops *before* the
+    // card whose vertical midpoint the pointer has crossed, otherwise it
+    // appends to the end. This makes top<->middle<->bottom reordering work.
+    const computeIndex = (e: React.DragEvent<HTMLDivElement>): number => {
+      const colRect = e.currentTarget.getBoundingClientRect();
+      const pointerY = e.clientY - colRect.top;
+      const cardEls = Array.from(
+        e.currentTarget.querySelectorAll<HTMLElement>('[role="article"]'),
+      );
+      let idx = column.cards.length;
+      for (let i = 0; i < cardEls.length; i++) {
+        const r = cardEls[i]!.getBoundingClientRect();
+        const mid = r.top + r.height / 2 - colRect.top;
+        if (pointerY <= mid) {
+          idx = i;
+          break;
+        }
+      }
+      return idx;
+    };
 
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
       if (readOnly) return;
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
       if (overColumnId !== column.id) setOverColumnId(column.id);
+      if (isDragging) setInsertAt(computeIndex(e));
     };
 
     const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
@@ -408,15 +474,23 @@ export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
         return;
       }
       if (overColumnId === column.id) setOverColumnId(null);
+      setInsertAt(null);
     };
 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
       e.preventDefault();
       const cardId = e.dataTransfer.getData("text/plain");
-      if (!cardId) return;
-      board.moveCard(cardId, column.id);
+      if (!cardId || !drag) return;
+      board.moveCard(cardId, column.id, computeIndex(e));
       setOverColumnId(null);
+      setInsertAt(null);
       setDrag(null);
+    };
+
+    const handleSubmit = (data: AddCardData) => {
+      if (onAddCard) onAddCard(data, column.id);
+      else board.addCard(column.id, data);
+      setAdding(false);
     };
 
     const overLimit = column.limit != null && column.cards.length > column.limit;
@@ -461,37 +535,122 @@ export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
             </span>
           </div>
           {!readOnly && (
-            <button
-              type="button"
-              className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              aria-label="Add card"
-              onClick={() => {
-                const title = window.prompt("Card title");
-                if (!title) return;
-                board.addCard(column.id, { title });
-              }}
-            >
-              <Icon name="plus" className="size-4" />
-            </button>
+            <Dialog open={adding} onOpenChange={setAdding}>
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                  aria-label="Add card"
+                >
+                  <Icon name="plus" className="size-4" />
+                </button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                {renderAddCard
+                  ? renderAddCard({ column, open: adding, onClose: () => setAdding(false), onSubmit: handleSubmit })
+                  : <DefaultAddCardForm column={column} onSubmit={handleSubmit} onCancel={() => setAdding(false)} />}
+              </DialogContent>
+            </Dialog>
           )}
         </header>
         {column.description && (
           <p className="px-3 pb-2 text-xs text-muted-foreground">{column.description}</p>
         )}
         <div className="flex-1 space-y-2 overflow-y-auto p-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {column.cards.length === 0 && (
+          {isDragging && !readOnly && insertAt === 0 && (
+            <div className="h-px w-full -mx-2 bg-primary" aria-hidden="true" />
+          )}
+          {column.cards.length === 0 ? (
             <div className="flex h-20 items-center justify-center rounded-md border border-dashed border-border text-xs text-muted-foreground">
               {emptyHint}
             </div>
+          ) : (
+            column.cards.map((card, idx) => (
+              <React.Fragment key={card.id}>
+                <KanbanCard card={card} />
+                {isDragging && !readOnly && insertAt === idx + 1 && (
+                  <div className="h-px w-full -mx-2 bg-primary" aria-hidden="true" />
+                )}
+              </React.Fragment>
+            ))
           )}
-          {column.cards.map((card) => (
-            <KanbanCard key={card.id} card={card} />
-          ))}
         </div>
       </div>
     );
   },
 );
+
+/* ── Default add-card form ────────────────────────────────── */
+
+function DefaultAddCardForm({
+  column,
+  onSubmit,
+  onCancel,
+}: {
+  column: KanbanColumnDef;
+  onSubmit: (data: AddCardData) => void;
+  onCancel: () => void;
+}) {
+  const [title, setTitle] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [tags, setTags] = React.useState("");
+  const handleSave = () => {
+    const t = title.trim();
+    if (!t) return;
+    onSubmit({
+      title: t,
+      description: description.trim() || undefined,
+      tags: tags
+        ? tags
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : undefined,
+    });
+  };
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle>Add card to {column.title}</DialogTitle>
+        <DialogDescription>Create a new card in this column.</DialogDescription>
+      </DialogHeader>
+      <div className="mt-4 space-y-3">
+        <div>
+          <Label className="text-xs">Title</Label>
+          <Input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Card title"
+          />
+        </div>
+        <div>
+          <Label className="text-xs">Description</Label>
+          <Textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Optional description"
+          />
+        </div>
+        <div>
+          <Label className="text-xs">Tags (comma separated)</Label>
+          <Input
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="bug, frontend"
+          />
+        </div>
+      </div>
+      <DialogFooter>
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
+        </Button>
+        <DialogClose asChild>
+          <Button onClick={handleSave}>Add card</Button>
+        </DialogClose>
+      </DialogFooter>
+    </>
+  );
+}
 
 /* ── KanbanBoard: all-in-one ──────────────────────────────── */
 
@@ -501,6 +660,10 @@ export interface KanbanBoardProps extends React.HTMLAttributes<HTMLDivElement> {
   emptyHint?: string;
   /** Scroll direction. Default: "horizontal". */
   direction?: "horizontal" | "vertical";
+  /** Fully custom add-card surface (modal, inline form, ...). */
+  renderAddCard?: RenderAddCard;
+  /** Override how a card is created from the add-card form. */
+  onAddCard?: (data: AddCardData, columnId: string) => void;
 }
 
 /**
@@ -512,6 +675,8 @@ export function KanbanBoard({
   board,
   emptyHint,
   direction = "horizontal",
+  renderAddCard,
+  onAddCard,
   className,
   ...props
 }: KanbanBoardProps) {
@@ -519,7 +684,9 @@ export function KanbanBoard({
   const [overColumnId, setOverColumnId] = React.useState<string | null>(null);
 
   return (
-    <KanbanContext.Provider value={{ board, readOnly: false, drag, setDrag, overColumnId, setOverColumnId }}>
+    <KanbanContext.Provider
+      value={{ board, readOnly: false, drag, setDrag, overColumnId, setOverColumnId, renderAddCard, onAddCard }}
+    >
       <div
         className={cn(
           direction === "horizontal"

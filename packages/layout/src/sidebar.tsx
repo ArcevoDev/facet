@@ -97,7 +97,7 @@ export function Sidebar({ config, isLoading, collapsed = false, width = DEFAULT_
       }`}
       style={collapsed ? undefined : { width: `${sidebarWidth}px` }}
       // Track hover across the sidebar content so the hamburger's close timer
-      // is cancelled while the mouse is inside the sidebar — the user can
+      // is cancelled while the mouse is inside the sidebar - the user can
       // open sections/subsections without the sidebar snapping shut.
       onMouseEnter={hoverEnterSidebar}
       onMouseLeave={hoverLeaveSidebar}
@@ -238,21 +238,21 @@ function NavSectionRenderer({
   const hasActive = sectionHasActiveItem(section, isActive);
   // Section open state is driven solely by the persisted collapse map.
   // An active section auto-expands via the route-change effect above
-  // (one-shot), so the user can still collapse it afterwards — keeping
+  // (one-shot), so the user can still collapse it afterwards - keeping
   // accordion (singleOpen) behavior intact.
   const explicitlyCollapsed = collapsedSections[sectionKey] === true;
   const open = !explicitlyCollapsed;
 
   // On route change, auto-expand the section that now contains the active
   // route (even if the user previously collapsed it). This is a one-shot
-  // side effect — it only triggers when the URL actually changes, so it
+  // side effect - it only triggers when the URL actually changes, so it
   // never interferes with accordion (singleOpen) logic or explicit
   // collapses from chevron clicks / collapse-all.
   const routeKey = router?.asPath ?? window.location.pathname + window.location.hash;
   React.useEffect(() => {
     // Auto-expand the section that contains the active route.
-    // Only runs on mount / route change — never on state writes from
-    // chevron clicks or accordion toggling — so the user can still
+    // Only runs on mount / route change - never on state writes from
+    // chevron clicks or accordion toggling - so the user can still
     // collapse the active section.
     if (hasActive && explicitlyCollapsed) {
       toggleSection(sectionKey);
@@ -283,7 +283,7 @@ function NavSectionRenderer({
   };
 
   // Item-level accordion state: when singleOpen is true, opening a
-  // collapsible child group closes its siblings — mirroring the
+  // collapsible child group closes its siblings - mirroring the
   // section-level behaviour so the Components sidebar sub-groups behave
   // the same as the top-level sections.
   const [openItem, setOpenItem] = React.useState<string | null>(null);
@@ -405,7 +405,7 @@ function NavItemRenderer({
     ? children.some((child) => isItemActive(child, getActive))
     : false;
   // In single-open (accordion) mode the open state is owned by openItem
-  // (external at depth 0, local at depth 1+) — so the user can collapse an
+  // (external at depth 0, local at depth 1+) - so the user can collapse an
   // active group. childActive only drives a one-shot auto-expand on route
   // change (below), not a forced-open state.
   const hasExternalOpenState = singleOpen && setOpenItem;

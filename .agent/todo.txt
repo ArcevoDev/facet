@@ -1,67 +1,52 @@
-facet — Agent Session Tracker
-============================
+facet — session plan (review-driven fixes)
+Status: DONE
 
-STATUS: IN PROGRESS — Ready-to-use components + auth/docs wiring (pre-push)
-Branch: main
+PRIORITY LIST
+[x] 1. NAVBAR/LANDING
+    - Nav.tsx: Product dropdown links fixed (/about#packages, /about#features, /about#roadmap)
+    - handleNav updated to handle path+hash navigation
+    - AboutPage sections: added id anchors (packages, features, roadmap)
+    - Landing app.tsx: trimmed to remove duplicate sections (DONE)
+    - Navbar hover: hoverDropdowns + shared close timer (48118e5) verified
+    - AboutPage: PackageCard padding p-5 → p-6 (consistent with Feature card)
 
---- Current Session Priority List ---
+[x] 2. CHANGELOG breathing space
+    - changelog-list.tsx: pl-8, left-3.5, ring-2 (DONE in working tree)
 
-[x] 1.  Verify UI changes from pre-crash session
-[x] 2.  arc-id security gap — facet-side fixes (provider warning + persist adapter)
-[x] 3.  arc-id summary file (.agent/arcid_summary.md)
-[x] 4.  Typecheck verification (full workspace)
-[x] 5.  Phase 0 security fix — changesets created
-[x] 6.  Docs cleanup — Resizable variants, horizontal polish
-[x] 7.  Phase 1 — facet-cli multi-package install + remove command (35 cli tests pass)
+[x] 3. DOCS-SITE: component categorization
+    - manifest.ts + gen-docs-manifest.mjs: moved from general to
+      ready-to-use/pages/animation/etc (DONE in working tree)
 
-[~] 8.  Phase 1 — components (CURRENT SESSION)
-      [x] a.  Stepper primitive (useStepper hook + Stepper / StepperNav /
-              StepperPanel / StepperFooter) — headless-first per the roadmap
-      [x] b.  KanbanBoard (useKanban + KanbanBoard / KanbanColumn /
-              KanbanCard) — native HTML5 DnD, controlled + uncontrolled
-      [x] c.  ChangelogList — vertical release log with kind-grouped bullets
-              + filter row (added / changed / fixed / deprecated / removed /
-              security)
-      [x] d.  Wire all three into packages/components barrel + types
-      [x] e.  Regenerate docs manifest (94 entries, +3 new)
+[x] 4. DOCS-SITE: missing previews
+    - previews.tsx: 20 new ComponentPreview cases (DONE in working tree)
 
-      [x] f.  21 ADDITIONAL ready-to-use components built this session:
-              WizardFormPage, DateRangePicker, Chart, EmptyStatePage,
-              QrScanner, ConsentCapture, DataTablePage, PricingComparison,
-              Tree, MultiCombobox, TagInput, RangeSlider, RatingInput,
-              CookieBanner, OtpInput, RichTextEditor, PhoneInput,
-              MentionInput, ShineBorderCard, GlowBorderCard (+1 misc)
-      [x] g.  Wire all 21 into barrel (typed exports)
-      [x] h.  Regenerate docs manifest again (now 113 entries, +18)
-      [x] i.  Docs-site previews for the 21 new components
-      [x] j.  Auth: PasswordStrengthMeter wired into <SignUp> +
-              <ResetPasswordForm> (opt-out via showPasswordStrength)
-      [x] k.  Docs engine: changelog block type renders ChangelogList inline
-      [x] l.  CLI: `facet docs init` scaffolds a /changelog page
-      [x] m.  Landing: ChangelogSection on home (ChangelogList)
-      [x] n.  Landing ecosystem: added components / auth / tokens entries
-      [x] o.  Nav + Footer columns point to available pages
-      [x] p.  CLAUDE.md, README, docs/landing prose updated to 113 count
-      [x] q.  Drift gate green (check-docs-inventory: 113/113)
-            - All 112 non-foundations ui components barrel-exported + manifest
-            - CLAUDE.md count matches
-      [x] r.  typecheck + build verify — GREEN (11/11 packages each)
-      [ ] s.  Changeset for the 21 new components
-      [ ] t.  Commit + push (awaiting user preview)
+[x] 5. KANBAN
+    - Reordering: computeIndex + moveCard(toIndex) (DONE in working tree)
+    - Add card via modal (DefaultAddCardForm + renderAddCard prop) (DONE)
 
-[x] 9.  Phase 0 doc cleanup (noted, deferred — can ship as follow-up)
-      [~] a. .glow-indigo used in 7 places across 6 files — rename pending
-      [~] b. Color palette decision (cyan vs indigo) — noted in summary
+[x] 6. GLOW/GLIMMER card clipping + animation
+    - GlowBorderCard: keyframes name fixed (facet-glow-2.4 → facet-glow-pulse),
+      animation name/duration separated, overflow:hidden added on wrapper
+    - ShineBorderCard: animation name fixed (facet-shine-3s → facet-shine),
+      overflow:hidden added on wrapper
+    - BorderBeamCard: already had overflow-hidden + facet-spin keyframes OK
 
-[ ] 10. Post-push follow-ups
-    - Sync arcid_summary.md into ../arc-id/.agent/ when arc-id repo is available
-    - arc-id-side: implement httpOnly cookie for refresh token + delete persistSession
-    - arc-id-side: bump facet-cli and facet-store pins to ^1.0.0
-    - arc-id-side: fix Tailwind @source path in tailwind config
-    - arc-id-side: correct doc claim "tokens stored in memory only"
+[x] 7. ABOUT card icons
+    - PackageCard padding p-5 → p-6 (now consistent with Feature card)
 
---- Next Actions ---
-- User will build + preview the new components and report back
-- On green preview: add changeset + commit + push the full bundle:
-  Phase 0 + Phase 1 (CLI) + 24 components + auth/docs wiring + landing
-- Post-push: open the auto-generated Version Packages PR for review
+[x] 8. ANIMATIONS 100%
+    - facet-spin (tailcss), facet-shimmer, facet-dissolve: all defined OK
+    - GlowBorderCard/ShineBorderCard: keyframes names fixed, now resolve
+
+[x] 9. EM-DASHES
+    - Replaced — with - in 23 source files (packages/ + apps/ + scripts/)
+    - User-facing strings in PricingPage, SecurityPage, DashboardPreviewSection,
+      DashboardDemoPage, EcosystemDetailPage, changelog-list: adjusted to
+      comma / full-stop where appropriate
+    - Code comments in kanban-board, pricing-comparison, stepper, etc: - (hyphen)
+
+NOTES
+- All 34 em-dash files checked: .agent/ and .changeset/ left as-is (not source code)
+- Build gate: pnpm -r build / typecheck / test / check:docs / check:icons / check:sdk-drift
+- Working tree fixes: kanban, changelog, docs manifest, previews, landing trim,
+  card animations, nav links, about page, em-dashes

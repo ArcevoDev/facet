@@ -47,14 +47,20 @@ export function GlowBorderCard({
 }: GlowBorderCardProps) {
   return (
     <div
-      className={cn("relative", containerClassName)}
+      className={cn("relative isolate overflow-hidden", containerClassName)}
       style={{
         borderRadius,
-        boxShadow: `0 0 0 1px ${color}, 0 0 24px ${color}`,
         opacity: 0.7 + intensity * 0.3,
-        animation: `facet-glow-${duration}s ease-in-out infinite`,
       }}
     >
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 rounded-[inherit]"
+        style={{
+          boxShadow: `0 0 0 1px ${color}, 0 0 24px ${color}`,
+          animation: `facet-glow-pulse ${duration}s ease-in-out infinite`,
+        }}
+      />
       <div
         {...rest}
         className={cn(
@@ -66,9 +72,9 @@ export function GlowBorderCard({
         {children}
       </div>
       <style>{`
-        @keyframes facet-glow-${duration} {
+        @keyframes facet-glow-pulse {
           0%, 100% { opacity: ${0.5 + intensity * 0.3}; }
-          50% { opacity: ${1 + intensity * 0.5}; }
+          50% { opacity: ${Math.min(1, 1 + intensity * 0.5)}; }
         }
       `}</style>
     </div>

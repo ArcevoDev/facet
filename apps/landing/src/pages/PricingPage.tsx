@@ -16,7 +16,7 @@ import { getDocsUrl } from "../lib/docs-url.js";
  * MIT-licensed and free on npm. The BillingPage components are reused
  * with `customPriceLabel` to label each as "Free" / "Donations welcome".
  *
- * Pricing / CTA on the landing site has nothing to sell — every plan
+ * Pricing / CTA on the landing site has nothing to sell - every plan
  * points back at the docs / GitHub. Real facet consumers don't pay
  * anything to use the libraries.
  */
@@ -39,7 +39,7 @@ const FACET_PLANS: BillingPlan[] = [
     id: "auth",
     name: "Auth + SDK + Store",
     price: 0,
-    description: "The arc-id identity stack — auth, typed SDK, Zustand stores.",
+    description: "The arc-id identity stack - auth, typed SDK, Zustand stores.",
     features: [
       "SignIn state machine + 4 domain presets",
       "7 standalone auth forms",
@@ -69,7 +69,7 @@ const FACET_PLANS: BillingPlan[] = [
     id: "support",
     name: "Support the project",
     price: 5,
-    description: "Optional sponsorship — funds CI, domains, and infra.",
+    description: "Optional sponsorship - funds CI, domains, and infra.",
     features: [
       "Recognition in repo + docs",
       "Early access to RFC proposals",
@@ -99,7 +99,7 @@ const CONFIG: BillingPageConfig = {
   plans: FACET_PLANS,
   title: "Free, forever",
   description:
-    "Every package ships free on npm under MIT. The only optional line below is sponsorship — no features are gated.",
+    "Every package ships free on npm under MIT. The only optional line below is sponsorship. No features are gated.",
   annualDiscountNote: "Sponsorship tiers use yearly as the suggested cadence.",
 };
 
@@ -157,7 +157,7 @@ export function PricingPage() {
           </h3>
           <p className="mt-3 text-sm text-muted-foreground">
             facet is a static library set. There's nothing to sign up for and
-            nothing to pay. The only optional line is sponsorship — every other
+            nothing to pay. The only optional line is sponsorship, every other
             "plan" is the same library, just with different surfaces highlighted.
           </p>
           <p className="mt-2 text-xs text-muted-foreground">

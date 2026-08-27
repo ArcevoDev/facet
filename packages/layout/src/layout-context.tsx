@@ -211,7 +211,7 @@ export function LayoutProvider({
   // When the sidebar closes by any means (leaf-nav click, click-outside,
   // Sheet close, toggle), reset the pinned flag so the next hover preview
   // can open it again. Without this, clicking a page would leave the
-  // sidebar pinned — and since hoverEnterSidebar bails while pinned,
+  // sidebar pinned - and since hoverEnterSidebar bails while pinned,
   // the hamburger would stop responding to hover afterwards.
   React.useEffect(() => {
     if (!sidebarOpen) {

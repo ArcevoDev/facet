@@ -46,13 +46,13 @@ export function ShineBorderCard({
 }: ShineBorderCardProps) {
   return (
     <div
-      className={cn("relative", containerClassName)}
+      className={cn("relative isolate overflow-hidden", containerClassName)}
       style={{
         padding: borderWidth,
         borderRadius,
         background: `linear-gradient(90deg, transparent 0%, transparent 40%, ${color} 50%, transparent 60%, transparent 100%)`,
         backgroundSize: "200% 100%",
-        animation: `facet-shine-${duration}s linear infinite`,
+        animation: `facet-shine ${duration}s linear infinite`,
       }}
     >
       <div

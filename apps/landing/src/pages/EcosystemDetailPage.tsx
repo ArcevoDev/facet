@@ -179,7 +179,7 @@ export function EcosystemDetailPage() {
             Ready to use {entry.title}?
           </h3>
           <p className="mt-3 text-sm text-muted-foreground">
-            Read the full documentation for {entry.name} — live component previews,
+            Read the full documentation for {entry.name} - live component previews,
             API reference, and installation guides.
           </p>
           <ShineButton

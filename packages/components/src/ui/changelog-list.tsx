@@ -215,11 +215,11 @@ export function ChangelogList({
         </div>
       )}
 
-      <ol className="relative space-y-8 pl-6" {...props}>
+      <ol className="relative space-y-8 pl-8" {...props}>
         {/* Vertical rail */}
         <span
           aria-hidden="true"
-          className="absolute left-2 top-2 bottom-2 w-px bg-border"
+          className="absolute left-3.5 top-2 bottom-2 w-px bg-border"
         />
 
         {releases.map((release, i) => {
@@ -243,7 +243,7 @@ export function ChangelogList({
               <span
                 aria-hidden="true"
                 className={cn(
-                  "absolute -left-[18px] top-1 inline-flex size-3.5 items-center justify-center rounded-full ring-4 ring-background",
+                  "absolute -left-[24px] top-1 inline-flex size-3.5 items-center justify-center rounded-full ring-2 ring-background",
                   release.pre ? "bg-amber-500" : "bg-primary",
                 )}
               />
@@ -311,7 +311,7 @@ export function ChangelogList({
                               )}
                               {change.author && (
                                 <span className="ml-1 text-xs text-muted-foreground">
-                                  — {change.author}
+                                  , {change.author}
                                 </span>
                               )}
                             </span>

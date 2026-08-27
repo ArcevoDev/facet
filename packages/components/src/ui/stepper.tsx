@@ -446,7 +446,7 @@ export interface StepperPanelProps
 
 /**
  * The content slot. Renders `children(activeStep)`, so the host picks
- * how to map step id -> React tree (a switch, a record, a hook — whatever).
+ * how to map step id -> React tree (a switch, a record, a hook - whatever).
  */
 export function StepperPanel({ children, className, ...props }: StepperPanelProps) {
   const api = useStepperContext("StepperPanel");
@@ -558,7 +558,7 @@ export function StepperFooter({
 /* ── Stepper: all-in-one convenience wrapper ───────────────── */
 
 export interface StepperProps extends Omit<StepperNavProps, "children"> {
-  /** The `useStepper` api — host owns the state. */
+  /** The `useStepper` api - host owns the state. */
   stepper: StepperApi;
   /** Content per step. Receives the active step; render anything. */
   children: (step: StepperStepDef) => React.ReactNode;
@@ -568,7 +568,7 @@ export interface StepperProps extends Omit<StepperNavProps, "children"> {
 
 /**
  * Drop-in convenience: wraps `StepperProvider` + `StepperNav` + `StepperPanel`.
- * The footer is omitted by default — hosts usually want their own buttons
+ * The footer is omitted by default - hosts usually want their own buttons
  * or pass `<StepperFooter />` via `footer`.
  */
 export function Stepper({

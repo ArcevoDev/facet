@@ -36,7 +36,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 
 function PackageCard({ pkg }: { pkg: Package }) {
   return (
-    <div className="glass-card rounded-xl p-5 transition-all hover:translate-y-[-2px]">
+    <div className="glass-card rounded-xl p-6 transition-all hover:translate-y-[-2px]">
       <div className="flex items-start gap-3">
         <LightIcon name={pkg.icon} className="mt-0.5 size-5 text-primary" />
         <div>
@@ -90,7 +90,7 @@ export function AboutPage() {
       </section>
 
       {/* What facet is */}
-      <section className="bg-secondary/30 mx-auto max-w-5xl px-8 py-16">
+      <section id="packages" className="bg-secondary/30 mx-auto max-w-5xl px-8 py-16">
         <div className="mb-12 text-center">
           <h2 className="text-2xl font-bold text-foreground">What facet is</h2>
           <p className="mt-3 text-muted-foreground">
@@ -133,7 +133,7 @@ export function AboutPage() {
       </section>
 
       {/* Core capabilities */}
-      <section className="mx-auto max-w-5xl px-8 py-16">
+      <section id="features" className="mx-auto max-w-5xl px-8 py-16">
         <h2 className="text-2xl font-bold text-foreground">Core capabilities</h2>
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
@@ -186,7 +186,7 @@ export function AboutPage() {
           loop, so the counts you see here never drift from the code.
         </p>
         <div className="mt-8">
-          <h3 className="text-lg font-semibold text-foreground">Roadmap</h3>
+          <h3 id="roadmap" className="text-lg font-semibold text-foreground">Roadmap</h3>
           <ul className="mt-4 space-y-3">
             {ROADMAP.map((r) => (
               <li key={r.phase} className="flex items-start gap-3">

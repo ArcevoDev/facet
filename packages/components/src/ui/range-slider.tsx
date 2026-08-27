@@ -5,7 +5,7 @@
  * value labels, and accessible keyboard navigation. Distinct from
  * `Slider` (which is single-thumb).
  *
- * Why: filter sidebars, price ranges, date ranges, weight bands — every
+ * Why: filter sidebars, price ranges, date ranges, weight bands - every
  * search filter UI needs a range slider.
  */
 

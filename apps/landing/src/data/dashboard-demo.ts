@@ -21,7 +21,7 @@ export const DASHBOARD_ACTIVITY: ActivityItem[] = [
   {
     id: "evt-1",
     title: "New identity verified",
-    description: "Tenant arcevocirqle-prod — credential issued for ada.lovelace@arcevocirqle.com.ng",
+    description: "Tenant arcevocirqle-prod - credential issued for ada.lovelace@arcevocirqle.com.ng",
     timestamp: MINS_AGO(3),
     icon: "badge-check",
     accent: "#10b981",
@@ -45,7 +45,7 @@ export const DASHBOARD_ACTIVITY: ActivityItem[] = [
   {
     id: "evt-4",
     title: "MFA challenge failed",
-    description: "Three failed TOTP attempts from 102.89.32.x — rate limit engaged",
+    description: "Three failed TOTP attempts from 102.89.32.x - rate limit engaged",
     timestamp: HOURS_AGO(2),
     icon: "circle-alert",
     accent: "#ef4444",
@@ -61,7 +61,7 @@ export const DASHBOARD_ACTIVITY: ActivityItem[] = [
   {
     id: "evt-6",
     title: "OAuth client created",
-    description: "arc-id-prod-app — scopes: openid, profile, email, vc.issue",
+    description: "arc-id-prod-app - scopes: openid, profile, email, vc.issue",
     timestamp: HOURS_AGO(6),
     icon: "key-round",
     accent: "#f59e0b",
@@ -69,7 +69,7 @@ export const DASHBOARD_ACTIVITY: ActivityItem[] = [
   {
     id: "evt-7",
     title: "API key revoked",
-    description: "facet_live_a82f…31bd — manual revoke by ada.lovelace@arcevocirqle.com.ng",
+    description: "facet_live_a82f…31bd - manual revoke by ada.lovelace@arcevocirqle.com.ng",
     timestamp: DAYS_AGO(1),
     icon: "shield-x",
     accent: "#ef4444",
@@ -85,7 +85,7 @@ export const DASHBOARD_ACTIVITY: ActivityItem[] = [
   {
     id: "evt-9",
     title: "New tenant onboarded",
-    description: "arcevocirqle-edu — education preset, passkey-first, 24-hour TTL",
+    description: "arcevocirqle-edu - education preset, passkey-first, 24-hour TTL",
     timestamp: DAYS_AGO(2),
     icon: "building",
     accent: "#06b6d4",

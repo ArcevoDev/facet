@@ -155,7 +155,7 @@ function ConsoleLayoutInner({
         </div>
       )}
 
-      {/* Mobile: slide-in sidebar panel (no overlay — the hamburger stays
+      {/* Mobile: slide-in sidebar panel (no overlay - the hamburger stays
           clickable so you can pin it even while the preview is open). */}
       {!isDesktop && (
         <div

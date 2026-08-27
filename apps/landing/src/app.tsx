@@ -4,11 +4,8 @@ import { NotFound, ThemeProvider } from "@arcevo/facet-components";
 import { LandingLayout } from "@arcevo/facet-layout";
 import { Nav } from "./components/Nav.js";
 import { HeroSection } from "./components/HeroSection.js";
-import { PackagesSection } from "./components/PackagesSection.js";
-import { FeaturesSection } from "./components/FeaturesSection.js";
 import { DemoSection } from "./components/DemoSection.js";
 import { InstallSection } from "./components/InstallSection.js";
-import { RoadmapSection } from "./components/RoadmapSection.js";
 import { FaqSection } from "./components/FaqSection.js";
 import { CTASection } from "./components/CTASection.js";
 import { TestimonialsSection } from "./components/TestimonialsSection.js";
@@ -28,14 +25,11 @@ import { DashboardDemoPage } from "./pages/DashboardDemoPage.js";
 function HomePage() {
   return (
     <LandingLayout nav={<Nav />} hero={<HeroSection />} footer={<Footer />}>
-      <PackagesSection />
-      <FeaturesSection />
       <DemoSection />
       <DashboardPreviewSection />
       <AuthShowcaseSection />
       <PricingTeaserSection />
       <TestimonialsSection />
-      <RoadmapSection />
       <ChangelogSection />
       <FaqSection />
       <InstallSection />

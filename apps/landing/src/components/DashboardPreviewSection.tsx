@@ -34,7 +34,7 @@ export function DashboardPreviewSection() {
           <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">ActivityFeed</code>,{" "}
           <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">PageHeader</code>,{" "}
           <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">BorderBeamCard</code>, and{" "}
-          <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">Tabs</code> —
+          <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">Tabs</code>,
           the primitives every console needs, wired together.
         </p>
       </div>
@@ -43,7 +43,7 @@ export function DashboardPreviewSection() {
         <PageHeader
           layout="row"
           title="Identity operations"
-          description="Live snapshot of the arc-id console — KPI cards above, activity feed below."
+          description="Live snapshot of the arc-id console - KPI cards above, activity feed below."
           crumbs={[
             { label: "Console", href: "#" },
             { label: "Operations" },
@@ -127,7 +127,7 @@ export function DashboardPreviewSection() {
                   Day-grouped, relative timestamps, click-through.
                 </TabsContent>
                 <TabsContent value="log" className="text-xs text-muted-foreground">
-                  Same feed, flat — no day headers.
+                  Same feed, flat - no day headers.
                 </TabsContent>
               </Tabs>
             </div>

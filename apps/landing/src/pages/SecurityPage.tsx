@@ -24,7 +24,7 @@ import {
 } from "../data/dashboard-demo.js";
 
 /**
- * /security — a settings console built entirely from ready-to-use facet
+ * /security - a settings console built entirely from ready-to-use facet
  * surfaces. Shows the AccountSettingsPanel nav + per-section content
  * (SecuritySectionCard + ApiKeyManager + TwoFactorSetupPanel +
  * PasswordStrengthMeter), so the landing demos the exact screens
@@ -39,7 +39,7 @@ export function SecurityPage() {
         <CardHeader>
           <CardTitle>Profile</CardTitle>
           <CardDescription>
-            Display name, email, and locale. Live-editable in a real app — the demo
+            Display name, email, and locale. Live-editable in a real app, the demo
             surface here just shows the section shape.
           </CardDescription>
         </CardHeader>
@@ -210,7 +210,7 @@ export function SecurityPage() {
             Security surface, ready to ship
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            Account settings, API keys, MFA, sessions — the surfaces every auth
+            Account settings, API keys, MFA, sessions, the surfaces every auth
             console needs, wired from the ready-to-use components in
             <code className="ml-1 rounded bg-secondary/50 px-1.5 py-0.5 text-sm">
               @arcevo/facet-components
@@ -220,7 +220,7 @@ export function SecurityPage() {
         </div>
       }
     >
-      {/* Top: SecuritySectionCard grid — the "tiles" that greet the user */}
+      {/* Top: SecuritySectionCard grid - the "tiles" that greet the user */}
       <section className="mx-auto max-w-7xl px-8 py-12">
         <h2 className="text-2xl font-bold text-foreground">At a glance</h2>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -231,7 +231,7 @@ export function SecurityPage() {
         </div>
       </section>
 
-      {/* Bottom: full AccountSettingsPanel — nav + per-section content */}
+      {/* Bottom: full AccountSettingsPanel - nav + per-section content */}
       <section className="mx-auto max-w-5xl px-8 py-12">
         <h2 className="text-2xl font-bold text-foreground">Settings</h2>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -247,7 +247,7 @@ export function SecurityPage() {
       <section className="mx-auto max-w-3xl px-8 py-12 text-center">
         <p className="text-sm text-muted-foreground">
           Every surface above is a typed component. Read the docs to wire them into
-          your own console — and your own auth backend.
+          your own console, and your own auth backend.
         </p>
       </section>
     </LandingLayout>

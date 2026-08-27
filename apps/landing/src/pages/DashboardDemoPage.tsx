@@ -23,7 +23,7 @@ import { DASHBOARD_STATS_FULL, DASHBOARD_ACTIVITY } from "../data/dashboard-demo
 import { getDocsUrl } from "../lib/docs-url.js";
 
 /**
- * /dashboard-demo — a full console surface demo. Shows everything the
+ * /dashboard-demo - a full console surface demo. Shows everything the
  * ready-to-use facet stack provides for the "console" use case:
  *   - PageHeader (breadcrumb + title + actions)
  *   - StatCard grid (KPI cards with deltas)
@@ -160,7 +160,7 @@ export function DashboardDemoPage() {
           <Card className="h-full">
             <CardHeader>
               <CardTitle className="text-sm">FlipCard</CardTitle>
-              <CardDescription>Click to flip — front / back</CardDescription>
+              <CardDescription>Click to flip - front / back</CardDescription>
             </CardHeader>
           </Card>
         </div>

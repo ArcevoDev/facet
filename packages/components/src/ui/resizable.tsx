@@ -65,7 +65,7 @@ export interface ResizablePanelProps
    *
    * - **Number** (0–100): percentage of the parent group
    *   (e.g. `defaultSize={50}` → 50 %).
-   * - **String**: any v4 size expression — `"50"`, `"30%"`, `"200px"`, `"1rem"`.
+   * - **String**: any v4 size expression - `"50"`, `"30%"`, `"200px"`, `"1rem"`.
    */
   defaultSize?: number | string;
   /**
@@ -87,7 +87,7 @@ export interface ResizableHandleProps
   /** Render a visible grip icon on the separator. */
   withHandle?: boolean;
   /**
-   * Layout direction of the enclosing group — controls the handle's cursor
+   * Layout direction of the enclosing group - controls the handle's cursor
    * and the orientation of the grip icon.
    */
   orientation?: "horizontal" | "vertical";
@@ -100,7 +100,7 @@ export interface ResizableHandleProps
 export interface ResizableImperativeHandle {
   /** Ref to pass to `<ResizablePanelGroup groupRef={...} />`. */
   groupRef: React.RefObject<GroupImperativeHandle | null>;
-  /** Ref to pass to `<ResizablePanel panelRef={...} />` — controls one panel. */
+  /** Ref to pass to `<ResizablePanel panelRef={...} />` - controls one panel. */
   panelRef: React.RefObject<PanelImperativeHandle | null>;
   /** Current layout: map of panel id → size percentage (0–100). */
   getLayout: () => RrpLayout;
@@ -119,7 +119,7 @@ export interface ResizableImperativeHandle {
 }
 
 /**
- * Result of {@link useResizableLayout} — spread directly onto a
+ * Result of {@link useResizableLayout} - spread directly onto a
  * `<ResizablePanelGroup>`.
  */
 export type ResizableLayoutResult = ReturnType<typeof useRrpDefaultLayout>;
@@ -267,7 +267,7 @@ ResizableHandle.displayName = "ResizableHandle";
  *
  * A single panel inside a {@link ResizablePanelGroup}. Use `defaultSize`
  * (0–100 as a percentage) and `minSize` / `maxSize` to control flexible
- * layouts — numbers are normalised to `%` strings for v4 compatibility.
+ * layouts - numbers are normalised to `%` strings for v4 compatibility.
  *
  * Panels can be **collapsible**: set `collapsible` and `collapsedSize`, then
  * toggle via {@link useResizable} or the Panel's `panelRef`.

@@ -32,7 +32,7 @@ export interface TokenRefresher {
  *
  * `persist` (optional): a key-value adapter that persists the **access token only**
  * to a secure medium (e.g. httpOnly cookie via a server callback).  The refresh
- * token should never be persisted through this adapter — use an httpOnly cookie
+ * token should never be persisted through this adapter - use an httpOnly cookie
  * on the arc-id backend instead.
  */
 export interface TokenStorage {
@@ -61,7 +61,7 @@ export function createZustandTokenStorage({
    * (e.g. httpOnly cookie via a server callback).  When provided,
    * `setTokens` also calls `persist.setAccessToken()` so the token survives
    * a full-page reload without relying on Zustand's in-memory state.
-   * The refresh token is NEVER passed through this adapter — it should
+   * The refresh token is NEVER passed through this adapter - it should
    * live in an httpOnly cookie on the arc-id backend.
    */
   persist?: PersistAdapter;

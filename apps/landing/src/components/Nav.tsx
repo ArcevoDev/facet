@@ -16,10 +16,10 @@ const LINKS: NavLink[] = [
     href: "#product",
     label: "Product",
     children: [
-      { href: "#packages", label: "Packages", icon: <LightIcon name="boxes" size={14} /> },
-      { href: "#features", label: "Features", icon: <LightIcon name="sparkles" size={14} /> },
+      { href: "/about#packages", label: "Packages", icon: <LightIcon name="boxes" size={14} /> },
+      { href: "/about#features", label: "Features", icon: <LightIcon name="sparkles" size={14} /> },
       { href: "#demo", label: "Demo", icon: <LightIcon name="layout-dashboard" size={14} /> },
-      { href: "#roadmap", label: "Roadmap", icon: <LightIcon name="compass" size={14} /> },
+      { href: "/about#roadmap", label: "Roadmap", icon: <LightIcon name="compass" size={14} /> },
     ],
   },
   {
@@ -173,7 +173,8 @@ export function Nav() {
   const location = useLocation();
 
   // Single handler for all Navbar links (desktop + mobile). Hash anchors
-  // scroll in-page; real routes navigate via the router.
+  // scroll in-page; real routes navigate via the router. Path+hash links
+  // (e.g. /about#packages) navigate first, then scroll to the section.
   const handleNav = (href: string) => {
     if (href.startsWith("#")) {
       if (location.pathname !== "/") {
@@ -185,7 +186,16 @@ export function Nav() {
         document.getElementById(href.slice(1))?.scrollIntoView({ behavior: "smooth" });
       }
     } else {
-      navigate(href);
+      const hashIndex = href.indexOf("#");
+      if (hashIndex > 0) {
+        const hash = href.slice(hashIndex + 1);
+        navigate(href);
+        setTimeout(() => {
+          document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else {
+        navigate(href);
+      }
     }
   };
 

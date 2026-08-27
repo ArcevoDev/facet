@@ -90,7 +90,7 @@ export function ArcProvider({
     // eslint-disable-next-line no-console
     console.warn(
       "[@arcevo/facet-auth] ArcProvider is using defaultStorage (localStorage). " +
-        "localStorage is vulnerable to XSS — refresh tokens stored here can be " +
+        "localStorage is vulnerable to XSS - refresh tokens stored here can be " +
         "stolen. For production, pass an explicit `storage` prop backed by " +
         "httpOnly cookies. This warning is shown once per page-load.",
     );

@@ -101,9 +101,9 @@ export interface LayoutContextValue {
   pinSidebar: () => void;
   /** Unpin + close the sidebar (e.g. after a page navigation). */
   unpinSidebar: () => void;
-  /** Open the sidebar as a hover preview — closes on mouse-leave unless pinned. */
+  /** Open the sidebar as a hover preview - closes on mouse-leave unless pinned. */
   hoverEnterSidebar: () => void;
-  /** Arm the close timer for hover preview — closes the sidebar after a short delay unless the mouse re-enters. */
+  /** Arm the close timer for hover preview - closes the sidebar after a short delay unless the mouse re-enters. */
   hoverLeaveSidebar: () => void;
   /** Rail mode: sidebar collapsed to icon-only (desktop only). Default: false */
   sidebarCollapsed: boolean;

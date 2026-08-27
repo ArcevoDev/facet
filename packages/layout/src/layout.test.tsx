@@ -245,7 +245,7 @@ describe("Sidebar", () => {
       expect(overview).toHaveAttribute("aria-expanded", "true");
     });
 
-    // User explicitly collapses the active section — must stay collapsed.
+    // User explicitly collapses the active section - must stay collapsed.
     await userEvent.click(overview);
     expect(overview).toHaveAttribute("aria-expanded", "false");
 

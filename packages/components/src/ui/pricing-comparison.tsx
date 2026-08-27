@@ -52,7 +52,7 @@ export interface PricingFeature {
   name: string;
   /** Per-tier values (keyed by tier id). */
   /** e.g. { free: "✓", pro: "✓", team: "✓", enterprise: "✓" } */
-  /** Values can be `string | true | false` — true/false render check/dash. */
+  /** Values can be `string | true | false` - true/false render check/dash. */
   values: Record<string, string | boolean>;
   /** Show in compact/mobile mode. Default: true. */
   showOnMobile?: boolean;

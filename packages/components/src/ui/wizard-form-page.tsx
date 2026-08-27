@@ -123,7 +123,7 @@ export function WizardFormPage<T extends FieldValues = FieldValues>({
   allowSkip = false,
   className,
 }: WizardFormPageProps<T>) {
-  // Outer form is uncontrolled state — the wizard re-derives the current
+  // Outer form is uncontrolled state - the wizard re-derives the current
   // step's field values from `form.getValues()` on each Next click.
   const form = useForm<FieldValues>({
     resolver: resolver as Resolver<FieldValues>,

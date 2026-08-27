@@ -190,6 +190,26 @@ import {
   KanbanBoard,
   useKanban,
   ChangelogList,
+  Chart,
+  ConsentCapture,
+  CookieBanner,
+  DataTablePage,
+  DateRangePicker,
+  EmptyStatePage,
+  GlowBorderCard,
+  MentionInput,
+  MultiCombobox,
+  OtpInput,
+  PhoneInput,
+  PricingComparison,
+  QrScanner,
+  RangeSlider,
+  RatingInput,
+  RichTextEditor,
+  ShineBorderCard,
+  TagInput,
+  Tree,
+  WizardFormPage,
 } from "@arcevo/facet-components";
 import {
   DropzoneDemo,
@@ -1287,6 +1307,248 @@ export function ComponentPreview({ slug, variant = "default", size = "default" }
         </div>
       );
     }
+    case "chart":
+      return (
+        <div className="w-full max-w-xl rounded-lg border border-border bg-background p-6">
+          <Chart
+            x={["Mon", "Tue", "Wed", "Thu", "Fri"]}
+            series={[
+              { id: "visitors", label: "Visitors", data: [12, 19, 8, 24, 15] },
+              { id: "orders", label: "Orders", data: [5, 14, 6, 18, 9] },
+            ]}
+            type="bar"
+          />
+        </div>
+      );
+    case "consent-capture":
+      return (
+        <div className="w-full max-w-lg rounded-lg border border-border bg-background p-6">
+          <ConsentCapture
+            title="Terms of service"
+            body={
+              <p className="text-sm leading-relaxed">
+                By clicking accept you agree to our Terms of Service and Privacy
+                Policy, and consent to the collection and use of your data as
+                described therein.
+              </p>
+            }
+            onSubmit={() => {}}
+            onReject={() => {}}
+          />
+        </div>
+      );
+    case "cookie-banner":
+      return (
+        <div className="w-full max-w-3xl">
+          <CookieBanner onChoose={() => {}} storageKey="facet.cookie-banner-preview" />
+        </div>
+      );
+    case "data-table-page": {
+      type Row = { id: string; name: string; email: string; role: string };
+      const columns: { key: string; header: string }[] = [
+        { key: "name", header: "Name" },
+        { key: "email", header: "Email" },
+        { key: "role", header: "Role" },
+      ];
+      const rows: Row[] = [
+        { id: "1", name: "Ada Lovelace", email: "ada@arcevo.com", role: "Engineer" },
+        { id: "2", name: "Alan Turing", email: "alan@arcevo.com", role: "Designer" },
+        { id: "3", name: "Grace Hopper", email: "grace@arcevo.com", role: "Lead" },
+      ];
+      return (
+        <div className="w-full max-w-4xl rounded-lg border border-border bg-background p-6">
+          <DataTablePage title="Team members" columns={columns} rows={rows} rowKey="id" />
+        </div>
+      );
+    }
+    case "date-range-picker":
+      return (
+        <div className="w-full max-w-sm rounded-lg border border-border bg-background p-6">
+          <DateRangePicker placeholder="Pick a date range" />
+        </div>
+      );
+    case "empty-state-page":
+      return (
+        <div className="w-full max-w-xl rounded-lg border border-border bg-background p-6">
+          <EmptyStatePage
+            icon="inbox"
+            title="No projects yet"
+            description="Create your first project to get started."
+            primaryAction={{ label: "New project", onClick: () => {} }}
+            secondaryAction={{ label: "Read the docs", href: "https://arcevo.com" }}
+          />
+        </div>
+      );
+    case "glow-border-card":
+      return (
+        <div className="w-full max-w-sm">
+          <GlowBorderCard>
+            <div className="p-6">
+              <h3 className="font-medium">GlowBorderCard</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                A card with a pulsing glow around its border.
+              </p>
+            </div>
+          </GlowBorderCard>
+        </div>
+      );
+    case "mention-input":
+      return (
+        <div className="w-full max-w-md rounded-lg border border-border bg-background p-6">
+          <MentionInput
+            value=""
+            onChange={() => {}}
+            users={[
+              { id: "1", name: "Ada Lovelace", handle: "ada" },
+              { id: "2", name: "Alan Turing", handle: "alan" },
+              { id: "3", name: "Grace Hopper", handle: "grace" },
+            ]}
+            placeholder="Type a message, use @ to mention someone."
+          />
+        </div>
+      );
+    case "multi-combobox":
+      return (
+        <div className="w-full max-w-md rounded-lg border border-border bg-background p-6">
+          <MultiCombobox
+            options={[
+              { id: "eng", label: "Engineering", description: "Backend & infra" },
+              { id: "design", label: "Design", description: "UI/UX" },
+              { id: "pm", label: "Product", description: "Roadmap & research" },
+            ]}
+            value={["eng"]}
+            onChange={() => {}}
+            placeholder="Pick teams…"
+          />
+        </div>
+      );
+    case "otp-input":
+      return (
+        <div className="w-full max-w-xs rounded-lg border border-border bg-background p-6">
+          <OtpInput value="" onChange={() => {}} maxLength={6} />
+        </div>
+      );
+    case "phone-input":
+      return (
+        <div className="w-full max-w-xs rounded-lg border border-border bg-background p-6">
+          <PhoneInput value="" onChange={() => {}} defaultCountryCode="US" />
+        </div>
+      );
+    case "pricing-comparison":
+      return (
+        <div className="w-full rounded-lg border border-border bg-background p-6">
+          <PricingComparison
+            title="Simple, honest pricing"
+            tiers={[
+              { id: "free", name: "Free", price: 0, features: ["Up to 3 projects", "5GB storage"] },
+              {
+                id: "pro",
+                name: "Pro",
+                price: 19,
+                features: ["Unlimited projects", "100GB storage"],
+                highlighted: true,
+                badge: "Most popular",
+              },
+              {
+                id: "team",
+                name: "Team",
+                price: 49,
+                features: ["Everything in Pro", "Roles & permissions"],
+              },
+            ]}
+            features={[
+              { name: "Projects", values: { free: "3", pro: true, team: true } },
+              { name: "Storage", values: { free: "5GB", pro: "100GB", team: "Unlimited" } },
+              { name: "Roles", values: { free: false, pro: false, team: true } },
+            ]}
+          />
+        </div>
+      );
+    case "qr-scanner":
+      return (
+        <div className="w-full max-w-sm rounded-lg border border-border bg-background p-6">
+          <QrScanner onScan={() => {}} autoStart={false} title="Scan a code" />
+        </div>
+      );
+    case "range-slider":
+      return (
+        <div className="w-full max-w-md rounded-lg border border-border bg-background p-6">
+          <RangeSlider value={[20, 80]} onChange={() => {}} min={0} max={100} />
+        </div>
+      );
+    case "rating-input":
+      return (
+        <div className="w-full max-w-xs rounded-lg border border-border bg-background p-6">
+          <RatingInput value={4} onChange={() => {}} label="Rate this component" />
+        </div>
+      );
+    case "rich-text-editor":
+      return (
+        <div className="w-full max-w-2xl rounded-lg border border-border bg-background p-6">
+          <RichTextEditor
+            value="<p>Hello world. Try <strong>bold</strong> and <em>italic</em> text.</p>"
+            onChange={() => {}}
+          />
+        </div>
+      );
+    case "shine-border-card":
+      return (
+        <div className="w-full max-w-sm">
+          <ShineBorderCard>
+            <div className="p-6">
+              <h3 className="font-medium">ShineBorderCard</h3>
+              <p className="mt-1 text-sm text-muted-foreground">
+                A card with an animated shine along its border.
+              </p>
+            </div>
+          </ShineBorderCard>
+        </div>
+      );
+    case "tag-input":
+      return (
+        <div className="w-full max-w-md rounded-lg border border-border bg-background p-6">
+          <TagInput
+            value={["react", "typescript"]}
+            onChange={() => {}}
+            placeholder="Add a tag…"
+            suggestions={["react", "typescript", "nextjs", "tailwind"]}
+          />
+        </div>
+      );
+    case "tree":
+      return (
+        <div className="w-full max-w-sm rounded-lg border border-border bg-background p-6">
+          <Tree
+            nodes={[
+              {
+                id: "1",
+                label: "Project",
+                icon: "folder",
+                children: [
+                  { id: "1-1", label: "src", icon: "folder" },
+                  { id: "1-2", label: "package.json", icon: "file-text" },
+                ],
+              },
+              { id: "2", label: "README.md", icon: "file-text" },
+            ]}
+            defaultExpandedIds={["1"]}
+          />
+        </div>
+      );
+    case "wizard-form-page":
+      return (
+        <div className="w-full max-w-2xl rounded-lg border border-border bg-background p-6">
+          <WizardFormPage
+            steps={[
+              { id: "account", title: "Account", fields: ["email", "password"] },
+              { id: "profile", title: "Profile", fields: ["name"] },
+            ]}
+            defaultValues={{ email: "", password: "", name: "" }}
+            renderField={(name, form) => <Input className="w-full" {...form.register(name)} />}
+            onSubmit={() => {}}
+          />
+        </div>
+      );
     default:
       return (
         <div className="text-sm text-muted-foreground">

@@ -139,7 +139,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Chart",
     "slug": "chart",
     "description": "@arcevo/facet-components: Chart",
-    "category": "general"
+    "category": "ready-to-use"
   },
   {
     "name": "Checkbox",
@@ -169,13 +169,13 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Command",
     "slug": "command",
     "description": "",
-    "category": "general"
+    "category": "ready-to-use"
   },
   {
     "name": "Consent Capture",
     "slug": "consent-capture",
     "description": "@arcevo/facet-components: ConsentCapture",
-    "category": "general"
+    "category": "ready-to-use"
   },
   {
     "name": "Context Menu",
@@ -187,7 +187,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Cookie Banner",
     "slug": "cookie-banner",
     "description": "@arcevo/facet-components: CookieBanner",
-    "category": "general"
+    "category": "ready-to-use"
   },
   {
     "name": "Cookie Consent",
@@ -211,13 +211,13 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Data Table Page",
     "slug": "data-table-page",
     "description": "@arcevo/facet-components: DataTablePage",
-    "category": "general"
+    "category": "pages"
   },
   {
     "name": "Date Input",
     "slug": "date-input",
     "description": "DateInput: a text input that parses and validates ISO (YYYY-MM-DD) dates,",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Date Picker",
@@ -229,7 +229,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Date Range Picker",
     "slug": "date-range-picker",
     "description": "@arcevo/facet-components: DateRangePicker",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Dialog",
@@ -265,7 +265,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Empty State Page",
     "slug": "empty-state-page",
     "description": "@arcevo/facet-components: EmptyStatePage",
-    "category": "general"
+    "category": "pages"
   },
   {
     "name": "Faq Section",
@@ -295,7 +295,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Glow Border Card",
     "slug": "glow-border-card",
     "description": "@arcevo/facet-components: GlowBorderCard",
-    "category": "general"
+    "category": "animation"
   },
   {
     "name": "Hover Card",
@@ -307,7 +307,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Infinite Scroll",
     "slug": "infinite-scroll",
     "description": "InfiniteScroll: an auto-loading container that fires `onLoadMore` when the",
-    "category": "general"
+    "category": "ready-to-use"
   },
   {
     "name": "Input",
@@ -373,7 +373,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Mention Input",
     "slug": "mention-input",
     "description": "@arcevo/facet-components: MentionInput",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Menubar",
@@ -391,7 +391,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Multi Combobox",
     "slug": "multi-combobox",
     "description": "@arcevo/facet-components: MultiCombobox",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Navbar",
@@ -427,7 +427,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Otp Input",
     "slug": "otp-input",
     "description": "@arcevo/facet-components: OtpInput",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Otp Verification Card",
@@ -451,7 +451,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Password Input",
     "slug": "password-input",
     "description": "PasswordInput: a password field with a built-in show/hide toggle.",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Password Strength Meter",
@@ -463,7 +463,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Phone Input",
     "slug": "phone-input",
     "description": "@arcevo/facet-components: PhoneInput",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Popover",
@@ -475,7 +475,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Pricing Comparison",
     "slug": "pricing-comparison",
     "description": "@arcevo/facet-components: PricingComparison",
-    "category": "general"
+    "category": "ready-to-use"
   },
   {
     "name": "Progress",
@@ -487,7 +487,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Qr Scanner",
     "slug": "qr-scanner",
     "description": "@arcevo/facet-components: QrScanner",
-    "category": "general"
+    "category": "ready-to-use"
   },
   {
     "name": "Qrcode",
@@ -505,13 +505,13 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Range Slider",
     "slug": "range-slider",
     "description": "@arcevo/facet-components: RangeSlider",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Rating Input",
     "slug": "rating-input",
     "description": "@arcevo/facet-components: RatingInput",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Resizable",
@@ -523,7 +523,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Rich Text Editor",
     "slug": "rich-text-editor",
     "description": "@arcevo/facet-components: RichTextEditor",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Roadmap",
@@ -565,7 +565,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Shine Border Card",
     "slug": "shine-border-card",
     "description": "@arcevo/facet-components: ShineBorderCard",
-    "category": "general"
+    "category": "animation"
   },
   {
     "name": "Skeleton",
@@ -625,7 +625,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Tag Input",
     "slug": "tag-input",
     "description": "@arcevo/facet-components: TagInput",
-    "category": "general"
+    "category": "inputs"
   },
   {
     "name": "Testimonial Showcase",
@@ -667,7 +667,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Tree",
     "slug": "tree",
     "description": "@arcevo/facet-components: Tree",
-    "category": "general"
+    "category": "ready-to-use"
   },
   {
     "name": "Two Factor Setup Panel",
@@ -679,7 +679,7 @@ export const docsManifest: DocsManifestEntry[] = [
     "name": "Wizard Form Page",
     "slug": "wizard-form-page",
     "description": "@arcevo/facet-components: WizardFormPage",
-    "category": "general"
+    "category": "pages"
   },
   {
     "name": "Icon",

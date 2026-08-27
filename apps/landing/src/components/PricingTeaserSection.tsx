@@ -50,7 +50,7 @@ const TIERS: TeaserTier[] = [
 
 /**
  * Pricing teaser that links to the dedicated /pricing page. Three-card
- * grid highlighting the components tier. Every tier is free — facet is
+ * grid highlighting the components tier. Every tier is free - facet is
  * open source end to end.
  */
 export function PricingTeaserSection() {
@@ -65,7 +65,7 @@ export function PricingTeaserSection() {
           Everything ships free, MIT-licensed
         </h2>
         <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-          Components, auth, layout, SDK, store, tokens, docs, emails, CLI —
+          Components, auth, layout, SDK, store, tokens, docs, emails, CLI -
           all on npm, all free. Pick the pieces you need.
         </p>
       </div>

@@ -31,7 +31,7 @@ const ok = [];
 /**
  * Value-exported SDK class names from the barrel.
  *
- * Matches `export { Name }` / `export { A, B }` value exports only — `export
+ * Matches `export { Name }` / `export { A, B }` value exports only - `export
  * type { ... }` is excluded because the regex requires `{` immediately after
  * `export`. Non-SDK exports (e.g. `ArcIdClient`) are dropped by the `Sdk`
  * suffix filter. Handles `export { A as B }` renames by stripping the alias.
