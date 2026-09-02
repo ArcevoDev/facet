@@ -44,11 +44,6 @@ live-rendered sandbox (second preview box pattern).
 
 Export `facetChangelog` release log from the package barrel.
 
-21 new ready-to-use surfaces added to @arcevo/facet-components:
-WizardFormPage, DateRangePicker, Chart (pure SVG), EmptyStatePage,
-QrScanner, ConsentCapture, DataTablePage, PricingComparison, Tree,
-MultiCombobox, TagInput, RangeSlider, RatingInput, CookieBanner,
-OtpInput, RichTextEditor, PhoneInput, MentionInput, ShineBorderCard,
-GlowBorderCard (plus Stepper / KanbanBoard / ChangelogList from the
-prior session) = 24 total this cycle. All wired into the barrel,
-docs manifest (113 total), and live playground demos.
+(The 21 new surfaces + auth/docs wiring are tracked in the separate
+`ready-to-use-components-1.12` and `stepper-kanban-changelog` changesets;
+this changeset covers only the polish layer above.)
