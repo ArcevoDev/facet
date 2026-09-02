@@ -85,7 +85,7 @@ const QRCode = React.forwardRef<HTMLDivElement, QRCodeProps>(
     return (
       <div
         ref={ref}
-        className={cn("inline-block rounded-md border border-border bg-background p-2", className)}
+        className={cn("inline-block rounded-md border border-border bg-background text-foreground p-2", className)}
       >
         <div className="relative" style={{ width: size, height: size }}>
           <QRCodeSVG
@@ -120,6 +120,7 @@ const QRCode = React.forwardRef<HTMLDivElement, QRCodeProps>(
                   alt={logoAlt ?? logo}
                   width={logoSize}
                   height={logoSize}
+                  className="dark:brightness-0 dark:invert"
                   style={{ width: logoSize, height: logoSize, objectFit: "contain" }}
                 />
               </div>

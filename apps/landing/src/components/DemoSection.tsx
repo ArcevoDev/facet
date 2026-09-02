@@ -156,7 +156,8 @@ function QrDemo() {
           <div className="rounded-lg border border-border bg-background p-3">
             <QRCode
               value={safeUrl}
-              size={180}
+              fgColor="currentColor"
+              size={140}
               logo="/facet-b&w.png"
               logoSize={56}
               level="H"

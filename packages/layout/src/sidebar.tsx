@@ -306,7 +306,7 @@ function NavSectionRenderer({
                 className="flex h-9 w-9 items-center justify-center rounded-md text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               >
                 {icon ? (
-                  <span className="size-4 shrink-0">{icon}</span>
+                  <span className="size-4 shrink-0 text-primary">{icon}</span>
                 ) : (
                   <span className="text-sm font-semibold">
                     {section.title.charAt(0).toUpperCase()}
@@ -442,7 +442,7 @@ function NavItemRenderer({
                 }`}
                 style={collapsed ? undefined : { paddingLeft: `${8 + depth * 12}px` }}
               >
-                {item.icon && collapsed && <span className="size-4 shrink-0">{item.icon}</span>}
+                {item.icon && collapsed && <span className="size-4 shrink-0 text-primary">{item.icon}</span>}
                 {!collapsed && <span className="flex-1 text-left">{item.label}</span>}
                 {!collapsed && item.badge != null && (
                   <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
@@ -518,7 +518,7 @@ function NavItemRenderer({
                   : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               }`}
             >
-              {item.icon && collapsed && <span className="size-4 shrink-0">{item.icon}</span>}
+              {item.icon && collapsed && <span className="size-4 shrink-0 text-primary">{item.icon}</span>}
               {!collapsed && <span className="flex-1">{item.label}</span>}
               {!collapsed && item.badge != null && (
                 <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">

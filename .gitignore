@@ -15,5 +15,6 @@ test-out.txt
 typecheck-out.txt
 build-output.txt
 typecheck-output.txt
+trace-output.txt
 ui_codebase_snapshot.txt
 storybook-static

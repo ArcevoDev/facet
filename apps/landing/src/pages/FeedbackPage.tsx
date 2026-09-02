@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { LandingLayout } from "@arcevo/facet-layout";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, ShineButton, buttonVariants, cn, Separator, Label, Input, Textarea } from "@arcevo/facet-components";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button, Separator, Label, Input, Textarea } from "@arcevo/facet-components";
 import { LightIcon } from "@arcevo/facet-components/light";
 import { CONTACT } from "../lib/socials.js";
 import { Nav } from "../components/Nav.js";
@@ -63,8 +63,9 @@ export function FeedbackPage() {
         </div>
       }
     >
-      {/* Email form (professional standard) */}
-      <Card className="mb-6">
+      <div className="mx-auto w-full max-w-2xl px-8 py-12">
+        {/* Email form (professional standard) */}
+        <Card className="mb-6">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <LightIcon name="mail" size={18} className="text-primary" />
@@ -108,12 +109,9 @@ export function FeedbackPage() {
                 onChange={(e) => setMessage(e.target.value)}
               />
             </div>
-            <ShineButton
-              type="submit"
-              className={cn(buttonVariants({ variant: "default", size: "default" }))}
-            >
+            <Button type="submit">
               Send feedback
-            </ShineButton>
+            </Button>
           </form>
         </CardContent>
       </Card>
@@ -182,6 +180,7 @@ export function FeedbackPage() {
             <div className="text-xs text-muted-foreground">@kenny.gr8</div>
           </div>
         </a>
+      </div>
       </div>
     </LandingLayout>
   );

@@ -81,7 +81,7 @@ export function AuthShowcaseSection() {
               </div>
             </TabsContent>
 
-            <TabsContent value="otp">
+            <TabsContent value="otp" className="flex justify-center">
               <OtpVerificationCard
                 onVerify={async () => {
                   // demo: always reject so the error state is observable

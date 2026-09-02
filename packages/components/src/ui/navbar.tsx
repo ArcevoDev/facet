@@ -447,7 +447,7 @@ function NavLinkItem({
       <DropdownMenu open={dropdownOpen} onOpenChange={dropdownOnOpenChange} modal={!hoverDropdowns}>
         <DropdownMenuTrigger asChild>
           <button type="button" className={cn(itemClass, "data-[state=open]:bg-accent/60")} {...triggerHoverProps} onClick={triggerClick}>
-            {link.icon && <span className="size-4 shrink-0">{link.icon}</span>}
+            {link.icon && <span className="size-4 shrink-0 text-primary/70">{link.icon}</span>}
             <span>{link.label}</span>
             {link.badge != null && (
               <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
@@ -491,7 +491,7 @@ function NavLinkItem({
                 >
                   <span className="flex items-center gap-2 text-sm font-medium">
                     {child.icon && (
-                      <span className="size-4 shrink-0 text-muted-foreground">{child.icon}</span>
+                      <span className="size-4 shrink-0 text-primary/70">{child.icon}</span>
                     )}
                     {child.label}
                     {child.badge != null && (
@@ -519,7 +519,7 @@ function NavLinkItem({
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger className="flex cursor-pointer items-center gap-2 py-2">
                         {child.icon && (
-                          <span className="size-4 shrink-0 text-muted-foreground">{child.icon}</span>
+                          <span className="size-4 shrink-0 text-primary/70">{child.icon}</span>
                         )}
                         <span className="flex-1 font-medium">{child.label}</span>
                         {child.badge != null && (
@@ -536,7 +536,7 @@ function NavLinkItem({
                             className="flex cursor-pointer items-center gap-2 py-2"
                           >
                             {nested.icon && (
-                              <span className="size-4 shrink-0 text-muted-foreground">
+                              <span className="size-4 shrink-0 text-primary/70">
                                 {nested.icon}
                               </span>
                             )}
@@ -557,7 +557,7 @@ function NavLinkItem({
                     >
                       <span className="flex items-center gap-2 font-medium">
                         {child.icon && (
-                          <span className="size-4 shrink-0 text-muted-foreground">{child.icon}</span>
+                          <span className="size-4 shrink-0 text-primary/70">{child.icon}</span>
                         )}
                         {child.label}
                         {child.badge != null && (
@@ -593,7 +593,7 @@ function NavLinkItem({
       className={itemClass}
       aria-current={isActive ? "page" : undefined}
     >
-      {link.icon && <span className="size-4 shrink-0">{link.icon}</span>}
+      {link.icon && <span className="size-4 shrink-0 text-primary/70">{link.icon}</span>}
       <span>{link.label}</span>
       {link.badge != null && (
         <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
@@ -628,7 +628,7 @@ function MobileNavLink({
           className="flex items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
         >
           <span className="flex items-center gap-2">
-            {link.icon && <span className="size-4 shrink-0">{link.icon}</span>}
+            {link.icon && <span className="size-4 shrink-0 text-primary/70">{link.icon}</span>}
             {link.label}
           </span>
           <svg
@@ -682,7 +682,7 @@ function MobileNavLink({
       }}
       className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground/70 transition-colors hover:bg-accent hover:text-foreground"
     >
-      {link.icon && <span className="size-4 shrink-0">{link.icon}</span>}
+      {link.icon && <span className="size-4 shrink-0 text-primary/70">{link.icon}</span>}
       <span>{link.label}</span>
       {link.badge != null && (
         <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground">
