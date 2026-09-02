@@ -120,14 +120,24 @@ export function Chart({
   const tooltipX = hover ? xOf(hover.dataIndex) : 0;
   const tooltipY = hover ? yOf(series[hover.seriesIndex]!.data[hover.dataIndex]!) : 0;
 
+  const svgRef = React.useRef<SVGSVGElement | null>(null);
+  const pointerYRef = React.useRef<number>(0);
+
+  const handlePointerMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (rect) pointerYRef.current = e.clientY - rect.top;
+  };
+
   return (
     <div className={cn("relative w-full", className)}>
       <svg
+        ref={svgRef}
         viewBox={`0 0 ${width} ${height}`}
         preserveAspectRatio="xMidYMid meet"
         className="block w-full"
         role="img"
         aria-label="Chart"
+        onMouseMove={handlePointerMove}
         onMouseLeave={() => setHover(null)}
       >
         {/* Y axis grid + labels */}
@@ -186,7 +196,7 @@ export function Chart({
                     width={barW}
                     height={Math.abs(yOf(v) - yOf(0))}
                     fill={color}
-                    opacity={hover && hover.dataIndex !== i ? 0.4 : 1}
+                    opacity={hover && (hover.dataIndex !== i || hover.seriesIndex !== si) ? 0.4 : 1}
                     rx={4}
                   />
                 ))}
@@ -234,7 +244,21 @@ export function Chart({
               width={xStep}
               height={plotH}
               fill="transparent"
-              onMouseEnter={() => setHover({ dataIndex: i, seriesIndex: 0 })}
+              onMouseEnter={() => {
+                const py = pointerYRef.current;
+                let bestSi = 0;
+                let bestDist = Infinity;
+                for (let si = 0; si < series.length; si++) {
+                  const val = series[si]?.data?.[i];
+                  if (val == null) continue;
+                  const dist = Math.abs(yOf(val) - py);
+                  if (dist < bestDist) {
+                    bestDist = dist;
+                    bestSi = si;
+                  }
+                }
+                setHover({ dataIndex: i, seriesIndex: bestSi });
+              }}
             />
           ))}
 

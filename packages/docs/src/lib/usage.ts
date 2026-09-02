@@ -1263,6 +1263,351 @@ function Example() {
     </ResizablePanelGroup>
   );
 }`,
+
+  /* ── Phase 1+ components that were missing usage snippets ────────── */
+
+  carousel: `import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <Carousel className="max-w-xs">
+      <CarouselContent>
+        <CarouselItem>
+          <div className="p-1">1</div>
+        </CarouselItem>
+        <CarouselItem>
+          <div className="p-1">2</div>
+        </CarouselItem>
+        <CarouselItem>
+          <div className="p-1">3</div>
+        </CarouselItem>
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
+  );
+}`,
+
+  chart: `import { Chart } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <Chart
+      x={["Mon", "Tue", "Wed", "Thu", "Fri"]}
+      series={[
+        { id: "sales", label: "Sales", data: [30, 80, 50, 60, 90] },
+        { id: "marketing", label: "Marketing", data: [40, 60, 70, 30, 50] },
+      ]}
+    />
+  );
+}`,
+
+  drawer: `import {
+  Drawer,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerDescription,
+  DrawerFooter,
+} from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <Drawer>
+      <DrawerTrigger>Open drawer</DrawerTrigger>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Are you sure?</DrawerTitle>
+          <DrawerDescription>This action cannot be undone.</DrawerDescription>
+        </DrawerHeader>
+        <DrawerFooter>
+          <button>Confirm</button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+}`,
+
+  stepper: `import {
+  StepperProvider,
+  StepperNav,
+  StepperPanel,
+  useStepper,
+} from "@arcevo/facet-components";
+
+const stepper = useStepper({
+  steps: [
+    { id: "details", title: "Details" },
+    { id: "payment", title: "Payment" },
+    { id: "confirm", title: "Confirm" },
+  ],
+});
+
+function Example() {
+  return (
+    <StepperProvider value={stepper}>
+      <StepperNav />
+      <StepperPanel />
+    </StepperProvider>
+  );
+}`,
+
+  tree: `import { Tree } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <Tree
+      nodes={[
+        { id: "1", label: "Dashboard" },
+        {
+          id: "2",
+          label: "Settings",
+          children: [
+            { id: "3", label: "Profile" },
+            { id: "4", label: "Security" },
+          ],
+        },
+      ]}
+    />
+  );
+}`,
+
+  "changelog-list": `import { ChangelogList } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <ChangelogList
+      releases={[
+        {
+          version: "1.2.0",
+          date: "2026-08-12",
+          changes: [
+            { kind: "added", text: "Stepper component" },
+            { kind: "fixed", text: "Navbar hover blink" },
+          ],
+        },
+      ]}
+    />
+  );
+}`,
+
+  "consent-capture": `import { ConsentCapture } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <ConsentCapture
+      title="Terms of Service"
+      body={<p>By accepting you agree to our terms and conditions.</p>}
+      onSubmit={() => {}}
+    />
+  );
+}`,
+
+  "cookie-banner": `import { CookieBanner } from "@arcevo/facet-components";
+
+function Example() {
+  return <CookieBanner onChoose={() => {}} />;
+}`,
+
+  "data-table-page": `import { DataTablePage } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <DataTablePage
+      title="Users"
+      columns={[
+        { accessorKey: "name", header: "Name" },
+        { accessorKey: "email", header: "Email" },
+      ]}
+      rows={[
+        { name: "Alice", email: "alice@acme.com" },
+        { name: "Bob", email: "bob@acme.com" },
+      ]}
+    />
+  );
+}`,
+
+  "date-range-picker": `import { DateRangePicker } from "@arcevo/facet-components";
+
+function Example() {
+  return <DateRangePicker />;
+}`,
+
+  "empty-state-page": `import { EmptyStatePage } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <EmptyStatePage
+      title="No projects yet"
+      description="Get started by creating your first project."
+    />
+  );
+}`,
+
+  "glow-border-card": `import { GlowBorderCard } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <GlowBorderCard className="p-6">
+      <p>Glow Border Card</p>
+    </GlowBorderCard>
+  );
+}`,
+
+  "input-group": `import { Input, InputGroup, InputGroupAddon } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <InputGroup>
+      <InputGroupAddon>@</InputGroupAddon>
+      <Input type="email" placeholder="you@acme.com" />
+    </InputGroup>
+  );
+}`,
+
+  "kanban-board": `import { KanbanBoard, useKanban } from "@arcevo/facet-components";
+
+const board = useKanban({
+  columns: [
+    { id: "todo", title: "Todo", cards: [{ id: "1", title: "Task A" }] },
+    { id: "done", title: "Done", cards: [] },
+  ],
+});
+
+function Example() {
+  return <KanbanBoard board={board} />;
+}`,
+
+  "mention-input": `import { MentionInput } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <MentionInput
+      value="@alice hello"
+      onChange={() => {}}
+      users={[{ id: "1", name: "Alice", handle: "alice" }]}
+    />
+  );
+}`,
+
+  "multi-combobox": `import { MultiCombobox } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <MultiCombobox
+      options={[
+        { id: "react", label: "React" },
+        { id: "vue", label: "Vue" },
+        { id: "svelte", label: "Svelte" },
+      ]}
+      value={["react"]}
+      onChange={() => {}}
+    />
+  );
+}`,
+
+  "otp-input": `import { OtpInput } from "@arcevo/facet-components";
+
+function Example() {
+  return <OtpInput value="123456" onChange={() => {}} />;
+}`,
+
+  "phone-input": `import { PhoneInput } from "@arcevo/facet-components";
+
+function Example() {
+  return <PhoneInput value="+14155552671" onChange={() => {}} />;
+}`,
+
+  "pricing-comparison": `import { PricingComparison } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <PricingComparison
+      tiers={[
+        {
+          id: "free",
+          name: "Free",
+          price: "$0",
+          features: { "Unlimited projects": false, "5 users": false },
+        },
+        {
+          id: "pro",
+          name: "Pro",
+          price: "$19",
+          features: { "Unlimited projects": true, "5 users": true },
+          highlighted: true,
+        },
+      ]}
+      features={[
+        { name: "Unlimited projects", values: { free: "✓", pro: true } },
+        { name: "5 users", values: { free: false, pro: true } },
+      ]}
+    />
+  );
+}`,
+
+  "qr-scanner": `import { QrScanner } from "@arcevo/facet-components";
+
+function Example() {
+  return <QrScanner onScan={(result) => console.log(result)} />;
+}`,
+
+  "range-slider": `import { RangeSlider } from "@arcevo/facet-components";
+
+function Example() {
+  return <RangeSlider value={[25, 75]} onChange={() => {}} min={0} max={100} />;
+}`,
+
+  "rating-input": `import { RatingInput } from "@arcevo/facet-components";
+
+function Example() {
+  return <RatingInput value={4} onChange={() => {}} />;
+}`,
+
+  "rich-text-editor": `import { RichTextEditor } from "@arcevo/facet-components";
+
+function Example() {
+  return <RichTextEditor value="<p>Hello world</p>" onChange={() => {}} />;
+}`,
+
+  "shine-border-card": `import { ShineBorderCard } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <ShineBorderCard className="p-6">
+      <p>Shine Border Card</p>
+    </ShineBorderCard>
+  );
+}`,
+
+  "tag-input": `import { TagInput } from "@arcevo/facet-components";
+
+function Example() {
+  return <TagInput value={["react", "typescript"]} onChange={() => {}} />;
+}`,
+
+  "wizard-form-page": `import { WizardFormPage, Input } from "@arcevo/facet-components";
+
+function Example() {
+  return (
+    <WizardFormPage
+      steps={[
+        { id: "account", title: "Account", fields: ["email", "password"] },
+        { id: "profile", title: "Profile", fields: ["name"] },
+      ]}
+      defaultValues={{ email: "", password: "", name: "" }}
+      renderField={(name) => <Input />}
+      onSubmit={(data) => console.log(data)}
+    />
+  );
+}`,
 };
 
 /** Minimal import + usage snippet for a component slug. */

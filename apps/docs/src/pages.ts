@@ -1,4 +1,5 @@
 import type { DocsPage } from "@arcevo/facet-docs";
+import { facetChangelog } from "@arcevo/facet-components";
 
 /**
  * facet's own authored guide pages.
@@ -572,6 +573,14 @@ function MyHeader() {
         text: "Because `config` is `Partial<AuthConfig>`, any consumer can build their own presets from an existing one.",
       },
     ],
+  },
+  {
+    path: "/playground",
+    title: "Playground",
+    section: "ecosystem",
+    description:
+      "Edit any component's full usage code and watch it render live. Pick a component to pre-load, then tweak the JSX and see the preview update instantly.",
+    blocks: [{ type: "playground", defaultSlug: "button" }],
   },
   {
     path: "/docs-package",
@@ -1464,6 +1473,23 @@ const client = new ArcIdClient({
       {
         type: "p",
         text: "See [Stack Agnosticism](/stack-agnosticism) for the full layer matrix. The store has zero arc-id-specific logic - it depends only on `@arcevo/facet-sdk` types and `zustand`. A `TokenStoreLike` and a `TokenRefresher` are the only contracts `createZustandTokenStorage` needs, so you can wire it to any store or refresh implementation.",
+      },
+    ],
+  },
+  {
+    path: "/changelog",
+    title: "Changelog",
+    section: "ecosystem",
+    description: "Release log for @arcevo/facet-components and the Arcevo ecosystem.",
+    blocks: [
+      {
+        type: "p",
+        text: "Versioned release notes for every @arcevo/facet-* package. Entries are curated from the shipped changesets and updated when `pnpm changeset version` runs and CHANGELOG.md is touched.",
+      },
+      {
+        type: "changelog",
+        releases: facetChangelog,
+        showFilter: true,
       },
     ],
   },

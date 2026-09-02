@@ -30,6 +30,9 @@ const AuthPreviews = React.lazy(() =>
 const LayoutPreviews = React.lazy(() =>
   import("../components/LayoutPreviews.js").then((m) => ({ default: m.LayoutPreviews })),
 );
+const PlaygroundPage = React.lazy(() =>
+  import("../components/PlaygroundPage.js").then((m) => ({ default: m.PlaygroundPage })),
+);
 
 /** Render a single structured content block. */
 function Block({ block }: { block: DocsBlock }) {
@@ -102,13 +105,21 @@ function Block({ block }: { block: DocsBlock }) {
           ]}
         />
       );
-    case "changelog":
-      return (
-        <ChangelogList
-          releases={block.releases as ChangelogRelease[]}
-          showFilter={block.showFilter ?? true}
-        />
-      );
+  case "changelog":
+    return (
+      <ChangelogList
+        releases={block.releases as ChangelogRelease[]}
+        showFilter={block.showFilter ?? true}
+      />
+    );
+  case "playground":
+    return (
+      <React.Suspense
+        fallback={<p className="text-sm text-muted-foreground">Loading playground…</p>}
+      >
+        <PlaygroundPage defaultSlug={block.defaultSlug} />
+      </React.Suspense>
+    );
   }
 }
 

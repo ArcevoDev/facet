@@ -698,10 +698,11 @@ export {
 
 /* ── Ready-to-use: project & tracking ─────────────────────── */
 export {
-  type KanbanCardDef,
+   type KanbanCardDef,
   type KanbanColumnDef,
   type UseKanbanOptions,
   type KanbanApi,
+  type KanbanCardAction,
   type KanbanCardProps,
   type KanbanColumnProps,
   type KanbanBoardProps,
@@ -718,6 +719,8 @@ export {
   type ChangelogListProps,
   ChangelogList,
 } from "./ui/changelog-list.js";
+export { type ChangelogRelease as FacetChangelogRelease } from "./ui/changelog-list.js";
+export { facetChangelog } from "./data/changelog.js";
 
 export {
   type WizardFormStep,

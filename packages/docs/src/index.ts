@@ -45,6 +45,12 @@ export type { InteractiveDemoProps } from "./components/InteractiveDemo.js";
 export { ThemePreviewFrame } from "./components/ThemePreviewFrame.js";
 export type { ThemePreviewFrameProps } from "./components/ThemePreviewFrame.js";
 
+// Live playground (editable default-usage code → live preview)
+export { LiveCodePlayground } from "./components/LiveCodePlayground.js";
+export type { LiveCodePlaygroundProps } from "./components/LiveCodePlayground.js";
+export { PlaygroundPage } from "./components/PlaygroundPage.js";
+export type { PlaygroundPageProps } from "./components/PlaygroundPage.js";
+
 // Content engine
 export { DocsContentPage } from "./pages/DocsContentPage.js";
 

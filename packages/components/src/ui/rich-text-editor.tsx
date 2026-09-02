@@ -13,6 +13,7 @@
  */
 
 import * as React from "react";
+import DOMPurify from "dompurify";
 import { cn } from "../utils.js";
 import { Icon, type IconName } from "../icon/index.js";
 import { Button } from "./button.js";
@@ -62,6 +63,60 @@ const TOOLS: ToolDef[] = [
   { id: "link", label: "Link", icon: "link", command: "createLink" },
 ];
 
+/**
+ * URL schemes that may be used in `href` / `src` attributes. Everything else
+ * (javascript:, data:, vbscript:, file:, …) is rejected so that
+ * `document.execCommand("createLink")` cannot inject a XSS payload.
+ */
+const SAFE_URL_PROTOCOLS = new Set(["http:", "https:", "mailto:", "tel:"]);
+
+/**
+ * Return `true` when `url` is a safe URI for an `<a href>` or similar.
+ * Relative URLs (no scheme) and same-page anchors (`#…`) are allowed.
+ */
+function isSafeUrl(url: string): boolean {
+  const trimmed = url.trim();
+  if (!trimmed) return true; // empty is fine (createLink with empty = no-op)
+  // Relative URLs, anchors, query strings — no colon-based scheme
+  if (!trimmed.includes(":") || trimmed.startsWith("/") || trimmed.startsWith("#") || trimmed.startsWith("?")) {
+    return true;
+  }
+  try {
+    const parsed = new URL(trimmed);
+    return SAFE_URL_PROTOCOLS.has(parsed.protocol);
+  } catch {
+    return false; // not a parseable URL — reject
+  }
+}
+
+/**
+ * Sanitize HTML for the contenteditable surface using DOMPurify.
+ * Strips <script> tags, event-handler attributes, and other active content.
+ */
+function sanitizeHtml(html: string): string {
+  // DOMPurify is browser-only; it no-ops (returns input) when window is absent.
+  if (typeof window === "undefined") return html;
+  return DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [
+      "b", "i", "em", "strong", "u", "s", "strike",
+      "span", "p", "br", "div",
+      "h1", "h2", "h3", "h4", "h5", "h6",
+      "ul", "ol", "li",
+      "blockquote", "pre", "code",
+      "a",
+      "img", "table", "thead", "tbody", "tr", "th", "td",
+      "hr", "sub", "sup",
+    ],
+    ALLOWED_ATTR: [
+      "href", "src", "alt", "title",
+      "width", "height",
+      "start",
+      "cellpadding", "cellspacing", "colspan", "rowspan",
+    ],
+    FORBID_ATTR: ["on*", "style", "class"],
+  });
+}
+
 /* ── Component ─────────────────────────────────────────────── */
 
 /**
@@ -86,7 +141,10 @@ export function RichTextEditor({
   React.useEffect(() => {
     const el = editorRef.current;
     if (!el) return;
-    if (el.innerHTML !== value) el.innerHTML = value;
+    // Sanitize before injecting HTML — prevents stored XSS if the consumer
+    // passes unsanitized content (e.g. from a database or paste).
+    const safe = sanitizeHtml(value);
+    if (el.innerHTML !== safe) el.innerHTML = safe;
   }, [value]);
 
   const runCommand = (tool: ToolDef) => {
@@ -105,6 +163,13 @@ export function RichTextEditor({
     if (!editorRef.current) return;
     editorRef.current.focus();
     if (linkUrl) {
+      // Guard against javascript: / data: / vbscript: URLs that would
+      // execute script when the link is clicked.
+      if (!isSafeUrl(linkUrl)) {
+        setLinkUrl("");
+        setLinkPromptOpen(false);
+        return;
+      }
       document.execCommand("createLink", false, linkUrl);
       onChange(editorRef.current.innerHTML);
     }

@@ -37,12 +37,12 @@ export const navbarVariants = cva(
       variant: {
         default: "border-b border-border bg-background",
         sticky:
-          "sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
-        glass: "sticky top-0 z-50 border-b border-white/10 glass",
+          "sticky top-0 z-60 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80",
+        glass: "sticky top-0 z-60 border-b border-white/10 glass",
         bordered: "border border-border/60 bg-background shadow-sm",
         transparent: "border-b border-transparent bg-transparent",
         pill: [
-          "sticky top-0 z-50 w-full",
+          "sticky top-0 z-60 w-full",
           "border-b border-border/60 bg-background/80 px-3 py-2 shadow-sm shadow-black/5",
           "backdrop-blur-xl supports-[backdrop-filter]:bg-background/60",
           "transition-colors",
@@ -214,6 +214,23 @@ export function Navbar({
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [showHamburger, mobileOpen]);
 
+  // Close any open hover dropdown with Escape (modal={false} below means
+  // Radix won't auto-fire onOpenChange for it).
+  React.useEffect(() => {
+    if (!hoverDropdowns) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && openDropdown) {
+        if (closeTimerRef.current) {
+          clearTimeout(closeTimerRef.current);
+          closeTimerRef.current = null;
+        }
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [hoverDropdowns, openDropdown, closeTimerRef, setOpenDropdown]);
+
   return (
     <nav
       ref={navbarRef}
@@ -304,7 +321,7 @@ export function Navbar({
       {showHamburger && mobileOpen && (
         <div
           className={cn(
-            `absolute inset-x-0 top-full z-50 border-b border-border bg-background p-4 ${bpHide}`,
+            `absolute inset-x-0 top-full z-60 border-b border-border bg-background p-4 ${bpHide}`,
             isPill && "mt-1 rounded-2xl shadow-lg",
           )}
         >
@@ -381,17 +398,30 @@ function NavLinkItem({
     const scheduleClose = React.useCallback(() => {
       clearCloseTimer();
       if (closeTimerRef) {
-        closeTimerRef.current = setTimeout(() => setOpenDropdown?.(null), 150);
+        closeTimerRef.current = setTimeout(() => setOpenDropdown?.(null), 250);
       }
     }, [closeTimerRef, clearCloseTimer, setOpenDropdown]);
 
     const dropdownOpen = hoverDropdowns ? openDropdown === link.href : undefined;
     const dropdownOnOpenChange = hoverDropdowns
       ? (open: boolean) => {
-          if (!open && openDropdown === link.href) {
+          // In hover mode we own the open/close lifecycle via the mouse
+          // timers.  Ignore every auto-close Radix fires (focus loss,
+          // outside-click, Escape) - those fire spuriously during the
+          // hover → content transition and cause the dropdown to blink.
+          // Click-on-trigger still opens, and toggles via onClick below.
+          if (open) {
             clearCloseTimer();
-            setOpenDropdown?.(null);
+            setOpenDropdown?.(link.href);
           }
+        }
+      : undefined;
+
+    const triggerClick = hoverDropdowns
+      ? (e: React.MouseEvent<HTMLButtonElement>) => {
+          e.preventDefault();
+          clearCloseTimer();
+          setOpenDropdown?.(openDropdown === link.href ? null : link.href);
         }
       : undefined;
 
@@ -401,20 +431,22 @@ function NavLinkItem({
             clearCloseTimer();
             setOpenDropdown?.(link.href);
           },
+          onMouseMove: clearCloseTimer,
           onMouseLeave: scheduleClose,
         }
       : {};
     const contentHoverProps = hoverDropdowns
       ? {
           onMouseEnter: clearCloseTimer,
+          onMouseMove: clearCloseTimer,
           onMouseLeave: scheduleClose,
         }
       : {};
 
     return (
-      <DropdownMenu open={dropdownOpen} onOpenChange={dropdownOnOpenChange}>
+      <DropdownMenu open={dropdownOpen} onOpenChange={dropdownOnOpenChange} modal={!hoverDropdowns}>
         <DropdownMenuTrigger asChild>
-          <button type="button" className={cn(itemClass, "data-[state=open]:bg-accent/60")} {...triggerHoverProps}>
+          <button type="button" className={cn(itemClass, "data-[state=open]:bg-accent/60")} {...triggerHoverProps} onClick={triggerClick}>
             {link.icon && <span className="size-4 shrink-0">{link.icon}</span>}
             <span>{link.label}</span>
             {link.badge != null && (
@@ -442,7 +474,7 @@ function NavLinkItem({
           align="start"
           side="bottom"
           sideOffset={8}
-          className={cn("p-2", panelWidth)}
+          className={cn("z-70 p-2", panelWidth)}
           {...contentHoverProps}
         >
           {isMega ? (

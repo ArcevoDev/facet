@@ -209,18 +209,22 @@ export function BorderBeamCard({
   ...props
 }: BorderBeamCardProps) {
   return (
-    <div className={cn("relative w-full overflow-hidden rounded-xl", className)} style={style} {...props}>
+    <div className={cn("group relative w-full overflow-hidden rounded-xl", className)} style={style} {...props}>
       {/* Rotating conic gradient, clipped to the border ring. The bright
           beam arc (primary -> fuchsia) sweeps around the edge while the
           content card stays static on top. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0"
+        className={cn(
+          "absolute inset-0",
+          "transition-[filter_250ms] group-hover:brightness-125",
+        )}
         style={
           {
             background: `conic-gradient(from 0deg, ${colors.join(", ")})`,
             animation: `facet-spin ${duration}ms linear infinite`,
             transformOrigin: "center center",
+            willChange: "transform",
           } as React.CSSProperties
         }
       />

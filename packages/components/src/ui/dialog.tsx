@@ -8,7 +8,7 @@ const DialogTrigger = DialogPrimitive.Trigger;
 const DialogPortal = DialogPrimitive.Portal;
 const DialogClose = DialogPrimitive.Close;
 
-const dialogOverlayVariants = cva("fixed inset-0 z-50", {
+const dialogOverlayVariants = cva("fixed inset-0 z-[70]", {
   variants: {
     variant: {
       dim: "bg-black/80",
@@ -42,7 +42,7 @@ const DialogOverlay = React.forwardRef<
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 const dialogContentVariants = cva(
-  "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 p-6 text-foreground sm:w-full sm:rounded-lg",
+  "fixed left-[50%] top-[50%] z-[70] grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 p-6 text-foreground sm:w-full sm:rounded-lg",
   {
     variants: {
       variant: {

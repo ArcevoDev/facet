@@ -179,7 +179,7 @@ export function UserAvatar({
           {avatar}
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="z-70 w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col gap-1">
             <p className="text-sm font-medium leading-none">{user.name ?? "Signed in"}</p>

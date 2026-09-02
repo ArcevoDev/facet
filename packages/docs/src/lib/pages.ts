@@ -60,6 +60,11 @@ export type DocsBlock =
       }>;
       /** Show the kind filter row. Default: true. */
       showFilter?: boolean;
+    } | {
+      /** Centralised live playground: component selector + editable usage code with a live preview. */
+      type: "playground";
+      /** Manifest slug to pre-select. Defaults to "button". */
+      defaultSlug?: string;
     };
 
 export interface DocsPage {

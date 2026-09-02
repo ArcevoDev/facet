@@ -27,10 +27,26 @@ import {
   DialogFooter,
   DialogClose,
 } from "./dialog.js";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "./alert-dialog.js";
 import { Input } from "./input.js";
 import { Textarea } from "./textarea.js";
 import { Button } from "./button.js";
 import { Label } from "./label.js";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "./dropdown-menu.js";
 
 /* ── Types ─────────────────────────────────────────────────── */
 
@@ -122,6 +138,22 @@ export interface KanbanApi {
   removeColumn: (columnId: string) => boolean;
   /** Look up a card by id (helper). */
   findCard: (cardId: string) => { card: KanbanCardDef; column: KanbanColumnDef } | null;
+}
+
+/** A single row in a card's action menu. */
+export interface KanbanCardAction {
+  /** Stable key used for React reconciliation. */
+  key: string;
+  /** Label shown in the menu item. */
+  label: string;
+  /** Optional icon (lucide name). */
+  icon?: IconName;
+  /** Invoked when the item is chosen. */
+  onClick: (card: KanbanCardDef) => void;
+  /** Render the item in the destructive tone. */
+  destructive?: boolean;
+  /** Disable the item. Receives the current card. */
+  disabled?: (card: KanbanCardDef) => boolean;
 }
 
 /* ── useKanban hook (state only) ──────────────────────────── */
@@ -308,8 +340,14 @@ export interface KanbanCardProps
   card: KanbanCardDef;
   /** Optional click handler (open detail panel). */
   onSelect?: (card: KanbanCardDef) => void;
+  /** Action menu items (Edit / Delete / Export …). When omitted the card
+   *  falls back to a built-in set bound to the board API so you get them
+   *  out of the box without any extra wiring. */
+  actions?: KanbanCardAction[];
   /** Show a drag handle. Default: true. */
   showHandle?: boolean;
+  /** Show the action menu (ellipsis). Default: true. */
+  showActions?: boolean;
 }
 
 function initials(value: string) {
@@ -323,13 +361,94 @@ function initials(value: string) {
 }
 
 /**
+ * Default action set used when no `actions` prop is supplied to KanbanCard.
+ * Every item is wired to the board API so cards are fully actionable
+ * out of the box - edit, duplicate, export and delete - with no extra wiring.
+ *
+ * `onDelete` opens a confirmation modal rather than calling `window.confirm`,
+ * so every action flows through a UI modal - not a native browser dialog.
+ */
+function defaultCardActions(
+  board: KanbanApi,
+  onEdit: (card: KanbanCardDef) => void,
+  onDelete: (card: KanbanCardDef) => void,
+): KanbanCardAction[] {
+  return [
+    {
+      key: "edit",
+      label: "Edit",
+      icon: "pencil",
+      onClick: (card) => onEdit(card),
+    },
+    {
+      key: "duplicate",
+      label: "Duplicate",
+      icon: "copy",
+      onClick: (card) => {
+        const located = board.findCard(card.id);
+        if (!located) return;
+        board.addCard(located.column.id, {
+          title: `${card.title} (copy)`,
+          description: card.description,
+          tags: card.tags,
+          icon: card.icon,
+          assignee: card.assignee,
+          updatedAt: new Date().toISOString(),
+        });
+      },
+    },
+    {
+      key: "export",
+      label: "Export as JSON",
+      icon: "download",
+      onClick: (card) => {
+        const data = JSON.stringify(card, null, 2);
+        const blob = new Blob([data], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `card-${card.id}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      icon: "trash2",
+      destructive: true,
+      onClick: (card) => onDelete(card),
+    },
+  ];
+}
+
+/**
  * A single kanban card. Drop-in: drag to move, click to select. Renders
  * title, description, tags, and assignee avatar.
  */
 export const KanbanCard = React.forwardRef<HTMLDivElement, KanbanCardProps>(
-  function KanbanCard({ card, onSelect, showHandle = true, className, ...props }, ref) {
+  function KanbanCard({ card, onSelect, actions, showHandle = true, showActions = true, className, ...props }, ref) {
     const ctx = useKanbanContext("KanbanCard");
     const { drag, setDrag, readOnly } = ctx;
+
+    const [editing, setEditing] = React.useState(false);
+    const [editTitle, setEditTitle] = React.useState("");
+    const [editDesc, setEditDesc] = React.useState("");
+    const [editTags, setEditTags] = React.useState("");
+    const [deletingCard, setDeletingCard] = React.useState<KanbanCardDef | null>(null);
+
+    React.useEffect(() => {
+      if (editing) {
+        setEditTitle(card.title);
+        setEditDesc(card.description ?? "");
+        setEditTags(card.tags?.join(", ") ?? "");
+      }
+    }, [editing, card]);
+
+    const resolvedActions =
+      showActions === false || readOnly
+        ? []
+        : actions ?? defaultCardActions(ctx.board, () => setEditing(true), (card) => setDeletingCard(card));
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
       if (readOnly) return;
@@ -385,6 +504,37 @@ export const KanbanCard = React.forwardRef<HTMLDivElement, KanbanCardProps>(
               aria-hidden="true"
             />
           )}
+          {resolvedActions.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="ml-1 flex h-6 w-6 items-center justify-center rounded-md opacity-25 hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label="Card actions"
+                >
+                  <Icon name="ellipsis-vertical" className="size-3.5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                {resolvedActions.map((a) => (
+                  <DropdownMenuItem
+                    key={a.key}
+                    onSelect={(e) => {
+                      e.preventDefault();
+                      a.onClick(card);
+                    }}
+                    disabled={a.disabled?.(card)}
+                    className={a.destructive ? "text-destructive" : undefined}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {a.icon && <Icon name={a.icon} className="mr-2 size-4" />}
+                    <span>{a.label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
         {(card.tags?.length || card.assignee) && (
           <div className="mt-3 flex items-center justify-between gap-2">
@@ -408,6 +558,82 @@ export const KanbanCard = React.forwardRef<HTMLDivElement, KanbanCardProps>(
             )}
           </div>
         )}
+
+        <Dialog open={editing} onOpenChange={setEditing}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Edit card</DialogTitle>
+              <DialogDescription>Update the card details.</DialogDescription>
+            </DialogHeader>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const title = editTitle.trim();
+                if (!title) return;
+                ctx.board.updateCard(card.id, {
+                  title,
+                  description: editDesc.trim() || undefined,
+                  tags: editTags
+                    ? editTags
+                        .split(",")
+                        .map((s) => s.trim())
+                        .filter(Boolean)
+                    : undefined,
+                });
+                setEditing(false);
+              }}
+            >
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-xs">Title</Label>
+                  <Input value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+                </div>
+                <div>
+                  <Label className="text-xs">Description</Label>
+                  <Textarea value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={3} />
+                </div>
+                <div>
+                  <Label className="text-xs">Tags (comma-separated)</Label>
+                  <Input value={editTags} onChange={(e) => setEditTags(e.target.value)} />
+                </div>
+              </div>
+              <DialogFooter className="mt-4">
+                <Button type="button" variant="outline" onClick={() => setEditing(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={!editTitle.trim()}>
+                  Save
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog
+          open={!!deletingCard}
+          onOpenChange={(open) => !open && setDeletingCard(null)}
+        >
+          <AlertDialogContent variant="destructive">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete this card?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently remove "{deletingCard?.title}".
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                onClick={() => {
+                  if (deletingCard) ctx.board.removeCard(deletingCard.id);
+                  setDeletingCard(null);
+                }}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     );
   },

@@ -1,52 +1,27 @@
-facet — session plan (review-driven fixes)
-Status: DONE
-
+facet — session plan (continuation)
+Status: IN PROGRESS — continuing from "playground perfection complete". New focus: z-index stack refinement, Playground prettify, components-not-displaying, playground consolidation.
 PRIORITY LIST
-[x] 1. NAVBAR/LANDING
-    - Nav.tsx: Product dropdown links fixed (/about#packages, /about#features, /about#roadmap)
-    - handleNav updated to handle path+hash navigation
-    - AboutPage sections: added id anchors (packages, features, roadmap)
-    - Landing app.tsx: trimmed to remove duplicate sections (DONE)
-    - Navbar hover: hoverDropdowns + shared close timer (48118e5) verified
-    - AboutPage: PackageCard padding p-5 → p-6 (consistent with Feature card)
-
-[x] 2. CHANGELOG breathing space
-    - changelog-list.tsx: pl-8, left-3.5, ring-2 (DONE in working tree)
-
-[x] 3. DOCS-SITE: component categorization
-    - manifest.ts + gen-docs-manifest.mjs: moved from general to
-      ready-to-use/pages/animation/etc (DONE in working tree)
-
-[x] 4. DOCS-SITE: missing previews
-    - previews.tsx: 20 new ComponentPreview cases (DONE in working tree)
-
-[x] 5. KANBAN
-    - Reordering: computeIndex + moveCard(toIndex) (DONE in working tree)
-    - Add card via modal (DefaultAddCardForm + renderAddCard prop) (DONE)
-
-[x] 6. GLOW/GLIMMER card clipping + animation
-    - GlowBorderCard: keyframes name fixed (facet-glow-2.4 → facet-glow-pulse),
-      animation name/duration separated, overflow:hidden added on wrapper
-    - ShineBorderCard: animation name fixed (facet-shine-3s → facet-shine),
-      overflow:hidden added on wrapper
-    - BorderBeamCard: already had overflow-hidden + facet-spin keyframes OK
-
-[x] 7. ABOUT card icons
-    - PackageCard padding p-5 → p-6 (now consistent with Feature card)
-
-[x] 8. ANIMATIONS 100%
-    - facet-spin (tailcss), facet-shimmer, facet-dissolve: all defined OK
-    - GlowBorderCard/ShineBorderCard: keyframes names fixed, now resolve
-
-[x] 9. EM-DASHES
-    - Replaced — with - in 23 source files (packages/ + apps/ + scripts/)
-    - User-facing strings in PricingPage, SecurityPage, DashboardPreviewSection,
-      DashboardDemoPage, EcosystemDetailPage, changelog-list: adjusted to
-      comma / full-stop where appropriate
-    - Code comments in kanban-board, pricing-comparison, stepper, etc: - (hyphen)
-
+[x] 1. KANBAN card actions - AlertDialog for Delete (replaced window.confirm)
+[x] 2. CHART hover - fixed hardcoded seriesIndex: 0
+[x] 3. NAVBAR hover dropdown blink - DropdownMenu fights hover timer (z-index 50 -> 60 done)
+[x] 4. DOCS z-index - mobile sidebar z-[40] -> z-[70] (above topbar/navbar z-60 so it overlays on small screens); topbar z-20 -> z-60; navbar z-50 -> z-60
+[x] 5. PLAYGROUND FORMAT - Prettier auto-indent formatting on the editor (Format button, lazy prettier/standalone) [DONE — pre-existing in working tree; tests pass]
+[x] 6. PLAYGROUND COMPONENTS NOT DISPLAYING - shared registry (facet-components + auth + layout + placeholders) + parseLiteral returns undefined for bare identifiers [DONE — added 26 USAGE entries for missing components + StepperProvider/KanbanBoard demo wrappers]
+[x] 7. PLAYGROUND CONSOLIDATION - ComponentPage playground shares LiveCodePlayground + playgroundComponents registry with /playground [DONE — pre-existing in working tree]
+[x] 8. BorderBeamCard animation / hover
+[x] 9. DOCS-SITE changelog wiring
+[x] 10. EM DASH PURGE
+[x] 11. LIVE PLAYGROUND - copy button, full code, bare-JSX fallback, max-height
+[x] 12. CENTRALIZE /playground - ecosystem sidebar + dynamic selector
+[x] 13. PLAYGROUND TESTS - LiveCodePlayground.test.tsx
 NOTES
-- All 34 em-dash files checked: .agent/ and .changeset/ left as-is (not source code)
+- z-index scale (IN SYNC across repo):
+    z-30 = persistent desktop sidebar (in-flow)
+    z-[50] = (retired; Radix portaled content now lives at z-[70])
+    z-60 = Application chrome (Topbar, Navbar) — sticky headers/overlays
+    z-[70] = Radix portaled overlays (Dialog, Drawer, Sheet, AlertDialog)
+              + Navbar/UserAvatar DropdownMenuContent (above z-60 chrome)
+    z-[80] = Mobile sidebar overlay — MUST sit above z-[70] overlays so
+              it covers them on small screens
 - Build gate: pnpm -r build / typecheck / test / check:docs / check:icons / check:sdk-drift
-- Working tree fixes: kanban, changelog, docs manifest, previews, landing trim,
-  card animations, nav links, about page, em-dashes
+- Working tree has uncommitted changes; fixes go into source + tracked under .agent/
