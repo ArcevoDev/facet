@@ -1556,7 +1556,7 @@ function Example() {
   "qr-scanner": `import { QrScanner } from "@arcevo/facet-components";
 
 function Example() {
-  return <QrScanner onScan={(result) => console.log(result)} />;
+  return <QrScanner onScan={(result) => console.log(result)} autoStart={false} />;
 }`,
 
   "range-slider": `import { RangeSlider } from "@arcevo/facet-components";

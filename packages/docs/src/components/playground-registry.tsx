@@ -270,4 +270,17 @@ export const playgroundComponents: Record<string, React.ComponentType<any>> = {
   // headless hook-based wrappers
   StepperProvider: StepperProviderWithDemo,
   KanbanBoard: KanbanBoardWithDemo,
+  // Prevent localStorage-dismissed AnnouncementBar from hiding the preview
+  // once a visitor clicked the close button. A unique storageKey per instance
+  // means dismissal never persists across remounts in the playground.
+  AnnouncementBar: (props: any) => {
+    const id = React.useId();
+    return <FacetComponents.AnnouncementBar {...props} storageKey={`facet-announcement-preview${id}`} />;
+  },
+  // The usage snippet references a bare `password` variable; the playground
+  // parser resolves it to undefined, and the component calls value.length.
+  // Provide a sane demo value so the preview renders.
+  PasswordStrengthMeter: (props: any) => (
+    <FacetComponents.PasswordStrengthMeter {...props} value={props.value ?? "Str0ng!Pass"} />
+  ),
 };

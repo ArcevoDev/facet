@@ -2,6 +2,7 @@ import * as React from "react";
 import { render, screen, fireEvent, cleanup, act } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { LiveCodePlayground } from "./LiveCodePlayground.js";
+import { playgroundComponents } from "./playground-registry.js";
 
 vi.mock("prettier/standalone", () => ({
   format: async (code: string) => "// formatted\n" + code,
@@ -164,5 +165,42 @@ describe("LiveCodePlayground", () => {
     );
     const link = screen.getByText("rel") as HTMLAnchorElement;
     expect(link.getAttribute("href")).toBe("/relative/path");
+  });
+
+  it("contains render errors instead of crashing the preview", () => {
+    const Boom: React.ComponentType<any> = () => {
+      throw new Error("demo component exploded");
+    };
+    render(
+      <LiveCodePlayground defaultCode="<Boom />" components={{ Boom }} />,
+    );
+    // The error boundary surfaces the message — no white screen.
+    expect(screen.getByText(/demo component exploded/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/isn't supported in the live playground/),
+    ).toBeInTheDocument();
+  });
+
+  it("renders PasswordStrengthMeter even when value parses to undefined", () => {
+    const code =
+"import { PasswordStrengthMeter } from \"@arcevo/facet-components\";\n\nfunction Example() {\n  return <PasswordStrengthMeter value={password} />;\n}";
+    render(
+      <LiveCodePlayground defaultCode={code} components={playgroundComponents} />,
+    );
+    // The wrapper supplies a fallback so the bar renders instead of crashing.
+    expect(screen.getByText(/At least 8 characters/i)).toBeInTheDocument();
+  });
+
+  it("renders AnnouncementBar despite a prior dismissal in localStorage", () => {
+    localStorage.setItem("facet-announcement-dismissed", "1");
+    const code =
+"import { AnnouncementBar } from \"@arcevo/facet-components\";\n\nfunction Example() {\n  return <AnnouncementBar>Deal of the day</AnnouncementBar>;\n}";
+    render(
+      <LiveCodePlayground defaultCode={code} components={playgroundComponents} />,
+    );
+    // The wrapper uses a unique storageKey, so the default-key dismissal
+    // does not hide the preview.
+    expect(screen.getByText("Deal of the day")).toBeInTheDocument();
+    localStorage.clear();
   });
 });

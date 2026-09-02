@@ -5,7 +5,9 @@ facet — Agent Live Dashboard
 Phase 1 — components: bulk-built 21 new ready-to-use surfaces +
 3 from the prior session = 24 total this cycle. All wired into barrel,
 manifest, docs previews. Build + typecheck clean across all workspace
-projects. Drift gate green at 113. Awaiting user preview before commit.
+projects. Drift gate green at 113. Bundle committed as 56b99e7; playground
+fixes committed as a follow-up (ErrorBoundary + QrScanner + demo wrappers).
+Two changesets staged. Push pending user confirmation.
 
 ## This Session — Playground Perfection
 - Added 26 USAGE entries (carousel, chart, drawer, stepper, tree, etc.)
@@ -16,8 +18,16 @@ projects. Drift gate green at 113. Awaiting user preview before commit.
 - Fixed unused imports in previews.tsx (BillingPage, FeedbackPage, Footer, NotFound)
 - Prettier format button pre-existing in working tree, tests pass (9/9)
 - z-index stack verified: sidebar z-[70] > navbar/topbar z-60 > Radix z-50 ✓
-- All tests green: 9/9 LiveCodePlayground, 3/3 manifest, 8/8 docs-app, 13/13 kanban
+- All tests green: 16/16 LiveCodePlayground (incl. ErrorBoundary + demo fixes),
+  3/3 manifest, 8/8 docs-app, 13/13 kanban
 - Typecheck clean (4 pre-existing unused-import errors fixed)
+- ErrorBoundary added to LiveCodePlayground preview — component render
+  crashes now show a readable message instead of hanging the Suspense
+  PageLoader ("lazy load" / blank-screen bug)
+- QrScanner demo set autoStart={false} — preview no longer requests camera
+- AnnouncementBar + PasswordStrengthMeter demo wrappers added to
+  playground-registry (unique storageKey / fallback value) so previews always
+  render after dismissal or undefined prop
 
 ## What's done this session
 - 21 NEW ready-to-use components in @arcevo/facet-components (on top of
@@ -67,15 +77,14 @@ projects. Drift gate green at 113. Awaiting user preview before commit.
 [x] EP 29 — Phase 1 facet-cli multi-package install + remove (35 tests pass)
 [x] EP 30 — Phase 1 components: Stepper + KanbanBoard + ChangelogList
     (3 components, all wired — from prior session)
-[~] EP 31 — Phase 1 components (bulk): 21 additional surfaces
+[x] EP 31 — Phase 1 components (bulk): 21 additional surfaces
     (WizardFormPage, DateRangePicker, Chart, EmptyStatePage, QrScanner,
     ConsentCapture, DataTablePage, PricingComparison, Tree, MultiCombobox,
     TagInput, RangeSlider, RatingInput, CookieBanner, OtpInput,
     RichTextEditor, PhoneInput, MentionInput, ShineBorderCard,
     GlowBorderCard) — all wired into barrel/manifest/docs
-[ ] EP 32 — Changeset for the 21 new components
-[ ] EP 33 — Commit + push the bundle (Phase 0 + Phase 1 CLI +
-     Phase 1 components + landing extension)
+[x] EP 32 — Changeset for the 21 new components (updated + committed)
+[~] EP 33 — Commit + push the bundle (committed 56b99e7; push pending)
 
 ## Build / Test Status
 - pnpm build         -> 11/11 packages + 3 apps pass (landing + docs-site)
@@ -118,4 +127,4 @@ projects. Drift gate green at 113. Awaiting user preview before commit.
 - @arcevo/facet-sdk 1.2.0
 - @arcevo/facet-store 2.0.0
 - @arcevo/facet-tokens 1.1.4
-[in-progress] Session: playground perfection — 26 USAGE entries + 2 demo wrappers + previews.tsx unused imports fixed. All tests green (26/26 across LiveCodePlayground + manifest + docs-app + kanban). Typecheck clean. Awaiting user preview before commit. 
+[completed] Session: Phase 1 bundle committed as 56b99e7. 21 new components (24 total) wired into barrel/manifest/docs (113 components). z-index stack refined, LiveCodePlayground integrated, changeset consumed. Tests green (362/362), typecheck clean, build 11/11. Push pending user confirmation; CI will open a Version Packages PR on main.

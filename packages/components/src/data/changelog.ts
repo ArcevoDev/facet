@@ -54,6 +54,9 @@ export const facetChangelog: ChangelogRelease[] = [
       { kind: "fixed", text: "Topbar + Navbar z-index raised to z-60 to render above Radix portaled preview content (z-50)" },
       { kind: "added", text: "LiveCodePlayground on component pages - default-usage code block is now an editable, live-rendered sandbox" },
       { kind: "fixed", text: "KanbanBoard Delete action uses AlertDialog modal instead of window.confirm()" },
+      { kind: "added", text: "LiveCodePlayground ErrorBoundary now surfaces a readable message when a demo snippet throws, instead of hanging the Suspense page loader" },
+      { kind: "fixed", text: "QrScanner playground demo no longer auto-starts the camera (autoStart={false}), preventing a camera-permission hang" },
+      { kind: "fixed", text: "PasswordStrengthMeter + AnnouncementBar playground wrappers supply fallback values / unique storageKeys so previews always render" },
     ],
   },
   {

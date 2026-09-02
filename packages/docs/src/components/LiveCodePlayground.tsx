@@ -26,6 +26,46 @@ export interface LiveCodePlaygroundProps {
   className?: string;
 }
 
+/**
+ * Catches render-time errors from playground components so a single crashing
+ * demo doesn't tear down the entire docs page (or spin the Suspense fallback
+ * into an infinite loading loop). Shows a readable message instead.
+ */
+class PlaygroundErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; message: string }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, message: "" };
+  }
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, message: error.message };
+  }
+  override componentDidCatch(error: Error, info: { componentStack?: string }) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("[Playground] preview error:", error, info.componentStack);
+    }
+  }
+  override render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex min-h-[160px] items-center justify-center">
+          <div className="text-center text-sm">
+            <code className="block font-mono text-destructive">
+              {this.state.message}
+            </code>
+            <p className="mt-2 text-muted-foreground">
+              This component's demo snippet isn't supported in the live playground.
+            </p>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 /*  ────────────────────────────────────────────────────────── */
 /*  Utilities                                                  */
 /*  ────────────────────────────────────────────────────────── */
@@ -708,7 +748,9 @@ export function LiveCodePlayground({
         </button>
       </div>
       <div className="overflow-auto rounded-md border bg-background p-4 max-h-[600px]">
-        <div className="flex min-h-[160px] items-center justify-center">{preview}</div>
+        <PlaygroundErrorBoundary>
+          <div className="flex min-h-[160px] items-center justify-center">{preview}</div>
+        </PlaygroundErrorBoundary>
       </div>
     </div>
   );

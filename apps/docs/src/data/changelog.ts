@@ -31,6 +31,9 @@ export const facetChangelog: ChangelogRelease[] = [
       },
       { kind: "added", text: "@arcevo/facet-docs changelog block type for DocsApp content pages" },
       { kind: "added", text: "facet docs init now scaffolds a populated /changelog page" },
+      { kind: "added", text: "LiveCodePlayground ErrorBoundary surfaces a readable message when a demo snippet throws instead of hanging the page loader" },
+      { kind: "fixed", text: "QrScanner playground demo disabled autoStart so the preview does not request camera permission" },
+      { kind: "fixed", text: "PasswordStrengthMeter + AnnouncementBar playground wrappers supply fallback values / unique storageKeys so previews always render" },
     ],
   },
   {
