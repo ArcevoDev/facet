@@ -106,6 +106,8 @@ export interface UserAvatarProps {
   className?: string;
   /** Optional avatar image class. */
   imageClassName?: string;
+  /** Optional badge/content rendered in the dropdown header below the email (e.g. role indicator). */
+  roleBadge?: React.ReactNode;
 }
 
 /** Derive initials from a name (or email prefix), max 2 chars. */
@@ -150,6 +152,7 @@ export function UserAvatar({
   renderSettingsLink,
   className,
   imageClassName,
+  roleBadge,
 }: UserAvatarProps) {
   const initials = getInitials(user.name, user.email);
 
@@ -187,6 +190,9 @@ export function UserAvatar({
               <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
             )}
           </div>
+          {roleBadge && (
+            <div className="mt-1">{roleBadge}</div>
+          )}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {items?.map((item) => (

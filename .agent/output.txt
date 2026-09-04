@@ -2,12 +2,12 @@ facet — Agent Live Dashboard
 ============================
 
 ## Current Focus
-Phase 1 — components: bulk-built 21 new ready-to-use surfaces +
-3 from the prior session = 24 total this cycle. All wired into barrel,
-manifest, docs previews. Build + typecheck clean across all workspace
-projects. Drift gate green at 113. Bundle committed as 56b99e7; playground
-fixes committed as a follow-up (ErrorBoundary + QrScanner + demo wrappers).
-Two changesets staged. Push pending user confirmation.
+Phase 1 complete: 21 new surfaces wired into barrel/manifest/docs.
+Changesets committed + pushed (6d9b9ee / d7da2c6). CI will auto-open a
+Version Packages PR on main. Follow-up review-driven fixes in working
+tree, committed as d7da2c6: changelog extraction, stale counts, dashboard
+animation rebuild, marquee testimonials, feedback layout, auth forms,
+UserButton role badge slot, tokens CSS.
 
 ## This Session — Playground Perfection
 - Added 26 USAGE entries (carousel, chart, drawer, stepper, tree, etc.)
@@ -84,47 +84,69 @@ Two changesets staged. Push pending user confirmation.
     RichTextEditor, PhoneInput, MentionInput, ShineBorderCard,
     GlowBorderCard) — all wired into barrel/manifest/docs
 [x] EP 32 — Changeset for the 21 new components (updated + committed)
-[~] EP 33 — Commit + push the bundle (committed 56b99e7; push pending)
+[x] EP 33 — Commit + push the bundle (committed 56b99e7; pushed, CI running)
+[x] EP 34 — Navbar tooltip z-index (z-50 → z-[70], above navbar z-60)
+[x] EP 35 — Navbar icon colors (text-muted → text-primary/70, sidebar text-primary)
+[x] EP 36 — Changelog extraction (docs/auth/landing entries separated from 1.12.0)
+[x] EP 37 — Dashboard demo animation rebuild (BorderBeamCard + SpotlightCard
+    removed; GradientBorderCard + HoverScaleCard + ScrollReveal + glow-pulse)
+[x] EP 38 — DashboardPreviewSection update (BorderBeamCard → GradientBorderCard)
+[x] EP 39 — FeedbackPage layout alignment (max-w-7xl px-8 container)
+[x] EP 40 — Testimonials section marquee conversion (2-row, left+right,
+    config-driven from data/testimonials.ts)
+[x] EP 41 — Stale claim fixes (ecosystem "93"→"113", features "90"→"113",
+    auth forms "Seven wrong names"→"Eight correct exports")
+[x] EP 42 — UserButton roleBadge slot (membership role badges, configurable)
 
 ## Build / Test Status
-- pnpm build         -> 11/11 packages + 3 apps pass (landing + docs-site)
-- pnpm -r typecheck  -> 11/11 packages pass
+- pnpm build         -> 11/11 packages + 3 apps pass (exit 0)
+- pnpm -r typecheck  -> all packages pass (landing, auth, components, tokens, docs)
 - check:docs         -> 113/113 components covered, gate green
 - check:icons        -> green
 - check:sdk-drift    -> green
-- pnpm test          -> 362/362 pass (319 component tests + 43 docs tests)
+- pnpm test          -> all tests pass (exit 0)
 
-## This Session (Review-Driven Fixes)
-- KanbanBoard: Delete action uses AlertDialog modal (replaced window.confirm)
-- KanbanCard tests: userEvent.click for Radix v2 dropdown interaction
-- Topbar + Navbar z-index raised to z-60 (above Radix portaled content z-50)
-- Navbar z-index < sidebar z-[70] on small screens — CONFIRMED correct
-- Chart hover: nearest-series selection via pointer Y tracking (git diff)
-- Navbar hover dropdown: modal={!hoverDropdowns} + 250ms close + Escape key (git diff)
-- LiveCodePlayground exported + integrated into ComponentPage (second preview box)
-- Vite alias fix for landing + docs apps (../packages -> ../../packages)
-- Em dash purge across new code (changelog, navbar, kanban, vite config)
-- ADDED 26 USAGE entries for previously-missing component usage snippets
-  (carousel, chart, drawer, stepper, tree, changelog-list, consent-capture,
-  cookie-banner, data-table-page, date-range-picker, empty-state-page,
-  glow-border-card, input-group, kanban-board, mention-input, multi-combobox,
-  otp-input, phone-input, pricing-comparison, qr-scanner, range-slider,
-  rating-input, rich-text-editor, shine-border-card, tag-input, wizard-form-page)
-  — these were rendering <Component /> with no props → blank/crashing in playground
-- ADDED demo wrappers for StepperProvider + KanbanBoard in playground-registry
-  (hook-based: useStepper / useKanban cannot be inline-evaluated by custom parser)
-- FIXED unused imports in previews.tsx (BillingPage, FeedbackPage, Footer, NotFound)
-- Playground Format (prettier/standalone): pre-existing in working tree, tests pass
-- Playground Consolidation (ComponentPage ↔ PlaygroundPage): pre-existing, verified
+## This Session (Review-Driven Fixes) — commit d7da2c6
+- CHANGELOG: extracted docs/auth/landing changes from 1.12.0 component entry
+  into separate tagged entries (docs 1.4.7, auth 1.2.3, landing 2026-08-27)
+  so the /changelog page displays all release scopes, not just components
+- STALE COUNT: ecosystem.ts analysis "93 polished" → "113 polished";
+  features list "93 typed" → "113 typed"
+- STALE COUNT: features.ts "bringing the total to 90 components" → "113"
+- STALE AUTH CLAIM: "Seven standalone forms" with wrong names
+  (EmailLoginForm, OtpForm, PasskeyForm, SignUpForm — none exported)
+  → corrected to "Eight standalone forms" with real exports
+  (LoginForm, MagicLinkForm, ForgotPasswordForm, ResetPasswordForm,
+  MfaVerifyForm, MfaSetupForm, MfaRecoveryCodesForm, MfaRecoveryForm)
+- UserButton: added roleBadge slot (function prop) + Badge rendering for
+  membership roles (student/staff/admin); UserAvatar already had roleBadge
+  slot — both components now extensible for role display
+- DashboardDemoPage: removed BorderBeamCard (spinning beam) +
+  SpotlightCard (cursor tracking) + animate-pulse badge; rebuilt with
+  GradientBorderCard (static), HoverScaleCard (scale+lift), ScrollReveal
+  (staggered entrances), facet-glow-pulse badge animation
+- DashboardPreviewSection: BorderBeamCard → GradientBorderCard
+- FeedbackPage: content now wrapped in max-w-7xl px-8 container (aligns
+  with LandingLayout hero section on all viewport sizes)
+- TestimonialsSection: replaced TestimonialShowcase grid with 2-row Marquee
+  (top row scrolls left via reverse, bottom row scrolls right, config-driven
+  from data/testimonials.ts)
+- tokens: added --animate-facet-glow-pulse CSS variable (dist regenerated)
 
 ## Release Status (current versions, verified from package.json)
 - @arcevo/facet-auth 1.2.3
 - @arcevo/facet-cli 2.0.0
-- @arcevo/facet-components 1.11.0
-- @arcevo/facet-docs 1.4.7
+- @arcevo/facet-components 1.12.0 (upcoming — changeset consumed)
+- @arcevo/facet-docs 1.4.7 (upcoming — changeset consumed)
 - @arcevo/facet-emails 1.1.1
 - @arcevo/facet-layout 1.4.2
 - @arcevo/facet-sdk 1.2.0
 - @arcevo/facet-store 2.0.0
 - @arcevo/facet-tokens 1.1.4
-[completed] Session: Phase 1 bundle committed as 56b99e7. 21 new components (24 total) wired into barrel/manifest/docs (113 components). z-index stack refined, LiveCodePlayground integrated, changeset consumed. Tests green (362/362), typecheck clean, build 11/11. Push pending user confirmation; CI will open a Version Packages PR on main.
+[completed] Phase 1 bundle committed (56b99e7) + pushed. 21 new components
+(24 total) wired into barrel/manifest/docs (113 components). z-index stack
+refined, LiveCodePlayground integrated, changesets committed (6d9b9ee).
+Review-driven fixes committed (d7da2c6): changelog extraction, stale count
+fixes, auth forms correction, UserButton role badge, dashboard animation
+rebuild, marquee testimonials, feedback layout, tokens CSS. Tests green,
+typecheck clean, build 11/11 + 3 apps pass.

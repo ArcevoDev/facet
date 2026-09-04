@@ -100,6 +100,12 @@ export interface FooterProps extends React.HTMLAttributes<HTMLElement> {
   steps?: FooterStep[];
   /** Max content width class. Default: "max-w-7xl". */
   containerClassName?: string;
+  /**
+   * Custom link renderer for SPA-compatible navigation (e.g. react-router
+   * `<Link>`). Receives a `FooterLink` and should return a link element.
+   * When omitted, a plain `<a href>` is used.
+   */
+  renderLink?: (link: FooterLink) => React.ReactNode;
 }
 
 /** Auto-detect external links unless explicitly set. */
@@ -127,7 +133,10 @@ function FooterBrand({ brand }: { brand: FooterProps["brand"] }) {
 }
 
 /** Link columns. */
-function FooterColumns({ columns }: { columns: FooterColumn[] }) {
+function FooterColumns({
+  columns,
+  renderLink,
+}: { columns: FooterColumn[]; renderLink?: (link: FooterLink) => React.ReactNode }) {
   if (!columns.length) return null;
   return columns.map((col) => (
     <div key={col.title}>
@@ -135,14 +144,18 @@ function FooterColumns({ columns }: { columns: FooterColumn[] }) {
       <ul className="mt-4 space-y-3">
         {col.links.map((link) => (
           <li key={link.label + link.href}>
-            <a
-              href={link.href}
-              target={isExternal(link) ? "_blank" : undefined}
-              rel={isExternal(link) ? "noreferrer" : undefined}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {link.label}
-            </a>
+            {renderLink ? (
+              renderLink(link)
+            ) : (
+              <a
+                href={link.href}
+                target={isExternal(link) ? "_blank" : undefined}
+                rel={isExternal(link) ? "noreferrer" : undefined}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.label}
+              </a>
+            )}
           </li>
         ))}
       </ul>
@@ -157,8 +170,9 @@ function FooterBottomBar({
   socials = [],
   bottomBar,
   socialArea,
+  renderLink,
   className,
-}: Pick<FooterProps, "legal" | "bottomLinks" | "socials" | "bottomBar" | "socialArea"> & {
+}: Pick<FooterProps, "legal" | "bottomLinks" | "socials" | "bottomBar" | "socialArea" | "renderLink"> & {
   className?: string;
 }) {
   if (bottomBar) return bottomBar;
@@ -173,15 +187,20 @@ function FooterBottomBar({
       {socialArea ?? (
       <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
         {bottomLinks.map((link) => (
-          <a
-            key={link.label + link.href}
-            href={link.href}
-            target={isExternal(link) ? "_blank" : undefined}
-            rel={isExternal(link) ? "noreferrer" : undefined}
-            className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {link.label}
-          </a>
+          <span key={link.label + link.href}>
+            {renderLink ? (
+              renderLink(link)
+            ) : (
+              <a
+                href={link.href}
+                target={isExternal(link) ? "_blank" : undefined}
+                rel={isExternal(link) ? "noreferrer" : undefined}
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {link.label}
+              </a>
+            )}
+          </span>
         ))}
         {socials.length > 0 && (
           <span className="flex items-center gap-3">
@@ -293,6 +312,7 @@ export function Footer({
   steps,
   className,
   containerClassName = "max-w-7xl",
+  renderLink,
   ...props
 }: FooterProps) {
   return (
@@ -324,7 +344,7 @@ export function Footer({
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
             <FooterBrand brand={brand} />
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-              <FooterColumns columns={columns} />
+              <FooterColumns columns={columns} renderLink={renderLink} />
             </div>
           </div>
         )}
@@ -338,7 +358,7 @@ export function Footer({
             }
           >
             <FooterBrand brand={brand} />
-            <FooterColumns columns={columns} />
+            <FooterColumns columns={columns} renderLink={renderLink} />
           </div>
         )}
 
@@ -346,7 +366,7 @@ export function Footer({
 
         {variant === "streamline" && (
           <div className="mt-10 grid gap-10 sm:grid-cols-2 md:grid-cols-4">
-            <FooterColumns columns={columns} />
+            <FooterColumns columns={columns} renderLink={renderLink} />
           </div>
         )}
 
@@ -365,6 +385,7 @@ export function Footer({
           socials={socials}
           bottomBar={bottomBar}
           socialArea={socialArea}
+          renderLink={renderLink}
         />
       </div>
     </footer>
