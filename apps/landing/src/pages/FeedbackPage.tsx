@@ -63,7 +63,8 @@ export function FeedbackPage() {
         </div>
       }
     >
-      <div className="mx-auto w-full max-w-2xl px-8 py-12">
+      <div className="mx-auto max-w-7xl px-8 py-12">
+        <div className="mx-auto max-w-2xl">
         {/* Email form (professional standard) */}
         <Card className="mb-6">
         <CardHeader>
@@ -180,6 +181,7 @@ export function FeedbackPage() {
             <div className="text-xs text-muted-foreground">@kenny.gr8</div>
           </div>
         </a>
+      </div>
       </div>
       </div>
     </LandingLayout>

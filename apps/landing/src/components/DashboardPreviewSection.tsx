@@ -1,7 +1,7 @@
 import {
   StatCard,
   ActivityFeed,
-  BorderBeamCard,
+  GradientBorderCard,
   PageHeader,
   Badge,
   Tabs,
@@ -15,7 +15,7 @@ import { getDocsUrl } from "../lib/docs-url.js";
 
 /**
  * Live dashboard preview. Shows the StatCard + ActivityFeed surfaces that
- * arc-id-style consoles get out of the box. Uses BorderBeamCard to frame
+ * arc-id-style consoles get out of the box. Uses GradientBorderCard to frame
  * the activity feed so the page preview reads as a console, not a blog.
  */
 export function DashboardPreviewSection() {
@@ -33,7 +33,7 @@ export function DashboardPreviewSection() {
           <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">StatCard</code>,{" "}
           <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">ActivityFeed</code>,{" "}
           <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">PageHeader</code>,{" "}
-          <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">BorderBeamCard</code>, and{" "}
+          <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">GradientBorderCard</code>, and{" "}
           <code className="rounded bg-secondary/50 px-1.5 py-0.5 text-xs">Tabs</code>,
           the primitives every console needs, wired together.
         </p>
@@ -50,7 +50,7 @@ export function DashboardPreviewSection() {
           ]}
           actions={
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-600">
-              <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+              <span className="size-1.5 animate-[facet-glow-pulse_2s_ease-in-out_infinite] rounded-full bg-emerald-500" />
               live
             </span>
           }
@@ -63,7 +63,7 @@ export function DashboardPreviewSection() {
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-3">
-          <BorderBeamCard className="lg:col-span-2">
+          <GradientBorderCard className="lg:col-span-2">
             <div className="p-5">
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="font-heading text-base font-semibold text-foreground">Recent activity</h3>
@@ -79,9 +79,9 @@ export function DashboardPreviewSection() {
               </div>
               <ActivityFeed items={DASHBOARD_ACTIVITY} />
             </div>
-          </BorderBeamCard>
+          </GradientBorderCard>
 
-          <BorderBeamCard>
+          <GradientBorderCard>
             <div className="p-5">
               <h3 className="font-heading text-base font-semibold text-foreground">Quick links</h3>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -131,7 +131,7 @@ export function DashboardPreviewSection() {
                 </TabsContent>
               </Tabs>
             </div>
-          </BorderBeamCard>
+          </GradientBorderCard>
         </div>
       </div>
     </section>

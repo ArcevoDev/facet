@@ -9,7 +9,7 @@ import * as React from "react";
 import { useAuth } from "./provider.js";
 import type { Appearance, ComponentSlots } from "./types.js";
 
-import { Button } from "@arcevo/facet-components";
+import { Badge, Button } from "@arcevo/facet-components";
 import { Avatar, AvatarFallback } from "@arcevo/facet-components";
 import { getModSymbol } from "@arcevo/facet-components";
 import {
@@ -31,6 +31,8 @@ export interface UserButtonProps {
     trigger?: React.ReactNode;
     /** Override the user's name label */
     label?: React.ReactNode;
+    /** Custom renderer for role badge inside membership rows */
+    roleBadge?: (role: string) => React.ReactNode;
   };
   /** Called when user clicks "Sign out" */
   onSignOut?: () => void;
@@ -101,7 +103,20 @@ export function UserButton({ appearance, slots, onSignOut }: UserButtonProps) {
               Organizations
             </DropdownMenuLabel>
             {user.memberships.map((m, i) => (
-              <DropdownMenuItem key={i}>{m.name ?? ""}</DropdownMenuItem>
+              <DropdownMenuItem key={i} disabled>
+                {m.name ?? ""}
+                {m.role &&
+                  (slots?.roleBadge
+                    ? slots.roleBadge(m.role)
+                    : (
+                      <Badge
+                        variant="secondary"
+                        className="ml-1.5 text-[9px] font-medium"
+                      >
+                        {m.role}
+                      </Badge>
+                    ))}
+              </DropdownMenuItem>
             ))}
           </>
         )}

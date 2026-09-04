@@ -1,38 +1,62 @@
 facet - session plan (continuation)
-Status: 2nd commit staged (playground fixes) - ErrorBoundary + QrScanner
-+ AnnouncementBar/PasswordStrengthMeter demo wrappers. Push pending user
-confirmation.
-All 16 priority items complete. Working tree clean (only debug
-trace-output.txt + scratchpad/ remain as session artifacts).
+Status: Changesets committed + pushed (6d9b9ee). New review-driven fixes
+in working tree: changelog extraction, stale counts, dashboard animation
+rebuild, marquee testimonials, feedback layout, auth forms, UserButton
+role badge slot. Commit pending, then typecheck + build + verify.
+
 PRIORITY LIST
 [x] 1. KANBAN card actions - AlertDialog for Delete (replaced window.confirm)
 [x] 2. CHART hover - fixed hardcoded seriesIndex: 0
 [x] 3. NAVBAR hover dropdown blink - DropdownMenu fights hover timer (z-index 50 -> 60 done)
-[x] 4. DOCS z-index - mobile sidebar z-[40] -> z-[70] (above topbar/navbar z-60 so it overlays on small screens); topbar z-20 -> z-60; navbar z-50 -> z-60
-[x] 5. PLAYGROUND FORMAT - Prettier auto-indent formatting on the editor (Format button, lazy prettier/standalone) [DONE - pre-existing in working tree; tests pass]
-[x] 6. PLAYGROUND COMPONENTS NOT DISPLAYING - shared registry (facet-components + auth + layout + placeholders) + parseLiteral returns undefined for bare identifiers [DONE - added 26 USAGE entries for missing components + StepperProvider/KanbanBoard demo wrappers]
-[x] 7. PLAYGROUND CONSOLIDATION - ComponentPage playground shares LiveCodePlayground + playgroundComponents registry with /playground [DONE - pre-existing in working tree]
+[x] 4. DOCS z-index - mobile sidebar z-[40] -> z-[70]; topbar z-20 -> z-60; navbar z-50 -> z-60
+[x] 5. PLAYGROUND FORMAT - Prettier auto-indent formatting on the editor
+[x] 6. PLAYGROUND COMPONENTS NOT DISPLAYING - shared registry + parseLiteral fix
+[x] 7. PLAYGROUND CONSOLIDATION - ComponentPage playground shares LiveCodePlayground
 [x] 8. BorderBeamCard animation / hover
 [x] 9. DOCS-SITE changelog wiring
 [x] 10. EM DASH PURGE
-[x] 11. LIVE PLAYGROUND - copy button, full code, bare-JSX fallback, max-height
+[x] 11. LIVE PLAYGROUND - copy button, full code, bare-JSX fallback
 [x] 12. CENTRALIZE /playground - ecosystem sidebar + dynamic selector
 [x] 13. PLAYGROUND TESTS - LiveCodePlayground.test.tsx
-[x] 14. PLAYGROUND ErrorBoundary - component render crashes now surface a
-    message instead of hanging the Suspense PageLoader ("lazy load")
-[x] 15. PLAYGROUND QrScanner - autoStart={false} so preview doesn't request
-    camera permission
+[x] 14. PLAYGROUND ErrorBoundary - component render crashes surface a message
+[x] 15. PLAYGROUND QrScanner - autoStart={false} prevents camera-permission hang
 [x] 16. PLAYGROUND AnnouncementBar + PasswordStrengthMeter - demo wrappers
-    (unique storageKey / fallback value) so previews always render
+[x] 17. CHANGELOG extraction - docs/auth/landing changes moved out of 1.12.0
+         component entry into separate tagged entries (docs 1.4.7, auth 1.2.3,
+         landing 2026-08-27) in packages/components/src/data/changelog.ts +
+         apps/docs/src/data/changelog.ts
+[x] 18. STALE COUNT fixes - ecosystem.ts "93 polished" -> "113 polished";
+         features.ts "90 components" -> "113 components"
+[x] 19. AUTH forms stale claim - "Seven" with wrong names -> "Eight"
+         (LoginForm, MagicLinkForm, ForgotPasswordForm, ResetPasswordForm,
+         MfaVerifyForm, MfaSetupForm, MfaRecoveryCodesForm, MfaRecoveryForm)
+[x] 20. NAVBAR tooltip z-index - z-50 -> z-[70] (above navbar z-60)
+[x] 21. NAVBAR icon colors - text-muted-foreground -> text-primary/70 (navbar)
+         + text-primary (sidebar)
+[x] 22. CONSOLE DASHBOARD demo animation - removed BorderBeamCard (spinning
+         beam) + SpotlightCard (cursor tracking) + animate-pulse badge.
+         Rebuilt with GradientBorderCard (static), HoverScaleCard (scale+lift),
+         ScrollReveal (staggered entrance), facet-glow-pulse badge
+[x] 23. DASHBOARD preview section - BorderBeamCard -> GradientBorderCard
+[x] 24. FEEDBACKPAGE layout - wrapped content in max-w-7xl px-8 container
+         with inner max-w-2xl so it aligns with LandingLayout hero
+[x] 25. TESTIMONIALS marquee - replaced TestimonialShowcase grid with 2-row
+         Marquee (top row scrolls left via reverse, bottom row scrolls right),
+         config-driven from data/testimonials.ts
+[x] 26. UserButton role badge - added roleBadge slot + Badge rendering for
+         membership roles (student/staff/admin) in packages/auth/src/user-button.tsx
+[x] 27. Tokens CSS - added --animate-facet-glow-pulse variable
+[~] 28. Commit + typecheck + build + verify
+
 NOTES
 - z-index scale (IN SYNC across repo):
     z-30 = persistent desktop sidebar (in-flow)
     z-[50] = (retired; Radix portaled content now lives at z-[70])
     z-60 = Application chrome (Topbar, Navbar) - sticky headers/overlays
     z-[70] = Radix portaled overlays (Dialog, Drawer, Sheet, AlertDialog)
-              + Navbar/UserAvatar DropdownMenuContent (above z-60 chrome)
-    z-[80] = Mobile sidebar overlay - MUST sit above z-[70] overlays so
-              it covers them on small screens
-- Build gate: pnpm -r build / typecheck / test / check:docs / check:icons / check:sdk-drift
-- Two changesets present (kanban-actions + playground-robustness).
-  CI will auto-open a Version Packages PR on main once pushed.
+            + Navbar/UserAvatar DropdownMenuContent (above z-60 chrome)
+    z-[80] = Mobile sidebar overlay - MUST sit above z-[70] overlays
+- Changeset config ignores @arcevo/facet-landing (correct — landing not published)
+- @arcevo/facet-docs-site is not a real package; docs-site = apps/docs
+- Two changesets present (kanban-actions + playground-robustness): committed +
+  pushed as 6d9b9ee. CI will auto-open a Version Packages PR on main.

@@ -2,8 +2,9 @@ import {
   PageHeader,
   StatCard,
   ActivityFeed,
-  BorderBeamCard,
-  SpotlightCard,
+  GradientBorderCard,
+  HoverScaleCard,
+  ScrollReveal,
   Card,
   CardHeader,
   CardTitle,
@@ -28,7 +29,8 @@ import { getDocsUrl } from "../lib/docs-url.js";
  *   - PageHeader (breadcrumb + title + actions)
  *   - StatCard grid (KPI cards with deltas)
  *   - ActivityFeed (grouped + relative time)
- *   - BorderBeamCard / SpotlightCard framing
+ *   - GradientBorderCard / HoverScaleCard framing
+ *   - Staggered ScrollReveal entrance on load
  *   - Tabs to switch between feed / table views
  *
  * Data is the same demo set as the home-page preview but with the
@@ -52,7 +54,7 @@ export function DashboardDemoPage() {
             ]}
             actions={
               <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-600">
-                <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
+                <span className="size-1.5 animate-[facet-glow-pulse_2s_ease-in-out_infinite] rounded-full bg-emerald-500" />
                 live demo
               </span>
             }
@@ -60,11 +62,13 @@ export function DashboardDemoPage() {
         </div>
       }
     >
-      {/* KPI grid */}
+      {/* KPI grid — staggered ScrollReveal entrance */}
       <section className="mx-auto max-w-7xl px-8 py-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {DASHBOARD_STATS_FULL.map((s) => (
-            <StatCard key={s.label} label={s.label} value={s.value} delta={s.delta} icon={s.icon} hint={s.hint} />
+          {DASHBOARD_STATS_FULL.map((s, i) => (
+            <ScrollReveal key={s.label} delay={i * 75} duration={500}>
+              <StatCard label={s.label} value={s.value} delta={s.delta} icon={s.icon} hint={s.hint} />
+            </ScrollReveal>
           ))}
         </div>
       </section>
@@ -72,97 +76,116 @@ export function DashboardDemoPage() {
       {/* Activity + quick stats */}
       <section className="mx-auto max-w-7xl px-8 py-8">
         <div className="grid gap-6 lg:grid-cols-3">
-          <BorderBeamCard className="lg:col-span-2">
-            <div className="p-5">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="font-heading text-lg font-semibold text-foreground">
-                  Recent activity
-                </h2>
+          <ScrollReveal delay={300} duration={600}>
+            <GradientBorderCard className="lg:col-span-2">
+              <div className="p-5">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="font-heading text-lg font-semibold text-foreground">
+                    Recent activity
+                  </h2>
+                  <Tabs defaultValue="feed">
+                    <TabsList>
+                      <TabsTrigger value="feed">Feed</TabsTrigger>
+                      <TabsTrigger value="log">Log</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </div>
                 <Tabs defaultValue="feed">
-                  <TabsList>
-                    <TabsTrigger value="feed">Feed</TabsTrigger>
-                    <TabsTrigger value="log">Log</TabsTrigger>
-                  </TabsList>
+                  <TabsContent value="feed">
+                    <ActivityFeed items={DASHBOARD_ACTIVITY} groupByDay />
+                  </TabsContent>
+                  <TabsContent value="log">
+                    <ActivityFeed items={DASHBOARD_ACTIVITY} groupByDay={false} />
+                  </TabsContent>
                 </Tabs>
               </div>
-              <Tabs defaultValue="feed">
-                <TabsContent value="feed">
-                  <ActivityFeed items={DASHBOARD_ACTIVITY} groupByDay />
-                </TabsContent>
-                <TabsContent value="log">
-                  <ActivityFeed items={DASHBOARD_ACTIVITY} groupByDay={false} />
-                </TabsContent>
-              </Tabs>
-            </div>
-          </BorderBeamCard>
+            </GradientBorderCard>
+          </ScrollReveal>
 
-          <SpotlightCard>
-            <CardHeader>
-              <CardTitle>System health</CardTitle>
-              <CardDescription>Last 24 hours</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {[
-                { label: "Identity API", status: "operational", color: "bg-emerald-500" },
-                { label: "Webhook delivery", status: "operational", color: "bg-emerald-500" },
-                { label: "Token refresh", status: "operational", color: "bg-emerald-500" },
-                { label: "Audit log export", status: "degraded", color: "bg-amber-500" },
-                { label: "OAuth introspection", status: "operational", color: "bg-emerald-500" },
-              ].map((row) => (
-                <div
-                  key={row.label}
-                  className="flex items-center justify-between rounded-md border border-border p-2.5"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className={`size-2 rounded-full ${row.color}`} />
-                    <span className="text-sm font-medium text-foreground">{row.label}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">{row.status}</span>
-                </div>
-              ))}
-            </CardContent>
-          </SpotlightCard>
+          <ScrollReveal delay={375} duration={600}>
+            <HoverScaleCard>
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle>System health</CardTitle>
+                  <CardDescription>Last 24 hours</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {[
+                    { label: "Identity API", status: "operational", color: "bg-emerald-500" },
+                    { label: "Webhook delivery", status: "operational", color: "bg-emerald-500" },
+                    { label: "Token refresh", status: "operational", color: "bg-emerald-500" },
+                    { label: "Audit log export", status: "degraded", color: "bg-amber-500" },
+                    { label: "OAuth introspection", status: "operational", color: "bg-emerald-500" },
+                  ].map((row) => (
+                    <div
+                      key={row.label}
+                      className="flex items-center justify-between rounded-md border border-border p-2.5"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className={`size-2 rounded-full ${row.color}`} />
+                        <span className="text-sm font-medium text-foreground">{row.label}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground">{row.status}</span>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </HoverScaleCard>
+          </ScrollReveal>
         </div>
       </section>
 
-      {/* Card animation family demo */}
+      {/* Card animation family demo — curated, low-motion showcase */}
       <section className="mx-auto max-w-7xl px-8 py-12">
-        <h2 className="text-2xl font-bold text-foreground">Card animation family</h2>
+        <h2 className="text-2xl font-bold text-foreground">Motion surfaces</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Every card below is one of the 11 motion surfaces in
+          Each card below is one of the motion surfaces in
           <code className="ml-1 rounded bg-secondary/50 px-1.5 py-0.5 text-xs">
             @arcevo/facet-components
           </code>
-          . Same Card primitive, motion bolted on.
+          . Same Card primitive, motion bolted on. Hover to feel the effect.
         </p>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <SpotlightCard>
-            <CardHeader>
-              <CardTitle className="text-sm">SpotlightCard</CardTitle>
-              <CardDescription>Cursor-following highlight</CardDescription>
-            </CardHeader>
-          </SpotlightCard>
-          <BorderBeamCard>
-            <CardHeader>
-              <CardTitle className="text-sm">BorderBeamCard</CardTitle>
-              <CardDescription>Animated gradient beam around the border</CardDescription>
-            </CardHeader>
-          </BorderBeamCard>
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle className="text-sm">TiltCard</CardTitle>
-              <CardDescription>Cursor-driven 3D tilt</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xs text-muted-foreground">Hover any tile to feel the effect.</p>
-            </CardContent>
-          </Card>
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle className="text-sm">FlipCard</CardTitle>
-              <CardDescription>Click to flip - front / back</CardDescription>
-            </CardHeader>
-          </Card>
+          <ScrollReveal delay={150} duration={500}>
+            <GradientBorderCard>
+              <CardHeader>
+                <CardTitle className="text-sm">GradientBorderCard</CardTitle>
+                <CardDescription>Static gradient border frame</CardDescription>
+              </CardHeader>
+            </GradientBorderCard>
+          </ScrollReveal>
+          <ScrollReveal delay={225} duration={500}>
+            <HoverScaleCard>
+              <Card className="h-full">
+                <CardHeader>
+                  <CardTitle className="text-sm">HoverScaleCard</CardTitle>
+                  <CardDescription>Subtle scale + shadow lift</CardDescription>
+                </CardHeader>
+              </Card>
+            </HoverScaleCard>
+          </ScrollReveal>
+          <ScrollReveal delay={300} duration={500}>
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-sm">MagneticCard</CardTitle>
+                <CardDescription>Cursor gravitate pull</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">Hover to feel the pull toward center.</p>
+              </CardContent>
+            </Card>
+          </ScrollReveal>
+          <ScrollReveal delay={375} duration={500}>
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-sm">RevealCard</CardTitle>
+                <CardDescription>Scroll-triggered fade/slide</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">This card is wrapped in RevealCard — it enters on scroll.</p>
+              </CardContent>
+            </Card>
+          </ScrollReveal>
         </div>
       </section>
 

@@ -288,14 +288,14 @@ const client = new ArcIdClient({
     description:
       "Radix-quality primitives, themed with the Alpha Palette, ready to copy or import.",
     analysis: [
-      "The components package is the visual layer: 93 polished, accessible React components built on Radix primitives and themed with the Alpha Palette tokens. Every component ships typed, focus-managed, dark-mode-aware, and SSR-safe - so consumers get shadcn quality without inheriting shadcn's drift problem.",
+      "The components package is the visual layer: 113 polished, accessible React components built on Radix primitives and themed with the Alpha Palette tokens. Every component ships typed, focus-managed, dark-mode-aware, and SSR-safe - so consumers get shadcn quality without inheriting shadcn's drift problem.",
       "Three layers of composition: Layer 1 are headless primitives (Button, Input, Card); Layer 2 are styled surfaces built on those primitives (Marquee, Tabs, DataTable, NumberInput); Layer 3 are ready-to-use pages wired from the layers below (BillingPage, FeedbackPage, AccountSettingsPanel, StatCard, ActivityFeed, PageHeader, ApiKeyManager, TestimonialShowcase, OtpVerificationCard, TwoFactorSetupPanel, InviteTeamForm, PasswordStrengthMeter, SecuritySectionCard, CookieConsent, AnnouncementBar, NotFound, FaqSection).",
       "The card-animation family (FlipCard, SpotlightCard, BorderBeamCard, ShineCard, GradientBorderCard, RevealCard, HoverScaleCard, MagneticCard, DissolveCard, GlowCard, TiltCard) covers the 'shadcn-ish aesthetic' without forcing consumers to wire it up - drop one in and you get a motion story that respects the design system.",
       "Iconography is pluggable: <Icon> resolves any lucide-style kebab name out of the box via the IconRegistry (registered in @arcevo/facet-components (1.12.0)). To use react-icons, heroicons, or your own SVG components, pass overrides via <IconProvider overrides={{ settings: MyIcon }}> per app/domain, or `registerIcon(\"name\", MyIcon)` globally.",
       "Theming happens through CSS variables emitted by @arcevo/facet-tokens. Override any token at runtime via <ThemeProvider overrideVars={{ '--primary': '...' }}> without recompiling. Dark mode is built in and respects the system preference until the user overrides it.",
     ],
     features: [
-      "93 typed Radix-powered components, named-export only",
+      "113 typed Radix-powered components, named-export only",
       "Layered architecture: primitives → styled surfaces → ready-to-use pages",
       "Alpha Palette tokens via @arcevo/facet-tokens (CSS variables, no recompile)",
       "Icon registry: lucide out of the box, swap in any icon set per app/domain",
@@ -333,12 +333,12 @@ const client = new ArcIdClient({
       "The auth package is a configurable, controlled state machine for sign-in and sign-up flows. The SignIn component is a fully typed IDLE → CHECK_SESSION → SELECT_METHOD → LOGIN_FORM / MAGIC_LINK_FORM / SOCIAL_LOGIN / PASSKEY_AUTH → CHECK_MFA → MFA_CHALLENGE → COMPLETE → STEP_UP machine. The host application can subscribe to step changes via the controlled `step` / `onStepChange` props and render whatever custom UI it needs at any stage.",
       "Three customization axes make it domain-customizable: `appearance` (style overrides), `config` (behavior flags like which methods are enabled, MFA requirement, session TTL), and `slots` (render props for form fields, action buttons, redirect target). This is why a fintech deployment can wire step-up MFA on every session, a healthcare deployment can plug HIPAA-aware session TTL into the same SignIn, and an education deployment can default to passkeys and social login.",
       "Domain presets ship out of the box: fintech (MFA required, 15-minute TTL, magic link enabled), med (MFA required, 30-minute TTL, magic link disabled), edu (passkeys enabled, 24-hour TTL, magic link enabled), enterprise (MFA required, optional passkeys, 8-hour TTL). Each preset is a plain AuthConfig object you can start from and override.",
-      "Seven standalone forms (EmailLoginForm, MagicLinkForm, OtpForm, MfaVerifyForm, PasskeyForm, ForgotPasswordForm, ResetPasswordForm, SignUpForm) let consumers compose their own flow without inheriting the full SignIn machine. All forms wire react-hook-form + Zod for inline validation; no plumbing code required on the consumer side.",
+      "Eight standalone forms (LoginForm, MagicLinkForm, ForgotPasswordForm, ResetPasswordForm, MfaVerifyForm, MfaSetupForm, MfaRecoveryCodesForm, MfaRecoveryForm) let consumers compose their own flow without inheriting the full SignIn machine. All forms wire react-hook-form + Zod for inline validation; no plumbing code required on the consumer side.",
       "Token storage is pluggable: pass any TokenStorage implementation to <ArcProvider storage={...}>. The default uses localStorage in development with a clear, once-fired console.warn (added in the Phase 0 security fix); production deployments are expected to wire an httpOnly cookie adapter or an in-memory store.",
     ],
     features: [
       "SignIn: configurable state machine, controlled step/onStepChange API",
-      "Seven standalone forms (email, magic link, OTP, MFA, passkey, forgot/reset, sign-up)",
+      "Eight standalone forms (LoginForm, MagicLinkForm, ForgotPasswordForm, ResetPasswordForm, MfaVerifyForm, MfaSetupForm, MfaRecoveryCodesForm, MfaRecoveryForm)",
       "Four domain presets: fintech, med, edu, enterprise (with override surface)",
       "react-hook-form + Zod validation wired in for every form",
       "Pluggable token storage: dev default warns, production wires cookie or in-memory",

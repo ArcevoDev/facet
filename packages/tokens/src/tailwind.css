@@ -118,6 +118,7 @@
   --animate-facet-beam: facet-beam 7s ease-in-out infinite;
   --animate-facet-sparkle: facet-sparkle 0.7s ease-out;
   --animate-facet-dissolve: facet-dissolve 500ms ease-out both;
+  --animate-facet-glow-pulse: facet-glow-pulse 2s ease-in-out infinite;
 }
 
 @keyframes accordion-down {
